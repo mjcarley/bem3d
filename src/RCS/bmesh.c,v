@@ -1,0 +1,2360 @@
+head	1.4;
+access;
+symbols;
+locks
+	ensmjc:1.4; strict;
+comment	@ * @;
+
+
+1.4
+date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2009.08.17.15.28.35;	author ensmjc;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.01.20.13.21.12;	author ensmjc;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2008.10.10.10.35.44;	author ensmjc;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@/* bmesh.c
+ * 
+ * Copyright (C) 2006, 2009 Michael Carley
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/**
+ * @@defgroup mesh BEM3D meshes
+ * @@{
+ * 
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /*HAVE_CONFIG_H*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+#include <glib.h>
+#include <gts.h>
+
+#include "bem3d.h"
+#include "bem3d-private.h"
+
+#define BMESH_FOREACH_DATA_WIDTH 8
+#define BMESH_FOREACH_FUNC       0
+#define BMESH_FOREACH_DATA       1
+#define BMESH_FOREACH_HASH       2
+#define BMESH_FOREACH_MESH       3
+
+static void destroy_element(gpointer key, BEM3DElement *e, gpointer data)
+
+{
+  gts_object_destroy(GTS_OBJECT(e)) ;
+
+  return ;
+}
+
+static void mesh_destroy(GtsObject *object)
+
+{
+  BEM3DMesh *m = BEM3D_MESH(object) ;
+
+  if ( m->e != NULL ) {
+    g_hash_table_foreach(m->e, (GHFunc)destroy_element, NULL) ;
+    g_hash_table_destroy(m->e) ;
+  }
+  if ( m->f != NULL ) g_hash_table_destroy(m->f) ;
+  if ( m->c != NULL ) g_hash_table_destroy(m->c) ;
+
+  (*GTS_OBJECT_CLASS(bem3d_mesh_class ())->parent_class->destroy)
+    (object) ;
+
+  return ;
+}
+
+static void bem3d_mesh_class_init (BEM3DMeshClass * klass)
+{
+  /* define new methods and overload inherited methods here */
+  GTS_OBJECT_CLASS (klass)->destroy = mesh_destroy ;
+}
+
+static void bem3d_mesh_init (BEM3DMesh * object)
+{
+  /* initialize object here */
+}
+
+/** 
+ * Definition of the ::BEM3DMeshClass. 
+ * 
+ * @@return ::BEM3DMeshClass
+ */
+
+BEM3DMeshClass * bem3d_mesh_class (void)
+{
+  static BEM3DMeshClass * klass = NULL;
+
+  if (klass == NULL) {
+    GtsObjectClassInfo bem3d_mesh_info = {
+      "BEM3DMesh",
+      sizeof (BEM3DMesh),
+      sizeof (BEM3DMeshClass),
+      (GtsObjectClassInitFunc) bem3d_mesh_class_init,
+      (GtsObjectInitFunc) bem3d_mesh_init,
+      (GtsArgSetFunc) NULL,
+      (GtsArgGetFunc) NULL
+    };
+    klass = gts_object_class_new (GTS_OBJECT_CLASS (gts_surface_class ()),
+				  &bem3d_mesh_info);
+  }
+
+  return klass;
+}
+
+/** 
+ * Create a new BEM3DMesh.
+ * 
+ * @@param klass the BEM3D mesh class for the mesh;
+ * @@param face_class the GTS face class;
+ * @@param edge_class the GTS edge class;
+ * @@param vertex_class the GTS vertex class. 
+ * 
+ * @@return a pointer to the newly created mesh
+ */
+
+BEM3DMesh *bem3d_mesh_new(BEM3DMeshClass *klass,
+			  GtsFaceClass *face_class,
+			  GtsEdgeClass *edge_class,
+			  GtsVertexClass *vertex_class)
+
+{
+  BEM3DMesh *m ;
+
+  g_return_val_if_fail(klass != NULL, NULL) ;
+  g_return_val_if_fail(face_class != NULL, NULL) ;
+  g_return_val_if_fail(edge_class != NULL, NULL) ;
+  g_return_val_if_fail(vertex_class != NULL, NULL) ;
+  
+  m = BEM3D_MESH (gts_object_new (GTS_OBJECT_CLASS (klass)));
+
+  GTS_SURFACE(m)->face_class = face_class ;
+  GTS_SURFACE(m)->edge_class = edge_class ;
+  GTS_SURFACE(m)->vertex_class = vertex_class ;
+
+  m->e = g_hash_table_new(g_direct_hash, g_direct_equal) ;
+  m->f = g_hash_table_new(g_direct_hash, g_direct_equal) ;
+  m->c = g_hash_table_new(g_direct_hash, g_direct_equal) ;
+#ifndef _FOREACH_USE_HASH_TABLE_
+  m->cpt = g_byte_array_new() ;
+#endif /*_FOREACH_USE_HASH_TABLE_*/
+
+  m->i0 = 0 ; m->i1 = G_MAXINT ;
+
+  return m ;
+}
+
+/** 
+ * Add an element to a BEM3DMesh, checking to see if it is already
+ * present.
+ * 
+ * @@param m BEM3DMesh to add element to
+ * @@param e element to add
+ * @@param force if TRUE force addition of the element vertices, even 
+ * if \a e is present in \a m
+ * 
+ * @@return ::BEM3D_SUCCESS on success
+ */
+
+gint bem3d_mesh_add_element(BEM3DMesh *m, BEM3DElement *e, gboolean force)
+
+{
+  gint i ;
+  gpointer k ;
+#ifndef _FOREACH_USE_HASH_TABLE_
+  guint8 f = 0 ;
+#endif /*_FOREACH_USE_HASH_TABLE_*/
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
+
+  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,
+	"%s: inserting element: %p", __FUNCTION__, e) ;
+
+  if ( g_hash_table_lookup(m->e, e) != NULL && !force ) {
+    g_log(G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,
+	  "%s: element %p already in mesh %p", __FUNCTION__, e, m) ;
+    return BEM3D_SUCCESS ;
+  }
+
+  if ( g_hash_table_lookup(m->e, e) == NULL )
+    g_hash_table_insert(m->e, e, e) ;
+
+  for ( i = 0 ; i < e->nf ; i ++ ) {
+    g_hash_table_insert(m->f, e->f[i], e) ;
+    gts_surface_add_face(GTS_SURFACE(m), e->f[i]) ;
+  }
+
+#ifdef _FOREACH_USE_HASH_TABLE_
+  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
+    k = g_hash_table_lookup(m->c,
+			    GINT_TO_POINTER(bem3d_element_global_index(e,i)+1)
+			    ) ;
+    if ( k == NULL ) {
+      g_hash_table_insert(m->c,
+			  GINT_TO_POINTER(bem3d_element_global_index(e,i)+1),
+			  e->c[i]) ;
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,
+	    "%s: inserting: %d; hash table size: %d", 
+	    __FUNCTION__, bem3d_element_global_index(e,i),
+	    g_hash_table_size(m->c)) ;
+    } else {
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,
+	    "%s: not inserting: %d; vertex %p",
+	    __FUNCTION__, bem3d_element_global_index(e,i),
+	    e->c[i]) ;
+    }
+  }  
+#else
+  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
+    k = g_hash_table_lookup(m->c,
+			    GINT_TO_POINTER(bem3d_element_global_index(e,i)+1)
+			    ) ;
+    if ( k == NULL ) {
+      g_hash_table_insert(m->c,
+			  GINT_TO_POINTER(bem3d_element_global_index(e,i)+1),
+			  GINT_TO_POINTER(m->cpt->len)) ;
+      m->cpt = g_byte_array_append(m->cpt,&f,1) ;
+    }
+  }
+#endif /*_FOREACH_USE_HASH_TABLE_*/
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Extract a linked list of the elements of a mesh containing 
+ * a given vertex.
+ * 
+ * @@param m BEM3DMesh containing vertex;
+ * @@param v vertex to check.
+ * 
+ * @@return GSList of elements connected to v.
+ */
+
+GSList *bem3d_mesh_vertex_elements(BEM3DMesh *m, GtsVertex *v)
+
+{
+  GSList *f, *e, *i ;
+  BEM3DElement *el ;
+
+  g_return_val_if_fail(m != NULL, NULL) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), NULL) ;
+  g_return_val_if_fail(v != NULL, NULL) ;
+  g_return_val_if_fail(GTS_IS_VERTEX(v), NULL) ;
+
+  f = gts_vertex_faces(v, GTS_SURFACE(m), NULL) ;
+  
+  e = NULL ;
+  for ( i = f ; i != NULL ; i = i->next ) {
+    el = g_hash_table_lookup(m->f, i->data) ;
+    if ( !g_slist_find(e, el) ) e = g_slist_prepend(e, el) ;
+  }
+
+  g_slist_free(f) ;
+
+  return e ;
+}
+
+static void reset_indices(BEM3DElement *e, gpointer data)
+
+{
+  gint i ;
+
+  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ )
+    bem3d_element_global_index(e,i) = -1 ;
+
+  return ;
+}
+
+static void element_normal(BEM3DMesh *m, BEM3DElement *e, gint i, GtsVector n)
+
+{
+  gdouble L[32], dLds[32], dLdt[32], J ;
+  
+  (e->shf)(bem3d_element_node_xi(e,i), bem3d_element_node_eta(e,i),
+	   L, dLds, dLdt, NULL) ;
+  bem3d_element_normal(e, dLds, dLdt, n, &J) ;
+
+  return ;
+}
+
+static gdouble vector_angle(GtsVector n, GtsVector m)
+
+{
+  gdouble a = gts_vector_scalar(n,m)/gts_vector_norm(n)/gts_vector_norm(m) ;
+  if ( a >  1.0 ) return 0.0 ;
+  if ( a < -1.0 ) return M_PI ;
+  return acos(a) ;
+}
+
+static gint node_is_indexed(GtsVertex *v, BEM3DMesh *m, GtsVector n,
+			    gdouble C)
+
+{
+  GSList *e, *i ;
+  gint j ;
+  BEM3DElement *el ;
+  GtsVector nn ;
+  gdouble va ;
+
+  e = bem3d_mesh_vertex_elements(m, v) ;
+
+  for ( i = e ; i != NULL ; i = i->next ) {
+    el = BEM3D_ELEMENT(i->data) ;
+    j = bem3d_element_find_node(el, v) ;
+    element_normal(m, el, j, nn) ;
+    va = vector_angle(n,nn) ;
+    if ( (bem3d_element_global_index(el,j) != -1) && va <= C )
+/* 	 fabs(vector_angle(n,nn)) <= fabs(C) ) */
+/*     if ( GTS_POINT(v)->x == 2.0 ) { */
+/*       fprintf(stderr, "%lg %lg %lg %lg %lg %lg %lg %lg\n", */
+/* 	      GTS_POINT(v)->x, GTS_POINT(v)->y, */
+/* 	      GTS_POINT(v)->z, nn[0], nn[1], nn[2], */
+/* 	      gts_vector_scalar(n,nn), C */
+/* 	      ) ; */
+/*     } */
+/*     if ( (bem3d_element_global_index(el,j) != -1) && */
+/* 	 gts_vector_scalar(n,nn) >= C ) */
+      return
+	bem3d_element_global_index(el,j) ;
+  }
+  
+  return -1 ;
+}
+
+static void set_indices(BEM3DElement *e, gpointer data[])
+
+{
+  BEM3DMesh *m = data[BEM3D_BMESH_DATA_MESH] ;
+  gdouble angle = *(gdouble *)data[BEM3D_BMESH_DATA_ANGLE] ;
+  gint *n = data[BEM3D_BMESH_DATA_N] ;
+  GtsVector norm ;
+  gint i, j ;
+
+  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
+    element_normal(m, e, i, norm) ;
+    if ( (j = node_is_indexed(bem3d_element_node(e,i), 
+			      m, norm, angle)) != -1 ) {
+/* 			      m, norm, cos(angle))) != -1 ) { */
+      bem3d_element_global_index(e,i) = j ;
+    } else {
+      bem3d_element_global_index(e,i) = (*n) ; (*n) ++ ;
+    }
+  }
+
+  return ;
+}
+
+static void add_element(BEM3DElement *e, gpointer data[])
+
+{
+  BEM3DMesh *m = data[BEM3D_BMESH_DATA_MESH] ;
+
+  bem3d_mesh_add_element(m, e, TRUE) ;
+
+  return ;
+}
+
+/** 
+ * Number the collocation points of a mesh, with sharp corners double
+ * indexed if the angle between two element normals at an edge is
+ * greater than \a angle.
+ * 
+ * @@param m ::BEM3DMesh to be numbered;
+ * @@param angle angle to be used in determining edge sharpness for 
+ * double indexing;
+ * @@param ni initial index.
+ * 
+ * @@return number of indices on success, which can be used as initial
+ * index for a subsequent mesh.
+ */
+
+gint bem3d_mesh_index_nodes(BEM3DMesh *m, gdouble angle, gint ni)
+
+{
+  gint n ;
+  gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+
+  n = ni ;
+  data[BEM3D_BMESH_DATA_MESH] = m ;
+  data[BEM3D_BMESH_DATA_N] = &n ;
+  data[BEM3D_BMESH_DATA_ANGLE] = &angle ;
+
+  bem3d_mesh_foreach_element(m, (BEM3DElementFunc)reset_indices, NULL) ;
+  bem3d_mesh_foreach_element(m, (BEM3DElementFunc)set_indices, data) ;
+  bem3d_mesh_foreach_element(m, (BEM3DElementFunc)add_element, data) ;
+  
+  return n ;
+}
+
+static void bem3d_edge_discretize(GtsEdge *e, gpointer *data)
+
+{
+  gint *n, nne, i ;
+  gdouble t ;
+  GtsEdge **es ;
+  GHashTable *eh ;
+  GtsVertex *v[8] ;
+
+  n = (gint *)data[BEM3D_BMESH_DATA_N] ;
+  es = (GtsEdge **)data[BEM3D_BMESH_DATA_EDGES] ;
+  nne = *(gint *)data[BEM3D_BMESH_DATA_N_EDGES] ;
+  eh = (GHashTable *)data[BEM3D_BMESH_DATA_HASH] ;
+
+  v[0] = GTS_SEGMENT(e)->v1 ;
+  v[nne] = GTS_SEGMENT(e)->v2 ;
+
+  for ( i = 1 ; i < nne ; i ++ ) {
+    t = (gdouble)i/(gdouble)(nne) ;
+    v[i] = gts_vertex_new(gts_vertex_class(),
+			  GTS_POINT(v[0])->x*(1.0-t)+
+			  GTS_POINT(v[nne])->x*t,
+			  GTS_POINT(v[0])->y*(1.0-t)+
+			  GTS_POINT(v[nne])->y*t,
+			  GTS_POINT(v[0])->z*(1.0-t)+
+			  GTS_POINT(v[nne])->z*t) ;
+  }
+
+  for ( i = 0 ; i < nne ; i ++ )
+    es[(*n)*nne+i] = gts_edge_new(gts_edge_class(), v[i], v[i+1]) ;
+
+  g_hash_table_insert(eh, e, 
+		      GUINT_TO_POINTER (*((guint *) n))) ;
+
+  (*n)++ ;
+
+  return ;
+}
+
+static void edge_split_order(GtsVertex *v1, GtsEdge **es,
+			     gint nne, GtsEdge **enew)
+
+     /*
+       extract the components of a split edge in the correct order for
+       generation of an element
+     */
+
+{
+  gint i, j ;
+
+  for ( i = 0 ; 
+	(i < nne)
+ 	  && (GTS_SEGMENT(es[i])->v1 != v1) 
+	  && (GTS_SEGMENT(es[i])->v2 != v1) ;
+	i ++ ) ;
+
+  if ( i == 0 ) {
+    for ( j = 0 ; j < nne ; j ++ ) enew[j] = es[j] ;
+  } else {
+    for ( j = 0 ; j < nne ; j ++ ) enew[j] = es[nne-1-j] ;
+  }
+
+  return ;
+}
+
+static void bem3d_face_discretize(GtsFace *f, gpointer *data)
+
+{
+  gint n, nne, i, j ;
+  GtsEdge **es, *et[3], *enew[16] ;
+  GHashTable *eh ;
+  GtsVertex *v[3], *vnew[16] ;
+  BEM3DMesh *m ; 
+  BEM3DElement *el ;
+  BEM3DElementBuildFunc bfunc ;
+
+  es = (GtsEdge **)data[BEM3D_BMESH_DATA_EDGES] ;
+  nne = *(gint *)data[BEM3D_BMESH_DATA_N_EDGES] ;
+  eh = (GHashTable *)data[BEM3D_BMESH_DATA_HASH] ;
+  m = (BEM3DMesh *)data[BEM3D_BMESH_DATA_MESH] ;
+  bfunc = (BEM3DElementBuildFunc)data[BEM3D_BMESH_DATA_ELEMENT] ;
+
+  gts_triangle_vertices_edges(GTS_TRIANGLE(f), NULL,
+			      &v[0], &v[1], &v[2], 
+			      &et[0], &et[1], &et[2]) ;
+
+  /*extract the new edges in order*/
+  for ( i = 0 ; i < 3 ; i ++ ) {
+    n = GPOINTER_TO_UINT(g_hash_table_lookup(eh, et[i])) ;
+    edge_split_order(v[i], &(es[n*nne]), nne, &(enew[i*nne])) ;
+  }
+
+  /*extract the new vertices in order*/
+  for ( i = 0 ; i < 16 ; i ++ ) vnew[i] = NULL ;
+  vnew[0] = v[0] ;
+  for ( i = 0 ; i < 3 ; i ++ ) {
+    for ( j = 0 ; j < nne ; j ++ ) {
+      if ( GTS_SEGMENT(enew[i*nne+j])->v1 != vnew[i*nne+j] )
+	vnew[i*nne+j+1] = GTS_SEGMENT(enew[i*nne+j])->v1 ;
+      else
+	vnew[i*nne+j+1] = GTS_SEGMENT(enew[i*nne+j])->v2 ;
+    }
+  }
+  /*for build functions that depend on having the element vertices
+    once and once only*/
+  vnew[3*nne] = NULL ; 
+
+  el = bfunc(enew, vnew) ;
+  bem3d_mesh_add_element(m, el, FALSE) ;
+  
+  return ;
+}
+
+/** 
+ * Discretize a surface by splitting its triangles into higher order
+ * elements.
+ * 
+ * @@param s GtsSurface to be discretized;
+ * @@param nne number of nodes per edge of each triangular face;
+ * @@param bfunc ::BEM3DElementBuildFunc for the required element;
+ * @@param m ::BEM3DMesh to be generated.
+ * 
+ * @@return ::BEM3D_SUCCESS on success.
+ */
+
+gint bem3d_mesh_discretize(GtsSurface *s, gint nne,
+			   BEM3DElementBuildFunc bfunc,
+			   BEM3DMesh *m)
+
+{
+  gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
+  gint n, ne ;
+  GtsEdge **es ;
+  GHashTable *e ;
+
+  g_return_val_if_fail(s != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(GTS_IS_SURFACE(s), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(bfunc != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+
+  ne = gts_surface_edge_number(s) ;
+  es = (GtsEdge **)g_malloc(ne*nne*sizeof(GtsEdge *)) ;
+  e = g_hash_table_new(g_direct_hash, g_direct_equal) ;
+
+  data[BEM3D_BMESH_DATA_MESH] = m ;
+  data[BEM3D_BMESH_DATA_N] = &n ;
+  data[BEM3D_BMESH_DATA_EDGES] = es ;
+  data[BEM3D_BMESH_DATA_N_EDGES] = &nne ;
+  data[BEM3D_BMESH_DATA_HASH] = e ;
+  data[BEM3D_BMESH_DATA_ELEMENT] = (gpointer)bfunc ;
+
+  n = 0 ;
+  gts_surface_foreach_edge(s, (GtsFunc)bem3d_edge_discretize, data) ;
+  g_assert(n == ne) ;
+
+  gts_surface_foreach_face(s, (GtsFunc)bem3d_face_discretize, data) ;
+
+  g_hash_table_destroy(e) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+static void count_nodes(gint i, GtsVertex *v, gint *n)
+
+{
+  (*n)++ ;
+
+  return ;
+}
+
+/** 
+ * Count the number of collocation points on a mesh
+ * 
+ * @@param m ::BEM3DMesh 
+ * 
+ * @@return number of nodes on \a m.
+ */
+
+gint bem3d_mesh_node_number(BEM3DMesh *m)
+
+{  
+  gint n = 0 ;
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+
+  bem3d_mesh_foreach_node(m, (BEM3DNodeFunc)count_nodes, &n) ;
+
+  return n ;
+}
+
+static void bem3d_element_subassemble(BEM3DElement *e, gpointer *data)
+
+{
+  BEM3DConfiguration *config = data[BEM3D_BMESH_DATA_CONFIG] ; 
+  BEM3DParameters *gdata = data[BEM3D_BMESH_DATA_GDATA] ;
+  gpointer edata = data[BEM3D_BMESH_DATA_EDATA] ;
+  BEM3DEquationFunc efunc = (BEM3DEquationFunc)data[BEM3D_BMESH_DATA_EFUNC] ;
+  GtsVertex *x = (GtsVertex *)data[BEM3D_BMESH_DATA_NODE] ;
+  gint row = *(gint *)data[BEM3D_BMESH_DATA_ROW] ;
+  static GArray *G = NULL ;
+  static GArray *dGdn = NULL ;
+  gint i, stride ;
+
+  if ( G == NULL ) {
+    G = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
+    dGdn = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
+  }
+
+  g_array_set_size(G,bem3d_element_node_number(e)) ; 
+  g_array_set_size(dGdn,bem3d_element_node_number(e)) ;
+  bem3d_element_assemble_equations(e, GTS_POINT(x), 
+				   config, gdata,
+				   G, dGdn) ;
+  stride = (G->len)/bem3d_element_node_number(e) ;
+  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ )
+    efunc(row, bem3d_element_global_index(e, i),
+	  &(g_array_index(G,gdouble,stride*i)),
+	  &(g_array_index(dGdn,gdouble,stride*i)),
+	  stride, edata) ;
+	  
+  return ;
+}
+
+static void bem3d_node_subassemble(gint i, GtsVertex *v, gpointer *data)
+
+{
+  BEM3DMesh *m = (BEM3DMesh *)data[BEM3D_BMESH_DATA_MESH] ;
+  gint imin = *(gint *)data[BEM3D_BMESH_DATA_IMIN] ;
+  gint imax = *(gint *)data[BEM3D_BMESH_DATA_IMAX] ;
+  data[BEM3D_BMESH_DATA_ROW] = &i ;
+  data[BEM3D_BMESH_DATA_NODE] = v ;
+
+  if ( (i >= imin) && ( i < imax ) ) {
+    g_log(G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, "%s: i=%d", __FUNCTION__, i) ;
+    bem3d_mesh_foreach_element(m, 
+			     (BEM3DElementFunc)bem3d_element_subassemble, 
+			     data) ;
+  }
+
+  return ;
+}
+
+/** 
+ * Assemble the BEM3D equations for two meshes (which may be the same 
+ * mesh)
+ * 
+ * @@param m ::BEM3DMesh whose elements are to be processed;
+ * @@param n ::BEM3DMesh whose nodes are to be processed;
+ * @@param config ::BEM3DConfiguration for the problem;
+ * @@param gdata ::BEM3DParameters for the Green's function;
+ * @@param efunc ::BEM3DEquationFunc for the problem
+ * @@param edata data to pass to efunc
+ * 
+ * @@return ::BEM3D_SUCCESS on success
+ */
+
+gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n,
+				   BEM3DConfiguration *config,
+				   BEM3DParameters *gdata,
+				   BEM3DEquationFunc efunc, gpointer edata)
+{
+  gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
+  gint np ;
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(n != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(n), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(gdata != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(efunc != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  np = bem3d_mesh_node_number(m) ;
+
+  data[BEM3D_BMESH_DATA_CONFIG] = config ;
+  data[BEM3D_BMESH_DATA_MESH] = m ; 
+  data[BEM3D_BMESH_DATA_GDATA] = gdata ;
+  data[BEM3D_BMESH_DATA_EFUNC] = (gpointer)efunc ;
+  data[BEM3D_BMESH_DATA_EDATA] = edata ;
+  data[BEM3D_BMESH_DATA_N] = &np ;
+  data[BEM3D_BMESH_DATA_IMIN] = &(bem3d_mesh_node_index_min(m)) ;
+  data[BEM3D_BMESH_DATA_IMAX] = &(bem3d_mesh_node_index_max(m)) ;
+
+  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "%s", __FUNCTION__) ;
+
+  bem3d_mesh_foreach_node(n, (BEM3DNodeFunc)bem3d_node_subassemble, data) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+static void bem3d_foreach_element(gpointer key, BEM3DElement *e, gpointer *fd)
+
+{
+  BEM3DElementFunc f = (BEM3DElementFunc)fd[BMESH_FOREACH_FUNC] ;
+  gpointer data = fd[BMESH_FOREACH_DATA] ;
+
+  f(e, data) ;
+
+  return ;
+}
+
+/** 
+ * Visit each element of a mesh and execute a function
+ * 
+ * @@param m mesh to process
+ * @@param f BEM3DElementFunc to call
+ * @@param data user data to pass to f
+ * 
+ * @@return ::BEM3D_SUCCESS on success
+ */
+
+gint bem3d_mesh_foreach_element(BEM3DMesh *m, BEM3DElementFunc f, gpointer data)
+
+{
+  gpointer fd[BMESH_FOREACH_DATA_WIDTH] ;
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  fd[BMESH_FOREACH_FUNC] = (gpointer)f ;
+  fd[BMESH_FOREACH_DATA] = data ;
+
+  g_hash_table_foreach(m->e, (GHFunc)bem3d_foreach_element, fd) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+static void bem3d_foreach_node(gpointer key, BEM3DElement *e, gpointer *fd)
+
+{
+  BEM3DMesh *m = (BEM3DMesh *)fd[BMESH_FOREACH_MESH] ;
+  BEM3DNodeFunc func = (BEM3DNodeFunc)fd[BMESH_FOREACH_FUNC] ;
+  gpointer data = fd[BMESH_FOREACH_DATA] ;
+#ifdef _FOREACH_USE_HASH_TABLE_
+  GHashTable *h = (GHashTable *)fd[BMESH_FOREACH_HASH] ;
+#else
+  gint j ;
+#endif /*_FOREACH_USE_HASH_TABLE_*/
+  gint i ;
+
+  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
+    if ( (e->i[i] >= bem3d_mesh_node_index_min(m)) &&
+	 (e->i[i] < bem3d_mesh_node_index_max(m)) ) {
+#ifdef _FOREACH_USE_HASH_TABLE_
+/*       fprintf(stderr, "index: %d\n", e->i[i]) ; */
+      if ( g_hash_table_lookup(h, GINT_TO_POINTER((e->i[i]+1))) == NULL ) {
+	func(e->i[i], e->c[i], data) ;
+	g_hash_table_insert(h, 
+			    GINT_TO_POINTER(e->i[i]+1), 
+			    GINT_TO_POINTER(e->i[i]+1)) ;
+      }
+#else
+      g_assert_not_reached() ;
+#endif /*_FOREACH_USE_HASH_TABLE_*/
+    }
+  }
+
+  return ;
+}
+
+/** 
+ * Visit each collocation point of a mesh and execute a function
+ * 
+ * @@param m mesh to process
+ * @@param f BEM3DNodeFunc to call
+ * @@param data user data to pass to f
+ * 
+ * @@return ::BEM3D_SUCCESS on success
+ */
+
+gint bem3d_mesh_foreach_node(BEM3DMesh *m, BEM3DNodeFunc f, 
+			     gpointer data)
+
+{
+  gpointer fd[BMESH_FOREACH_DATA_WIDTH] ;
+#ifdef _FOREACH_USE_HASH_TABLE_
+  GHashTable *h ;
+  h = g_hash_table_new(NULL, NULL) ;
+  fd[BMESH_FOREACH_HASH] = h ;
+#endif /*_FOREACH_USE_HASH_TABLE_*/
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  fd[BMESH_FOREACH_FUNC] = (gpointer)f ;
+  fd[BMESH_FOREACH_DATA] = data ;
+  fd[BMESH_FOREACH_MESH] = m ;
+
+#ifndef _FOREACH_USE_HASH_TABLE_
+  memset(m->cpt->data, 0, m->cpt->len) ;
+#endif /*_FOREACH_USE_HASH_TABLE_*/
+  g_hash_table_foreach(m->e, (GHFunc)bem3d_foreach_node, fd) ;
+
+#ifdef _FOREACH_USE_HASH_TABLE_
+  g_hash_table_destroy(h) ;
+#endif /*_FOREACH_USE_HASH_TABLE_*/
+
+  return BEM3D_SUCCESS ;
+}
+
+gint bem3d_equation_func_simple(gint i, gint j,
+			      gdouble *G, gdouble *dGdn, 
+			      gint n, gpointer *e)
+{
+  gint np = *(gint *)e[0] ;
+  gdouble *A = (gdouble *)e[1] ;
+  gdouble *B = (gdouble *)e[2] ;
+
+  g_assert(n == 1) ;
+
+  B[i*np+j] += G[0] ; A[i*np+j] += dGdn[0] ;
+
+  return BEM3D_SUCCESS ;
+}
+
+static void element_set_bc(BEM3DElement *e, gpointer *data)
+
+{
+  GHashTable *h = (GHashTable *)data[BEM3D_BMESH_DATA_HASH] ;
+  BEM3DBCFunc bcf = (BEM3DBCFunc)data[BEM3D_BMESH_DATA_BFUNC] ;
+  gpointer bdata = data[BEM3D_BMESH_DATA_BDATA] ;
+  static gdouble *dLds, *dLdt ;
+  gdouble s, t, J ;
+  GtsVector n ;
+  gint i ;
+
+  if ( dLds == NULL ) {
+    dLds = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
+    dLdt = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
+  }
+
+  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
+    if ( !g_hash_table_lookup(h, GINT_TO_POINTER((e->i[i]+1))) ) {
+      g_hash_table_insert(h, GINT_TO_POINTER(e->i[i]+1), 
+			  GINT_TO_POINTER(e->i[i]+1)) ;
+      s = bem3d_element_vertex_xi(e,i) ;
+      t = bem3d_element_vertex_eta(e,i) ;
+      e->shf(s, t, NULL, dLds, dLdt, NULL) ;
+      bem3d_element_normal(e, dLds, dLdt, n, &J) ;
+      bcf(GTS_VERTEX(e->c[i]), n, e->i[i], bdata) ;
+    }
+  }
+
+  return ;
+}
+
+/** 
+ * Set the boundary conditions on a mesh
+ * 
+ * @@param m mesh for boundary conditions
+ * @@param bcf BEM3DBCFunc
+ * @@param bdata user data to pass to bcf 
+ * 
+ * @@return ::BEM3D_SUCCESS on success
+ */
+
+gint bem3d_mesh_set_bc(BEM3DMesh *m, BEM3DBCFunc bcf, gpointer bdata)
+
+{
+  gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
+  GHashTable *h ;
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(bcf != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  h = g_hash_table_new(NULL, NULL) ;
+  data[BEM3D_BMESH_DATA_HASH] = h ;
+  data[BEM3D_BMESH_DATA_BFUNC] = (gpointer)bcf ;
+  data[BEM3D_BMESH_DATA_BDATA] = bdata ;
+
+  bem3d_mesh_foreach_element(m, (BEM3DElementFunc)element_set_bc, data) ;
+  
+  g_hash_table_destroy(h) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
+
+{
+  BEM3DMesh *m = (BEM3DMesh *)data[BEM3D_BMESH_DATA_MESH] ;
+  BEM3DConfiguration *config = data[BEM3D_BMESH_DATA_CONFIG] ; 
+  BEM3DParameters *gdata = data[BEM3D_BMESH_DATA_GDATA] ;
+  BEM3DLookupFunc lf = (BEM3DLookupFunc)data[BEM3D_BMESH_DATA_LFUNC] ;
+  gpointer ldata = data[BEM3D_BMESH_DATA_LDATA] ;
+  BEM3DEquationFunc efunc = (BEM3DEquationFunc)data[BEM3D_BMESH_DATA_EFUNC] ;
+  gpointer edata = data[BEM3D_BMESH_DATA_EDATA] ;
+  gint j ;
+  static GArray *g = NULL, *f = NULL, *zero = NULL ;
+
+  if ( g == NULL ) {
+    f = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
+    zero = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
+    g = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
+  }
+
+  for ( j = 0 ; j < f->len ; j ++ ) g_array_index(f,gdouble,j)=0.0 ;
+  bem3d_mesh_radiation_point(m, config, gdata,
+			     lf, ldata, GTS_POINT(v), f) ;
+  g_array_set_size(zero, f->len) ;
+  efunc(i, i, 
+	&(g_array_index(zero,gdouble,0)),
+	&(g_array_index(f,gdouble,0)),
+	f->len, edata) ;
+
+  return ;
+}
+
+/** 
+ * Integrate the normal derivative of the Green's function over a
+ * mesh.
+ * 
+ * @@param m BEM3DMEsh 
+ * @@param config ::BEM3DConfiguration for the problem;
+ * @@param gdata ::BEM3DParameters to pass to Green's function;
+ * @@param lfunc BEM3DLookupFunc; use ::bem3d_lookup_func_unit 
+ * (for real problems) 
+ * or bem3d_lookup_func_unit_c (for complex) 
+ * @@param ldata data to pass to the lookup function 
+ * @@param efunc equation function for problem. This will be called with 
+ * the row and column numbers equal.
+ * @@param edata user data to pass to efunc
+ * 
+ * @@return ::BEM3D_SUCCESS on success
+ */
+
+gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
+			  BEM3DConfiguration *config,
+			  BEM3DParameters *gdata,
+			  BEM3DLookupFunc lfunc, gpointer ldata,
+			  BEM3DEquationFunc efunc, gpointer edata)
+
+{
+  gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(gdata != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(efunc != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  data[BEM3D_BMESH_DATA_MESH] = m ; 
+  data[BEM3D_BMESH_DATA_CONFIG] = config ; 
+  data[BEM3D_BMESH_DATA_GDATA] = gdata ;
+  data[BEM3D_BMESH_DATA_LFUNC] = (gpointer)lfunc ;
+  data[BEM3D_BMESH_DATA_LDATA] = ldata ;
+  data[BEM3D_BMESH_DATA_IMIN] = &(bem3d_mesh_node_index_min(m)) ;
+  data[BEM3D_BMESH_DATA_IMAX] = &(bem3d_mesh_node_index_max(m)) ;
+  data[BEM3D_BMESH_DATA_EFUNC] = efunc ;
+  data[BEM3D_BMESH_DATA_EDATA] = edata ;
+
+  bem3d_mesh_foreach_node(m, (BEM3DNodeFunc)mesh_quad_gfunc,
+			  (gpointer )(&data[0])) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+static void add_mesh(BEM3DElement *e, BEM3DMesh *m)
+
+{
+  bem3d_mesh_add_element(m, e, FALSE) ;
+
+  return ;
+}
+
+gint bem3d_mesh_merge(BEM3DMesh *m, BEM3DMesh *n)
+
+{  
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(n != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(n), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  
+  bem3d_mesh_foreach_element(n, (BEM3DElementFunc)add_mesh, m) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Find the ::BEM3DElement of a ::BEM3DMesh containing a given GtsFace. 
+ * 
+ * @@param m BEM3DMesh to search
+ * @@param f GtsFace to locate
+ * 
+ * @@return ::BEM3DElement of \a m containing \a f or NULL if \a f is not
+ * in \a m. 
+ */
+
+BEM3DElement *bem3d_mesh_face_element(BEM3DMesh *m, GtsFace *f)
+
+{
+  BEM3DElement *e ;
+
+  g_return_val_if_fail(m != NULL, NULL) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), NULL) ;
+  g_return_val_if_fail(f != NULL, NULL) ;
+  g_return_val_if_fail(GTS_IS_FACE(f), NULL) ;
+
+  e = g_hash_table_lookup(m->f, f) ;
+
+  return e ;
+}
+
+/** 
+ * Find the GtsVertex on a ::BEM3DMesh containing a given collocation
+ * point.
+ * 
+ * @@param m BEM3DMesh to search;
+ * @@param i index of collocation point.
+ * 
+ * @@return GtsVertex of \a m with collocation point index \a i or NULL
+ * if point \a i is not on \a m.
+ */
+
+GtsVertex *bem3d_mesh_node_from_index(BEM3DMesh *m, gint i)
+
+{
+  GtsVertex *v = NULL ;
+
+  g_return_val_if_fail(m != NULL, NULL) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), NULL) ;
+
+  v = g_hash_table_lookup(m->c, GINT_TO_POINTER(i+1)) ;
+
+  return v ;
+}
+
+static void bem3d_element_clear_reserved(BEM3DElement *e, gpointer data)
+
+{
+  e->reserved = NULL ;
+
+  return ;
+}
+
+gint bem3d_mesh_element_clear_reserved(BEM3DMesh *m)
+
+{
+  bem3d_mesh_foreach_element(m, 
+			     (BEM3DElementFunc)bem3d_element_clear_reserved, 
+			     NULL) ;
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Find an index for a collocation point in a ::BEM3DMesh. Note that
+ * this index may not be unique, for example if the mesh has sharp edges.
+ * 
+ * @@param m ::BEM3DMesh
+ * @@param v GtsVertex for collocation point to find
+ * 
+ * @@return index of \a v in \a m, or -1 if not found.
+ */
+
+gint bem3d_mesh_index_from_node(BEM3DMesh *m, GtsVertex *v)
+
+{
+  gint i = -1, j ;
+  GSList *e ;
+  
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(v != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(GTS_IS_VERTEX(v), BEM3D_ARGUMENT_WRONG_TYPE) ;
+
+  e = bem3d_mesh_vertex_elements(m, v) ;
+
+  if ( e == NULL ) return i ;
+
+  j = bem3d_element_find_node(BEM3D_ELEMENT(e->data), v) ;
+  i = bem3d_element_global_index(BEM3D_ELEMENT(e->data), j) ;
+
+  return i ;
+}
+
+gint bem3d_mesh_remove_element(BEM3DMesh *m, BEM3DElement *e)
+
+{
+  gint i ;
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  
+  if ( !bem3d_element_has_parent_mesh(m, e) ) return 0 ;
+
+  g_hash_table_remove(m->e, e) ;
+  for ( i = 0 ; i < bem3d_element_face_number(e) ; i ++ ) {
+    g_hash_table_remove(m->f, e->f[i]) ;
+    gts_surface_remove_face(GTS_SURFACE(m), e->f[i]) ;
+  }
+
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Extract a linked list of the elements of a mesh containing a given
+ * node (collocation point).
+ * 
+ * @@param m BEM3DMesh;
+ * @@param i index of node on \a m.
+ * 
+ * @@return linked list of elements containing node \a i, NULL otherwise.
+ */
+
+GSList *bem3d_mesh_node_elements(BEM3DMesh *m, gint i)
+
+{
+  GSList *f, *e, *j ;
+  GtsVertex *v ;
+  BEM3DElement *el ;
+
+  g_return_val_if_fail(m != NULL, NULL) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), NULL) ;
+
+  if ( (v = bem3d_mesh_node_from_index(m, i)) == NULL ) return NULL ;
+  
+  f = gts_vertex_faces(v, GTS_SURFACE(m), NULL) ;
+    
+  for ( (e = NULL), (j = f) ; j != NULL ; j = j->next ) {
+    el = g_hash_table_lookup(m->f, j->data) ;
+    if ( !g_slist_find(e, el) && 
+	 (bem3d_element_find_index(el, i) != -1 ) ) e = g_slist_prepend(e, el) ;
+  }
+
+  g_slist_free(f) ;
+
+  return e ;
+}
+
+static gint element_moments(BEM3DElement *e, gint *H)
+
+{  
+  bem3d_element_moments_make(e, (*H)) ;
+
+  return 0 ;
+}
+
+gint bem3d_mesh_element_moments(BEM3DMesh *m, gint H)
+
+{
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
+
+  bem3d_mesh_foreach_element(m, (BEM3DElementFunc)element_moments, &H) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+/**
+ * @@}
+ * 
+ */
+@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2006 Michael Carley
+d159 2
+d165 1
+a165 1
+gint bem3d_mesh_add_element(BEM3DMesh *m, BEM3DElement *e)
+d182 8
+a189 1
+  if ( g_hash_table_lookup(m->e, e) != NULL) return BEM3D_SUCCESS ;
+a190 1
+  g_hash_table_insert(m->e, e, e) ;
+d292 4
+a295 1
+  return acos(gts_vector_scalar(n,m)/gts_vector_norm(n)/gts_vector_norm(m)) ;
+d306 1
+d314 3
+a316 2
+    if ( (bem3d_element_global_index(el,j) != -1) &&
+	 fabs(vector_angle(n,nn)) <= fabs(C) )
+d356 10
+d396 2
+a397 1
+
+d509 1
+a509 1
+  bem3d_mesh_add_element(m, el) ;
+d596 1
+a596 1
+  BEM3DGreensFunc gfunc = (BEM3DGreensFunc)data[BEM3D_BMESH_DATA_GFUNC] ; 
+a597 3
+  BEM3DQuadratureRuleFunc qfunc = 
+    (BEM3DQuadratureRuleFunc)data[BEM3D_BMESH_DATA_QFUNC] ; 
+  gpointer qdata = data[BEM3D_BMESH_DATA_QDATA] ;
+d614 1
+a614 2
+				   gfunc, gdata,
+				   qfunc, qdata,
+d636 1
+a636 4
+    g_log(G_LOG_DOMAIN,
+	  G_LOG_LEVEL_DEBUG,
+	  "%s: i=%d", 
+	  __FUNCTION__, i) ;
+d649 4
+a652 4
+ * @@param m ::BEM3DMesh whose elements are to be processed
+ * @@param n ::BEM3DMesh whose nodes are to be processed
+ * @@param gfunc ::BEM3DGreensFunc for the problem
+ * @@param gdata data to pass to gfunc
+a654 2
+ * @@param qfunc ::BEM3DQuadratureRuleFunc, default used if set to NULL
+ * @@param qdata quadrature selection data, default used if set to NULL
+d660 1
+a660 1
+				   BEM3DGreensFunc gfunc,
+d662 1
+a662 4
+				   BEM3DEquationFunc efunc, gpointer edata,
+				   BEM3DQuadratureRuleFunc qfunc, 
+				   gpointer qdata)
+
+a670 1
+  g_return_val_if_fail(gfunc != NULL, BEM3D_NULL_ARGUMENT) ;
+d676 1
+a677 1
+  data[BEM3D_BMESH_DATA_GFUNC] = (gpointer)gfunc ; 
+a678 8
+  if ( qfunc != NULL ) 
+    data[BEM3D_BMESH_DATA_QFUNC] = (gpointer)qfunc ;
+  else
+    data[BEM3D_BMESH_DATA_QFUNC] = (gpointer)bem3d_quadrature_rule_default ;    
+  if ( qdata != NULL ) 
+    data[BEM3D_BMESH_DATA_QDATA] = qdata ;
+  else
+    data[BEM3D_BMESH_DATA_QDATA] = bem3d_quadrature_selector_default() ;
+d886 1
+a886 1
+  BEM3DGreensFunc gfunc = (BEM3DGreensFunc)data[BEM3D_BMESH_DATA_GFUNC] ; 
+a887 3
+  BEM3DQuadratureRuleFunc qf = 
+    (BEM3DQuadratureRuleFunc)data[BEM3D_BMESH_DATA_QFUNC] ;
+  gpointer qdata = data[BEM3D_BMESH_DATA_QDATA] ;
+a889 2
+  BEM3DRadiationFunc rfunc = (BEM3DRadiationFunc)data[BEM3D_BMESH_DATA_RFUNC] ;
+  gpointer rdata = data[BEM3D_BMESH_DATA_RDATA] ;
+d893 1
+a893 2
+  static GArray *g = NULL, *dg = NULL, *phi = NULL, 
+    *dphi = NULL, *f = NULL, *zero = NULL ;
+a898 3
+    dg = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
+    phi = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
+    dphi = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
+d902 2
+a903 3
+  bem3d_mesh_radiation_point(m, gfunc, gdata, qf, qdata, 
+			     lf, ldata,
+			     rfunc, rdata, GTS_POINT(v), f) ;
+d918 2
+a919 4
+ * @@param gfunc Green's function for problem
+ * @@param gdata data to pass to Green's function
+ * @@param qfunc quadrature rule function (NULL for default)
+ * @@param qdata data for quadrature rule (NULL for default)
+a923 2
+ * @@param rfunc radiation function for problem
+ * @@param rdata user data to pass to radiation function
+d932 1
+a932 1
+			  BEM3DGreensFunc gfunc, 
+a933 1
+			  BEM3DQuadratureRuleFunc qfunc, gpointer qdata,
+a934 1
+			  BEM3DRadiationFunc rfunc, gpointer rdata,
+a941 1
+  g_return_val_if_fail(gfunc != NULL, BEM3D_NULL_ARGUMENT) ;
+d946 1
+a946 1
+  data[BEM3D_BMESH_DATA_GFUNC] = (gpointer)gfunc ; 
+a947 8
+  if ( qfunc != NULL ) 
+    data[BEM3D_BMESH_DATA_QFUNC] = (gpointer)qfunc ;
+  else
+    data[BEM3D_BMESH_DATA_QFUNC] = bem3d_quadrature_rule_default ;    
+  if ( qdata != NULL ) 
+    data[BEM3D_BMESH_DATA_QDATA] = qdata ;
+  else
+    data[BEM3D_BMESH_DATA_QDATA] = bem3d_quadrature_selector_default() ;
+a949 4
+  if ( rfunc != NULL ) 
+    data[BEM3D_BMESH_DATA_RFUNC] = (gpointer)rfunc ;
+  else
+    data[BEM3D_BMESH_DATA_RFUNC] = bem3d_radiation_func_laplace ;
+d964 1
+a964 1
+  bem3d_mesh_add_element(m, e) ;
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d21 1
+a21 1
+ * @@defgroup mesh BEM3D Meshes
+d47 26
+d76 1
+a76 1
+
+a86 1
+ * 
+d112 1
+a112 1
+ * Create a new BEM3DMesh
+d123 3
+a125 3
+		      GtsFaceClass *face_class,
+		      GtsEdgeClass *edge_class,
+		      GtsVertexClass *vertex_class)
+d129 5
+d154 2
+a155 1
+ * Add an element to a BEM3DMesh
+d160 1
+a160 1
+ * @@return 0 on success
+d172 5
+d180 1
+a180 1
+  g_return_val_if_fail( g_hash_table_lookup(m->e, e) == NULL, BEM3D_EINVAL ) ;
+d241 1
+a241 1
+  g_return_val_if_fail(IS_BEM3D_MESH(m), NULL) ;
+d258 31
+a288 1
+static gint number_vertex(GtsVertex *v, gpointer data[])
+a290 2
+  BEM3DMesh *m ;
+  gint *n, j ;
+d292 3
+a294 4
+  gboolean idx ;
+
+  m = data[BEM3D_BMESH_DATA_MESH] ;
+  n = data[BEM3D_BMESH_DATA_N] ;
+a296 1
+  if ( e == NULL ) return BEM3D_SUCCESS ;
+d298 17
+a314 6
+  for ( (i = e), (idx = FALSE) ; i != NULL ; i = i->next ) {
+    j = bem3d_element_find_node(i->data, v) ;
+    if ( j != BEM3D_FAILURE ) {
+      bem3d_element_reset_index(m, i->data, j, (*n)) ;
+      idx = TRUE ;
+    }
+d316 5
+d322 6
+a327 1
+  if ( idx ) (*n)++ ;
+d329 10
+a338 1
+  g_slist_free(e) ;
+d340 1
+a340 1
+  return BEM3D_SUCCESS ;
+d344 8
+a351 1
+ * Number the collocation points of a mesh
+d353 2
+a354 5
+ * @@param m ::BEM3DMesh to be numbered
+ * @@param n pointer to number of first collocation point. This will be set to 
+ * the value of the new highest node number on exit.
+ * 
+ * @@return 0 on success
+d357 1
+a357 1
+gint bem3d_mesh_index_nodes(BEM3DMesh *m, gint *n)
+d360 1
+d363 4
+d368 2
+a369 1
+  data[BEM3D_BMESH_DATA_N] = n ;
+d371 2
+a372 2
+  /*have to use a surface traverse---the points aren't numbered yet*/
+  gts_surface_foreach_vertex(GTS_SURFACE(m), (GtsFunc)number_vertex, &data) ;
+d374 1
+a374 1
+  return BEM3D_SUCCESS ;
+d377 1
+a377 1
+static gint bem3d_edge_discretize(GtsEdge *e, gpointer *data)
+d413 1
+a413 1
+  return BEM3D_SUCCESS ;
+d416 1
+a416 1
+static gint edge_split_order(GtsVertex *v1, GtsEdge **es,
+d439 1
+a439 1
+  return BEM3D_SUCCESS ;
+d442 1
+a442 1
+static gint bem3d_face_discretize(GtsFace *f, gpointer *data)
+d487 1
+a487 1
+  return BEM3D_SUCCESS ;
+d492 1
+a492 1
+ * elements
+d494 4
+a497 4
+ * @@param s GtsSurface to be discretized
+ * @@param nne number of nodes per edge of each triangular face
+ * @@param bfunc ::BEM3DElementBuildFunc for the required element
+ * @@param m ::BEM3DMesh to be generated
+d499 1
+a499 1
+ * @@return 0 on success
+d512 6
+d540 1
+a540 1
+static gint count_nodes(gint i, GtsVertex *v, gint *n)
+d545 1
+a545 1
+  return BEM3D_SUCCESS ;
+d561 3
+d641 1
+a641 1
+ * @@return 0 on success
+d655 7
+a661 2
+  g_assert(m != NULL) ; g_assert(n != NULL) ; 
+  g_assert(gfunc != NULL) ; g_assert(efunc != NULL) ;
+d707 1
+a707 1
+ * @@return 0 on success
+d715 3
+a717 3
+  g_return_val_if_fail(m != NULL, BEM3D_EINVAL) ;
+  g_return_val_if_fail(IS_BEM3D_MESH(m), BEM3D_EINVAL) ;
+  g_return_val_if_fail(f != NULL, BEM3D_EINVAL) ;  
+d767 1
+a767 1
+ * @@return 0 on success
+d781 3
+a783 3
+  g_return_val_if_fail(m != NULL, BEM3D_EINVAL) ;
+  g_return_val_if_fail(IS_BEM3D_MESH(m), BEM3D_EINVAL) ;
+  g_return_val_if_fail(f != NULL, BEM3D_EINVAL) ;  
+d816 1
+a816 1
+static gint element_set_bc(BEM3DElement *e, gpointer *data)
+d844 1
+a844 1
+  return BEM3D_SUCCESS ;
+d854 1
+a854 1
+ * @@return 0 on success
+d863 4
+d879 1
+a879 1
+static gint mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
+d917 1
+a917 1
+  return BEM3D_SUCCESS ;
+d939 1
+a939 1
+ * @@return 0 on success
+d953 5
+a957 3
+  g_assert(m != NULL) ;
+  g_assert(gfunc != NULL) ; g_assert(lfunc != NULL) ;
+  g_assert(efunc != NULL) ;
+d987 1
+a987 22
+BEM3DElement *bem3d_mesh_edges_element(BEM3DMesh *m, GtsEdge *e1, GtsEdge *e2)
+
+{
+  BEM3DElement *e = NULL ;
+  GSList *i, *j ;
+  GtsTriangle *t ;
+  GtsFace *f ;
+  
+  for ( (t = NULL), ( i = e1->triangles ) ; 
+	(i != NULL) && ( t == NULL ) ; i = i->next ) {
+    for ( j = e2->triangles ; (j != NULL) && (t == NULL) ; j = j->next ) {
+      if ( j->data == i->data ) t = GTS_TRIANGLE(i->data) ;
+    }
+  }
+
+  f = GTS_FACE(t) ;
+  e = g_hash_table_lookup(m->f, f) ;
+
+  return e ;
+}
+
+static gint add_mesh(BEM3DElement *e, BEM3DMesh *m)
+d992 1
+a992 1
+  return BEM3D_SUCCESS ;
+d997 5
+a1001 1
+{
+a1007 47
+/* static gint find_match(GtsVertex *w, gpointer data[]) */
+
+/* { */
+/*   BEM3DMesh *n = (BEM3DMesh *)data[1] ; */
+/*   GPtrArray *vt = (GPtrArray *)data[2] ; */
+/*   GtsVertex *v = (GtsVertex *)data[3] ; */
+
+/*   if ( !(gts_vertex_is_boundary(w, GTS_SURFACE(n))) ) return BEM3D_SUCCESS ;   */
+
+/*   if ( (GTS_POINT(v)->x == GTS_POINT(w)->x ) && */
+/*        (GTS_POINT(v)->y == GTS_POINT(w)->y ) && */
+/*        (GTS_POINT(v)->z == GTS_POINT(w)->z ) ) { */
+/*     g_ptr_array_add(vt, v) ; g_ptr_array_add(vt, w) ; */
+/*     g_assert(v != w) ; */
+/*   } */
+
+/*   return BEM3D_SUCCESS ; */
+/* } */
+
+static gint clean_edges(GtsEdge *e, GSList **edges)
+
+{
+  if ( gts_edge_is_duplicate(e) ) 
+    *edges = g_slist_prepend(*edges, e) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+gint bem3d_mesh_clean_edges(BEM3DMesh *m)
+
+{
+  GSList *edges, *i ;
+  GtsEdge *e ;
+
+  edges = NULL ;
+  gts_surface_foreach_edge(GTS_SURFACE(m), (GtsFunc)clean_edges, &edges) ;
+  for ( i = edges ; i != NULL ; i = i->next ) {
+    if ( (e = gts_edge_is_duplicate(GTS_EDGE(i->data))) != NULL ) {
+      gts_edge_replace(GTS_EDGE(i->data), e) ;
+    }
+  }
+
+  g_slist_free(edges) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+d1023 5
+d1049 3
+d1057 1
+a1057 1
+static gint bem3d_element_clear_reserved(BEM3DElement *e, gpointer data)
+d1062 1
+a1062 1
+  return BEM3D_SUCCESS ;
+d1090 4
+a1093 2
+  g_return_val_if_fail(m != NULL, BEM3D_EINVAL) ;
+  g_return_val_if_fail(v != NULL, BEM3D_EINVAL) ;  
+d1110 4
+a1113 4
+  g_return_val_if_fail(m != NULL, BEM3D_EINVAL) ;
+  g_return_val_if_fail(IS_BEM3D_MESH(m), BEM3D_EINVAL) ;
+  g_return_val_if_fail(e != NULL, BEM3D_EINVAL) ;  
+  g_return_val_if_fail(IS_BEM3D_ELEMENT(e), BEM3D_EINVAL) ;
+d1144 1
+a1144 2
+  g_return_val_if_fail(IS_BEM3D_MESH(m), NULL) ;
+  g_return_val_if_fail(i >= 0, NULL) ;  
+d1161 19
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d21 1
+a21 1
+ * @@defgroup Mesh Mesh
+d26 4
+d33 1
+d38 2
+a39 4
+#include "bem.h"
+#include "bem-private.h"
+
+#include "bmesh.h"
+d41 5
+a45 17
+gint _bem_element_clear_reserved(BEMElement *e, gpointer data) ;
+void _bem_cpoint_subassemble(gint i, GtsVertex *v, gpointer *data) ;
+void _bem_element_subassemble(BEMElement *e, gpointer *data) ;
+gint _count_cpts(gint i, GtsVertex *v, gint *n) ;
+gint _edge_split_order(GtsVertex *v1, GtsEdge **es,
+		       gint nne, GtsEdge **enew) ;
+gint _number_vertex(GtsVertex *v, gpointer data[]) ;
+gint _bem_edge_discretize(GtsEdge *e, gpointer *data) ;
+void _bem_foreach_element(gpointer key, BEMElement *e, gpointer *fd) ;
+void _bem_foreach_cpoint(gpointer key, BEMElement *e, gpointer *fd) ;
+gint _element_set_bc(BEMElement *e, gpointer *data) ;
+gint _mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[]) ;
+gint _add_mesh(BEMElement *e, BEMMesh *m) ;
+gint _find_match(GtsVertex *w, gpointer data[]) ;
+gint _clean_edges(GtsEdge *e, GSList **edges) ;
+gint _bem_face_discretize(GtsFace *f, gpointer *data) ;
+gint _bem_count_vertex(GtsVertex *v, gpointer data[]) ;
+d47 1
+a47 1
+static void bem_mesh_class_init (BEMMeshClass * klass)
+d53 1
+a53 1
+static void bem_mesh_init (BEMMesh * object)
+d59 1
+a59 1
+ * Definition of the ::BEMMeshClass. 
+d62 1
+a62 1
+ * @@return ::BEMMeshClass
+d65 1
+a65 1
+BEMMeshClass * bem_mesh_class (void)
+d67 1
+a67 1
+  static BEMMeshClass * klass = NULL;
+d70 6
+a75 6
+    GtsObjectClassInfo bem_mesh_info = {
+      "BEMMesh",
+      sizeof (BEMMesh),
+      sizeof (BEMMeshClass),
+      (GtsObjectClassInitFunc) bem_mesh_class_init,
+      (GtsObjectInitFunc) bem_mesh_init,
+d80 1
+a80 1
+				  &bem_mesh_info);
+d87 1
+a87 1
+ * Create a new BEMMesh
+d89 1
+a89 1
+ * @@param klass the BEM mesh class for the mesh;
+d97 1
+a97 1
+BEMMesh *bem_mesh_new(BEMMeshClass *klass,
+d103 1
+a103 1
+  BEMMesh *m ;
+d105 1
+a105 1
+  m = BEM_MESH (gts_object_new (GTS_OBJECT_CLASS (klass)));
+d124 1
+a124 1
+ * Add an element to a BEMMesh
+d126 1
+a126 1
+ * @@param m BEMMesh to add element to
+d132 1
+a132 1
+gint bem_mesh_add_element(BEMMesh *m, BEMElement *e)
+d144 1
+a144 1
+  g_return_val_if_fail( g_hash_table_lookup(m->e, e) == NULL, BEM_EINVAL ) ;
+d153 1
+a153 1
+  for ( i = 0 ; i < bem_element_ncpt(e) ; i ++ ) {
+d155 1
+a155 1
+			    GINT_TO_POINTER(bem_element_global_index(e,i)+1)
+d159 1
+a159 1
+			  GINT_TO_POINTER(bem_element_global_index(e,i)+1),
+d163 1
+a163 1
+	    __FUNCTION__, bem_element_global_index(e,i),
+d168 1
+a168 1
+	    __FUNCTION__, bem_element_global_index(e,i),
+d173 1
+a173 1
+  for ( i = 0 ; i < bem_element_ncpt(e) ; i ++ ) {
+d175 1
+a175 1
+			    GINT_TO_POINTER(bem_element_global_index(e,i)+1)
+d179 1
+a179 1
+			  GINT_TO_POINTER(bem_element_global_index(e,i)+1),
+d185 1
+a185 1
+  return BEM_SUCCESS ;
+d192 1
+a192 1
+ * @@param m BEMMesh containing vertex;
+d198 1
+a198 1
+GSList *bem_mesh_vertex_elements(BEMMesh *m, GtsVertex *v)
+d202 1
+a202 1
+  BEMElement *el ;
+d205 1
+a205 1
+  g_return_val_if_fail(IS_BEM_MESH(m), NULL) ;
+d222 1
+a222 1
+gint _number_vertex(GtsVertex *v, gpointer data[])
+d225 1
+a225 1
+  BEMMesh *m ;
+d230 2
+a231 2
+  m = data[_BMESH_DATA_MESH] ;
+  n = data[_BMESH_DATA_N] ;
+d233 2
+a234 2
+  e = bem_mesh_vertex_elements(m, v) ;
+  if ( e == NULL ) return BEM_SUCCESS ;
+d237 3
+a239 3
+    j = bem_element_find_cpt(i->data, v) ;
+    if ( j != BEM_FAILURE ) {
+      bem_element_set_index(i->data, j, (*n)) ;
+d248 1
+a248 1
+  return BEM_SUCCESS ;
+d254 1
+a254 1
+ * @@param m ::BEMMesh to be numbered
+d261 1
+a261 1
+gint bem_mesh_number_cpts(BEMMesh *m, gint *n)
+d264 1
+a264 1
+  gpointer data[_BMESH_DATA_WIDTH] ;
+d266 2
+a267 2
+  data[_BMESH_DATA_MESH] = m ;
+  data[_BMESH_DATA_N] = n ;
+d270 1
+a270 1
+  gts_surface_foreach_vertex(GTS_SURFACE(m), (GtsFunc)_number_vertex, &data) ;
+d272 1
+a272 1
+  return BEM_SUCCESS ;
+d275 1
+a275 1
+gint _bem_edge_discretize(GtsEdge *e, gpointer *data)
+d284 4
+a287 4
+  n = (gint *)data[_BMESH_DATA_N] ;
+  es = (GtsEdge **)data[_BMESH_DATA_EDGES] ;
+  nne = *(gint *)data[_BMESH_DATA_N_EDGES] ;
+  eh = (GHashTable *)data[_BMESH_DATA_HASH] ;
+d311 1
+a311 1
+  return BEM_SUCCESS ;
+d314 2
+a315 2
+gint _edge_split_order(GtsVertex *v1, GtsEdge **es,
+		       gint nne, GtsEdge **enew)
+d337 1
+a337 1
+  return BEM_SUCCESS ;
+d340 1
+a340 1
+gint _bem_face_discretize(GtsFace *f, gpointer *data)
+d347 9
+a355 9
+  BEMMesh *m ; 
+  BEMElement *el ;
+  BEMElementBuildFunc bfunc ;
+
+  es = (GtsEdge **)data[_BMESH_DATA_EDGES] ;
+  nne = *(gint *)data[_BMESH_DATA_N_EDGES] ;
+  eh = (GHashTable *)data[_BMESH_DATA_HASH] ;
+  m = (BEMMesh *)data[_BMESH_DATA_MESH] ;
+  bfunc = (BEMElementBuildFunc)data[_BMESH_DATA_ELEMENT] ;
+d364 1
+a364 1
+    _edge_split_order(v[i], &(es[n*nne]), nne, &(enew[i*nne])) ;
+d383 1
+a383 1
+  bem_mesh_add_element(m, el) ;
+d385 1
+a385 1
+  return BEM_SUCCESS ;
+d394 2
+a395 2
+ * @@param bfunc ::BEMElementBuildFunc for the required element
+ * @@param m ::BEMMesh to be generated
+d400 3
+a402 3
+gint bem_mesh_discretize(GtsSurface *s, gint nne,
+			 BEMElementBuildFunc bfunc,
+			 BEMMesh *m)
+d405 1
+a405 1
+  gpointer data[_BMESH_DATA_WIDTH] ;
+d414 6
+a419 6
+  data[_BMESH_DATA_MESH] = m ;
+  data[_BMESH_DATA_N] = &n ;
+  data[_BMESH_DATA_EDGES] = es ;
+  data[_BMESH_DATA_N_EDGES] = &nne ;
+  data[_BMESH_DATA_HASH] = e ;
+  data[_BMESH_DATA_ELEMENT] = (gpointer)bfunc ;
+d422 1
+a422 1
+  gts_surface_foreach_edge(s, (GtsFunc)_bem_edge_discretize, data) ;
+d425 1
+a425 1
+  gts_surface_foreach_face(s, (GtsFunc)_bem_face_discretize, data) ;
+d429 1
+a429 26
+  return BEM_SUCCESS ;
+}
+
+gint _bem_count_vertex(GtsVertex *v, gpointer data[])
+
+{
+  BEMMesh *m ;
+  gint *n, j, k ;
+  GSList *e, *i ;
+  
+  m = data[_BMESH_DATA_MESH] ;
+  n = data[_BMESH_DATA_N] ;
+
+  e = bem_mesh_vertex_elements(m, v) ;
+  if ( e == NULL ) return BEM_SUCCESS ;
+
+  for ( (i = e), (k = 0) ; i != NULL ; i = i->next ) {
+    j = bem_element_find_cpt(i->data, v) ;
+    if ( j != BEM_FAILURE ) {
+      (*n) ++ ; break ;
+    }
+  }
+
+  g_slist_free(e) ;
+
+  return BEM_SUCCESS ;
+d432 1
+a432 1
+gint _count_cpts(gint i, GtsVertex *v, gint *n)
+d437 1
+a437 1
+  return BEM_SUCCESS ;
+d443 1
+a443 2
+ * @@param m ::BEMMesh 
+ * @@param n pointer to number of collocation points
+d445 1
+a445 1
+ * @@return 0 on success
+d448 1
+a448 1
+gint bem_mesh_count_cpts(BEMMesh *m, gint *n)
+d451 1
+a451 1
+  *n = 0 ;
+d453 1
+a453 1
+  bem_mesh_foreach_cpoint(m, (BEMCPTFunc)_count_cpts, n) ;
+d455 1
+a455 1
+  return BEM_SUCCESS ;
+d458 1
+a458 1
+void _bem_element_subassemble(BEMElement *e, gpointer *data)
+d461 9
+a469 9
+  BEMGreensFunc gfunc = (BEMGreensFunc)data[_BMESH_DATA_GFUNC] ; 
+  gpointer gdata = data[_BMESH_DATA_GDATA] ;
+  BEMQuadratureRuleFunc qfunc = 
+    (BEMQuadratureRuleFunc)data[_BMESH_DATA_QFUNC] ; 
+  gpointer qdata = data[_BMESH_DATA_QDATA] ;
+  gpointer edata = data[_BMESH_DATA_EDATA] ;
+  BEMEquationFunc efunc = (BEMEquationFunc)data[_BMESH_DATA_EFUNC] ;
+  GtsVertex *x = (GtsVertex *)data[_BMESH_DATA_NODE] ;
+  gint row = *(gint *)data[_BMESH_DATA_ROW] ;
+d479 9
+a487 9
+  g_array_set_size(G,bem_element_ncpt(e)) ; 
+  g_array_set_size(dGdn,bem_element_ncpt(e)) ;
+  bem_element_assemble_equations(e, GTS_POINT(x), 
+				 gfunc, gdata,
+				 qfunc, qdata,
+				 G, dGdn) ;
+  stride = (G->len)/bem_element_ncpt(e) ;
+  for ( i = 0 ; i < bem_element_ncpt(e) ; i ++ )
+    efunc(row, bem_element_global_index(e, i),
+d495 1
+a495 1
+void _bem_cpoint_subassemble(gint i, GtsVertex *v, gpointer *data)
+d498 5
+a502 5
+  BEMMesh *m = (BEMMesh *)data[_BMESH_DATA_MESH] ;
+  gint imin = *(gint *)data[_BMESH_DATA_IMIN] ;
+  gint imax = *(gint *)data[_BMESH_DATA_IMAX] ;
+  data[_BMESH_DATA_ROW] = &i ;
+  data[_BMESH_DATA_NODE] = v ;
+d509 2
+a510 2
+    bem_mesh_foreach_element(m, 
+			     (BEMElementFunc)_bem_element_subassemble, 
+d518 1
+a518 1
+ * Assemble the BEM equations for two meshes (which may be the same 
+d521 3
+a523 3
+ * @@param m ::BEMMesh whose elements are to be processed
+ * @@param n ::BEMMesh whose nodes are to be processed
+ * @@param gfunc ::BEMGreensFunc for the problem
+d525 1
+a525 1
+ * @@param efunc ::BEMEquationFunc for the problem
+d527 1
+a527 1
+ * @@param qfunc ::BEMQuadratureRuleFunc, default used if set to NULL
+d533 6
+a538 4
+gint bem_mesh_assemble_equations(BEMMesh *m, BEMMesh *n,
+				 BEMGreensFunc gfunc, gpointer gdata,
+				 BEMEquationFunc efunc, gpointer edata,
+				 BEMQuadratureRuleFunc qfunc, gpointer qdata)
+d541 1
+a541 1
+  gpointer data[_BMESH_DATA_WIDTH] ;
+d547 1
+a547 1
+  bem_mesh_count_cpts(m, &np) ;
+d549 3
+a551 3
+  data[_BMESH_DATA_MESH] = m ; 
+  data[_BMESH_DATA_GFUNC] = (gpointer)gfunc ; 
+  data[_BMESH_DATA_GDATA] = gdata ;
+d553 1
+a553 1
+    data[_BMESH_DATA_QFUNC] = (gpointer)qfunc ;
+d555 1
+a555 1
+    data[_BMESH_DATA_QFUNC] = (gpointer)bem_quadrature_rule_default ;    
+d557 1
+a557 1
+    data[_BMESH_DATA_QDATA] = qdata ;
+d559 6
+a564 6
+    data[_BMESH_DATA_QDATA] = bem_quadrature_selector_default() ;
+  data[_BMESH_DATA_EFUNC] = (gpointer)efunc ;
+  data[_BMESH_DATA_EDATA] = edata ;
+  data[_BMESH_DATA_N] = &np ;
+  data[_BMESH_DATA_IMIN] = &(bem_mesh_cpt_index_min(m)) ;
+  data[_BMESH_DATA_IMAX] = &(bem_mesh_cpt_index_max(m)) ;
+d568 1
+a568 1
+  bem_mesh_foreach_cpoint(n, (BEMCPTFunc)_bem_cpoint_subassemble, data) ;
+d570 1
+a570 1
+  return BEM_SUCCESS ;
+d573 1
+a573 1
+void _bem_foreach_element(gpointer key, BEMElement *e, gpointer *fd)
+d576 2
+a577 2
+  BEMElementFunc f = (BEMElementFunc)fd[_BMESH_FOREACH_FUNC] ;
+  gpointer data = fd[_BMESH_FOREACH_DATA] ;
+d588 1
+a588 1
+ * @@param f BEMElementFunc to call
+d594 1
+a594 1
+gint bem_mesh_foreach_element(BEMMesh *m, BEMElementFunc f, gpointer data)
+d597 5
+a601 1
+  gpointer fd[_BMESH_FOREACH_DATA_WIDTH] ;
+d603 2
+a604 2
+  fd[_BMESH_FOREACH_FUNC] = (gpointer)f ;
+  fd[_BMESH_FOREACH_DATA] = data ;
+d606 1
+a606 1
+  g_hash_table_foreach(m->e, (GHFunc)_bem_foreach_element, fd) ;
+d608 1
+a608 1
+  return BEM_SUCCESS ;
+d611 1
+a611 1
+void _bem_foreach_cpoint(gpointer key, BEMElement *e, gpointer *fd)
+d614 3
+a616 3
+  BEMMesh *m = (BEMMesh *)fd[_BMESH_FOREACH_MESH] ;
+  BEMCPTFunc func = (BEMCPTFunc)fd[_BMESH_FOREACH_FUNC] ;
+  gpointer data = fd[_BMESH_FOREACH_DATA] ;
+d618 1
+a618 1
+  GHashTable *h = (GHashTable *)fd[_BMESH_FOREACH_HASH] ;
+d624 3
+a626 3
+  for ( i = 0 ; i < bem_element_ncpt(e) ; i ++ ) {
+    if ( (e->i[i] >= bem_mesh_cpt_index_min(m)) &&
+	 (e->i[i] < bem_mesh_cpt_index_max(m)) ) {
+d628 2
+a629 1
+      if ( !g_hash_table_lookup(h, GINT_TO_POINTER((e->i[i]+1))) ) {
+d636 1
+a636 7
+      j = 
+	GPOINTER_TO_INT(g_hash_table_lookup(m->c, 
+					    GINT_TO_POINTER(bem_element_global_index(e,i)))) ;
+      if ( m->cpt->data[j] == 0 ) {
+	func(e->i[i], e->c[i], data) ;
+	m->cpt->data[j] = 1 ;
+      }
+d648 1
+a648 1
+ * @@param f BEMCPTFunc to call
+d654 1
+a654 1
+gint bem_mesh_foreach_cpoint(BEMMesh *m, BEMCPTFunc f, 
+d658 1
+a658 1
+  gpointer fd[_BMESH_FOREACH_DATA_WIDTH] ;
+d662 1
+a662 1
+  fd[_BMESH_FOREACH_HASH] = h ;
+d665 7
+a671 3
+  fd[_BMESH_FOREACH_FUNC] = (gpointer)f ;
+  fd[_BMESH_FOREACH_DATA] = data ;
+  fd[_BMESH_FOREACH_MESH] = m ;
+d676 1
+a676 1
+  g_hash_table_foreach(m->e, (GHFunc)_bem_foreach_cpoint, fd) ;
+d682 1
+a682 1
+  return BEM_SUCCESS ;
+d685 1
+a685 1
+gint bem_equation_func_simple(gint i, gint j,
+d697 1
+a697 1
+  return BEM_SUCCESS ;
+d700 1
+a700 1
+gint _element_set_bc(BEMElement *e, gpointer *data)
+d703 3
+a705 3
+  GHashTable *h = (GHashTable *)data[_BMESH_DATA_HASH] ;
+  BEMBCFunc bcf = (BEMBCFunc)data[_BMESH_DATA_BFUNC] ;
+  gpointer bdata = data[_BMESH_DATA_BDATA] ;
+d712 2
+a713 2
+    dLds = (gdouble *)g_malloc(4*bem_element_ncpt(e)*sizeof(gdouble)) ;
+    dLdt = (gdouble *)g_malloc(4*bem_element_ncpt(e)*sizeof(gdouble)) ;
+d716 1
+a716 1
+  for ( i = 0 ; i < bem_element_ncpt(e) ; i ++ ) {
+d720 2
+a721 2
+      s = bem_element_node_xi(e,i) ;
+      t = bem_element_node_eta(e,i) ;
+d723 1
+a723 1
+      bem_element_normal(e, dLds, dLdt, n, &J) ;
+d728 1
+a728 1
+  return BEM_SUCCESS ;
+d735 1
+a735 1
+ * @@param bcf BEMBCFunc
+d741 1
+a741 1
+gint bem_mesh_set_bc(BEMMesh *m, BEMBCFunc bcf, gpointer bdata)
+d744 1
+a744 1
+  gpointer data[_BMESH_DATA_WIDTH] ;
+d748 3
+a750 3
+  data[_BMESH_DATA_HASH] = h ;
+  data[_BMESH_DATA_BFUNC] = (gpointer)bcf ;
+  data[_BMESH_DATA_BDATA] = bdata ;
+d752 1
+a752 1
+  bem_mesh_foreach_element(m, (BEMElementFunc)_element_set_bc, data) ;
+d756 1
+a756 1
+  return BEM_SUCCESS ;
+d759 1
+a759 1
+gint _mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
+d762 12
+a773 12
+  BEMMesh *m = (BEMMesh *)data[_BMESH_DATA_MESH] ;
+  BEMGreensFunc gf = (BEMGreensFunc)data[_BMESH_DATA_GFUNC] ; 
+  gpointer gdata = data[_BMESH_DATA_GDATA] ;
+  BEMQuadratureRuleFunc qf = 
+    (BEMQuadratureRuleFunc)data[_BMESH_DATA_QFUNC] ;
+  gpointer qdata = data[_BMESH_DATA_QDATA] ;
+  BEMLookupFunc lf = (BEMLookupFunc)data[_BMESH_DATA_LFUNC] ;
+  gpointer ldata = data[_BMESH_DATA_LDATA] ;
+  BEMRadiationFunc rfunc = (BEMRadiationFunc)data[_BMESH_DATA_RFUNC] ;
+  gpointer rdata = data[_BMESH_DATA_RDATA] ;
+  BEMEquationFunc efunc = (BEMEquationFunc)data[_BMESH_DATA_EFUNC] ;
+  gpointer edata = data[_BMESH_DATA_EDATA] ;
+d788 3
+a790 3
+  bem_mesh_radiation_point(m, gf, gdata, qf, qdata, 
+			   lf, ldata,
+			   rfunc, rdata, GTS_POINT(v), f) ;
+d797 1
+a797 1
+  return BEM_SUCCESS ;
+d804 1
+a804 1
+ * @@param m BEMMEsh 
+d809 3
+a811 2
+ * @@param lfunc BEMLookupFunc; use ::bem_lookup_func_unit (for real problems) 
+ * or bem_lookup_func_unit_c (for complex) 
+d822 7
+a828 9
+/*  * This actually gives the integral \f$ -\int_{S} \frac{\partial */
+/*  * G}{\partial n} \mathrm{d}S\f$ (note the minus sign).  */
+
+gint bem_mesh_quad_dgdn(BEMMesh *m,
+			BEMGreensFunc gfunc, gpointer gdata,
+			BEMQuadratureRuleFunc qfunc, gpointer qdata,
+			BEMLookupFunc lfunc, gpointer ldata,
+			BEMRadiationFunc rfunc, gpointer rdata,
+			BEMEquationFunc efunc, gpointer edata)
+d831 1
+a831 1
+  gpointer data[_BMESH_DATA_WIDTH] ;
+d837 3
+a839 3
+  data[_BMESH_DATA_MESH] = m ; 
+  data[_BMESH_DATA_GFUNC] = (gpointer)gfunc ; 
+  data[_BMESH_DATA_GDATA] = gdata ;
+d841 1
+a841 1
+    data[_BMESH_DATA_QFUNC] = (gpointer)qfunc ;
+d843 1
+a843 1
+    data[_BMESH_DATA_QFUNC] = bem_quadrature_rule_default ;    
+d845 1
+a845 1
+    data[_BMESH_DATA_QDATA] = qdata ;
+d847 3
+a849 3
+    data[_BMESH_DATA_QDATA] = bem_quadrature_selector_default() ;
+  data[_BMESH_DATA_LFUNC] = (gpointer)lfunc ;
+  data[_BMESH_DATA_LDATA] = ldata ;
+d851 1
+a851 1
+    data[_BMESH_DATA_RFUNC] = (gpointer)rfunc ;
+d853 5
+a857 5
+    data[_BMESH_DATA_RFUNC] = bem_radiation_func_laplace ;
+  data[_BMESH_DATA_IMIN] = &(bem_mesh_cpt_index_min(m)) ;
+  data[_BMESH_DATA_IMAX] = &(bem_mesh_cpt_index_max(m)) ;
+  data[_BMESH_DATA_EFUNC] = efunc ;
+  data[_BMESH_DATA_EDATA] = edata ;
+d859 1
+a859 1
+  bem_mesh_foreach_cpoint(m, (BEMCPTFunc)_mesh_quad_gfunc,
+d862 1
+a862 1
+  return BEM_SUCCESS ;
+d865 1
+a865 1
+BEMElement *bem_mesh_edges_element(BEMMesh *m, GtsEdge *e1, GtsEdge *e2)
+d868 1
+a868 1
+  BEMElement *e = NULL ;
+d886 1
+a886 1
+gint _add_mesh(BEMElement *e, BEMMesh *m)
+d889 1
+a889 1
+  bem_mesh_add_element(m, e) ;
+d891 1
+a891 1
+  return BEM_SUCCESS ;
+d894 1
+a894 1
+gint bem_mesh_merge(BEMMesh *m, BEMMesh *n)
+d898 1
+a898 1
+  bem_mesh_foreach_element(n, (BEMElementFunc)_add_mesh, m) ;
+d900 1
+a900 1
+  return BEM_SUCCESS ;
+d903 1
+a903 1
+gint _find_match(GtsVertex *w, gpointer data[])
+d905 4
+a908 4
+{
+  BEMMesh *n = (BEMMesh *)data[1] ;
+  GPtrArray *vt = (GPtrArray *)data[2] ;
+  GtsVertex *v = (GtsVertex *)data[3] ;
+d910 1
+a910 1
+  if ( !(gts_vertex_is_boundary(w, GTS_SURFACE(n))) ) return BEM_SUCCESS ;  
+d912 6
+a917 6
+  if ( (GTS_POINT(v)->x == GTS_POINT(w)->x ) &&
+       (GTS_POINT(v)->y == GTS_POINT(w)->y ) &&
+       (GTS_POINT(v)->z == GTS_POINT(w)->z ) ) {
+    g_ptr_array_add(vt, v) ; g_ptr_array_add(vt, w) ;
+    g_assert(v != w) ;
+  }
+d919 2
+a920 2
+  return BEM_SUCCESS ;
+}
+d922 1
+a922 1
+gint _clean_edges(GtsEdge *e, GSList **edges)
+d928 1
+a928 1
+  return BEM_SUCCESS ;
+d931 1
+a931 1
+gint bem_mesh_clean_edges(BEMMesh *m)
+d938 1
+a938 1
+  gts_surface_foreach_edge(GTS_SURFACE(m), (GtsFunc)_clean_edges, &edges) ;
+d947 1
+a947 1
+  return BEM_SUCCESS ;
+d951 1
+a951 1
+ * Find the ::BEMElement of a ::BEMMesh containing a given GtsFace. 
+d953 1
+a953 1
+ * @@param m BEMMesh to search
+d956 1
+a956 1
+ * @@return ::BEMElement of \a m containing \a f or NULL if \a f is not
+d960 1
+a960 1
+BEMElement *bem_mesh_face_element(BEMMesh *m, GtsFace *f)
+d963 1
+a963 1
+  BEMElement *e ;
+d971 1
+a971 1
+ * Find the GtsVertex on a ::BEMMesh containing a given collocation
+d974 1
+a974 1
+ * @@param m BEMMesh to search;
+d981 1
+a981 1
+GtsVertex *bem_mesh_find_cpt(BEMMesh *m, gint i)
+d991 1
+a991 1
+gint _bem_element_clear_reserved(BEMElement *e, gpointer data)
+d996 1
+a996 1
+  return BEM_SUCCESS ;
+d999 1
+a999 1
+gint bem_mesh_element_clear_reserved(BEMMesh *m)
+d1002 4
+a1005 4
+  bem_mesh_foreach_element(m, (BEMElementFunc)_bem_element_clear_reserved, 
+			   NULL) ;
+
+  return BEM_SUCCESS ;
+d1009 1
+a1009 1
+ * Find an index for a collocation point in a ::BEMMesh. Note that
+d1012 1
+a1012 1
+ * @@param m ::BEMMesh
+d1018 1
+a1018 1
+gint bem_mesh_index_from_cpoint(BEMMesh *m, GtsVertex *v)
+d1024 2
+a1025 2
+  g_return_val_if_fail(m != NULL, BEM_EINVAL) ;
+  g_return_val_if_fail(v != NULL, BEM_EINVAL) ;  
+d1027 1
+a1027 1
+  e = bem_mesh_vertex_elements(m, v) ;
+d1031 2
+a1032 2
+  j = bem_element_find_cpt(BEM_ELEMENT(e->data), v) ;
+  i = bem_element_global_index(BEM_ELEMENT(e->data), j) ;
+d1037 1
+a1037 1
+gint bem_mesh_remove_element(BEMMesh *m, BEMElement *e)
+d1042 4
+a1045 4
+  g_return_val_if_fail(m != NULL, BEM_EINVAL) ;
+  g_return_val_if_fail(IS_BEM_MESH(m), BEM_EINVAL) ;
+  g_return_val_if_fail(e != NULL, BEM_EINVAL) ;  
+  g_return_val_if_fail(IS_BEM_ELEMENT(e), BEM_EINVAL) ;
+d1047 1
+a1047 1
+  if ( !bem_element_has_parent_mesh(m, e) ) return 0 ;
+d1050 1
+a1050 1
+  for ( i = 0 ; i < bem_element_nfaces(e) ; i ++ ) {
+d1055 37
+a1091 1
+  return 0 ;
+@

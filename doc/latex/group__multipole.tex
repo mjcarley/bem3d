@@ -1,0 +1,193 @@
+\section{Fast and accelerated multipole calculations}
+\label{group__multipole}\index{Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+G\-Node $\ast$ {\bf bem3d\-\_\-mesh\-\_\-oct\-\_\-tree} (Gmc\-Oct\-Tree\-Box\-Class $\ast$klass, {\bf B\-E\-M3\-D\-Mesh} $\ast$m, gint nc, gint stride, gint nbmax)
+\item 
+B\-E\-M3\-D\-F\-M\-M\-Matrix $\ast$ {\bf bem3d\-\_\-fmm\-\_\-matrix\-\_\-new} (Gmc\-Oct\-Tree\-Box\-Class $\ast$klass, {\bf B\-E\-M3\-D\-Mesh} $\ast$m, {\bf B\-E\-M3\-D\-Lookup\-Func} lfunc, B\-E\-M3\-D\-Configuration $\ast$config, {\bf B\-E\-M3\-D\-Parameters} $\ast$gdata, gint nc, gint nbmax, gint Hmin, gint Hmax, gint Lmin, gint Lmax, Gmc\-Field\-Type field, Gmc\-Evaluation\-Mode mode)
+\item 
+gint {\bf bem3d\-\_\-fmm\-\_\-matrix\-\_\-multiply} (B\-E\-M3\-D\-F\-M\-M\-Matrix $\ast$f, gpointer ldata, Gmc\-Lookup\-Func xlfunc, gpointer xdata, Gmc\-Lookup\-Func ylfunc, gpointer ydata)
+\item 
+gint {\bf bem3d\-\_\-fmm\-\_\-matrix\-\_\-free} (B\-E\-M3\-D\-F\-M\-M\-Matrix $\ast$f)
+\item 
+gint {\bf bem3d\-\_\-fmm\-\_\-matrix\-\_\-write} (B\-E\-M3\-D\-F\-M\-M\-Matrix $\ast$m, F\-I\-L\-E $\ast$f)
+\item 
+B\-E\-M3\-D\-F\-M\-M\-Matrix $\ast$ {\bf bem3d\-\_\-fmm\-\_\-matrix\-\_\-read} (Gts\-File $\ast$f)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\index{Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}!bem3d\-\_\-fmm\-\_\-matrix\-\_\-free@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-free}}
+\index{bem3d\-\_\-fmm\-\_\-matrix\-\_\-free@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-free}!Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}}
+\subsubsection[{bem3d\-\_\-fmm\-\_\-matrix\-\_\-free}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\-\_\-fmm\-\_\-matrix\-\_\-free (
+\begin{DoxyParamCaption}
+\item[{B\-E\-M3\-D\-F\-M\-M\-Matrix $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__multipole_gae2c149f1d7ec849a872ee6709d828cce}
+Free a \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix and associated memory.
+
+
+\begin{DoxyParams}{Parameters}
+{\em f} & the \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix to free.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\-::\-B\-E\-M3\-D\-\_\-\-S\-U\-C\-C\-E\-S\-S on success. 
+\end{DoxyReturn}
+\index{Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}!bem3d\-\_\-fmm\-\_\-matrix\-\_\-multiply@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-multiply}}
+\index{bem3d\-\_\-fmm\-\_\-matrix\-\_\-multiply@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-multiply}!Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}}
+\subsubsection[{bem3d\-\_\-fmm\-\_\-matrix\-\_\-multiply}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\-\_\-fmm\-\_\-matrix\-\_\-multiply (
+\begin{DoxyParamCaption}
+\item[{B\-E\-M3\-D\-F\-M\-M\-Matrix $\ast$}]{f, }
+\item[{gpointer}]{ldata, }
+\item[{Gmc\-Lookup\-Func}]{xlfunc, }
+\item[{gpointer}]{xdata, }
+\item[{Gmc\-Lookup\-Func}]{ylfunc, }
+\item[{gpointer}]{ydata}
+\end{DoxyParamCaption}
+)}\label{group__multipole_gaeb28cb299b88ce1994591f88b49eea54}
+Perform a matrix multiplication using a \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix, $[A]x=y$.
+
+
+\begin{DoxyParams}{Parameters}
+{\em f} & a \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix; \\
+\hline
+{\em ldata} & data to be passed to \-::bem3d\-\_\-fmm\-\_\-matrix\-\_\-lookup\-\_\-func({\itshape f}); \\
+\hline
+{\em xlfunc} & \-::\-Gmc\-Lookup\-Func for the left hand side vector, or N\-U\-L\-L; \\
+\hline
+{\em xdata} & data for {\itshape xlfunc}; \\
+\hline
+{\em ylfunc} & \-::\-Gmc\-Lookup\-Func for the right hand side vector, or N\-U\-L\-L; \\
+\hline
+{\em ydata} & data for {\itshape ylfunc}.\\
+\hline
+\end{DoxyParams}
+If {\itshape xlfunc} ({\itshape ylfunc}) is N\-U\-L\-L, then {\itshape xdata} ({\itshape ydata}) may not be N\-U\-L\-L and will be treated as a gdouble array and a built-\/in lookup function will be used. Also, note that {\itshape ylfunc} is used to insert the result of multiplication in its vector, so it must return a pointer to the true location for the result and not to some intermediate location or buffer.
+
+\begin{DoxyReturn}{Returns}
+\-::\-B\-E\-M3\-D\-\_\-\-S\-U\-C\-C\-E\-S\-S on success. 
+\end{DoxyReturn}
+\index{Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}!bem3d\-\_\-fmm\-\_\-matrix\-\_\-new@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-new}}
+\index{bem3d\-\_\-fmm\-\_\-matrix\-\_\-new@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-new}!Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}}
+\subsubsection[{bem3d\-\_\-fmm\-\_\-matrix\-\_\-new}]{\setlength{\rightskip}{0pt plus 5cm}B\-E\-M3\-D\-F\-M\-M\-Matrix$\ast$ bem3d\-\_\-fmm\-\_\-matrix\-\_\-new (
+\begin{DoxyParamCaption}
+\item[{Gmc\-Oct\-Tree\-Box\-Class $\ast$}]{klass, }
+\item[{{\bf B\-E\-M3\-D\-Mesh} $\ast$}]{m, }
+\item[{{\bf B\-E\-M3\-D\-Lookup\-Func}}]{lfunc, }
+\item[{B\-E\-M3\-D\-Configuration $\ast$}]{config, }
+\item[{{\bf B\-E\-M3\-D\-Parameters} $\ast$}]{gdata, }
+\item[{gint}]{nc, }
+\item[{gint}]{nbmax, }
+\item[{gint}]{Hmin, }
+\item[{gint}]{Hmax, }
+\item[{gint}]{Lmin, }
+\item[{gint}]{Lmax, }
+\item[{Gmc\-Field\-Type}]{field, }
+\item[{Gmc\-Evaluation\-Mode}]{mode}
+\end{DoxyParamCaption}
+)}\label{group__multipole_gadbd6700b9f2ffb243799762bc0bd9510}
+Generate a new \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix for a \doxyref{B\-E\-M3\-D\-Mesh}{p.}{structBEM3DMesh} and associated Green's functions. The lookup function and data fields will be set to N\-U\-L\-L so you will need to set them before you call \doxyref{bem3d\-\_\-fmm\-\_\-matrix\-\_\-multiply}{p.}{group__multipole_gaeb28cb299b88ce1994591f88b49eea54} if you want near-\/field terms included.
+
+
+\begin{DoxyParams}{Parameters}
+{\em klass} & \-::\-Gmc\-Oct\-Tree\-Box\-Class for the octtree of the matrix; \\
+\hline
+{\em m} & a \doxyref{B\-E\-M3\-D\-Mesh}{p.}{structBEM3DMesh}; \\
+\hline
+{\em lfunc} & a \doxyref{B\-E\-M3\-D\-Lookup\-Func}{p.}{structBEM3DLookupFunc} used in performing near field integrations; \\
+\hline
+{\em config} & \-::\-B\-E\-M3\-D\-Configuration function for the problem; \\
+\hline
+{\em gdata} & \-::\-B\-E\-M3\-Dparameters for the Green's function\-: these are copied into the returned \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix; \\
+\hline
+{\em nc} & number of components in the nodal values, 1 for real, 2 for complex; \\
+\hline
+{\em nbmax} & maximum number of points in a box of the octtree; \\
+\hline
+{\em Hmin} & minimum order of the multipole coefficients; \\
+\hline
+{\em Hmax} & maximum order of the multipole coefficients; \\
+\hline
+{\em Lmin} & minimum order of the local expansions; \\
+\hline
+{\em Lmax} & maximum order of the local expansions; \\
+\hline
+{\em field} & a G\-M\-C\-\_\-\-F\-I\-E\-L\-D\-\_\-\-T\-Y\-P\-E, G\-M\-C\-\_\-\-F\-I\-E\-L\-D\-\_\-\-L\-A\-P\-L\-A\-C\-E or G\-M\-C\-\_\-\-F\-I\-E\-L\-D\-\_\-\-H\-E\-L\-M\-H\-O\-L\-T\-Z; \\
+\hline
+{\em mode} & single or double layer integral, G\-M\-C\-\_\-\-E\-V\-A\-L\-U\-A\-T\-I\-O\-N\-\_\-\-S\-I\-N\-G\-L\-E\-\_\-\-L\-A\-Y\-E\-R or G\-M\-C\-\_\-\-E\-V\-A\-L\-U\-A\-T\-I\-O\-N\-\_\-\-D\-O\-U\-B\-L\-E\-\_\-\-L\-A\-Y\-E\-R.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+new \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix on success. 
+\end{DoxyReturn}
+\index{Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}!bem3d\-\_\-fmm\-\_\-matrix\-\_\-read@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-read}}
+\index{bem3d\-\_\-fmm\-\_\-matrix\-\_\-read@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-read}!Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}}
+\subsubsection[{bem3d\-\_\-fmm\-\_\-matrix\-\_\-read}]{\setlength{\rightskip}{0pt plus 5cm}B\-E\-M3\-D\-F\-M\-M\-Matrix$\ast$ bem3d\-\_\-fmm\-\_\-matrix\-\_\-read (
+\begin{DoxyParamCaption}
+\item[{Gts\-File $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__multipole_ga9ac3321c807151d8dc704f3cb6946500}
+Read a \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix written by \doxyref{bem3d\-\_\-fmm\-\_\-matrix\-\_\-write}{p.}{group__multipole_ga011d5f5ef852ce61e62caad712e6dbe0} from file.
+
+
+\begin{DoxyParams}{Parameters}
+{\em f} & a Gts\-File for the input stream.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix read from {\itshape f}. 
+\end{DoxyReturn}
+\index{Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}!bem3d\-\_\-fmm\-\_\-matrix\-\_\-write@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-write}}
+\index{bem3d\-\_\-fmm\-\_\-matrix\-\_\-write@{bem3d\-\_\-fmm\-\_\-matrix\-\_\-write}!Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}}
+\subsubsection[{bem3d\-\_\-fmm\-\_\-matrix\-\_\-write}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\-\_\-fmm\-\_\-matrix\-\_\-write (
+\begin{DoxyParamCaption}
+\item[{B\-E\-M3\-D\-F\-M\-M\-Matrix $\ast$}]{m, }
+\item[{F\-I\-L\-E $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__multipole_ga011d5f5ef852ce61e62caad712e6dbe0}
+Write a \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix to file as a set of header data followed by the diagonal entries, the Gmc\-Oct\-Tree and the Gmc\-Near\-Field\-Matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & the \-::\-B\-E\-M3\-D\-F\-M\-M\-Matrix to write; \\
+\hline
+{\em f} & F\-I\-L\-E pointer.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+B\-E\-M3\-D\-\_\-\-S\-U\-C\-C\-E\-S\-S on success. 
+\end{DoxyReturn}
+\index{Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}!bem3d\-\_\-mesh\-\_\-oct\-\_\-tree@{bem3d\-\_\-mesh\-\_\-oct\-\_\-tree}}
+\index{bem3d\-\_\-mesh\-\_\-oct\-\_\-tree@{bem3d\-\_\-mesh\-\_\-oct\-\_\-tree}!Fast and accelerated multipole calculations@{Fast and accelerated multipole calculations}}
+\subsubsection[{bem3d\-\_\-mesh\-\_\-oct\-\_\-tree}]{\setlength{\rightskip}{0pt plus 5cm}G\-Node$\ast$ bem3d\-\_\-mesh\-\_\-oct\-\_\-tree (
+\begin{DoxyParamCaption}
+\item[{Gmc\-Oct\-Tree\-Box\-Class $\ast$}]{klass, }
+\item[{{\bf B\-E\-M3\-D\-Mesh} $\ast$}]{m, }
+\item[{gint}]{nc, }
+\item[{gint}]{stride, }
+\item[{gint}]{nbmax}
+\end{DoxyParamCaption}
+)}\label{group__multipole_gadbbf64e62747c041f5265fb491c872df}
+Generate an octtree for the elements of a \doxyref{B\-E\-M3\-D\-Mesh}{p.}{structBEM3DMesh}, if G\-M\-C support is available.
+
+
+\begin{DoxyParams}{Parameters}
+{\em klass} & a \-::\-Gmc\-Oct\-Tree\-Box\-Class; \\
+\hline
+{\em m} & a \doxyref{B\-E\-M3\-D\-Mesh}{p.}{structBEM3DMesh}; \\
+\hline
+{\em nc} & number of components per node variable (1 for real, 2 for complex, for example); \\
+\hline
+{\em stride} & node data stride (e.\-g. 1 for scalar, 3 for vector); \\
+\hline
+{\em nbmax} & the maximum number of \-::\-B\-E\-M3\-D\-Elements contained in the boxes of the octtree.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a \-::\-G\-Node tree for the elements of {\itshape m}. 
+\end{DoxyReturn}

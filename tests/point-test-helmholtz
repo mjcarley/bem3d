@@ -1,0 +1,34 @@
+#!/bin/bash
+
+## Test a mesh and configuration (e.g. quadrature rules) for point
+## source boundary conditions by comparing exact and computed
+## solutions on mesh and/or in field
+
+mesh=sphere.bem
+field=sphere-field.bem
+source=source-helmholtz.fn
+config=sphere-helmholtz.cfg
+gconfig=sphere-helmholtz-gradient.cfg
+gradient=gradient-helmholtz.fn
+k=1.0
+
+bem3d-assemble -k ${k} -C ${config} -i ${mesh} -o helmholtz.mtx
+bem3d-function -E 4 -i ${mesh} -F ${source} -o bc-helmholtz.dat
+bem3d-solve -C ${config} -d bc-helmholtz.dat -m helmholtz.mtx \
+	    -o potential.dat
+
+bem3d-function -E 4 -i ${mesh} -F ${source} -o ref-helmholtz.dat
+bem3d-function -E 4 -i ${mesh} -F compare-imag.fn \
+	       -d ref-helmholtz.dat -e potential.dat -o check.dat
+
+bem3d-field -k ${k} -C ${config} -d potential.dat -i ${mesh} \
+	    -o field.dat -s ${field} 
+bem3d-function -E 4 -i ${field} -F ${source} -o field-helmholtz.dat
+bem3d-function -E 4 -i ${field} -F compare-imag.fn \
+	       -d field-helmholtz.dat -e field.dat -o check-field.dat
+
+bem3d-field -k ${k} -C ${gconfig} -d potential.dat -i ${mesh} \
+	    -o gradient.dat -s ${field} 
+bem3d-function -E 8 -i ${field} -F ${gradient} -o gradient-helmholtz.dat
+bem3d-function -E 8 -i ${field} -F compare-imag-vector.fn \
+	       -d gradient-helmholtz.dat -e gradient.dat -o check-gradient.dat

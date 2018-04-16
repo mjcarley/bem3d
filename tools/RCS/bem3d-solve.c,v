@@ -1,0 +1,363 @@
+head	1.1;
+access;
+symbols;
+locks
+	ensmjc:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	2009.08.17.15.28.59;	author ensmjc;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/* bem3d-solve.c
+ * 
+ * Copyright (C) 2006 Michael Carley
+ * 
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /*HAVE_CONFIG_H*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <unistd.h>
+#include <string.h>
+
+#include <glib.h>
+#include <gts.h>
+
+#include <wmpi.h>
+#include <sisl.h>
+
+#include "bem3d.h"
+#include "bem3d-private.h"
+
+#include "tools.h"
+
+#include <gsl/gsl_complex.h>
+#include <gsl/gsl_complex_math.h>
+
+
+FILE *file_open(gchar *fname, gchar *namedefault, gchar *mode, 
+		FILE *fdefault) ;
+gint file_close(FILE *f) ;
+
+FILE *file_open(gchar *fname, gchar *namedefault, gchar *mode, 
+		FILE *fdefault)
+
+{
+  FILE *f ;
+
+  if ( !strcmp(fname, namedefault) ) return fdefault ;
+
+  f = fopen(fname, mode) ;
+
+  if ( f == NULL ) 
+    g_error("%s: cannot open file %s", __FUNCTION__, fname) ;
+
+  return f ;
+}
+
+gint file_close(FILE *f)
+
+{
+  if ( (f != stdin) && (f != stdout) && (f != stderr) ) fclose(f) ;
+
+  return 0 ;
+}
+
+static void read_real_matrices(FILE *f, gint n, 
+			       sisl_matrix_t *A, sisl_matrix_t *B)
+
+{
+  gint i, j, k ;
+  gdouble x ;
+
+  for ( i = 0 ; i < n ; i ++ ) {
+    fscanf(f, "%d", &k) ;
+    if ( sisl_matrix_has_local_row(A,k) ) {
+      for ( j = 0 ; j < n ; j ++ ) {
+	fscanf(f, "%lg", &x) ;
+	sisl_matrix_set(A, k, j, x) ;
+      }
+      fscanf(f, "%d", &k) ;
+      for ( j = 0 ; j < n ; j ++ ) {
+	fscanf(f, "%lg", &x) ;
+	sisl_matrix_set(B, k, j, x) ;
+      }      
+    } else {
+      for ( j = 0 ; j < n ; j ++ ) fscanf(f, "%*g") ;
+      fscanf(f, "%*d") ;
+      for ( j = 0 ; j < n ; j ++ ) fscanf(f, "%*g") ;
+    }
+  }
+
+  return ;
+}
+
+static void read_complex_matrices(FILE *f, gint n, 
+				  sisl_matrix_t *A, sisl_matrix_t *B)
+
+{
+  gint i, j, k ;
+  gsl_complex x ;
+
+  for ( i = 0 ; i < n ; i ++ ) {
+    fscanf(f, "%d", &k) ;
+    if ( sisl_matrix_has_local_row(A,k) ) {
+      for ( j = 0 ; j < n ; j ++ ) {
+	fscanf(f, "%lg %lg", &GSL_REAL(x), &GSL_IMAG(x)) ;
+	sisl_matrix_set_complex(A, k, j, x) ;
+      }
+      fscanf(f, "%d", &k) ;
+      for ( j = 0 ; j < n ; j ++ ) {
+	fscanf(f, "%lg %lg", &GSL_REAL(x), &GSL_IMAG(x)) ;
+	sisl_matrix_set_complex(B, k, j, x) ;
+      }      
+    } else {
+/*       fprintf(stderr, "P%d: skipping row %d\n", wmpi_rank(), k) ; */
+      for ( j = 0 ; j < 2*n ; j ++ ) fscanf(f, "%*g") ;
+      fscanf(f, "%*d") ;
+      for ( j = 0 ; j < 2*n ; j ++ ) fscanf(f, "%*g") ;
+    }
+  }
+
+  return ;
+}
+
+static void set_complex_vectors(sisl_vector_t *phi, sisl_vector_t *dphi,
+				BEM3DMeshData *data)
+
+{
+  gint i ;
+  gdouble *f ;
+
+  g_assert(sisl_vector_length(phi) == sisl_vector_length(dphi)) ;
+
+  for ( i = 0 ; i < sisl_vector_length(phi) ; i ++ ) {
+    f = bem3d_mesh_data_get(data, i) ;
+    sisl_vector_set_complex(phi, i, *((gsl_complex *)(&(f[0])))) ;
+    sisl_vector_set_complex(dphi, i, *((gsl_complex *)(&(f[2])))) ;
+  }
+
+  return ;
+}
+
+static void set_real_vectors(sisl_vector_t *phi, sisl_vector_t *dphi,
+			     BEM3DMeshData *data)
+
+{
+  gint i ;
+  gdouble *f ;
+
+  g_assert(sisl_vector_length(phi) == sisl_vector_length(dphi)) ;
+
+  for ( i = 0 ; i < sisl_vector_length(phi) ; i ++ ) {
+    g_assert( (f = bem3d_mesh_data_get(data, i)) != NULL ) ;
+    sisl_vector_set(phi, i, f[0]) ;
+    sisl_vector_set(dphi, i, f[1]) ;
+  }
+
+  return ;
+}
+
+gint main(gint argc, gchar **argv)
+
+{
+  GTimer *t ;
+  sisl_matrix_t *A, *B ;
+  sisl_vector_t *phi, *dphi, *rhs ;
+  sisl_solver_workspace_t *w ;
+  sisl_solver_performance_t perf ;
+  sisl_complex_t rc ;
+  gchar *ipfile, *opfile, *matfile, *datfile ;
+  FILE *input, *output ;
+  gchar *progname, ch, p[32] ;
+  gint np, i, j, mstride ;
+  guint imin, imax ;
+  gsl_complex zc ;
+  BEM3DMeshData *data ;
+
+  wmpi_initialize(&argc, &argv) ;
+  progname = g_strdup(g_basename(argv[0])) ;
+
+  sprintf(p, "P%03d: ", wmpi_rank()) ;
+  bem3d_logging_init(stderr, p, G_LOG_LEVEL_MESSAGE, wmpi_shutdown) ;
+  bem3d_shapefunc_lookup_init() ;
+  sisl_logging_init(stderr, p, G_LOG_LEVEL_MESSAGE, wmpi_shutdown) ;
+
+  ipfile = opfile = matfile = datfile = NULL ;
+
+  while ( (ch = getopt(argc, argv, "hd:m:o:")) != EOF ) {
+    switch (ch) {
+    default:
+    case 'h':
+      if ( wmpi_rank() == 0 ) {
+	fprintf(stderr, 
+		"%s: solve assembled BEM3D problem\n\n",
+		progname) ;
+	fprintf(stderr, "Usage: %s <options>\n", progname) ;
+	fprintf(stderr, 
+		"Options:\n"
+		"        -h (print this message and exit)\n"
+		"        -d <data file name> (for boundary conditions)\n"
+		"        -m <matrix file name from bem3dassemble>\n"
+		"        -o <output file name> (for mesh block data)\n") ;
+      }
+      wmpi_pause() ;
+      wmpi_shutdown() ;
+      return 0 ;
+      break ;
+    case 'd': datfile = g_strdup(optarg) ; break ;
+    case 'm': 
+/*       if ( wmpi_process_number() == 1 ) { */
+	matfile = g_strdup(optarg) ; 
+/*       } else { */
+/* 	matfile = g_strdup_printf("%s-%04d", optarg, wmpi_rank()) ; 	 */
+/*       } */
+      break ;
+    case 'o': opfile = g_strdup(optarg) ; break ;
+    }
+  }
+
+  if ( ipfile == NULL ) ipfile = g_strdup("-") ;
+  if ( opfile == NULL ) opfile = g_strdup("-") ;
+  if ( datfile == NULL ) datfile = g_strdup("-") ;
+  if ( matfile == NULL ) matfile = g_strdup("-") ;
+
+  if ( wmpi_rank() == 0 )
+    fprintf(stderr, "%s", BEM3D_STARTUP_MESSAGE) ;
+  
+  input = file_open(matfile, "-", "r", stdin) ;
+
+  fscanf(input, "%d %d", &np, &mstride) ;
+  wmpi_split_range(0, np, &imin, &imax) ;
+  if ( mstride == 1 ) rc = SISL_REAL ;
+  if ( mstride == 2 ) rc = SISL_COMPLEX ;
+
+  A = sisl_matrix_new(rc, SISL_MATRIX_DENSE) ;
+  B = sisl_matrix_new(rc, SISL_MATRIX_DENSE) ;
+  fprintf(stderr, "%s: P%d: matrices allocated %d rows\n", 
+	  progname, wmpi_rank(), imax-imin) ;
+
+  phi = sisl_vector_new(rc) ;
+  dphi = sisl_vector_new(rc) ;
+  rhs = sisl_vector_new(rc) ;
+
+  sisl_matrix_set_block_size(A, imax-imin, np) ; 
+  sisl_matrix_set_block_size(B, imax-imin, np) ;
+  sisl_matrix_row_number(A) = sisl_matrix_row_number(B) = np ;
+  sisl_matrix_column_number(A) = sisl_matrix_column_number(B) = np ;
+  sisl_matrix_local_row_start(A) = imin ; sisl_matrix_local_row_end(A) = imax ;
+  sisl_matrix_local_row_start(B) = imin ; sisl_matrix_local_row_end(B) = imax ;
+
+  if ( wmpi_rank() == 0 )
+    fprintf(stderr, "%s: matrix chunks split\n", progname) ;
+
+  i = sisl_matrix_local_row_start(A) ;
+  j = sisl_matrix_local_row_end(A) ;
+  fprintf(stderr, "%s: P%d: local rows: %d--%d\n", 
+	  progname, wmpi_rank(), i, j) ;
+  
+  if ( rc == SISL_REAL ) 
+    read_real_matrices(input, np, A, B) ;
+  else
+    read_complex_matrices(input, np, A, B) ;
+
+  file_close(input) ;
+
+  input = file_open(datfile, "-", "r", stdin) ;
+
+  bem3d_mesh_data_read(&data, input) ;
+
+  file_close(input) ;
+
+  if ( bem3d_mesh_data_node_number(data) < np ) {
+    fprintf(stderr, "%s: not enough data points (%d) for %dx%d matrix\n",
+	    progname, bem3d_mesh_data_node_number(data), np, np) ;
+    exit(1) ;
+  }
+
+  wmpi_pause() ;
+  sisl_vector_set_length(phi, np) ; 
+  sisl_vector_set_length(dphi, np) ;
+
+  if ( mstride == 1 ) set_real_vectors(phi, dphi, data) ;
+  if ( mstride == 2 ) set_complex_vectors(phi, dphi, data) ;
+  
+  t = g_timer_new() ; g_timer_start(t) ;
+
+  if ( sisl_is_real(phi) ) sisl_vector_set_all(phi, 0.0) ;
+  else sisl_vector_set_all_complex(phi, GSL_COMPLEX_ZERO) ;
+
+  if ( wmpi_process_number() > 1 )
+    sisl_matrix_distribution(A) = sisl_matrix_distribution(B) = 
+      SISL_DISTRIBUTED ;
+
+  w = sisl_solver_workspace_new() ;
+  sisl_matrix_vector_mul(B, dphi, rhs) ;
+
+  sisl_solve(SISL_SOLVER_BICGSTAB, A, phi, rhs, 1e-6, 128, w, &perf) ;
+  wmpi_pause() ;
+  if ( wmpi_rank() == 0 ) 
+    fprintf(stderr, "%s: system solved: t=%f\n", 
+	    progname, g_timer_elapsed(t, NULL)) ;
+
+  sisl_matrix_free(A) ; sisl_matrix_free(B) ;
+
+  if ( wmpi_rank() == 0 ) {
+    output = file_open(opfile, "-", "w", stdout) ;
+    if ( !sisl_is_real(phi) ) {
+      fprintf(output, "%d 4 BEM3DMeshData\n", sisl_vector_length(phi)) ;
+      for ( i = 0 ; i < sisl_vector_length(phi) ; i ++ ) {
+	zc = sisl_vector_get_complex(phi,i) ;      
+	fprintf(output, "%d %lg %lg", i, GSL_REAL(zc), GSL_IMAG(zc)) ;
+	zc = sisl_vector_get_complex(dphi,i) ;      
+	fprintf(output, " %lg %lg\n", GSL_REAL(zc), GSL_IMAG(zc)) ;
+      }
+    } else {
+      fprintf(output, "%d 2 BEM3DMeshData\n", sisl_vector_length(phi)) ;
+      for ( i = 0 ; i < sisl_vector_length(phi) ; i ++ ) 
+	fprintf(output, "%d %lg %lg\n", i,
+		sisl_vector_get(phi,i),
+		sisl_vector_get(dphi,i)) ;
+    }
+    fclose(output) ;
+  }
+
+  wmpi_pause() ;
+
+  sisl_solver_workspace_free(w) ;
+
+  wmpi_shutdown() ;
+
+  return 0 ;
+}
+@

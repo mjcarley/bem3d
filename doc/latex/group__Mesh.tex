@@ -1,0 +1,366 @@
+\section{BEM3D Meshes}
+\label{group__Mesh}\index{BEM3D Meshes@{BEM3D Meshes}}
+\subsection*{Data Structures}
+\begin{CompactItemize}
+\item 
+struct {\bf BEM3DMesh}
+\item 
+struct {\bf BEM3DMeshClass}
+\end{CompactItemize}
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf BEM3D\_\-MESH}(obj)
+\item 
+\#define {\bf BEM3D\_\-MESH\_\-CLASS}(klass)
+\item 
+\#define {\bf IS\_\-BEM3D\_\-MESH}(obj)
+\item 
+\#define {\bf bem3d\_\-mesh\_\-element\_\-number}(m)
+\item 
+\#define {\bf bem3d\_\-mesh\_\-node\_\-index\_\-min}(m)
+\item 
+\#define {\bf bem3d\_\-mesh\_\-node\_\-index\_\-max}(m)
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void {\bf bem3d\_\-mesh\_\-write} ({\bf BEM3DMesh} $\ast$m, FILE $\ast$fptr)
+\item 
+guint {\bf bem3d\_\-mesh\_\-read} ({\bf BEM3DMesh} $\ast$m, GtsFile $\ast$f)
+\item 
+gint {\bf bem3d\_\-mesh\_\-write\_\-nodes} ({\bf BEM3DMesh} $\ast$m, FILE $\ast$f)
+\item 
+{\bf BEM3DMeshClass} $\ast$ {\bf bem3d\_\-mesh\_\-class} (void)
+\item 
+{\bf BEM3DMesh} $\ast$ {\bf bem3d\_\-mesh\_\-new} ({\bf BEM3DMeshClass} $\ast$klass, GtsFaceClass $\ast$face\_\-class, GtsEdgeClass $\ast$edge\_\-class, GtsVertexClass $\ast$vertex\_\-class)
+\item 
+gint {\bf bem3d\_\-mesh\_\-add\_\-element} ({\bf BEM3DMesh} $\ast$m, {\bf BEM3DElement} $\ast$e)
+\item 
+GSList $\ast$ {\bf bem3d\_\-mesh\_\-vertex\_\-elements} ({\bf BEM3DMesh} $\ast$m, GtsVertex $\ast$v)
+\item 
+gint {\bf bem3d\_\-mesh\_\-index\_\-nodes} ({\bf BEM3DMesh} $\ast$m, gint $\ast$n)
+\item 
+gint {\bf bem3d\_\-mesh\_\-discretize} (GtsSurface $\ast$s, gint nne, {\bf BEM3DElementBuildFunc} bfunc, {\bf BEM3DMesh} $\ast$m)
+\item 
+gint {\bf bem3d\_\-mesh\_\-node\_\-number} ({\bf BEM3DMesh} $\ast$m)
+\item 
+gint {\bf bem3d\_\-mesh\_\-assemble\_\-equations} ({\bf BEM3DMesh} $\ast$m, {\bf BEM3DMesh} $\ast$n, {\bf BEM3DGreensFunc} gfunc, {\bf BEM3DParameters} $\ast$gdata, {\bf BEM3DEquationFunc} efunc, gpointer edata, {\bf BEM3DQuadratureRuleFunc} qfunc, gpointer qdata)
+\item 
+gint {\bf bem3d\_\-mesh\_\-foreach\_\-element} ({\bf BEM3DMesh} $\ast$m, BEM3DElementFunc f, gpointer data)
+\item 
+gint {\bf bem3d\_\-mesh\_\-foreach\_\-node} ({\bf BEM3DMesh} $\ast$m, {\bf BEM3DNodeFunc} f, gpointer data)
+\item 
+gint {\bf bem3d\_\-mesh\_\-set\_\-bc} ({\bf BEM3DMesh} $\ast$m, {\bf BEM3DBCFunc} bcf, gpointer bdata)
+\item 
+gint {\bf bem3d\_\-mesh\_\-quad\_\-dgdn} ({\bf BEM3DMesh} $\ast$m, {\bf BEM3DGreensFunc} gfunc, {\bf BEM3DParameters} $\ast$gdata, {\bf BEM3DQuadratureRuleFunc} qfunc, gpointer qdata, {\bf BEM3DLookupFunc} lfunc, gpointer ldata, {\bf BEM3DRadiationFunc} rfunc, gpointer rdata, {\bf BEM3DEquationFunc} efunc, gpointer edata)
+\item 
+{\bf BEM3DElement} $\ast$ {\bf bem3d\_\-mesh\_\-face\_\-element} ({\bf BEM3DMesh} $\ast$m, GtsFace $\ast$f)
+\item 
+GtsVertex $\ast$ {\bf bem3d\_\-mesh\_\-find\_\-node} ({\bf BEM3DMesh} $\ast$m, gint i)
+\item 
+gint {\bf bem3d\_\-mesh\_\-index\_\-from\_\-node} ({\bf BEM3DMesh} $\ast$m, GtsVertex $\ast$v)
+\end{CompactItemize}
+
+
+\subsection{Define Documentation}
+\index{Mesh@{Mesh}!BEM3D_MESH@{BEM3D\_\-MESH}}
+\index{BEM3D_MESH@{BEM3D\_\-MESH}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define BEM3D\_\-MESH(obj)}\label{group__Mesh_gcabe0d1e72fb99d219a9f59d4cbf4719}
+
+
+Casts {\em obj\/} to \doxyref{BEM3DMesh}{p.}{structBEM3DMesh}
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em obj}]a GtsObject\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]result of casting {\em obj\/} to \doxyref{BEM3DMesh}{p.}{structBEM3DMesh}. \end{Desc}
+\index{Mesh@{Mesh}!BEM3D_MESH_CLASS@{BEM3D\_\-MESH\_\-CLASS}}
+\index{BEM3D_MESH_CLASS@{BEM3D\_\-MESH\_\-CLASS}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define BEM3D\_\-MESH\_\-CLASS(klass)}\label{group__Mesh_ge37496924b6482578894aed0b4be8900}
+
+
+Casts {\em klass\/} to \doxyref{BEM3DMeshClass}{p.}{structBEM3DMeshClass}
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em klass}]class to cast \end{description}
+\end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_element_number@{bem3d\_\-mesh\_\-element\_\-number}}
+\index{bem3d_mesh_element_number@{bem3d\_\-mesh\_\-element\_\-number}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\_\-mesh\_\-element\_\-number(m)}\label{group__Mesh_gc70e61307b4403e9d2b79ae2488612dc}
+
+
+Number of elements in a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh} \index{Mesh@{Mesh}!bem3d_mesh_node_index_max@{bem3d\_\-mesh\_\-node\_\-index\_\-max}}
+\index{bem3d_mesh_node_index_max@{bem3d\_\-mesh\_\-node\_\-index\_\-max}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\_\-mesh\_\-node\_\-index\_\-max(m)}\label{group__Mesh_g6671ccf15833db4c8c85b6e092cc09ac}
+
+
+Maximum index of node to be considered in \doxyref{bem3d\_\-mesh\_\-foreach\_\-node}{p.}{group__Mesh_g39295d4861dca739ea6b22d4e72a9494} \index{Mesh@{Mesh}!bem3d_mesh_node_index_min@{bem3d\_\-mesh\_\-node\_\-index\_\-min}}
+\index{bem3d_mesh_node_index_min@{bem3d\_\-mesh\_\-node\_\-index\_\-min}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\_\-mesh\_\-node\_\-index\_\-min(m)}\label{group__Mesh_g8749ab4003a44b36664f457d2bc5fcd4}
+
+
+Minimum index of node to be considered in \doxyref{bem3d\_\-mesh\_\-foreach\_\-node}{p.}{group__Mesh_g39295d4861dca739ea6b22d4e72a9494} \index{Mesh@{Mesh}!IS_BEM3D_MESH@{IS\_\-BEM3D\_\-MESH}}
+\index{IS_BEM3D_MESH@{IS\_\-BEM3D\_\-MESH}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}\#define IS\_\-BEM3D\_\-MESH(obj)}\label{group__Mesh_g48d8cbbaa98e9c3ddc234d85d3c12705}
+
+
+TRUE if {\em obj\/} is from the \doxyref{BEM3DMeshClass}{p.}{structBEM3DMeshClass} class 
+
+\subsection{Function Documentation}
+\index{Mesh@{Mesh}!bem3d_mesh_add_element@{bem3d\_\-mesh\_\-add\_\-element}}
+\index{bem3d_mesh_add_element@{bem3d\_\-mesh\_\-add\_\-element}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-add\_\-element ({\bf BEM3DMesh} $\ast$ {\em m}, {\bf BEM3DElement} $\ast$ {\em e})}\label{group__Mesh_gc12ce0df068f0246927dce4608a71dab}
+
+
+Add an element to a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh}
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} to add element to \item[{\em e}]element to add\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_assemble_equations@{bem3d\_\-mesh\_\-assemble\_\-equations}}
+\index{bem3d_mesh_assemble_equations@{bem3d\_\-mesh\_\-assemble\_\-equations}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-assemble\_\-equations ({\bf BEM3DMesh} $\ast$ {\em m}, {\bf BEM3DMesh} $\ast$ {\em n}, {\bf BEM3DGreensFunc} {\em gfunc}, {\bf BEM3DParameters} $\ast$ {\em gdata}, {\bf BEM3DEquationFunc} {\em efunc}, gpointer {\em edata}, {\bf BEM3DQuadratureRuleFunc} {\em qfunc}, gpointer {\em qdata})}\label{group__Mesh_gd52397397276b9fd9a22f0ee93cc8b27}
+
+
+Assemble the BEM3D equations for two meshes (which may be the same mesh)
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} whose elements are to be processed \item[{\em n}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} whose nodes are to be processed \item[{\em gfunc}]\doxyref{BEM3DGreensFunc}{p.}{group__gfunc_gf368ec0a64f1731c643c9b3dd8bcab89} for the problem \item[{\em gdata}]data to pass to gfunc \item[{\em efunc}]\doxyref{BEM3DEquationFunc}{p.}{structBEM3DEquationFunc} for the problem \item[{\em edata}]data to pass to efunc \item[{\em qfunc}]\doxyref{BEM3DQuadratureRuleFunc}{p.}{structBEM3DQuadratureRuleFunc}, default used if set to NULL \item[{\em qdata}]quadrature selection data, default used if set to NULL\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_class@{bem3d\_\-mesh\_\-class}}
+\index{bem3d_mesh_class@{bem3d\_\-mesh\_\-class}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf BEM3DMeshClass}$\ast$ bem3d\_\-mesh\_\-class (void)}\label{group__Mesh_ga15913078fdd26222fd6f411b07e7a2b}
+
+
+Definition of the \doxyref{BEM3DMeshClass}{p.}{structBEM3DMeshClass}.
+
+\begin{Desc}
+\item[Returns:]\doxyref{BEM3DMeshClass}{p.}{structBEM3DMeshClass} \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_discretize@{bem3d\_\-mesh\_\-discretize}}
+\index{bem3d_mesh_discretize@{bem3d\_\-mesh\_\-discretize}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-discretize (GtsSurface $\ast$ {\em s}, gint {\em nne}, {\bf BEM3DElementBuildFunc} {\em bfunc}, {\bf BEM3DMesh} $\ast$ {\em m})}\label{group__Mesh_g53045c1fd977f0ded50765fb00e9ef40}
+
+
+Discretize a surface by splitting its triangles into higher order elements
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em s}]GtsSurface to be discretized \item[{\em nne}]number of nodes per edge of each triangular face \item[{\em bfunc}]\doxyref{BEM3DElementBuildFunc}{p.}{structBEM3DElementBuildFunc} for the required element \item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} to be generated\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_face_element@{bem3d\_\-mesh\_\-face\_\-element}}
+\index{bem3d_mesh_face_element@{bem3d\_\-mesh\_\-face\_\-element}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf BEM3DElement}$\ast$ bem3d\_\-mesh\_\-face\_\-element ({\bf BEM3DMesh} $\ast$ {\em m}, GtsFace $\ast$ {\em f})}\label{group__Mesh_g46930949200d4f0e25f3abeb4761ea26}
+
+
+Find the \doxyref{BEM3DElement}{p.}{group__belement_g3cfa160210c58ab7257ec296c1b8a0af} of a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh} containing a given GtsFace.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} to search \item[{\em f}]GtsFace to locate\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]\doxyref{BEM3DElement}{p.}{group__belement_g3cfa160210c58ab7257ec296c1b8a0af} of {\em m\/} containing {\em f\/} or NULL if {\em f\/} is not in {\em m\/}. \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_find_node@{bem3d\_\-mesh\_\-find\_\-node}}
+\index{bem3d_mesh_find_node@{bem3d\_\-mesh\_\-find\_\-node}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}GtsVertex$\ast$ bem3d\_\-mesh\_\-find\_\-node ({\bf BEM3DMesh} $\ast$ {\em m}, gint {\em i})}\label{group__Mesh_g247aaff3dfcee003dea35edf6c234434}
+
+
+Find the GtsVertex on a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh} containing a given collocation point.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} to search; \item[{\em i}]index of collocation point.\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]GtsVertex of {\em m\/} with collocation point index {\em i\/} or NULL if point {\em i\/} is not on {\em m\/}. \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_foreach_element@{bem3d\_\-mesh\_\-foreach\_\-element}}
+\index{bem3d_mesh_foreach_element@{bem3d\_\-mesh\_\-foreach\_\-element}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-foreach\_\-element ({\bf BEM3DMesh} $\ast$ {\em m}, BEM3DElementFunc {\em f}, gpointer {\em data})}\label{group__Mesh_g99adde9fb4036c275c775760238cc179}
+
+
+Visit each element of a mesh and execute a function
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]mesh to process \item[{\em f}]BEM3DElementFunc to call \item[{\em data}]user data to pass to f\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_foreach_node@{bem3d\_\-mesh\_\-foreach\_\-node}}
+\index{bem3d_mesh_foreach_node@{bem3d\_\-mesh\_\-foreach\_\-node}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-foreach\_\-node ({\bf BEM3DMesh} $\ast$ {\em m}, {\bf BEM3DNodeFunc} {\em f}, gpointer {\em data})}\label{group__Mesh_g39295d4861dca739ea6b22d4e72a9494}
+
+
+Visit each collocation point of a mesh and execute a function
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]mesh to process \item[{\em f}]\doxyref{BEM3DNodeFunc}{p.}{structBEM3DNodeFunc} to call \item[{\em data}]user data to pass to f\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_index_from_node@{bem3d\_\-mesh\_\-index\_\-from\_\-node}}
+\index{bem3d_mesh_index_from_node@{bem3d\_\-mesh\_\-index\_\-from\_\-node}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-index\_\-from\_\-node ({\bf BEM3DMesh} $\ast$ {\em m}, GtsVertex $\ast$ {\em v})}\label{group__Mesh_gc160e1d17b8c48645ad3c724efff2a5f}
+
+
+Find an index for a collocation point in a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh}. Note that this index may not be unique, for example if the mesh has sharp edges.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} \item[{\em v}]GtsVertex for collocation point to find\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]index of {\em v\/} in {\em m\/}, or -1 if not found. \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_index_nodes@{bem3d\_\-mesh\_\-index\_\-nodes}}
+\index{bem3d_mesh_index_nodes@{bem3d\_\-mesh\_\-index\_\-nodes}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-index\_\-nodes ({\bf BEM3DMesh} $\ast$ {\em m}, gint $\ast$ {\em n})}\label{group__Mesh_gbd572cd55dfad94c1d9282a948e2414a}
+
+
+Number the collocation points of a mesh
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} to be numbered \item[{\em n}]pointer to number of first collocation point. This will be set to the value of the new highest node number on exit.\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_new@{bem3d\_\-mesh\_\-new}}
+\index{bem3d_mesh_new@{bem3d\_\-mesh\_\-new}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}{\bf BEM3DMesh}$\ast$ bem3d\_\-mesh\_\-new ({\bf BEM3DMeshClass} $\ast$ {\em klass}, GtsFaceClass $\ast$ {\em face\_\-class}, GtsEdgeClass $\ast$ {\em edge\_\-class}, GtsVertexClass $\ast$ {\em vertex\_\-class})}\label{group__Mesh_gb57a737c8f6fc1987cf1c3b69b163b80}
+
+
+Create a new \doxyref{BEM3DMesh}{p.}{structBEM3DMesh}
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em klass}]the BEM3D mesh class for the mesh; \item[{\em face\_\-class}]the GTS face class; \item[{\em edge\_\-class}]the GTS edge class; \item[{\em vertex\_\-class}]the GTS vertex class.\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]a pointer to the newly created mesh \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_node_number@{bem3d\_\-mesh\_\-node\_\-number}}
+\index{bem3d_mesh_node_number@{bem3d\_\-mesh\_\-node\_\-number}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-node\_\-number ({\bf BEM3DMesh} $\ast$ {\em m})}\label{group__Mesh_gf4ca16ac8bcb96e5eef381593e1aca93}
+
+
+Count the number of collocation points on a mesh
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh}\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]number of nodes on {\em m\/}. \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_quad_dgdn@{bem3d\_\-mesh\_\-quad\_\-dgdn}}
+\index{bem3d_mesh_quad_dgdn@{bem3d\_\-mesh\_\-quad\_\-dgdn}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-quad\_\-dgdn ({\bf BEM3DMesh} $\ast$ {\em m}, {\bf BEM3DGreensFunc} {\em gfunc}, {\bf BEM3DParameters} $\ast$ {\em gdata}, {\bf BEM3DQuadratureRuleFunc} {\em qfunc}, gpointer {\em qdata}, {\bf BEM3DLookupFunc} {\em lfunc}, gpointer {\em ldata}, {\bf BEM3DRadiationFunc} {\em rfunc}, gpointer {\em rdata}, {\bf BEM3DEquationFunc} {\em efunc}, gpointer {\em edata})}\label{group__Mesh_g8d0d710c9e0c03881a29fdcce2393c7b}
+
+
+Integrate the normal derivative of the Green's function over a mesh.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]BEM3DMEsh \item[{\em gfunc}]Green's function for problem \item[{\em gdata}]data to pass to Green's function \item[{\em qfunc}]quadrature rule function (NULL for default) \item[{\em qdata}]data for quadrature rule (NULL for default) \item[{\em lfunc}]\doxyref{BEM3DLookupFunc}{p.}{structBEM3DLookupFunc}; use \doxyref{bem3d\_\-lookup\_\-func\_\-unit}{p.}{group__lookup_gb516d2a6f9e1c4486840a450aa81a7b2} (for real problems) or bem3d\_\-lookup\_\-func\_\-unit\_\-c (for complex) \item[{\em ldata}]data to pass to the lookup function \item[{\em rfunc}]radiation function for problem \item[{\em rdata}]user data to pass to radiation function \item[{\em efunc}]equation function for problem. This will be called with the row and column numbers equal. \item[{\em edata}]user data to pass to efunc\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_read@{bem3d\_\-mesh\_\-read}}
+\index{bem3d_mesh_read@{bem3d\_\-mesh\_\-read}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}guint bem3d\_\-mesh\_\-read ({\bf BEM3DMesh} $\ast$ {\em m}, GtsFile $\ast$ {\em f})}\label{group__Mesh_gd9997585b43accd5aef9299bd47ac32d}
+
+
+Read a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh} from input file. This is a modified version of Stephane Popinet's original gts\_\-surface\_\-read
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} to read \item[{\em f}]GtsFile to read from\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success, line number where error was encountered otherwise \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_set_bc@{bem3d\_\-mesh\_\-set\_\-bc}}
+\index{bem3d_mesh_set_bc@{bem3d\_\-mesh\_\-set\_\-bc}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-set\_\-bc ({\bf BEM3DMesh} $\ast$ {\em m}, {\bf BEM3DBCFunc} {\em bcf}, gpointer {\em bdata})}\label{group__Mesh_gb260c6934997caf2c6c5502113b4a10a}
+
+
+Set the boundary conditions on a mesh
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]mesh for boundary conditions \item[{\em bcf}]\doxyref{BEM3DBCFunc}{p.}{structBEM3DBCFunc} \item[{\em bdata}]user data to pass to bcf\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_vertex_elements@{bem3d\_\-mesh\_\-vertex\_\-elements}}
+\index{bem3d_mesh_vertex_elements@{bem3d\_\-mesh\_\-vertex\_\-elements}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}GSList$\ast$ bem3d\_\-mesh\_\-vertex\_\-elements ({\bf BEM3DMesh} $\ast$ {\em m}, GtsVertex $\ast$ {\em v})}\label{group__Mesh_gf5323fe694ef03caa5b0dc5930286b3e}
+
+
+Extract a linked list of the elements of a mesh containing a given vertex.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} containing vertex; \item[{\em v}]vertex to check.\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]GSList of elements connected to v. \end{Desc}
+\index{Mesh@{Mesh}!bem3d_mesh_write@{bem3d\_\-mesh\_\-write}}
+\index{bem3d_mesh_write@{bem3d\_\-mesh\_\-write}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void bem3d\_\-mesh\_\-write ({\bf BEM3DMesh} $\ast$ {\em m}, FILE $\ast$ {\em fptr})}\label{group__Mesh_g9741299781205937fda1d7cb1772c77a}
+
+
+Write a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh} to a file
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]mesh to write \item[{\em fptr}]file pointer\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]void\end{Desc}
+The output file is a GtsSurface file followed by the element data as follows:
+
+number of elements
+
+element data as specified in \doxyref{bem3d\_\-element\_\-write}{p.}{group__belement_g34a4af041e053afa282ec37e9262abf5}, one element per line \index{Mesh@{Mesh}!bem3d_mesh_write_nodes@{bem3d\_\-mesh\_\-write\_\-nodes}}
+\index{bem3d_mesh_write_nodes@{bem3d\_\-mesh\_\-write\_\-nodes}!Mesh@{Mesh}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\_\-mesh\_\-write\_\-nodes ({\bf BEM3DMesh} $\ast$ {\em m}, FILE $\ast$ {\em f})}\label{group__Mesh_g9035b1ad98c6be01f7a78eee78bc2185}
+
+
+Write the nodes of a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh} to output
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh} to write \item[{\em f}]file pointer\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}

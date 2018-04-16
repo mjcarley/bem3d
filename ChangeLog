@@ -1,0 +1,255 @@
+2017-08-10  Michael Carley  <ensmjc@rpc-ensmjc.bath.ac.uk>
+
+	* src/configure.c (physics_set): added surface_admittance setting
+	for key file
+
+	* src/bem3d.h ("C"): added default admittance for Robin boundary
+	conditions to BEM3DConfiguration
+
+2017-07-10  Michael Carley  <ensmjc@rpc-ensmjc.bath.ac.uk>
+
+	* src/configure.c (bem3d_configuration_new): added default
+	settings for solver and FMM solver
+
+2017-06-13  Michael Carley  <ensmjc@balena-02.cm.balena>
+
+	* src/location.c (bem3d_element_nearest_vertex): renamed
+	bem3d_element_nearest to be consistent with
+	bem3d_element_nearest_point
+
+2013-04-16  MIchael Carley  <ensmjc@rpc-ensmjc.bath.ac.uk>
+
+	* src/bmesh.c (vector_angle): changed to allow for possibly
+	parallel vectors.
+
+2013-01-17    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/bem3d.h (bem3d_quadrature_weight): changed definition of
+	BEM3DQuadratureRule to pack all nodes and weights into a single
+	array.
+
+2012-07-11    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/motion.c (bem3d_motion_node_acceleration): Added function to
+	compute accelerations from motion specification.
+
+2011-03-10    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* tools/bem3d-aero.c (main): fixed a bug in support for multiple
+	body mesh data blocks.
+
+2010-12-23  Michael  <michael@paraffinalia.bath.ac.uk>
+
+	* tools/bem3d-field.c (main): Added configuration file support.
+
+2010-10-18  Michael  <michael@paraffinalia.bath.ac.uk>
+
+	* src/config.c (greens_func_laplace): Added ready-made structs for
+	setting Green's functions in a BEM3DConfiguration.
+
+2010-09-17  Michael  <michael@paraffinalia.bath.ac.uk>
+
+	* tools/bem3d-aero.c (main): Added solver tolerance option.
+
+2010-06-20  Michael  <michael@paraffinalia.bath.ac.uk>
+
+	* src/bem3d.h ("C"): Added data type BEM3DGreensFunction to
+	contain extra information about Green's functions (real or
+	complex, etc.)
+
+2010-06-16    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/quadrature.c: Added bem3d_quadrature_newman_gradient to
+	compute velocity fields in Laplace problems.
+
+2010-02-14  Michael  <michael@paraffinalia.bath.ac.uk>
+
+	* tools/bem3d2pos.c (main): Added option to write edges to .pos
+	file to help in selecting wake lines.
+
+	* src/gmsh.c (bem3d_edge_write_pos): Added function to write edge
+	files in .pos format, for choosing wake lines and similar.
+
+2010-01-21  Michael  <michael@paraffinalia.bath.ac.uk>
+
+	* tools/msh2bem3d.c (main): Added support for generation of sharp
+	edge files.
+
+2010-01-20    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/motion.c: Added support for motion specification using
+	libmatheval. 
+
+	* src/edge.c: Added support for sharp edges via BEM3DEdge.
+
+	* src/functions.c: Modified BEM3DMeshData to use GArray of
+	gdouble, allowing resizing with memory protection.
+
+2009-08-17    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/bem3d.h: added moment data to BEM3DElement, mainly for use
+	in speeding up calculation of quadratures such as Newman's rules
+	for polyhedra.
+
+2009-08-07  Michael  <michael@paraffinalia.bath.ac.uk>
+
+	* src/quadrature.c (bem3d_quadrature_rule_newman): Added new rule
+	which uses (only) free terms in BEM3DQuadrature to implement
+	analytical integration rules.
+
+2009-04-06  Michael  <michael@paraffinalia.bath.ac.uk>
+
+	* ammtools/bem3d-field-amm.c (main): now runs using call to
+	AMM-based radiation functions, similarly to calling the basic
+	element-wise versions.
+
+2009-04-06  Michael  <michael@paraffinalia>
+
+	* src/gmsh.c (bem3d_gmsh_write_element): fixed bug which made
+	function think data were absent when they were present.
+
+2008-12-01    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/bmesh.c (bem3d_mesh_node_elements): Modified to use
+	bem3d_element_find_index, giving correct behaviour for
+	double-indexed vertices.
+	
+	* src/belement.c (bem3d_element_find_index): added function to
+	locate nodes on elements, by global index.
+
+	* src/operators.c: Added new functions for differential operators
+	(gradient and normal) using averaging over elements connected to a
+	node.
+
+2008-11-26    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/belement.c (bem3d_element_vertex_is_corner): Added to check
+	if vertex is an element corner.
+
+2008-05-07    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* tools/bem2pos.c (main): Bugfix to remove segmentation violation
+	in problems with unspecified data.
+
+2008-03-04    <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* tools/bemsolve.c (bc_func_sisl_c): Added support for multiple
+	sources in boundary condition setting.
+
+2007-04-12  Michael Carley  <ensmjc@en-beowulf.beowulf.cluster>
+
+	* configure.ac (PACKAGE): Parallel codes for assembly and solution
+	are automatically compiled if wmpi has MPI support.
+
+2007-04-05  Michael Carley  <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/edge.c (bem_edge_is_sharp): Modified to compute the angle
+	between triangles as that between their normals. 
+	(bem_mesh_index_sharp_edges): Sharp edge finding is now based on
+	the GtsFace's of an element, rather than the computed normals, to
+	avoid problems with higher order elements and dubious normals. 
+
+2007-04-02  Michael Carley  <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/gmsh.c (bem_mesh_write_gmsh): Added support for GMSH vector
+	and tensor modes.
+	(bem_gmsh_write_element): Modified to allow for vector and tensor
+	data. 
+
+	* src/bem.h: Added bem_gmsh_mode_t type to allow writing of GMSH
+	vector and tensor data.
+
+2007-03-19  Michael Carley  <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/bmesh.c: Added bem_mesh_index_from_cpoint to return a
+	collocation point index from a mesh.
+
+	* src/edge.c (bem_element_edges_link): now takes an extra
+	parameter np, for indexing of elements as they are inserted into
+	the mesh.
+
+	* src/belement.c: Added bem_element_index_cpoints for indexing of
+	BEMElements before insertion in a BEMMesh.
+
+2007-03-15  Michael Carley  <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/belement.c: Added bem_element_point_inside
+
+2007-03-13  Michael Carley  <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/edge.c (bem_element_edge_copy_list): Copying of edges now
+	includes copy of global index information.
+
+	* src/functions.c: Added bem_mesh_data_add_node to add nodes to
+	pre-sized data blocks. Added bem_mesh_data_sized_new to set up
+	blocks for a given number of nodes, rather than being fixed by a
+	mesh size.
+	(bem_mesh_data_new): Modified to use call to
+	bem_mesh_data_sized_new
+	(_bem_init_data): Modified to use call to bem_mesh_data_add_node
+
+2007-02-28  Michael Carley  <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/edge.c: Added bem_element_edges_link to generate swept
+	surfaces, such as wakes.
+
+2007-02-22  Michael Carley  <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* src/quadrature.c (bem_quadrature_rule_polar): Fixed a bug
+	affecting integration on second order elements, due to wrong
+	calculation of weights for mid-edge nodes.
+
+2007-02-20  Michael Carley  <ensmjc@enpc-adm34.bath.ac.uk>
+
+	* tools/msh2bem.c (main): Added command line option to set logging
+	level. 
+
+	* src/elements.c (bem_element_build_q2): Added build function for
+	GMSH nine point quads.
+
+	* src/gmsh.c (_write_element_msh): Added handling of GMSH nine
+	point quad. 
+
+	* tools/bem2msh.c (main): Added command line option to set logging
+	level. 
+
+2007-02-06    <michael@rpc-ensmjc.icam.fr>
+
+	* Checked that code handles mixed triangle/quad meshes.
+
+	* src/quadrature.c (bem_quadrature_rule_wx): Modified to handle
+	non-triangular elements, by decomposition into triangles.
+
+	* src/gmsh.c (_write_element_msh): Added code to handle GMSH
+	linear quad elements.
+
+2007-02-06    <michael@rpc-ensmjc.bath.ac.uk>
+
+	* src/quadrature.c (bem_quadrature_rule_polar): Modified to allow
+	for non-triangular elements, by decomposition in elementary
+	triangles. 
+
+2007-02-05    <michael@rpc-ensmjc.bath.ac.uk>
+
+	* src/quadrature.c (bem_quadrature_rule_remap): new function
+	to help remap triangle quadrature rules onto other shaped
+	elements. 
+
+2006-12-31    <michael@rpc-ensmjc.bath.ac.uk>
+
+	* Added #ifdef DOXYGEN_BLOCK to allow documentation of #define's
+	in source files. 
+
+	* src/belement.c: Corrected bem_element_neighbours to check for
+	shared edges rather than shared vertices.
+
+	* src/partition.c: Added mesh graphing and partitioning functions
+	and types (BEMENode, bem_mesh_graph, bem_mesh_graph_mesh) based on
+	the corresponding GTS functions.
+
+	* src/bem.h: BEMMesh is now an object derived from GtsSurface.
+
+Copyright (C) 2006, 2007 by Michael Carley 
+
+Copying and distribution of this file, with or without modification, are
+permitted provided the copyright notice and this notice are preserved.

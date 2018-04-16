@@ -1,0 +1,172 @@
+\section{Building elements}
+\label{group__elements}\index{Building elements@{Building elements}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf B\+E\+M3\+D\+Element\+Build\+Func}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf B\+E\+M3\+D\+Element} $\ast$ {\bf bem3d\+\_\+element\+\_\+build\+\_\+t0} (Gts\+Edge $\ast$$\ast$e, Gts\+Vertex $\ast$$\ast$v)
+\item 
+{\bf B\+E\+M3\+D\+Element} $\ast$ {\bf bem3d\+\_\+element\+\_\+build\+\_\+t1} (Gts\+Edge $\ast$$\ast$e, Gts\+Vertex $\ast$$\ast$v)
+\item 
+{\bf B\+E\+M3\+D\+Element} $\ast$ {\bf bem3d\+\_\+element\+\_\+build\+\_\+t2} (Gts\+Edge $\ast$$\ast$e, Gts\+Vertex $\ast$$\ast$v)
+\item 
+{\bf B\+E\+M3\+D\+Element} $\ast$ {\bf bem3d\+\_\+element\+\_\+build\+\_\+t3} (Gts\+Edge $\ast$$\ast$e, Gts\+Vertex $\ast$$\ast$v)
+\item 
+{\bf B\+E\+M3\+D\+Element} $\ast$ {\bf bem3d\+\_\+element\+\_\+build\+\_\+q1} (Gts\+Edge $\ast$$\ast$e, Gts\+Vertex $\ast$$\ast$v)
+\item 
+{\bf B\+E\+M3\+D\+Element} $\ast$ {\bf bem3d\+\_\+element\+\_\+build\+\_\+q2} (Gts\+Edge $\ast$$\ast$e, Gts\+Vertex $\ast$$\ast$v)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+B\+E\+M3\+D can handle a wide range of elements and some of them are built in to the main library. The B\+E\+M\+Element type contains the geometric and other information needed to perform calculations; the \doxyref{B\+E\+M3\+D\+Element\+Build\+Func}{p.}{structBEM3DElementBuildFunc} type defines a function which takes as input the vertices of an element and returns the new element. In each case, the inputs are an array of Gts\+Edge\textquotesingle{}s and an array of Gts\+Vertex\textquotesingle{}s which define the boundary of the element, with the exception of \doxyref{bem3d\+\_\+element\+\_\+build\+\_\+t3}{p.}{group__elements_ga0d3d9bc819bb8643592b2d0cb320a620} and \doxyref{bem3d\+\_\+element\+\_\+build\+\_\+q2}{p.}{group__elements_ga5a41eaafa4f26fae1f1112b4dfdc5b4d} which include an interior point in the centre of the element. 
+
+\subsection{Function Documentation}
+\index{Building elements@{Building elements}!bem3d\+\_\+element\+\_\+build\+\_\+q1@{bem3d\+\_\+element\+\_\+build\+\_\+q1}}
+\index{bem3d\+\_\+element\+\_\+build\+\_\+q1@{bem3d\+\_\+element\+\_\+build\+\_\+q1}!Building elements@{Building elements}}
+\subsubsection[{bem3d\+\_\+element\+\_\+build\+\_\+q1}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+build\+\_\+q1 (
+\begin{DoxyParamCaption}
+\item[{Gts\+Edge $\ast$$\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$$\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__elements_ga398af314e67c4c10d2b88ad776c1992b}
+Generate a first order quadrilateral element. The shape function for geometry and computation is \doxyref{bem3d\+\_\+shfunc\+\_\+q1}{p.}{group__shapefunc_gab5d91ecfd994dfcd593275cfe52050c8}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em e} & array of Gts\+Edge around the outside of the element \\
+\hline
+{\em v} & array of Gts\+Vertex around the outside of the element\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the new element 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+add\+\_\+face(), bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+class(), bem3d\+\_\+element\+\_\+new(), bem3d\+\_\+element\+\_\+set\+\_\+corner(), bem3d\+\_\+element\+\_\+vertex\+\_\+eta, bem3d\+\_\+element\+\_\+vertex\+\_\+xi, and bem3d\+\_\+shfunc\+\_\+q1().
+
+\index{Building elements@{Building elements}!bem3d\+\_\+element\+\_\+build\+\_\+q2@{bem3d\+\_\+element\+\_\+build\+\_\+q2}}
+\index{bem3d\+\_\+element\+\_\+build\+\_\+q2@{bem3d\+\_\+element\+\_\+build\+\_\+q2}!Building elements@{Building elements}}
+\subsubsection[{bem3d\+\_\+element\+\_\+build\+\_\+q2}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+build\+\_\+q2 (
+\begin{DoxyParamCaption}
+\item[{Gts\+Edge $\ast$$\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$$\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__elements_ga5a41eaafa4f26fae1f1112b4dfdc5b4d}
+Generate a second order quadrilateral element, based on the G\+M\+S\+H nine point quad. The shape function for geometry and computation is \doxyref{bem3d\+\_\+shfunc\+\_\+q2}{p.}{group__shapefunc_gaf4cecd331e0d4dfefb60c29f2278a45a}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em e} & array of Gts\+Edge around the outside of the element \\
+\hline
+{\em v} & array of Gts\+Vertex around the outside of the element\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the new element 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+add\+\_\+face(), bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+class(), bem3d\+\_\+element\+\_\+new(), bem3d\+\_\+element\+\_\+set\+\_\+corner(), bem3d\+\_\+element\+\_\+vertex\+\_\+eta, bem3d\+\_\+element\+\_\+vertex\+\_\+xi, and bem3d\+\_\+shfunc\+\_\+q2().
+
+\index{Building elements@{Building elements}!bem3d\+\_\+element\+\_\+build\+\_\+t0@{bem3d\+\_\+element\+\_\+build\+\_\+t0}}
+\index{bem3d\+\_\+element\+\_\+build\+\_\+t0@{bem3d\+\_\+element\+\_\+build\+\_\+t0}!Building elements@{Building elements}}
+\subsubsection[{bem3d\+\_\+element\+\_\+build\+\_\+t0}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+build\+\_\+t0 (
+\begin{DoxyParamCaption}
+\item[{Gts\+Edge $\ast$$\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$$\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__elements_ga36ff2a5e4e7b4c6bfaa4b370f49b21c0}
+Generate a zero order triangular element. The shape function for computation is \doxyref{bem3d\+\_\+shfunc\+\_\+t0}{p.}{group__shapefunc_gaa7fef62285688d7553ded3298588255f} and for the geometry is \doxyref{bem3d\+\_\+shfunc\+\_\+t1}{p.}{group__shapefunc_ga0921fb3aeadff37d40c9eb1bccbea7c0}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em e} & array of Gts\+Edge around the outside of the element \\
+\hline
+{\em v} & array of Gts\+Vertex around the outside of the element\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the new element 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+add\+\_\+face(), bem3d\+\_\+element\+\_\+add\+\_\+node(), bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+class(), bem3d\+\_\+element\+\_\+new(), bem3d\+\_\+element\+\_\+node\+\_\+eta, bem3d\+\_\+element\+\_\+node\+\_\+xi, bem3d\+\_\+element\+\_\+set\+\_\+corner(), bem3d\+\_\+element\+\_\+vertex\+\_\+eta, bem3d\+\_\+element\+\_\+vertex\+\_\+xi, bem3d\+\_\+shfunc\+\_\+t0(), and bem3d\+\_\+shfunc\+\_\+t1().
+
+\index{Building elements@{Building elements}!bem3d\+\_\+element\+\_\+build\+\_\+t1@{bem3d\+\_\+element\+\_\+build\+\_\+t1}}
+\index{bem3d\+\_\+element\+\_\+build\+\_\+t1@{bem3d\+\_\+element\+\_\+build\+\_\+t1}!Building elements@{Building elements}}
+\subsubsection[{bem3d\+\_\+element\+\_\+build\+\_\+t1}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+build\+\_\+t1 (
+\begin{DoxyParamCaption}
+\item[{Gts\+Edge $\ast$$\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$$\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__elements_ga5bb68f1624223cfc73f2cf6403227a1c}
+Generate a first order triangular element. The shape function for geometry and computation is \doxyref{bem3d\+\_\+shfunc\+\_\+t1}{p.}{group__shapefunc_ga0921fb3aeadff37d40c9eb1bccbea7c0}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em e} & array of Gts\+Edge around the outside of the element \\
+\hline
+{\em v} & array of Gts\+Vertex around the outside of the element\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the new \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+add\+\_\+face(), bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+class(), bem3d\+\_\+element\+\_\+new(), bem3d\+\_\+element\+\_\+set\+\_\+corner(), bem3d\+\_\+element\+\_\+vertex\+\_\+eta, bem3d\+\_\+element\+\_\+vertex\+\_\+xi, and bem3d\+\_\+shfunc\+\_\+t1().
+
+\index{Building elements@{Building elements}!bem3d\+\_\+element\+\_\+build\+\_\+t2@{bem3d\+\_\+element\+\_\+build\+\_\+t2}}
+\index{bem3d\+\_\+element\+\_\+build\+\_\+t2@{bem3d\+\_\+element\+\_\+build\+\_\+t2}!Building elements@{Building elements}}
+\subsubsection[{bem3d\+\_\+element\+\_\+build\+\_\+t2}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+build\+\_\+t2 (
+\begin{DoxyParamCaption}
+\item[{Gts\+Edge $\ast$$\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$$\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__elements_ga9feb1d69a9a9c8091c9b97d72564812a}
+Generate a second order triangular element. The shape function for geometry and computation is \doxyref{bem3d\+\_\+shfunc\+\_\+t2}{p.}{group__shapefunc_ga3e1b82c86c45c1c874c84d33dcddc89c}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em e} & array of Gts\+Edge around the outside of the element \\
+\hline
+{\em v} & array of Gts\+Vertex around the outside of the element\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the new element 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+add\+\_\+face(), bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+class(), bem3d\+\_\+element\+\_\+new(), bem3d\+\_\+element\+\_\+set\+\_\+corner(), bem3d\+\_\+element\+\_\+vertex\+\_\+eta, bem3d\+\_\+element\+\_\+vertex\+\_\+xi, and bem3d\+\_\+shfunc\+\_\+t2().
+
+\index{Building elements@{Building elements}!bem3d\+\_\+element\+\_\+build\+\_\+t3@{bem3d\+\_\+element\+\_\+build\+\_\+t3}}
+\index{bem3d\+\_\+element\+\_\+build\+\_\+t3@{bem3d\+\_\+element\+\_\+build\+\_\+t3}!Building elements@{Building elements}}
+\subsubsection[{bem3d\+\_\+element\+\_\+build\+\_\+t3}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+build\+\_\+t3 (
+\begin{DoxyParamCaption}
+\item[{Gts\+Edge $\ast$$\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$$\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__elements_ga0d3d9bc819bb8643592b2d0cb320a620}
+Generate a third order triangular element. The shape function for geometry and computation is \doxyref{bem3d\+\_\+shfunc\+\_\+t3}{p.}{group__shapefunc_gafe1e4ebebf24aa46b2184f5af4c454e6}. If the tenth Gts\+Vertex in {\itshape v} is N\+U\+L\+L, the centre vertex is the centroid of the supplied vertices, otherwise {\itshape v}[9] is used.
+
+
+\begin{DoxyParams}{Parameters}
+{\em e} & array of Gts\+Edge around the outside of the element \\
+\hline
+{\em v} & array of Gts\+Vertex around the outside of the element\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the new element 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+add\+\_\+face(), bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+class(), bem3d\+\_\+element\+\_\+new(), bem3d\+\_\+element\+\_\+set\+\_\+corner(), bem3d\+\_\+element\+\_\+vertex\+\_\+eta, bem3d\+\_\+element\+\_\+vertex\+\_\+xi, and bem3d\+\_\+shfunc\+\_\+t3().
+

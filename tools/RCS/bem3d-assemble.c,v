@@ -1,0 +1,350 @@
+head	1.1;
+access;
+symbols;
+locks
+	ensmjc:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	2009.08.17.15.28.59;	author ensmjc;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/* bem3dassemble.c
+ * 
+ * Copyright (C) 2006, 2009 Michael Carley
+ * 
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /*HAVE_CONFIG_H*/
+
+#include <stdio.h>
+#include <math.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+#include <wmpi.h>
+
+#include "bem3d.h"
+#include "bem3d-private.h"
+
+#include <gsl/gsl_complex.h>
+#include <gsl/gsl_complex_math.h>
+
+static gint equation_func_C(gint i, gint j,
+			    gdouble *G, gdouble *dGdn, 
+			    gint n, gdouble *C)
+{
+  C[n*i] += dGdn[0] ;
+  if ( n != 1 ) C[n*i+1] += dGdn[1] ;
+
+  return 0 ;
+}
+
+static void _assemble_element(BEM3DElement *e, gpointer adata[])
+
+{
+  BEM3DGreensFunc gfunc = adata[1] ; 
+  BEM3DParameters *gdata = adata[2] ;
+  gdouble *a = adata[3] ;
+  gdouble *b = adata[4] ;
+  gint np = *(gint *)adata[5] ;
+  gint nc = *(gint *)adata[6] ;
+  GtsVertex *x = (GtsVertex *)adata[7] ;
+  BEM3DQuadratureRuleFunc qfunc = adata[8] ;
+  gpointer qdata = adata[9] ;
+  static GArray *G = NULL ;
+  static GArray *dGdn = NULL ;
+  gint i, j, k, stride ;
+
+  if ( G == NULL ) {
+    G = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
+    dGdn = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
+  }
+
+  g_array_set_size(G,bem3d_element_node_number(e)*nc) ; 
+  g_array_set_size(dGdn,bem3d_element_node_number(e)*nc) ;
+  bem3d_element_assemble_equations(e, GTS_POINT(x), 
+				   gfunc, gdata,
+				   qfunc, qdata,
+				   G, dGdn) ;
+  stride = nc ;
+  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
+    k = bem3d_element_global_index(e, i) ;
+    for ( j = 0 ; j < stride ; j ++ ) {
+      g_assert(k*stride+j < np*nc) ;
+      b[k*stride+j] += g_array_index(G,gdouble,(stride*i+j)) ;
+      a[k*stride+j] += g_array_index(dGdn,gdouble,(stride*i+j)) ;
+    }
+  }
+
+  return ;
+}
+
+static void _assemble_rows(gint i, GtsVertex *v, gpointer adata[])
+
+{
+  GPtrArray *meshes = adata[0] ;
+  gdouble *a = adata[3] ;
+  gdouble *b = adata[4] ;
+  gint np = *(gint *)adata[5] ;
+  gint nc = *(gint *)adata[6] ;
+  FILE *output = (FILE *)adata[10] ;
+  gint imin = *(gint *)adata[11] ;
+  gint imax = *(gint *)adata[12] ;
+  gdouble *C = (gdouble *)adata[13] ;
+  gint j ;
+
+  if ( (i < imin) || (i > imax ) ) return ;
+
+  for ( j = 0 ; j < nc*np ; j ++ ) a[j] = b[j] = 0.0 ;
+  adata[7] = v ;
+  for ( j = 0 ; j < meshes->len ; j ++ ) {
+    bem3d_mesh_foreach_element(g_ptr_array_index(meshes,j),
+			       (BEM3DElementFunc)_assemble_element, 
+			       adata) ;
+  }
+  
+  for ( j = 0 ; j < nc ; j ++ ) a[i*nc+j] -= C[i*nc+j] ;
+
+  fprintf(output, "%d ", i) ;
+  for ( j = 0 ; j < np*nc ; j ++ ) fprintf(output, " %1.16e", a[j]) ;
+  fprintf(output, "\n") ;
+
+  fprintf(output, "%d ", i) ;
+  for ( j = 0 ; j < np*nc ; j ++ ) fprintf(output, " %1.16e", b[j]) ;
+  fprintf(output, "\n") ;
+
+  fflush(output) ;
+
+  return ;
+}
+
+gint main(gint argc, gchar **argv)
+
+{
+  BEM3DMesh *m ;
+  GPtrArray *meshes, *V ;
+  GtsFile *fp ;
+  GTimer *t ;
+  gint i, np, nc, w ;
+  gchar ch, *ipfile, *opfile, p[32], *progname ;
+  BEM3DGreensFunc gfunc ;
+  BEM3DRadiationFunc rfunc ;
+  BEM3DLookupFunc dgfunc ;
+  BEM3DParameters gdata ;
+  gpointer adata[16] ;
+  gdouble k, M ;
+  gdouble *a, *b, *C ;
+  guint imin, imax ;
+  GLogLevelFlags loglevel ;
+  FILE *input, *output ;
+
+  wmpi_initialize(&argc, &argv) ;
+
+  progname = g_strdup(g_basename(argv[0])) ;
+
+  /*computational geometry*/
+  meshes = g_ptr_array_new() ; V = g_ptr_array_new() ;
+
+  /*default test case is a Laplace equation (k=0)*/
+  rfunc = bem3d_radiation_func_laplace ;
+  gfunc = bem3d_greens_func_laplace ;
+  dgfunc = (BEM3DLookupFunc)bem3d_lookup_func_unit ;
+  k = 0.0 ; M = 0.0 ; w = 1 ;
+  ipfile = opfile = NULL ;
+  output = stdout ;
+  loglevel = G_LOG_LEVEL_MESSAGE ;
+  bem3d_shapefunc_lookup_init() ;
+  sprintf(p, "P%03d:", wmpi_rank()) ;
+  bem3d_logging_init(stderr, p, loglevel, wmpi_shutdown) ;
+  while ( (ch = getopt(argc, argv, "hl:i:k:M:o:")) != EOF ) {
+    switch (ch) {
+    default:
+    case 'h':
+      if ( wmpi_rank() == 0 ) {
+	fprintf(stderr, 
+		"%s: assemble equations for BEM3D calculation\n\n",
+		progname) ;
+	fprintf(stderr, "Usage: %s <options>\n", progname) ;
+	fprintf(stderr, 
+		"Options:\n"
+		"        -h (print this message and exit)\n"
+		"        -i <bem3d input file>\n"
+		"        -k # (wave number for Helmholtz calculation\n"
+/* 		"        -M # (Mach number for convected Helmholtz\n" */
+		"        -o <output file name>\n") ;
+      }
+      wmpi_pause() ;
+      wmpi_shutdown() ;
+      return 0 ;
+      break ;
+    case 'l': 
+      loglevel = 1 << atoi(optarg) ; 
+      break ;
+    case 'i': 
+      ipfile = g_strdup(optarg) ;
+      m = bem3d_mesh_new(bem3d_mesh_class(), gts_face_class(),
+			 gts_edge_class(), gts_vertex_class()) ;
+      input = fopen(ipfile, "r") ;
+      if ( input == NULL ) {
+	if ( wmpi_rank() == 0 ) 
+	  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,
+		"cannot open input file %s\n", ipfile) ;
+	wmpi_shutdown() ;
+	return(1) ;
+      }
+      fp = gts_file_new(input) ;
+      bem3d_mesh_read(m, fp) ;
+      fclose(input) ;
+      g_free(ipfile) ;
+      g_ptr_array_add(meshes, m) ;
+      break ;
+    case 'k': 
+      sscanf(optarg, "%lg", &k) ;
+      /*use Helmholtz equation*/
+      if ( wmpi_rank() == 0 ) 
+	fprintf(stderr, "%s: complex wave equation, k=%f\n", 
+		progname, k) ;
+      gfunc = bem3d_greens_func_helmholtz ;
+      rfunc = bem3d_radiation_func_helmholtz ;
+      dgfunc = (BEM3DLookupFunc)bem3d_lookup_func_unit_c ;
+      w = 2 ;
+      break ;
+    case 'M': 
+      sscanf(optarg, "%lg", &M) ;
+      break ;
+    case 'o': 
+      if ( wmpi_process_number() == 1 ) 
+	opfile = g_strdup(optarg) ; 
+      else
+	opfile = g_strdup_printf("%s-%04d", optarg, wmpi_rank()) ; 
+      break ;
+    }
+  }
+  bem3d_logging_init(stderr, p, loglevel, wmpi_shutdown) ;
+
+  fprintf(stderr, "%s", BEM3D_STARTUP_MESSAGE) ;
+
+  bem3d_parameters_wavenumber(&gdata) = k ;
+  bem3d_parameters_mach_number(&gdata) = M ;
+
+  if ( opfile != NULL ) {
+    output = fopen(opfile, "w") ;
+    g_assert(output != NULL) ;
+  }
+
+  if ( M != 0.0 ) {
+    gfunc = bem3d_greens_func_convected_helmholtz ;
+    w = 2 ;
+  }
+
+  for ( (i = 0), (np = 0) ; i < meshes->len ; i ++ ) {
+    nc = bem3d_mesh_node_number(g_ptr_array_index(meshes,i)) ;
+    if ( wmpi_rank() == 0 )
+      fprintf(stderr, "%s: mesh %d, %d collocation points\n", progname, i, nc) ;
+    np += nc ;
+  }
+  
+  if ( np == 0 ) {
+    if ( wmpi_rank() == 0 ) {
+      fprintf(stderr, "%s: no meshes or empty meshes read: exiting\n", 
+	      progname) ;
+    }
+    wmpi_pause() ;
+    wmpi_shutdown() ;
+    return 0 ;
+  }
+
+  if ( wmpi_rank() == 0 )
+      fprintf(stderr, "%s: mesh collocation points: %d\n", progname, np) ;
+
+  t = g_timer_new() ; g_timer_start(t) ;
+
+  a = (gdouble *)g_malloc(np*w*sizeof(gdouble)) ;
+  b = (gdouble *)g_malloc(np*w*sizeof(gdouble)) ;
+  C = (gdouble *)g_malloc(np*w*sizeof(gdouble)) ;
+
+  wmpi_split_range(0, np, &imin, &imax) ;
+  fprintf(stderr, "%s: P%d: nodes: %d--%d\n", 
+	  progname, wmpi_rank(), imin, imax) ;
+  
+  adata[0] = meshes ;
+  adata[1] = gfunc ; adata[2] = &gdata ;
+  adata[3] = a ; adata[4] = b ;
+  adata[5] = &np ; adata[6] = &w ;
+  if ( gfunc == bem3d_greens_func_laplace ) {
+    adata[8] = bem3d_quadrature_rule_newman ;
+    adata[9] = NULL ;
+/*     for ( i = 0 ; i < meshes->len ; i ++ ) */
+/*       bem3d_mesh_element_moments(g_ptr_array_index(meshes,i), 2) ; */
+  } else {
+    adata[8] = bem3d_quadrature_rule_default ;
+    adata[9] = bem3d_quadrature_selector_default() ;
+  }
+  adata[10] = output ;
+  adata[11] = &imin ; adata[12] = &imax ; 
+  adata[13] = C ;
+
+  fprintf(stderr, "%s: starting assembly: t=%f\n", 
+	  progname, g_timer_elapsed(t, NULL)) ;
+
+  bem3d_parameters_wavenumber(&gdata) = 0.0 ;
+  for ( i = 0 ; i < np*w ; i ++ ) C[i] = 0.0 ;
+  for ( i = 0 ; i < np ; i ++ ) C[i*w] = 1.0 ;
+  for ( i = 0 ; i < meshes->len ; i ++ ) {
+    bem3d_mesh_quad_dgdn(g_ptr_array_index(meshes,i),
+			 gfunc, &gdata, 
+			 adata[8], adata[9],
+/* 			 NULL, NULL, */
+			 dgfunc, NULL, 
+			 rfunc, NULL,
+			 (BEM3DEquationFunc)equation_func_C, C) ;
+  }
+  bem3d_parameters_wavenumber(&gdata) = k ;
+
+  if ( wmpi_rank() == 0 ) fprintf(output, "%d %d\n", np, w) ;
+
+  for ( i = 0 ; i < meshes->len ; i ++ )
+    bem3d_mesh_foreach_node(g_ptr_array_index(meshes,i),
+			    (BEM3DNodeFunc)_assemble_rows, adata) ;
+    
+  if ( output != stdout ) fclose(output) ;
+
+  fprintf(stderr, "%s: assembly completed: t=%f\n", 
+	  progname, g_timer_elapsed(t, NULL)) ;
+
+  g_ptr_array_free(meshes, FALSE) ; g_free(progname) ;
+
+  wmpi_pause() ;
+  wmpi_shutdown() ;
+
+  return 0 ;
+}
+@

@@ -1,0 +1,32 @@
+B\+E\+M3\+D is a library and collection of associated tools for three-\/dimensional boundary element calculations.\section{Getting started}\label{index_start}
+To solve a basic problem for acoustic scattering from a sphere, start with\+: \begin{DoxyVerb} bem3d-sphere -e 1 -r 3 > sphere.bem
+ bem3d-assemble -k 5.0 -i sphere.bem > sphere.mtx
+ bem3d-source -k 5.0 -i sphere.bem -p > plane.dat
+ bem3d-boundary -i sphere.bem -d plane.dat -o bndry.dat
+ bem3d-solve -d bndry.dat -m sphere.mtx -o sphere.dat \end{DoxyVerb}
+
+
+These commands generate a spherical surface mesh, assemble the corresponding B\+E\+M matrices for the Helmholtz equation with wavenumber $k=5.0$, impose a plane wave boundary condition and solve for the surface potential. To compute the field radiated by the surface potential\+: \begin{DoxyVerb} bem3d-plane -i32 -j32 -v-3,-3,0 -v3,-3,0 -v3,3,0 -v-3,3,0 > plane.gts
+ gts2bem3d < plane.gts > plane.bem
+ bem3d-field -k 5.0 -i sphere.bem -d sphere.dat -s plane.bem > plane.dat \end{DoxyVerb}
+ which generates a G\+T\+S file for a plane surface spanning the points $(-3,-3,0)$, $(3,-3,0)$, $(3,3,0)$ and $(-3,3,0)$, converts it to B\+E\+M elements and computes the radiated field on the surface.
+
+To visualize the results, the data can be output as G\+M\+S\+H .pos files using the geometry and result files\+: \begin{DoxyVerb} bem3d2pos -d sphere.dat -i sphere.bem -o sphere.pos
+ bem3d2pos -d plane.dat -i plane.bem -o plane.pos 
+ gmsh plane.pos sphere.pos \end{DoxyVerb}
+
+
+\section{What B\+E\+M3\+D does}\label{index_what}
+A number of different codes are built on the B\+E\+M3\+D library. The main capabilities are in scattering and potential flow problems (i.\+e. the Helmholtz and Laplace equations) with some of these also having accelerated or fast multipole solvers. Some of these features are experimental so they are liable to change and you should decide for yourself whether their performance is adequate for your purposes. The meshing program of choice is {\tt gmsh} and there are a number of programs for converting to and from its data formats.
+
+\begin{DoxyItemize}
+\item Aerodynamics using the potential code \doxyref{bem3d-\/aero}{p.}{bem3daero}\end{DoxyItemize}
+\section{References}\label{index_references}
+The following papers and links have been used in some way in developing B\+E\+M3\+D\+:
+\begin{DoxyEnumerate}
+\item {\tt http\+://huizen.\+dto.\+tudelft.\+nl/de\+Bruijn/programs/suna02.\+htm,} for area coordinate calculations on triangles.
+\item Jin, S., Lewis, R. and West, D., `\+A comparison of algorithms for vertex normal computation\textquotesingle{}, The Visual Computer, 21(1-\/2)\+:71--82, {\tt http\+://dx.\+doi.\+org/10.\+1007/s00371-\/004-\/0271-\/1}
+\item Xu, G., `\+Convergent discrete Laplace-\/\+Beltrami operators over triangular surfaces\textquotesingle{}, Proceedings of the Geometric Modeling and Processing 2004 (G\+M\+P 04), {\tt http\+://dx.\+doi.\+org/10.\+1109/\+G\+M\+A\+P.\+2004.\+1290041}
+\item {\tt http\+://www.\+csit.\+fsu.\+edu/$\sim$burkardt/m\+\_\+src/fempack/fempack.\+html} {\tt http\+://orion.\+math.\+iastate.\+edu/burkardt/f\+\_\+src/fempack/fempack.\+htm} {\tt http\+://www.\+colorado.\+edu/engineering/\+C\+A\+S/courses.\+d/\+I\+F\+E\+M.\+d/} for shape function calculations.
+\item Tai, A, `\+Boundary element methods for flow over deforming bodies\textquotesingle{}, Ph\+D thesis, University of Bath, 2010. 
+\end{DoxyEnumerate}

@@ -1,0 +1,108 @@
+make -f hfmm3dpart.make -j4
+make[1]: Entering directory `/home/ensmjc/Codes/External/Numerical/fmmlib3d-1.2/examples'
+f77 -c   hfmm3dpart_driver.f
+f77 -c   ../src/hfmm3dpart.f
+f77 -c   ../src/hfmm3drouts.f
+f77 -c   ../src/d3tstrcr.f
+f77 -c   ../src/d3mtreeplot.f
+f77 -c   ../src/prini.f
+f77 -c   ../src/h3dterms.f
+f77 -c   ../src/helmrouts3d.f
+f77 -c   ../src/h3dtrans.f
+f77 -c   ../src/projections.f
+f77 -c   ../src/cdjseval3d.f
+f77 -c   ../src/prinm.f
+f77 -c   ../src/yrecursion.f
+f77 -c   ../src/legeexps.f
+f77 -c   ../src/rotviarecur3.f
+f77 -c   ../src/rotproj.f
+f77 -c   ../src/dfft.f
+f77 -c   hkrand.f
+f77 -c   dlaran.f
+rm -f int2         
+f77 -o int2           hfmm3dpart_driver.o hfmm3dpart.o hfmm3drouts.o d3tstrcr.o d3mtreeplot.o prini.o h3dterms.o helmrouts3d.o h3dtrans.o projections.o cdjseval3d.o prinm.o yrecursion.o legeexps.o rotviarecur3.o rotproj.o dfft.o hkrand.o dlaran.o 
+./int2         
+ ntarget=
+   10000
+ iprec=
+       1
+ epsfmm=
+  0.50000E-03
+ nbox=
+     160
+ scale=
+  0.10000E+01  0.99980E+00  0.49990E+00  0.24995E+00  0.12498E+00  0.62488E-01
+  lused7 is 
+  290006
+ in hfmm3dpart, bsize(0) zk/2 pi=
+  0.31825E+00
+ zk=
+  0.10000E+01  0.10000E+00
+ bsize=
+  0.19996E+01  0.99980E+00  0.49990E+00  0.24995E+00  0.12498E+00  0.62488E-01
+ nterms=
+      12      12      12      11      11      11
+ nmax=
+      12
+ finished reordering=
+       0
+ ier=
+       0
+ nboxes=
+     429
+ nlev=
+       5
+ nboxes=
+     429
+ lused7=
+  291562
+  lmptot is 
+  481653
+  lused7 is 
+  481654
+ === STEP 1 (form mp) ====
+ === STEP 2 (form lo) ====
+ === STEPS 3,4,5 ====
+ === STEP 6 (eval mp) ====
+ === STEP 7 (eval lo) ====
+ === STEP 8 (direct) =====
+ timeinfo=
+  0.14498E+00  0.96185E+00  0.39994E-01  0.74289E+00  0.11498E+00  0.50092E+00
+  0.14298E+00  0.37584E+01
+ nboxes=
+     429
+ nsource=
+   10000
+ ntarget=
+   10000
+ lwlists=
+ *******
+ lused total =
+  481654
+ memory / point = 
+  0.48165E+02
+ nsource=
+   10000
+ ntarget=
+   10000
+ after fmm, time (sec)=
+  0.64300E+01
+ after fmm, speed (points+targets/sec)=
+  0.31104E+04
+ directly, estimated time (sec)=
+  0.37294E+02
+ directly, estimated speed (points/sec)=
+  0.26814E+03
+ relative L2 error in potential=
+  0.68709E-06
+ relative L2 error in field=
+  0.28455E-07
+ directly, estimated time (sec)=
+  0.37894E+02
+ directly, estimated speed (targets/sec)=
+  0.26389E+03
+ relative L2 error in target potential=
+  0.42849E-05
+ relative L2 error in target field=
+  0.47311E-04
+make[1]: Leaving directory `/home/ensmjc/Codes/External/Numerical/fmmlib3d-1.2/examples'

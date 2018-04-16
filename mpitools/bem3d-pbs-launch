@@ -1,0 +1,80 @@
+#PBS -k oe
+#PBS -l nodes=1:ppn=8,walltime=01:00:00
+#PBS -m abe
+#!/bin/sh
+
+progname=$0
+
+( set -u; : $RUNDIR ) 2> /dev/null ;
+op=$?
+if [[ ${op} != 0 ]] ; then 
+    echo Error RUNDIR undefined
+    exit ;
+fi
+
+( set -u; : $APPLICATION ) 2> /dev/null ;
+op=$?
+if [[ ${op} != 0 ]] ; then 
+    echo Error APPLICATION undefined
+    exit ;
+fi
+
+# Extra flags for mpich:
+EXTRAMPI=""
+
+# Error trapping for unset options
+if [[ ${RUNDIR} == "" ]] ; then
+  echo Unknown RUNDIR
+  exit ;
+fi
+
+if [[ ${RUNFLAGS} == "" ]] ; then
+  echo Unknown RUNFLAGS
+  exit ;
+fi
+
+tmpfile=`mktemp ${RUNDIR}/${JOBNAME}.XXXXXX`
+mfile=`mktemp ${RUNDIR}/mfile-${JOBNAME}.XXXXXX`
+lockfile=.lock-bem3d-pbs-run-${JOBNAME}
+
+# If you need to load any modules or otherwise set up your
+# environment, do it here. The lines below work for the system I use,
+# but will almost certainly not work on yours or will not be what you
+# want
+
+module purge
+module load shared
+module load ofed/1.4/base/64/1.4 ofed/1.4/gcc/mvapich/1.1.0
+
+##############################################################
+#        Below this nothing should have to be changed        #
+##############################################################
+
+echo Running from MPI $MPI_HOME
+echo 
+echo Changing to $RUNDIR
+cd $RUNDIR
+
+if [ -a ${lockfile} ] ; then
+  echo Job $JOBNAME locked by `cat ${lockfile}`
+  exit ;
+fi
+
+echo $USER > ${lockfile}
+
+nodes=(`cat $PBS_NODEFILE`)
+nnodes=${#nodes[*]}
+
+echo Nodes: ${nodes[*]}
+
+cat $PBS_NODEFILE > ${mfile}
+
+echo "Running: mpirun  -np ${nnodes} -machinefile $mfile \
+	$EXTRAMPI $APPLICATION $RUNFLAGS"
+echo "Starting job..."
+time mpirun  -np ${nnodes} -machinefile $mfile $EXTRAMPI \
+    $APPLICATION $RUNFLAGS
+
+rm ${tmpfile}
+rm -f ${mfile}
+rm -f ${lockfile}

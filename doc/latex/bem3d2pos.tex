@@ -1,0 +1,11 @@
+The G\+M\+S\+H pos format is deprecated, since visualization is now done with mesh files, but it is still sufficient for visualization of data from B\+E\+M3\+D calculations.
+
+The most basic invocation of {\ttfamily bem3d2pos} is \begin{DoxyVerb}bem3d2pos -i input.bem -o output.pos \end{DoxyVerb}
+ which generates a visualization file {\ttfamily output.\+pos} which can be viewed with \begin{DoxyVerb}gmsh output.pos \end{DoxyVerb}
+
+
+An extra option allows you to visualize the surface with solution information added\+: \begin{DoxyVerb}bem3d2pos -i input.bem -d input.dat -f 4 -o output.pos \end{DoxyVerb}
+ will generate a file {\ttfamily output.\+pos} which contains the geometry of {\ttfamily input.\+bem} with the nodes coloured according to the value of field 4 of the data block in {\ttfamily input.\+dat} (the field option defaults to 0).
+
+The edge data for the input file can also be visualized, for example, to select the trailing edge in a \doxyref{bem3d-\/aero}{p.}{bem3daero} calculation\+: \begin{DoxyVerb}bem3d2pos -i input.bem -e input-0.edg -e input-1.edg -o output.pos \end{DoxyVerb}
+ generates a .pos file of {\ttfamily input.\+bem} with additional entities for the edge files {\ttfamily input-\/0.\+edg} and {\ttfamily input-\/1.\+edg}. 

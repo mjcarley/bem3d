@@ -1,0 +1,77 @@
+head	1.1;
+access;
+symbols;
+locks
+	ensmjc:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/* fmm.c
+ * 
+ * Copyright (C) 2017 Michael Carley
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /*HAVE_CONFIG_H*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+#include <glib.h>
+#include <gts.h>
+
+#include "bem3d.h"
+#include "bem3d-private.h"
+#include "fmmlib3d_1_2.h"
+
+#ifdef HAVE_FMMLIB3D_1_2
+
+typedef struct {gdouble r, i ;} _fmm_c ;
+
+void hfmm3dparttarg_(gint *ier, gint *iprec, _fmm_c *z,
+		     gint *nsource, gdouble *source,
+		     gint *ifcharge, gdouble *charge,
+		     gint *ifdipole, gdouble *dipstr, gdouble *dipvec,
+		     gint *ifpot, gdouble *pot, 
+		     gint *iffld, gdouble *fld,
+		     gint *ntarget, gdouble *target,
+		     gint *ifpottarg, gdouble *pottarg,
+		     gint *iffldtarg, gdouble *fldtarg) ;
+
+void prini_(gint *ip1, gint *iq1) ;
+
+#else /*HAVE_FMMLIB3D_1_2*/
+#endif /*HAVE_FMMLIB3D_1_2*/
+@

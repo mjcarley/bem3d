@@ -1,0 +1,611 @@
+head	1.4;
+access;
+symbols;
+locks
+	ensmjc:1.4; strict;
+comment	@ * @;
+
+
+1.4
+date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2009.08.17.15.28.35;	author ensmjc;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.01.20.13.21.12;	author ensmjc;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2008.10.10.10.35.44;	author ensmjc;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@/* qselect.c
+ * 
+ * Copyright (C) 2006 Michael Carley
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/**
+ * @@defgroup qselect Quadrature selection
+ *
+ * BEM3D has a built-in method for selecting quadrature rules (which
+ * can be overridden using a \link config configuration file \endlink.
+ * The selection is performed using a parameter \f$\sigma\f$,
+ * calculated from geometrical properties of the element, and of the
+ * point. For an element, define
+ * \f$\mathbf{c}=\overline{\mathbf{x}_{i}}\f$, the mean of the element
+ * vertices. Then \f$R_{s}\f$ is defined as the maximum value of
+ * \f$\sqrt{2}|\mathbf{c}-\mathbf{x}_{i}|\f$, so that a sphere
+ * containing the element is defined. The point-element distance is
+ * defined as \f$R_{p}=|\mathbf{c}-\mathbf{x}|\f$. For field points
+ * which coincide with an element vertex \f$\sigma=0\f$. For
+ * \f$R_{p}<R_{s}\f$, \f$\sigma=z_{n}/R_{s}\f$ where \f$z_{n}\f$ is
+ * the approximate normal distance from the field point to the plane
+ * of the element. For \f$R_{p}\geq R_{s}\f$,
+ * \f$\sigma=R_{p}/R_{s}\f$.
+ *
+ * @@{
+ * 
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /*HAVE_CONFIG_H*/
+
+#include <stdio.h>
+#include <math.h>
+
+#include <gts.h>
+#include <glib.h>
+
+#include "bem3d.h"
+#include "bem3d-private.h"
+
+/** 
+ * Allocate a new BEM3DQuadratureSelector
+ * 
+ * @@param n number of parameters to handle
+ * 
+ * @@return pointer to new selector
+ */
+
+BEM3DQuadratureSelector *bem3d_quadrature_selector_new(void)
+
+{
+  BEM3DQuadratureSelector *s ;
+  
+  g_debug("%s: ", __FUNCTION__) ;
+
+  s = (BEM3DQuadratureSelector *)
+    g_malloc(sizeof(BEM3DQuadratureSelector)) ;
+  
+  s->f = g_ptr_array_new() ;
+  s->sigma = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
+  s->NM = g_array_new(FALSE, TRUE, sizeof(gint)) ;
+
+  return s ;
+}
+
+/** 
+ * Clear a quadrature selection rule
+ * 
+ * @@param s quadrature selector
+ * 
+ * @@return 0 on success
+ */
+
+gint bem3d_quadrature_selector_clear(BEM3DQuadratureSelector *s)
+
+{
+  g_return_val_if_fail(s != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  g_debug("%s: ", __FUNCTION__) ;
+
+  g_ptr_array_set_size(s->f, 0) ;
+  g_array_set_size(s->sigma, 0) ;
+  g_array_set_size(s->NM, 0) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Add a new quadrature to a selection rule
+ * 
+ * @@param s ::BEM3DQuadratureSelector;
+ * @@param f ::BEM3DQuadratureRuleFunc to add.
+ * @@param p parameter, the quadrature will be selected if
+ * bem3d_quadrature_parameter returns a value greater than p
+ * @@param N number of points in angle in polar rules
+ * @@param M number of points in radius in polar rules
+ *
+ * \a N and \a M can be used for different purposes in other rules,
+ * but will always be passed as an array of int of length 2, [N M]
+ * 
+ * @@return 0 on success
+ */
+
+gint bem3d_quadrature_selector_add(BEM3DQuadratureSelector *s,
+				   BEM3DQuadratureRuleFunc f,
+				   gdouble p, 
+				   gint N, gint M)
+
+{
+  g_debug("%s: ", __FUNCTION__) ;
+
+  g_return_val_if_fail(s != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(p >= 0.0, BEM3D_ARGUMENT_OUT_OF_RANGE) ;
+
+  g_ptr_array_add(s->f, f) ;
+  g_array_append_val(s->sigma, p) ;
+  g_array_append_val(s->NM, N) ;
+  g_array_append_val(s->NM, M) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Select a quadrature for a given parameter
+ * 
+ * @@param s BEM3DQuadratureSelector
+ * @@param p quadrature parameter, returned by bem3d_quadrature_parameter
+ * @@param f BEM3DQuadratureRuleFunc to call
+ * @@param data to pass to f
+ * 
+ * @@return 
+ */
+
+gint bem3d_quadrature_select(BEM3DQuadratureSelector *s,
+			     gdouble p,
+			     BEM3DQuadratureRuleFunc *f,
+			     gpointer *data)
+{
+  gint i ;
+  
+  g_debug("%s: s=%p; p=%lg; f=%p; data=%p", 
+	  __FUNCTION__, s, p, f, data) ;
+
+  g_return_val_if_fail(s != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(p >= 0.0, BEM3D_ARGUMENT_OUT_OF_RANGE) ;
+
+  for ( i = 0 ; 
+	(i < bem3d_quadrature_selector_length(s)-1) &&
+	  bem3d_quadrature_selector_sigma(s,i) < p ;
+	i++ ) ;
+
+  *f = bem3d_quadrature_selector_rule(s,i) ;
+  *data = &(bem3d_quadrature_selector_data(s,i)) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Default quadrature selection rule which is reasonably good for most
+ * problems. For points close to, or on, an element, polar or Hayami's
+ * PART quadrature is used, switching to a symmetric high-order rule
+ * further away.
+ * 
+ * @@return pointer to quadrature selector 
+ */
+
+BEM3DQuadratureSelector *bem3d_quadrature_selector_default()
+
+{
+  BEM3DQuadratureSelector *s = NULL ;
+
+  g_debug("%s: ", __FUNCTION__) ;
+
+  s = bem3d_quadrature_selector_new() ;
+  bem3d_quadrature_selector_add(s, bem3d_quadrature_rule_polar, 0.0, 64, 64) ;
+  bem3d_quadrature_selector_add(s, bem3d_quadrature_rule_polar, 0.125, 32, 32) ;
+  bem3d_quadrature_selector_add(s, bem3d_quadrature_rule_polar, 0.25, 16, 16) ;
+  bem3d_quadrature_selector_add(s, bem3d_quadrature_rule_polar, 0.5, 16, 16) ;
+  bem3d_quadrature_selector_add(s, bem3d_quadrature_rule_wx, 1.0, 54, 0) ;
+  bem3d_quadrature_selector_add(s, bem3d_quadrature_rule_wx, 2.0, 25, 0) ;
+  /* bem3d_quadrature_selector_add(s, bem3d_quadrature_rule_wx, 4.0, 7, 0) ; */
+  /* bem3d_quadrature_selector_add(s, bem3d_quadrature_rule_gauss, 8.0, 1, 0) ; */
+
+  return s ;
+}
+
+/**
+ * @@}
+ * 
+ */
+@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@d22 17
+d64 1
+a64 1
+BEM3DQuadratureSelector *bem3d_quadrature_selector_new(gint n)
+a70 2
+  g_return_val_if_fail(n > 0, NULL) ;
+
+d73 4
+a76 5
+  s->nmax = n ; s->n = 0 ;
+  s->f = (BEM3DQuadratureRuleFunc *)
+    g_malloc(n*sizeof(BEM3DQuadratureRuleFunc)) ;
+  s->p = (gdouble *)g_malloc(n*sizeof(gdouble)) ;
+  s->data = (gpointer *)g_malloc(n*sizeof(gpointer)) ;
+d96 3
+a98 1
+  s->n = 0 ;
+d110 5
+a114 1
+ * @@param data data to be passed to f if quadrature is selected
+d121 2
+a122 1
+				   gdouble p, gpointer data)
+d131 4
+a134 4
+  g_assert(s->n < s->nmax) ;
+  
+  s->f[s->n] = f ; s->p[s->n] = p ; s->data[s->n] = data ;
+  s->n ++ ;
+d164 7
+a170 2
+  for ( i = 0 ; (i < s->n-1) && (s->p[i]<p) ; i ++ ) ;
+  *f = s->f[i] ; *data = s->data[i] ;
+d187 1
+a187 6
+  static BEM3DQuadratureSelector *s = NULL ;
+/*   static gint npts[] = {4, 4, 2, 2, 85, 25, 7, 3, 1} ; */
+/*   static gint npts[] = {4, 4, 2, 2, 7, 3, 1} ; */
+  static gint npts[] = {32, 32, 16, 16, 8, 8, 85, 25, 3, 1} ;
+  BEM3DQuadratureRuleFunc rule0, rule1, rule2, rule3 ;
+  gint i ;
+d191 9
+a199 86
+  rule0 = bem3d_quadrature_rule_polar ;
+/*   rule3 = bem3d_quadrature_rule_kw ; */
+  rule3 = bem3d_quadrature_rule_hayami ;
+  rule1 = bem3d_quadrature_rule_wx ;
+  rule2 = bem3d_quadrature_rule_gauss ;
+  if ( s == NULL ) {
+    i = 0 ;
+    s = bem3d_quadrature_selector_new(16) ;
+    bem3d_quadrature_selector_add(s, rule0, 0.0, &(npts[i])) ;
+    i += 2 ;
+    bem3d_quadrature_selector_add(s, rule3, 0.25, &(npts[i])) ;
+    i += 2 ;
+/*     bem3d_quadrature_selector_add(s, rule0, 0.05, &(npts[i])) ; */
+/*     i += 2 ; */
+/*     bem3d_quadrature_selector_add(s, rule1, 0.0, &(npts[i])) ; */
+/*     i += 1 ; */
+    bem3d_quadrature_selector_add(s, rule3, 0.5, &(npts[i])) ;
+    i += 2 ;
+    bem3d_quadrature_selector_add(s, rule1, 1.0, &(npts[i])) ;
+    i += 1 ;
+/*     bem3d_quadrature_selector_add(s, rule1, 2.0, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule1, 0.05, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule2, 0.25, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule2, 0.5, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule1, 0.5, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule2, 4.0, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule2, 4.0, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule2, 8.0, &(npts[i])) ; */
+/*     i += 1 ; */
+  }
+
+  return s ;
+}
+
+/** 
+ * Default quadrature selection rule for hypersingular problems. For
+ * points close to, or on, an element, polar quadrature is used,
+ * switching to a symmetric high-order rule further away.
+ * 
+ * @@return pointer to quadrature selector 
+ */
+
+BEM3DQuadratureSelector *bem3d_quadrature_selector_hypersingular_default()
+
+{
+  static BEM3DQuadratureSelector *s = NULL ;
+/*   static gint npts[] = {64, 64, 32, 32, 16, 16, 175, 126, 85, 25, 7} ; */
+  static gint npts[] = {64, 64, 64, 64, 64, 64, 32, 32, 175, 85, 25, 7} ;
+  BEM3DQuadratureRuleFunc rule0, rule1, rule2 ;
+  gint i ;
+
+  rule0 = bem3d_quadrature_rule_polar_hs ;
+  rule1 = bem3d_quadrature_rule_hayami ;
+  rule2 = bem3d_quadrature_rule_wx ;
+  if ( s == NULL ) {
+    i = 0 ;
+    s = bem3d_quadrature_selector_new(16) ;
+    bem3d_quadrature_selector_add(s, rule0, 0.0, &(npts[i])) ;
+    i += 2 ;
+    bem3d_quadrature_selector_add(s, rule1, 0.1, &(npts[i])) ;
+    i += 2 ;
+    bem3d_quadrature_selector_add(s, rule1, 0.3, &(npts[i])) ;
+    i += 2 ;
+    bem3d_quadrature_selector_add(s, rule1, 1.0, &(npts[i])) ;
+    i += 2 ;
+/*     bem3d_quadrature_selector_add(s, rule1, 1.5, &(npts[i])) ; */
+/*     i += 2 ; */
+    bem3d_quadrature_selector_add(s, rule2, 2.25, &(npts[i])) ;
+    i += 1 ;
+    bem3d_quadrature_selector_add(s, rule2, 2.5, &(npts[i])) ;
+    i += 1 ;
+/*     bem3d_quadrature_selector_add(s, rule2, 3.0, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule2, 4.0, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule1, 1.0, &(npts[i])) ; */
+/*     i += 1 ; */
+/*     bem3d_quadrature_selector_add(s, rule1, 2.0, &(npts[i])) ; */
+  }
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d54 2
+a55 1
+  g_assert(n > 0) ;
+d78 2
+d100 2
+a101 2
+				 BEM3DQuadratureRuleFunc f,
+				 gdouble p, gpointer data)
+d106 4
+d136 6
+a141 1
+  g_debug("%s: ", __FUNCTION__) ;
+d151 3
+a153 2
+ * problems. For points close to, or on, an element, polar quadrature
+ * is used, switching to a symmetric high-order rule further away.
+d162 4
+a165 2
+  static gint npts[] = {32, 32, 16, 16, 85, 25, 7, 3, 1} ;
+  BEM3DQuadratureRuleFunc rule0, rule1, rule2 ;
+d171 2
+d180 1
+a180 1
+    bem3d_quadrature_selector_add(s, rule0, 0.125, &(npts[i])) ;
+d186 3
+a188 1
+    bem3d_quadrature_selector_add(s, rule1, 0.25, &(npts[i])) ;
+d190 2
+d198 8
+a205 8
+    bem3d_quadrature_selector_add(s, rule1, 0.5, &(npts[i])) ;
+    i += 1 ;
+    bem3d_quadrature_selector_add(s, rule1, 2.0, &(npts[i])) ;
+    i += 1 ;
+    bem3d_quadrature_selector_add(s, rule2, 4.0, &(npts[i])) ;
+    i += 1 ;
+    bem3d_quadrature_selector_add(s, rule2, 8.0, &(npts[i])) ;
+    i += 1 ;
+a259 14
+
+gint bem3d_quadrature_selector_shift(BEM3DQuadratureSelector *s, gint n)
+
+{
+  gint i ;
+  gdouble f ;
+
+  for ( (f = 1.0), (i = 0) ; i < n ; (i ++), (f *= 0.5)) ;
+
+  for ( i = 0 ; i < s->n ; i ++ ) s->p[i] *= f ;
+
+  return BEM3D_SUCCESS ;
+}
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d26 3
+d36 2
+a37 2
+#include "bem.h"
+#include "bem-private.h"
+d40 1
+a40 1
+ * Allocate a new BEMQuadratureSelector
+d47 1
+a47 1
+BEMQuadratureSelector *bem_quadrature_selector_new(gint n)
+d50 1
+a50 1
+  BEMQuadratureSelector *s ;
+d52 2
+d55 2
+a56 2
+  s = (BEMQuadratureSelector *)
+    g_malloc(sizeof(BEMQuadratureSelector)) ;
+d58 2
+a59 2
+  s->f = (BEMQuadratureRuleFunc *)
+    g_malloc(n*sizeof(BEMQuadratureRuleFunc)) ;
+d74 1
+a74 1
+gint bem_quadrature_selector_clear(BEMQuadratureSelector *s)
+d77 2
+d81 1
+a81 1
+  return BEM_SUCCESS ;
+d87 2
+a88 2
+ * @@param s ::BEMQuadratureSelector;
+ * @@param f ::BEMQuadratureRuleFunc to add.
+d90 1
+a90 1
+ * bem_quadrature_parameter returns a value greater than p
+d96 2
+a97 2
+gint bem_quadrature_selector_add(BEMQuadratureSelector *s,
+				 BEMQuadratureRuleFunc f,
+d101 2
+d108 1
+a108 1
+  return BEM_SUCCESS ;
+d114 3
+a116 3
+ * @@param s BEMQuadratureSelector
+ * @@param p quadrature parameter, returned by bem_quadrature_parameter
+ * @@param f BEMQuadratureRuleFunc to call
+d122 4
+a125 4
+gint bem_quadrature_select(BEMQuadratureSelector *s,
+			   gdouble p,
+			   BEMQuadratureRuleFunc *f,
+			   gpointer *data)
+d129 2
+d134 1
+a134 1
+  return BEM_SUCCESS ;
+d145 1
+a145 1
+BEMQuadratureSelector *bem_quadrature_selector_default()
+d148 3
+a150 7
+  static BEMQuadratureSelector *s = NULL ;
+/*   static gint npts[] = {64, 64, 32, 32, 16, 16, 175, 126, 85, 25, 7} ; */
+/*   static gint npts[] = {16, 16, 8, 8, 4, 4, 25, 3, 1} ; */
+/*   static gint npts[] = {2, 2, 1, 1, 1, 1, 7, 3, 1} ; */
+/*   static gint npts[] = {85, 54, 25, 3, 1} ; */
+  static gint npts[] = {4, 4, 2, 2, 1, 1, 7, 3, 1} ;
+  BEMQuadratureRuleFunc rule0, rule1, rule2 ;
+d153 5
+a157 3
+  rule0 = bem_quadrature_rule_polar ;
+  rule1 = bem_quadrature_rule_wx ;
+  rule2 = bem_quadrature_rule_gauss ;
+d160 2
+a161 2
+    s = bem_quadrature_selector_new(16) ;
+    bem_quadrature_selector_add(s, rule0, 0.0, &(npts[i])) ;
+d163 1
+a163 1
+    bem_quadrature_selector_add(s, rule0, 0.025, &(npts[i])) ;
+d165 3
+a167 3
+    bem_quadrature_selector_add(s, rule0, 0.05, &(npts[i])) ;
+    i += 2 ;
+/*     bem_quadrature_selector_add(s, rule1, 0.0, &(npts[i])) ; */
+d169 3
+a171 1
+/*     bem_quadrature_selector_add(s, rule1, 0.025, &(npts[i])) ; */
+d173 1
+a173 1
+/*     bem_quadrature_selector_add(s, rule1, 0.05, &(npts[i])) ; */
+d175 1
+a175 1
+/*     bem_quadrature_selector_add(s, rule2, 0.25, &(npts[i])) ; */
+d177 7
+a183 3
+/*     bem_quadrature_selector_add(s, rule2, 0.5, &(npts[i])) ; */
+/*     i += 1 ; */
+    bem_quadrature_selector_add(s, rule1, 1.0, &(npts[i])) ;
+a184 1
+    bem_quadrature_selector_add(s, rule2, 2.0, &(npts[i])) ;
+d198 1
+a198 1
+BEMQuadratureSelector *bem_quadrature_selector_hypersingular_default()
+d201 1
+a201 1
+  static BEMQuadratureSelector *s = NULL ;
+d204 1
+a204 1
+  BEMQuadratureRuleFunc rule0, rule1, rule2 ;
+d207 3
+a209 3
+  rule0 = bem_quadrature_rule_polar_hs ;
+  rule1 = bem_quadrature_rule_hayami ;
+  rule2 = bem_quadrature_rule_wx ;
+d212 2
+a213 2
+    s = bem_quadrature_selector_new(16) ;
+    bem_quadrature_selector_add(s, rule0, 0.0, &(npts[i])) ;
+d215 1
+a215 1
+    bem_quadrature_selector_add(s, rule1, 0.1, &(npts[i])) ;
+d217 1
+a217 1
+    bem_quadrature_selector_add(s, rule1, 0.3, &(npts[i])) ;
+d219 1
+a219 1
+    bem_quadrature_selector_add(s, rule1, 1.0, &(npts[i])) ;
+d221 1
+a221 1
+/*     bem_quadrature_selector_add(s, rule1, 1.5, &(npts[i])) ; */
+d223 1
+a223 1
+    bem_quadrature_selector_add(s, rule2, 2.25, &(npts[i])) ;
+d225 1
+a225 1
+    bem_quadrature_selector_add(s, rule2, 2.5, &(npts[i])) ;
+d227 1
+a227 1
+/*     bem_quadrature_selector_add(s, rule2, 3.0, &(npts[i])) ; */
+d229 1
+a229 1
+/*     bem_quadrature_selector_add(s, rule2, 4.0, &(npts[i])) ; */
+d231 1
+a231 1
+/*     bem_quadrature_selector_add(s, rule1, 1.0, &(npts[i])) ; */
+d233 1
+a233 1
+/*     bem_quadrature_selector_add(s, rule1, 2.0, &(npts[i])) ; */
+d240 1
+a240 1
+gint bem_quadrature_selector_shift(BEMQuadratureSelector *s, gint n)
+d250 1
+a250 1
+  return BEM_SUCCESS ;
+@

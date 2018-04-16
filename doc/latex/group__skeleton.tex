@@ -1,0 +1,88 @@
+\section{Mesh skeletons}
+\label{group__skeleton}\index{Mesh skeletons@{Mesh skeletons}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$ {\bf bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, gint order\+\_\+max)
+\item 
+gint {\bf bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init} ({\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$s, {\bf B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, {\bf B\+E\+M3\+D\+Average} anorm)
+\item 
+gint {\bf bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write} ({\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$s, F\+I\+L\+E $\ast$f)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+B\+E\+M3\+D skeletons are representations of meshes as arrays of point sources, mainly intended for use in interfacing to third-\/party libraries such as Fast Multipole Methods which take input as a set of elementary sources. 
+
+\subsection{Function Documentation}
+\index{Mesh skeletons@{Mesh skeletons}!bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init}}
+\index{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init}!Mesh skeletons@{Mesh skeletons}}
+\subsubsection[{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{s, }
+\item[{{\bf B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q, }
+\item[{{\bf B\+E\+M3\+D\+Average}}]{anorm}
+\end{DoxyParamCaption}
+)}\label{group__skeleton_gaccd4b3b43d662fa781d77fd3f89e9b71}
+Initialize a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} which has been allocated with \doxyref{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new}{p.}{group__skeleton_ga1884465ee9765b8298fab319c8a0b478}. You should be careful to use a \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} which guarantees source points which are distinct from the collocation points. For example, a three-\/point Gaussian quadrature with nodes at the midpoints of triangle edges will generate source points which coincide with the mid-\/edge nodes of a second-\/order triangular element.
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} \\
+\hline
+{\em q} & a \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} used to find points on mesh elements \\
+\hline
+{\em anorm} & a \doxyref{B\+E\+M3\+D\+Average}{p.}{group__operators_gab4643c303f563fb00005135a808e33ba} specification used in computing collocation point normals\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+mesh\+\_\+element\+\_\+number, bem3d\+\_\+mesh\+\_\+foreach\+\_\+element(), bem3d\+\_\+mesh\+\_\+foreach\+\_\+node(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
+
+\index{Mesh skeletons@{Mesh skeletons}!bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new}}
+\index{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new}!Mesh skeletons@{Mesh skeletons}}
+\subsubsection[{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Mesh\+Skeleton}$\ast$ bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{gint}]{order\+\_\+max}
+\end{DoxyParamCaption}
+)}\label{group__skeleton_ga1884465ee9765b8298fab319c8a0b478}
+Allocate a new \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} for a given mesh
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
+\hline
+{\em order\+\_\+max} & maximum number of source points per element on the skeleton\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a new \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} on success. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+mesh\+\_\+element\+\_\+node\+\_\+number\+\_\+max(), bem3d\+\_\+mesh\+\_\+element\+\_\+number, bem3d\+\_\+mesh\+\_\+index\+\_\+range(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
+
+\index{Mesh skeletons@{Mesh skeletons}!bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write}}
+\index{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write}!Mesh skeletons@{Mesh skeletons}}
+\subsubsection[{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{s, }
+\item[{F\+I\+L\+E $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__skeleton_gad72c9c5256e1ea90e9cf7944907ba841}
+Write a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} to file
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} \\
+\hline
+{\em f} & F\+I\+L\+E pointer\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
+\end{DoxyReturn}

@@ -1,0 +1,16 @@
+\section{BEMRadiationFunc Struct Reference}
+\label{structBEMRadiationFunc}\index{BEMRadiationFunc@{BEMRadiationFunc}}
+
+
+\subsection{Detailed Description}
+Compute radiated quantities given the integrated Green's function and derivative over an element and the solution at the element nodes. In principle, the solution is the sum of $g{d\phi}/{d n}-\phi dg/dn$ over the elements.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em g}]GArray of integrated Green's function on element \item[{\em dgdn}]GArray of integrated Green's function normal derivative on element \item[{\em phi}]GArray of solution at element nodes \item[{\em dphi}]GArray of solution normal derivative at nodes \item[{\em f}]GArray of radiated field \item[{\em data}]user data to pass to function\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]0 on success \end{Desc}
+
+

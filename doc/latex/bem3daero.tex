@@ -1,0 +1,16 @@
+bem3d-\/aero is a Morino type code for quasi-\/potential flow calculations. It is intended to handle higher order elements, although at present it only deals with linear triangular panels (although this is still better than zero order). The formulation, and in particular the implementation of the trailing edge conditions, is described in more detail in Tai, A, Boundary element methods for flow over deforming bodies, Ph\+D thesis, University of Bath, 2009.
+
+To perform a calculation with bem3d-\/aero, the steps are the usual ones of generating a geometry, assembling the matrix, applying the boundary conditions and solving. There are some important differences, however\+: the first is that the sharp edges must be identified (as in standard problems) but the trailing edge(s) must be specified so that-\/the second major difference-\/the wake(s) can be shed as required. This can be done using the special options of \doxyref{msh2bem3d}{p.}{msh2bem3d} to generate edge files and of \doxyref{bem3d2pos}{p.}{bem3d2pos} to visualize the edges and select those which shed a wake.
+
+A typical invocation of bem3d-\/aero (given in the examples) would be \begin{DoxyVerb}bem3d-aero -i naca0012.bem -m naca0012.mtn \
+    -e naca0012.edg \
+    -o naca0012-%04d.bem -O naca0012-%04d.dat \
+    -w wake-%04d.bem -W wake-%04d.dat \
+    -S 0 -d 0.5 -f 10 -Z 0.01 \end{DoxyVerb}
+ which uses a geometry file {\ttfamily naca0012.\+bem} and a \doxyref{motion file}{p.}{group__motion} {\ttfamily naca0012.\+mtn}. The wing has one wake-\/shedding edge, described in the \doxyref{edge file}{p.}{group__edge} {\ttfamily naca0012.\+edg}. The results for each time step are output as B\+E\+M files for the surfaces of the body and the wake which is shed from the trailing edge, and as \doxyref{data blocks}{p.}{group__data} for the potential and the potential gradient on the surfaces (actually potential jump on the wake). These data are saved in files whose name is given by the templates {\ttfamily naca0012-\/\%04d}.$\ast$, etc, where the {\ttfamily \%04d} is a C-\/style format specifier used to generate an index from the time point. Any valid C format can be used but this is a useful one since it generates a list of files in time-\/point order.
+
+The remaining options set the start time at zero, the time step to 0.\+5, the final time to 10 and the trailing edge condition stand off distance to 0.\+01.
+
+In the example directory, the edge file is already set up for you, but for your own problems you should look at the information given in \doxyref{msh2bem3d}{p.}{msh2bem3d}.
+
+A handy option to remember is {\ttfamily -\/\+G}, which generates `graphical output\textquotesingle{}, i.\+e. it does not run the solver but only computes the body positions and generates the wake surface at each time step. You can use this to check that you have set up the problem correctly, including selecting the right edge for wake shedding. 

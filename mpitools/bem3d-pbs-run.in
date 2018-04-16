@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# @configure_input@
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+export JOBNAME=$1
+export APPLICATION=${exec_prefix}/bin/${JOBNAME}.mpi
+shift 1
+export RUNFLAGS=$*
+
+export RUNDIR=`pwd`
+
+echo "Running ${APPLICATION} ${RUNFLAGS} in directory ${RUNDIR}"
+echo
+
+JOBID=`qsub -V ${exec_prefix}/bin/bem3d-pbs-launch`
+
+echo "Submitted job id: ${JOBID}"

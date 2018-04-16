@@ -1,0 +1,256 @@
+#include <stdio.h>
+
+#include <glib.h>
+
+#include <math.h>
+
+#ifndef REAL_FLOAT
+#ifndef REAL_DOUBLE
+#define REAL_DOUBLE
+#endif
+#endif
+
+#ifdef REAL_FLOAT
+/* #warning "Compiling in single precision" */
+#define REAL gfloat
+#define REAL_ATAN2(x,y)  atan2f((x),(y))
+#define REAL_ATAN(x)     atanf((x))
+#define REAL_SIN(x)      sinf((x))
+#define REAL_COS(x)      cosf((x))
+#define REAL_LOG(x)      logf((x))
+#define REAL_SQRT(x)     sqrtf((x))
+#define NEWMAN_TRI       newman_tri_f
+#define NEWMAN_TRI_SHAPE newman_tri_shape_f
+#define NEWMAN_QUAD      newman_quad_f
+#else
+/* #warning "Compiling in double precision" */
+#define REAL gdouble
+#define REAL_ATAN2(x,y)  atan2((x),(y))
+#define REAL_ATAN(x)     atan((x))
+#define REAL_SIN(x)      sin((x))
+#define REAL_COS(x)      cos((x))
+#define REAL_LOG(x)      log((x))
+#define REAL_SQRT(x)     sqrt((x))
+#define NEWMAN_TRI       newman_tri
+#define NEWMAN_TRI_SHAPE newman_tri_shape
+#define NEWMAN_QUAD      newman_quad
+#endif /*REAL*/
+
+gint NEWMAN_TRI (REAL p[], REAL x1[], REAL x2[], REAL x3[],
+		 REAL I[], REAL J[]) ;
+
+gint newman_edge(REAL Rn, REAL Rnp1,
+		 REAL Sn, REAL Snp1,
+		 REAL *s, 
+			REAL dn[], REAL dnp1[],
+			REAL rn, REAL rnp1,
+			REAL an, REAL anp1,
+			REAL z,
+			REAL I[], REAL J[])
+
+{
+  REAL Q, s1, s2, s3, c1, c2, c3, St, Ct, sn, u, U, tn ;
+  REAL chk ;
+
+  tn = REAL_ATAN2(s[1], s[0]) ;
+  St = REAL_SIN(tn) ; Ct = REAL_COS(tn) ;
+  sn = REAL_SQRT(s[0]*s[0] + s[1]*s[1]) ;
+  if ( s[1] != 0.0 ) {
+    s1 = s[1]*Sn   - s[0]*dn[0]  *dn  [1] ; c1 = Rn  *z*s[0] ;
+    s2 = s[1]*Snp1 - s[0]*dnp1[0]*dnp1[1] ; c2 = Rnp1*z*s[0] ;
+    s3 = s1*c2 - s2*c1 ;
+    c3 = c1*c2 + s1*s2 ;
+  } else {
+    s1 = s[1]*Sn   - s[0]*dn[0]  *dn  [1] ; 
+    s2 = s[1]*Snp1 - s[0]*dnp1[0]*dnp1[1] ; 
+    c1 = Rn  *z*s[0] ; c2 = Rnp1*z*s[0] ;
+    s3 = s1*c2 - s2*c1 ;
+    c3 = c1*c2 + s1*s2 ;
+  }
+/*   if ( fabs((c3 = c1*c2 + s1*s2)) > 0.0 ) { */
+/*   if ( (c3 = c1*c2 + s1*s2) != 0.0 ) { */
+/*     chk = REAL_ATAN((s1*c2 - s2*c1)/c3) - REAL_ATAN2((s1*c2 - s2*c1),c3) ; */
+  if ( c3 != 0.0 ) {
+/*     chk = REAL_ATAN(s3/c3) - REAL_ATAN2(s3,c3) ; */
+/*     if ( fabs(chk) > 1e-6 ) return 1 ; */
+/*       g_error("%s: atan mismatch %lg, %lg, %lg, %lg, %lg, %lg, %lg, %lg", */
+/* 	      __FUNCTION__, s1, s2, c1, c2, c3, z, */
+/* 	      REAL_ATAN2((s1*c2 - s2*c1),c3),REAL_ATAN((s1*c2 - s2*c1)/c3)) ; */
+/*     I[0] += REAL_ATAN(s3/c3) ; */
+    I[0] += REAL_ATAN2(s3,c3) ;
+/*     I[0] += REAL_ATAN2(s1,c1) - REAL_ATAN2(s2,c2) ; */
+  }
+/*   else */
+/* /\*     I[0] += REAL_ATAN((s1*c2 - s2*c1)/c3) ; *\/ */
+/* /\*     I[0] += REAL_ATAN2((s1*c2 - s2*c1),c3) ; *\/ */
+/*     I[0] = 0.0 ; */
+
+  if ( Rn+Rnp1-sn > 1e-15 ) {
+/*   if ( Rn+Rnp1-sn != 0.0 ) { */
+/*     fprintf(stderr, "%lg %lg %lg\n", Rn+Rnp1+sn, Rn+Rnp1-sn, */
+/* 	    (Rn+Rnp1+sn)/(Rn+Rnp1-sn)) ; */
+    Q = REAL_LOG((Rn+Rnp1+sn)/(Rn+Rnp1-sn)) ;
+  }
+  else 
+    Q = 0.0 ;
+
+  J[0] += Q*(dn[0]*St - dn[1]*Ct) ;
+
+  u = rn*REAL_COS(an - tn) ; U = rnp1*REAL_COS(anp1 - tn) ;
+
+  I[1] += Q*St ; I[2] += Q*Ct ;
+
+/*   fprintf(stderr, "%lg %lg %lg %lg %lg ", u, Rn, U, Rnp1, Q) ; */
+  Q = 0.5*(u*Rn - U*Rnp1 + (Rn*Rn - u*u)*Q) ;
+
+  J[1] += Q*St ; J[2] += Q*Ct ;
+/*   fprintf(stderr, "%lg %lg %lg\n", Q, St, Ct) ; */
+
+  return 0 ;
+}
+			
+gint NEWMAN_TRI (REAL p[], REAL x1[], REAL x2[], REAL x3[],
+		 REAL I[], REAL J[])
+
+{
+  REAL R1, R2, R3, S1, S2, S3, r1, r2, r3, a1, a2, a3,
+    d1[2], d2[2], d3[2] ;
+  REAL s[2], z ;
+  gint rt ;
+
+  I[0] = I[1] = I[2] = J[0] = J[1] = J[2] = 0.0 ;
+  z = p[2] ;
+
+  r1 = (p[0]-x1[0])*(p[0]-x1[0]) +  (p[1]-x1[1])*(p[1]-x1[1]) ;
+  r2 = (p[0]-x2[0])*(p[0]-x2[0]) +  (p[1]-x2[1])*(p[1]-x2[1]) ;
+  r3 = (p[0]-x3[0])*(p[0]-x3[0]) +  (p[1]-x3[1])*(p[1]-x3[1]) ;
+
+  R1 = REAL_SQRT(r1 + z*z) ; R2 = REAL_SQRT(r2 + z*z) ; 
+  R3 = REAL_SQRT(r3 + z*z) ;
+  S1 = (p[0]-x1[0])*(p[0]-x1[0]) + z*z ;
+  S2 = (p[0]-x2[0])*(p[0]-x2[0]) + z*z ;
+  S3 = (p[0]-x3[0])*(p[0]-x3[0]) + z*z ;
+
+  r1 = REAL_SQRT(r1) ; r2 = REAL_SQRT(r2) ; r3 = REAL_SQRT(r3) ;
+
+  a1 = REAL_ATAN2(p[1]-x1[1],p[0]-x1[0]) ;
+  a2 = REAL_ATAN2(p[1]-x2[1],p[0]-x2[0]) ;
+  a3 = REAL_ATAN2(p[1]-x3[1],p[0]-x3[0]) ;
+
+  d1[0] = p[0] - x1[0] ; d1[1] = p[1] - x1[1] ;
+  d2[0] = p[0] - x2[0] ; d2[1] = p[1] - x2[1] ;
+  d3[0] = p[0] - x3[0] ; d3[1] = p[1] - x3[1] ;
+  
+  s[0] = x2[0]-x1[0] ; s[1] = x2[1]-x1[1] ;
+  if ( (rt = newman_edge(R1, R2, S1, S2, s, d1, d2, r1, r2, a1, a2, z, I, J)) ) 
+    return rt ;
+  s[0] = x3[0]-x2[0] ; s[1] = x3[1]-x2[1] ;
+  if ( (rt = newman_edge(R2, R3, S2, S3, s, d2, d3, r2, r3, a2, a3, z, I, J)) ) 
+    return rt ;
+  s[0] = x1[0]-x3[0] ; s[1] = x1[1]-x3[1] ;
+  if ( (rt = newman_edge(R3, R1, S3, S1, s, d3, d1, r3, r1, a3, a1, z, I, J)) )
+    return rt;
+
+  I[1] = p[0]*I[0] + z*I[1] ;
+  I[2] = p[1]*I[0] - z*I[2] ;
+
+  J[0] -= z*I[0] ;
+  J[1] = p[0]*J[0] - J[1] ;
+  J[2] = p[1]*J[0] + J[2] ;
+
+  return 0 ;
+}
+
+gint NEWMAN_QUAD (REAL p[], 
+		  REAL x1[], REAL x2[], 
+		  REAL x3[], REAL x4[],
+		  REAL I[], REAL J[])
+
+{
+  REAL R1, R2, R3, R4, S1, S2, S3, S4, r1, r2, r3, r4,
+    a1, a2, a3, a4, d1[2], d2[2], d3[2], d4[2] ;
+  REAL s[2], z ;
+
+  I[0] = I[1] = I[2] = J[0] = J[1] = J[2] = 0.0 ;
+  z = p[2] ;
+
+  r1 = (p[0]-x1[0])* (p[0]-x1[0]) +  (p[1]-x1[1])* (p[1]-x1[1]) ;
+  r2 = (p[0]-x2[0])* (p[0]-x2[0]) +  (p[1]-x2[1])* (p[1]-x2[1]) ;
+  r3 = (p[0]-x3[0])* (p[0]-x3[0]) +  (p[1]-x3[1])* (p[1]-x3[1]) ;
+  r4 = (p[0]-x4[0])* (p[0]-x4[0]) +  (p[1]-x4[1])* (p[1]-x4[1]) ;
+
+  R1 = REAL_SQRT(r1 + z*z) ; R2 = REAL_SQRT(r2 + z*z) ; 
+  R3 = REAL_SQRT(r3 + z*z) ; R4 = REAL_SQRT(r4 + z*z) ;
+  S1 = (p[0]-x1[0])*(p[0]-x1[0]) + z*z ;
+  S2 = (p[0]-x2[0])*(p[0]-x2[0]) + z*z ;
+  S3 = (p[0]-x3[0])*(p[0]-x3[0]) + z*z ;
+  S4 = (p[0]-x4[0])*(p[0]-x4[0]) + z*z ;
+
+  r1 = REAL_SQRT(r1) ; r2 = REAL_SQRT(r2) ; 
+  r3 = REAL_SQRT(r3) ; r4 = REAL_SQRT(r4) ;
+
+  a1 = REAL_ATAN2(p[1]-x1[1],p[0]-x1[0]) ;
+  a2 = REAL_ATAN2(p[1]-x2[1],p[0]-x2[0]) ;
+  a3 = REAL_ATAN2(p[1]-x3[1],p[0]-x3[0]) ;
+  a4 = REAL_ATAN2(p[1]-x4[1],p[0]-x4[0]) ;
+
+  d1[0] = p[0] - x1[0] ; d1[1] = p[1] - x1[1] ;
+  d2[0] = p[0] - x2[0] ; d2[1] = p[1] - x2[1] ;
+  d3[0] = p[0] - x3[0] ; d3[1] = p[1] - x3[1] ;
+  d4[0] = p[0] - x4[0] ; d4[1] = p[1] - x4[1] ;
+  
+  s[0] = x2[0]-x1[0] ; s[1] = x2[1]-x1[1] ;
+  newman_edge(R1, R2, S1, S2, s, d1, d2, r1, r2, a1, a2, z, I, J) ;
+  s[0] = x3[0]-x2[0] ; s[1] = x3[1]-x2[1] ;
+  newman_edge(R2, R3, S2, S3, s, d2, d3, r2, r3, a2, a3, z, I, J) ;
+  s[0] = x4[0]-x3[0] ; s[1] = x4[1]-x3[1] ;
+  newman_edge(R3, R4, S3, S4, s, d3, d4, r3, r4, a3, a4, z, I, J) ;
+  s[0] = x1[0]-x4[0] ; s[1] = x1[1]-x4[1] ;
+  newman_edge(R4, R1, S4, S1, s, d4, d1, r4, r1, a4, a1, z, I, J) ;
+
+  I[1] = p[0]*I[0] + z*I[1] ;
+  I[2] = p[1]*I[0] - z*I[2] ;
+
+  J[0] -= z*I[0] ;
+  J[1] = p[0]*J[0] - J[1] ;
+  J[2] = p[1]*J[0] + J[2] ;
+
+  return 0 ;
+}
+
+gint NEWMAN_TRI_SHAPE (REAL *p, REAL *x1, REAL *x2, REAL *x3,
+		       REAL *G, REAL *dG)
+
+{
+  REAL g[3], dg[3] ;
+  REAL a, b, c, d, e, f ;
+
+  if ( NEWMAN_TRI (p, x1, x2, x3, dg, g) ) 
+
+    return 1 ;
+
+  a = x2[0] - x1[0] ; b = x3[0] - x1[0] ;
+  c = x2[1] - x1[1] ; d = x3[1] - x1[1] ;
+
+  e = g[1] - x1[0]*g[0] ;
+  f = g[2] - x1[1]*g[0] ;
+  
+/*   fprintf(stderr, "%lg %lg %lg %lg %lg %lg ", a, b, c, d, e, f) ; */
+
+  G[2] = (e*c - f*a)/(b*c - d*a) ;
+  G[1] = (e - b*G[2])/a ;
+  G[0] = g[0] - G[1] - G[2] ;
+
+  G[0] = -G[0] ; G[1] = -G[1] ; G[2] = -G[2] ; 
+
+  e = dg[1] - x1[0]*dg[0] ;
+  f = dg[2] - x1[1]*dg[0] ;
+
+/*   fprintf(stderr, "%lg %lg\n",e, f) ; */
+
+  dG[2] = -(e*c - f*a)/(b*c - d*a) ;
+  dG[1] = -(e+b*dG[2])/a ;
+  dG[0] = -dg[0] - dG[1] - dG[2] ;
+
+  return 0 ;
+}

@@ -1,0 +1,104 @@
+\section{Looking up data}
+\label{group__lookup}\index{Looking up data@{Looking up data}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+gint {\bf bem3d\+\_\+lookup\+\_\+func\+\_\+unit} (gint i, gint j, gpointer data, G\+Array $\ast$s, G\+Array $\ast$ds)
+\item 
+gint {\bf bem3d\+\_\+lookup\+\_\+func\+\_\+unit\+\_\+c} (gint i, gint j, gpointer data, G\+Array $\ast$s, G\+Array $\ast$ds)
+\item 
+gint {\bf bem3d\+\_\+lookup\+\_\+func\+\_\+both\+\_\+unit} (gint i, gint j, gpointer data, G\+Array $\ast$s, G\+Array $\ast$ds)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Various \doxyref{B\+E\+M3\+D\+Lookup\+Func}{p.}{structBEM3DLookupFunc}\textquotesingle{}s for dummy operations, such as calculating local surface coefficients. 
+
+\subsection{Function Documentation}
+\index{Looking up data@{Looking up data}!bem3d\+\_\+lookup\+\_\+func\+\_\+both\+\_\+unit@{bem3d\+\_\+lookup\+\_\+func\+\_\+both\+\_\+unit}}
+\index{bem3d\+\_\+lookup\+\_\+func\+\_\+both\+\_\+unit@{bem3d\+\_\+lookup\+\_\+func\+\_\+both\+\_\+unit}!Looking up data@{Looking up data}}
+\subsubsection[{bem3d\+\_\+lookup\+\_\+func\+\_\+both\+\_\+unit}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+lookup\+\_\+func\+\_\+both\+\_\+unit (
+\begin{DoxyParamCaption}
+\item[{gint}]{i, }
+\item[{gint}]{j, }
+\item[{gpointer}]{data, }
+\item[{G\+Array $\ast$}]{s, }
+\item[{G\+Array $\ast$}]{ds}
+\end{DoxyParamCaption}
+)}\label{group__lookup_gacb4e7231565b2d8f18fc60050d95875a}
+A \doxyref{B\+E\+M3\+D\+Lookup\+Func}{p.}{structBEM3DLookupFunc} which returns 1.\+0 for the normal derivative and 1.\+0 for the surface term, to be used in testing quadrature rules.
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & ignored \\
+\hline
+{\em j} & local index \\
+\hline
+{\em data} & ignored \\
+\hline
+{\em s} & surface term \\
+\hline
+{\em ds} & normal derivative\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\end{DoxyReturn}
+\index{Looking up data@{Looking up data}!bem3d\+\_\+lookup\+\_\+func\+\_\+unit@{bem3d\+\_\+lookup\+\_\+func\+\_\+unit}}
+\index{bem3d\+\_\+lookup\+\_\+func\+\_\+unit@{bem3d\+\_\+lookup\+\_\+func\+\_\+unit}!Looking up data@{Looking up data}}
+\subsubsection[{bem3d\+\_\+lookup\+\_\+func\+\_\+unit}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+lookup\+\_\+func\+\_\+unit (
+\begin{DoxyParamCaption}
+\item[{gint}]{i, }
+\item[{gint}]{j, }
+\item[{gpointer}]{data, }
+\item[{G\+Array $\ast$}]{s, }
+\item[{G\+Array $\ast$}]{ds}
+\end{DoxyParamCaption}
+)}\label{group__lookup_gab516d2a6f9e1c4486840a450aa81a7b2}
+A \doxyref{B\+E\+M3\+D\+Lookup\+Func}{p.}{structBEM3DLookupFunc} which returns 0.\+0 for the normal derivative and 1.\+0 for the surface term, to be used in integrating a real Green\textquotesingle{}s function over a surface.
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & ignored \\
+\hline
+{\em j} & local index \\
+\hline
+{\em data} & ignored \\
+\hline
+{\em s} & surface term \\
+\hline
+{\em ds} & normal derivative\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\end{DoxyReturn}
+\index{Looking up data@{Looking up data}!bem3d\+\_\+lookup\+\_\+func\+\_\+unit\+\_\+c@{bem3d\+\_\+lookup\+\_\+func\+\_\+unit\+\_\+c}}
+\index{bem3d\+\_\+lookup\+\_\+func\+\_\+unit\+\_\+c@{bem3d\+\_\+lookup\+\_\+func\+\_\+unit\+\_\+c}!Looking up data@{Looking up data}}
+\subsubsection[{bem3d\+\_\+lookup\+\_\+func\+\_\+unit\+\_\+c}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+lookup\+\_\+func\+\_\+unit\+\_\+c (
+\begin{DoxyParamCaption}
+\item[{gint}]{i, }
+\item[{gint}]{j, }
+\item[{gpointer}]{data, }
+\item[{G\+Array $\ast$}]{s, }
+\item[{G\+Array $\ast$}]{ds}
+\end{DoxyParamCaption}
+)}\label{group__lookup_ga19d557645e1f5acaa90e60dcf53c9b9d}
+A \doxyref{B\+E\+M3\+D\+Lookup\+Func}{p.}{structBEM3DLookupFunc} which returns 0.\+0+j0.0 for the normal derivative and 1.\+0+j0.0 for the surface term, to be used in integrating a complex Green\textquotesingle{}s function over a surface.
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & ignored \\
+\hline
+{\em j} & local index \\
+\hline
+{\em data} & ignored \\
+\hline
+{\em s} & surface term \\
+\hline
+{\em ds} & normal derivative\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\end{DoxyReturn}

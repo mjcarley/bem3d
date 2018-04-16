@@ -1,0 +1,16 @@
+\section{BEMElementBuildFunc Struct Reference}
+\label{structBEMElementBuildFunc}\index{BEMElementBuildFunc@{BEMElementBuildFunc}}
+
+
+\subsection{Detailed Description}
+Build an element from edge and vertex data
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em e}]an array of edges \item[{\em v}]an array of vertices\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]a pointer to the newly built element\end{Desc}
+The function should insert the vertices into the new element and construct new faces and edges as required to build up the element. Note that the ordering is important for the shape functions. 
+

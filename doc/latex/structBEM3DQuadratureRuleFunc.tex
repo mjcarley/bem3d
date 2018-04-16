@@ -1,0 +1,27 @@
+\section{B\+E\+M3\+D\+Quadrature\+Rule\+Func Struct Reference}
+\label{structBEM3DQuadratureRuleFunc}\index{B\+E\+M3\+D\+Quadrature\+Rule\+Func@{B\+E\+M3\+D\+Quadrature\+Rule\+Func}}
+
+
+\subsection{Detailed Description}
+gint \doxyref{B\+E\+M3\+D\+Quadrature\+Rule\+Func}{p.}{structBEM3DQuadratureRuleFunc}(Gts\+Point $\ast$p, B\+E\+M3\+D\+Element $\ast$e, \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} $\ast$q, \doxyref{B\+E\+M3\+D\+Greens\+Function}{p.}{structBEM3DGreensFunction} gfunc, \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} $\ast$param, gpointer data)
+
+Function for generating quadrature rules
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & field point for integration; \\
+\hline
+{\em e} & element over which to integrate; \\
+\hline
+{\em q} & quadrature rule to hold points; \\
+\hline
+{\em gfunc} & Green\textquotesingle{}s function to integrate (ignored for some rules); \\
+\hline
+{\em param} & parameters for {\itshape gfunc}; \\
+\hline
+{\em data} & user data passed to quadrature generation.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}

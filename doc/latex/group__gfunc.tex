@@ -1,0 +1,497 @@
+\section{Green\textquotesingle{}s functions}
+\label{group__gfunc}\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct {\bf B\+E\+M3\+D\+Parameters}
+\item 
+struct {\bf B\+E\+M3\+D\+Greens\+Function}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bf bem3d\+\_\+greens\+\_\+function\+\_\+func}(g)
+\item 
+\#define {\bf bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real}(g)
+\item 
+\#define {\bf bem3d\+\_\+greens\+\_\+function\+\_\+component\+\_\+number}(g)
+\item 
+\#define {\bf bem3d\+\_\+parameters\+\_\+wavenumber}(p)
+\item 
+\#define {\bf bem3d\+\_\+parameters\+\_\+mach\+\_\+number}(p)
+\item 
+\#define {\bf bem3d\+\_\+parameters\+\_\+amplitude\+\_\+real}(p)
+\item 
+\#define {\bf bem3d\+\_\+parameters\+\_\+amplitude\+\_\+imag}(p)
+\item 
+\#define {\bf bem3d\+\_\+parameters\+\_\+normal}(p)
+\item 
+\#define {\bf bem3d\+\_\+parameters\+\_\+lambda\+\_\+real}(p)
+\item 
+\#define {\bf bem3d\+\_\+parameters\+\_\+lambda\+\_\+imag}(p)
+\item 
+\#define {\bf bem3d\+\_\+parameters\+\_\+conditioning}(p)
+\item 
+\#define {\bf bem3d\+\_\+parameters\+\_\+user\+\_\+data}(p)
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef gint($\ast$ {\bf B\+E\+M3\+D\+Greens\+Func}) (Gts\+Point $\ast$x, Gts\+Point $\ast$y, Gts\+Vector n, {\bf B\+E\+M3\+D\+Parameters} $\ast$p, G\+Array $\ast$G, G\+Array $\ast$d\+Gdn)
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+gint {\bf bem3d\+\_\+greens\+\_\+func\+\_\+laplace} (Gts\+Point $\ast$x, Gts\+Point $\ast$y, Gts\+Vector n, {\bf B\+E\+M3\+D\+Parameters} $\ast$p, G\+Array $\ast$G, G\+Array $\ast$d\+Gdn)
+\item 
+gint {\bf bem3d\+\_\+greens\+\_\+func\+\_\+gradient\+\_\+laplace} (Gts\+Point $\ast$x, Gts\+Point $\ast$y, Gts\+Vector n, {\bf B\+E\+M3\+D\+Parameters} $\ast$p, G\+Array $\ast$G, G\+Array $\ast$d\+Gdn)
+\item 
+gint {\bf bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz} (Gts\+Point $\ast$x, Gts\+Point $\ast$y, Gts\+Vector n, {\bf B\+E\+M3\+D\+Parameters} $\ast$p, G\+Array $\ast$G, G\+Array $\ast$d\+Gdn)
+\item 
+gint {\bf bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs} (Gts\+Point $\ast$x, Gts\+Point $\ast$y, Gts\+Vector ny, {\bf B\+E\+M3\+D\+Parameters} $\ast$p, G\+Array $\ast$G, G\+Array $\ast$d\+Gdn)
+\item 
+gint {\bf bem3d\+\_\+greens\+\_\+func\+\_\+convected\+\_\+helmholtz} (Gts\+Point $\ast$x, Gts\+Point $\ast$y, Gts\+Vector n, {\bf B\+E\+M3\+D\+Parameters} $\ast$p, G\+Array $\ast$G, G\+Array $\ast$d\+Gdn)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Macro Definition Documentation}
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+function\+\_\+component\+\_\+number@{bem3d\+\_\+greens\+\_\+function\+\_\+component\+\_\+number}}
+\index{bem3d\+\_\+greens\+\_\+function\+\_\+component\+\_\+number@{bem3d\+\_\+greens\+\_\+function\+\_\+component\+\_\+number}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+greens\+\_\+function\+\_\+component\+\_\+number}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+greens\+\_\+function\+\_\+component\+\_\+number(
+\begin{DoxyParamCaption}
+\item[{}]{g}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_gafea61dacfcb9a6d191e6ee65c67aff3d}
+Find the number of values returned by a Green\textquotesingle{}s function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em g} & a pointer to a \doxyref{B\+E\+M3\+D\+Greens\+Function}{p.}{structBEM3DGreensFunction}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the number of values returned for one call to {\itshape g}. 
+\end{DoxyReturn}
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+function\+\_\+func@{bem3d\+\_\+greens\+\_\+function\+\_\+func}}
+\index{bem3d\+\_\+greens\+\_\+function\+\_\+func@{bem3d\+\_\+greens\+\_\+function\+\_\+func}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+greens\+\_\+function\+\_\+func}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+greens\+\_\+function\+\_\+func(
+\begin{DoxyParamCaption}
+\item[{}]{g}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga2a928614716ca48abba0ef25c0ffae03}
+The \doxyref{B\+E\+M3\+D\+Greens\+Func}{p.}{group__gfunc_gae91d45f951130f15865c63bad9e7d41e} of a \doxyref{B\+E\+M3\+D\+Greens\+Function}{p.}{structBEM3DGreensFunction}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em g} & a pointer to a \doxyref{B\+E\+M3\+D\+Greens\+Function}{p.}{structBEM3DGreensFunction}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the \doxyref{B\+E\+M3\+D\+Greens\+Func}{p.}{group__gfunc_gae91d45f951130f15865c63bad9e7d41e} of {\itshape g}. 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+configuration\+\_\+new(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient().
+
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real@{bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real}}
+\index{bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real@{bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real(
+\begin{DoxyParamCaption}
+\item[{}]{g}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga60009484bf2516c930e70f5728fa4134}
+Check if a Green\textquotesingle{}s function is real or complex.
+
+
+\begin{DoxyParams}{Parameters}
+{\em g} & a pointer to a \doxyref{B\+E\+M3\+D\+Greens\+Function}{p.}{structBEM3DGreensFunction}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+T\+R\+U\+E if {\itshape g} is real. 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+configuration\+\_\+new(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient().
+
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+amplitude\+\_\+imag@{bem3d\+\_\+parameters\+\_\+amplitude\+\_\+imag}}
+\index{bem3d\+\_\+parameters\+\_\+amplitude\+\_\+imag@{bem3d\+\_\+parameters\+\_\+amplitude\+\_\+imag}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+parameters\+\_\+amplitude\+\_\+imag}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+parameters\+\_\+amplitude\+\_\+imag(
+\begin{DoxyParamCaption}
+\item[{}]{p}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga95e1097c0cf5c2818e9577b301d119a6}
+Imaginary part of amplitude in a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & a pointer to a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the imaginary part of the amplitude contained in {\itshape p} 
+\end{DoxyReturn}
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+amplitude\+\_\+real@{bem3d\+\_\+parameters\+\_\+amplitude\+\_\+real}}
+\index{bem3d\+\_\+parameters\+\_\+amplitude\+\_\+real@{bem3d\+\_\+parameters\+\_\+amplitude\+\_\+real}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+parameters\+\_\+amplitude\+\_\+real}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+parameters\+\_\+amplitude\+\_\+real(
+\begin{DoxyParamCaption}
+\item[{}]{p}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga0de07262244d10b012c2e221b318cd2b}
+Real part of amplitude in a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct. The real and imaginary parts are aligned so that they can be extracted together and cast, if necessary, to a gsl\+\_\+complex type. That is\+: \begin{DoxyVerb}&(bem3d_parameters_amplitude_real(p)) \end{DoxyVerb}
+ is a pointer to an array of type gdouble of length two, containing the real and imaginary parts of the magnitude.
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & a pointer to a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the real part of the amplitude contained in {\itshape p} 
+\end{DoxyReturn}
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+conditioning@{bem3d\+\_\+parameters\+\_\+conditioning}}
+\index{bem3d\+\_\+parameters\+\_\+conditioning@{bem3d\+\_\+parameters\+\_\+conditioning}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+parameters\+\_\+conditioning}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+parameters\+\_\+conditioning(
+\begin{DoxyParamCaption}
+\item[{}]{p}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga6df4cbb5c37a08669cec3fdd7e694abd}
+Conditioning parameter for Burton and Miller type hypersingular formulations (see Wolf and Lele)
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & a pointer to a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value of conditioning parameter 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs().
+
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+lambda\+\_\+imag@{bem3d\+\_\+parameters\+\_\+lambda\+\_\+imag}}
+\index{bem3d\+\_\+parameters\+\_\+lambda\+\_\+imag@{bem3d\+\_\+parameters\+\_\+lambda\+\_\+imag}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+parameters\+\_\+lambda\+\_\+imag}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+parameters\+\_\+lambda\+\_\+imag(
+\begin{DoxyParamCaption}
+\item[{}]{p}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga4526a166db08bfc23a83f58f46f1b4db}
+Imaginary part of coupling parameter for Burton and Miller type hypersingular formulations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & a pointer to a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+imaginary part of coupling parameter 
+\end{DoxyReturn}
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+lambda\+\_\+real@{bem3d\+\_\+parameters\+\_\+lambda\+\_\+real}}
+\index{bem3d\+\_\+parameters\+\_\+lambda\+\_\+real@{bem3d\+\_\+parameters\+\_\+lambda\+\_\+real}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+parameters\+\_\+lambda\+\_\+real}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+parameters\+\_\+lambda\+\_\+real(
+\begin{DoxyParamCaption}
+\item[{}]{p}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga1fabfc5b227e05124ccc24268012a536}
+Real part of coupling parameter for Burton and Miller type hypersingular formulations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & a pointer to a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+real part of coupling parameter (address can be cast to $\ast$gsl\+\_\+complex) 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs().
+
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+mach\+\_\+number@{bem3d\+\_\+parameters\+\_\+mach\+\_\+number}}
+\index{bem3d\+\_\+parameters\+\_\+mach\+\_\+number@{bem3d\+\_\+parameters\+\_\+mach\+\_\+number}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+parameters\+\_\+mach\+\_\+number}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+parameters\+\_\+mach\+\_\+number(
+\begin{DoxyParamCaption}
+\item[{}]{p}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_gac6df571c9d2d10eb2b0c6740e301618d}
+Mach number in a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & a pointer to a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the value of the Mach number field of {\itshape p} 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+convected\+\_\+helmholtz().
+
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+normal@{bem3d\+\_\+parameters\+\_\+normal}}
+\index{bem3d\+\_\+parameters\+\_\+normal@{bem3d\+\_\+parameters\+\_\+normal}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+parameters\+\_\+normal}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+parameters\+\_\+normal(
+\begin{DoxyParamCaption}
+\item[{}]{p}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga31f86e6ad3de6970132a68518624f9c6}
+Normal to surface at evaluation point (e.\+g. in hypersingular scattering calculations)
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & a pointer to a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to three element array of normal components (can be cast to Gts\+Vector) 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs().
+
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+user\+\_\+data@{bem3d\+\_\+parameters\+\_\+user\+\_\+data}}
+\index{bem3d\+\_\+parameters\+\_\+user\+\_\+data@{bem3d\+\_\+parameters\+\_\+user\+\_\+data}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+parameters\+\_\+user\+\_\+data}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+parameters\+\_\+user\+\_\+data(
+\begin{DoxyParamCaption}
+\item[{}]{p}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga41fec65a5a6d283d942bdc34ea7dbcb1}
+User data in a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & a pointer to a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the gpointer reserved for user data in {\itshape p} 
+\end{DoxyReturn}
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+wavenumber@{bem3d\+\_\+parameters\+\_\+wavenumber}}
+\index{bem3d\+\_\+parameters\+\_\+wavenumber@{bem3d\+\_\+parameters\+\_\+wavenumber}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+parameters\+\_\+wavenumber}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+parameters\+\_\+wavenumber(
+\begin{DoxyParamCaption}
+\item[{}]{p}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga8d6d691aff37b7bc7cb984387b533180}
+Wavenumber in a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & a pointer to a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the value of the wavenumber contained in {\itshape p} 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+convected\+\_\+helmholtz(), bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz(), and bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs().
+
+
+
+\subsection{Typedef Documentation}
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!B\+E\+M3\+D\+Greens\+Func@{B\+E\+M3\+D\+Greens\+Func}}
+\index{B\+E\+M3\+D\+Greens\+Func@{B\+E\+M3\+D\+Greens\+Func}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{B\+E\+M3\+D\+Greens\+Func}]{\setlength{\rightskip}{0pt plus 5cm}B\+E\+M3\+D\+Greens\+Func}\label{group__gfunc_gae91d45f951130f15865c63bad9e7d41e}
+gint B\+E\+M3\+D\+Greens\+Func(Gts\+Point $\ast$x, Gts\+Point $\ast$y, Gts\+Vector n, \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} $\ast$p, G\+Array $\ast$\+G, G\+Array $\ast$d\+Gdn)
+
+Green\textquotesingle{}s function for various problems. The function should return 0 on success and fill {\itshape G} with the Green\textquotesingle{}s function and {\itshape d\+Gdn} with its normal derivative, or their equivalents for a particular problem.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & field point \\
+\hline
+{\em y} & source point \\
+\hline
+{\em n} & normal at source point \\
+\hline
+{\em param} & parameters to use in Green\textquotesingle{}s function \\
+\hline
+{\em G} & Green\textquotesingle{}s function \\
+\hline
+{\em d\+Gdn} & normal derivative of Green\textquotesingle{}s function \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Function Documentation}
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+func\+\_\+convected\+\_\+helmholtz@{bem3d\+\_\+greens\+\_\+func\+\_\+convected\+\_\+helmholtz}}
+\index{bem3d\+\_\+greens\+\_\+func\+\_\+convected\+\_\+helmholtz@{bem3d\+\_\+greens\+\_\+func\+\_\+convected\+\_\+helmholtz}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+greens\+\_\+func\+\_\+convected\+\_\+helmholtz}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+greens\+\_\+func\+\_\+convected\+\_\+helmholtz (
+\begin{DoxyParamCaption}
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{Gts\+Point $\ast$}]{y, }
+\item[{Gts\+Vector}]{n, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{p, }
+\item[{G\+Array $\ast$}]{G, }
+\item[{G\+Array $\ast$}]{d\+Gdn}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga0ac47d116abbe3c807e0a6d1b9210662}
+Green\textquotesingle{}s function for convected Helmholtz equation\+: $G=\exp(\mathrm{j} k\sigma)/4\pi S$
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & field point \\
+\hline
+{\em y} & source point \\
+\hline
+{\em n} & normal at source point \\
+\hline
+{\em p} & a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters}; \\
+\hline
+{\em G} & two element G\+Array containing real and imaginary parts of Green\textquotesingle{}s function \\
+\hline
+{\em d\+Gdn} & two element G\+Array containing real and imaginary parts of normal derivative of Green\textquotesingle{}s function\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+parameters\+\_\+mach\+\_\+number, and bem3d\+\_\+parameters\+\_\+wavenumber.
+
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+func\+\_\+gradient\+\_\+laplace@{bem3d\+\_\+greens\+\_\+func\+\_\+gradient\+\_\+laplace}}
+\index{bem3d\+\_\+greens\+\_\+func\+\_\+gradient\+\_\+laplace@{bem3d\+\_\+greens\+\_\+func\+\_\+gradient\+\_\+laplace}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+greens\+\_\+func\+\_\+gradient\+\_\+laplace}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+greens\+\_\+func\+\_\+gradient\+\_\+laplace (
+\begin{DoxyParamCaption}
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{Gts\+Point $\ast$}]{y, }
+\item[{Gts\+Vector}]{n, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{p, }
+\item[{G\+Array $\ast$}]{G, }
+\item[{G\+Array $\ast$}]{d\+Gdn}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_gab681fbcd4d3b5eedcda99ba9c7e26627}
+Green\textquotesingle{}s function for gradient of field in Laplace equation\+: $G=-1/4\pi R^{2}\nabla R$, $R=|\mathbf{x}-\mathbf{y}|$
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & field point \\
+\hline
+{\em y} & source point \\
+\hline
+{\em n} & normal at source point \\
+\hline
+{\em p} & a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters}, ignored in this function; \\
+\hline
+{\em G} & three element G\+Array containing gradient of Green\textquotesingle{}s function \\
+\hline
+{\em d\+Gdn} & three element G\+Array containing gradient of normal derivative of Green\textquotesingle{}s function\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
+\end{DoxyReturn}
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz@{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz}}
+\index{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz@{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz (
+\begin{DoxyParamCaption}
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{Gts\+Point $\ast$}]{y, }
+\item[{Gts\+Vector}]{n, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{p, }
+\item[{G\+Array $\ast$}]{G, }
+\item[{G\+Array $\ast$}]{d\+Gdn}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga72b647494ebdcaad483fa695a37e08a6}
+Green\textquotesingle{}s function for Helmholtz equation\+: $G=\exp(\mathrm{J} kR)/4\pi R$, $R=|\mathbf{x}-\mathbf{y}|$
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & field point \\
+\hline
+{\em y} & source point \\
+\hline
+{\em n} & normal at source point \\
+\hline
+{\em p} & a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters}; \\
+\hline
+{\em G} & two element G\+Array containing real and imaginary parts of Green\textquotesingle{}s function \\
+\hline
+{\em d\+Gdn} & two element G\+Array containing real and imaginary parts of normal derivative of Green\textquotesingle{}s function\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+parameters\+\_\+wavenumber.
+
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs@{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs}}
+\index{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs@{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs (
+\begin{DoxyParamCaption}
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{Gts\+Point $\ast$}]{y, }
+\item[{Gts\+Vector}]{ny, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{p, }
+\item[{G\+Array $\ast$}]{G, }
+\item[{G\+Array $\ast$}]{d\+Gdn}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga41aa922f65ed9dc187819534e2de59c0}
+Green\textquotesingle{}s function for Helmholtz equation, hypersingular formulation\+: $G=\exp(\mathrm{J} kR)/4\pi R$, $R=|\mathbf{x}-\mathbf{y}|$
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & field point \\
+\hline
+{\em y} & source point \\
+\hline
+{\em ny} & normal at source point \\
+\hline
+{\em p} & a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters}; \\
+\hline
+{\em G} & two element G\+Array containing real and imaginary parts of Green\textquotesingle{}s function \\
+\hline
+{\em d\+Gdn} & two element G\+Array containing real and imaginary parts of normal derivative of Green\textquotesingle{}s function\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+parameters\+\_\+conditioning, bem3d\+\_\+parameters\+\_\+lambda\+\_\+real, bem3d\+\_\+parameters\+\_\+normal, and bem3d\+\_\+parameters\+\_\+wavenumber.
+
+\index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+func\+\_\+laplace@{bem3d\+\_\+greens\+\_\+func\+\_\+laplace}}
+\index{bem3d\+\_\+greens\+\_\+func\+\_\+laplace@{bem3d\+\_\+greens\+\_\+func\+\_\+laplace}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
+\subsubsection[{bem3d\+\_\+greens\+\_\+func\+\_\+laplace}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+greens\+\_\+func\+\_\+laplace (
+\begin{DoxyParamCaption}
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{Gts\+Point $\ast$}]{y, }
+\item[{Gts\+Vector}]{n, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{p, }
+\item[{G\+Array $\ast$}]{G, }
+\item[{G\+Array $\ast$}]{d\+Gdn}
+\end{DoxyParamCaption}
+)}\label{group__gfunc_ga46206cce899bfb461c6352b1ea176cc2}
+Green\textquotesingle{}s function for Laplace equation\+: $G=1/4\pi R$, $R=|\mathbf{x}-\mathbf{y}|$
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & field point \\
+\hline
+{\em y} & source point \\
+\hline
+{\em n} & normal at source point \\
+\hline
+{\em p} & a \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters}, ignored in this function; \\
+\hline
+{\em G} & single element G\+Array containing Green\textquotesingle{}s function \\
+\hline
+{\em d\+Gdn} & single element G\+Array containing normal derivative of Green\textquotesingle{}s function\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+configuration\+\_\+new(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient().
+

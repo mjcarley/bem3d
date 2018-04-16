@@ -1,0 +1,55 @@
+ epsfmm=
+  0.50000E-09
+ nbox=
+     800
+ scale=
+  0.99999E+00  0.49999E+00  0.25000E+00  0.12500E+00
+  lused7 is 
+  700023
+ in hfmm3dpart, bsize(0) zk/2 pi=
+  0.15915E+00
+ zk=
+  0.10000E+01  0.30000E+00
+ bsize=
+  0.99999E+00  0.49999E+00  0.25000E+00  0.12500E+00
+ nterms=
+      35      35      35      34
+ nmax=
+      35
+ finished reordering=
+       0
+ ier=
+       0
+ nboxes=
+     585
+ nlev=
+       3
+ nboxes=
+     585
+ lused7=
+  706445
+  lmptot is 
+ 5692273
+  lused7 is 
+ 5692274
+ === STEP 1 (form mp) ====
+ === STEP 2 (form lo) ====
+ === STEPS 3,4,5 ====
+ === STEP 6 (eval mp) ====
+ === STEP 7 (eval lo) ====
+ === STEP 8 (direct) =====
+ timeinfo=
+  0.61391E+00  0.00000E+00  0.82987E+00  0.36631E+02  0.10848E+01  0.00000E+00
+  0.59891E+00  0.34523E+02
+ nboxes=
+     585
+ nsource=
+  100000
+ ntarget=
+       0
+ lwlists=
+       4
+ lused total =
+ 5692274
+ memory / point = 
+  0.56923E+02

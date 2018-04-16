@@ -1,0 +1,47 @@
+#!/bin/bash
+
+## generate a spherical surface using the BEM3D sphere generator
+bem3d-sphere > sphere.bem
+
+## assemble the matrix for a Laplace problem
+bem3d-assemble -C sphere-laplace.cfg -i sphere.bem -o sphere-laplace.mtx
+
+## generate a mean flow boundary condition using an
+## analytically-specified function
+bem3d-function -E 2 -i sphere.bem -F velocity.fn -o bc-laplace.dat
+
+## solve for the surface potential using the velocity boundary condition
+bem3d-solve -C sphere-laplace.cfg -d bc-laplace.dat -m sphere-laplace.mtx \
+	    -o solution.dat
+
+## generate a GMSH visualization to view the surface potential solution
+bem3d2pos -t "Surface" -i sphere.bem -d solution.dat -o sphere.pos
+
+## generate a simple regular grid
+bem3d-plane -v -2.5,-2.5,0 -v 2.5,-2.5,0 -v 2.5,2.5,0 -v -2.5,2.5,0 \
+	    -i 65 -j 65 | gts2bem3d > field.bem
+
+## compute the potential on the grid
+bem3d-field -C sphere-laplace.cfg -d solution.dat -i sphere.bem \
+	    -s field.bem -o phi.dat
+
+## generate a GMSH visualization to view the field potential
+bem3d2pos -t "Potential" -i field.bem -d phi.dat -o field.pos
+
+## use a mesh from GMSH to show the gradient (velocity field)
+## generate a GMSH mesh for the field
+gmsh -2 gradient.geo
+
+## convert the GMSH mesh to BEM3D format
+msh2bem3d < gradient.msh > gradient.bem
+
+## compute the field, including the gradient, on the mesh
+bem3d-field -C sphere-laplace-gradient.cfg -d solution.dat -i sphere.bem \
+	    -s gradient.bem -o gradient1.dat
+
+## add the background flow to the computed potential
+bem3d-function -E 4 -F gradient.fn -i gradient.bem -d gradient1.dat \
+	       -o gradient.dat
+
+## generate a GMSH visualization for the three components of velocity
+bem3d2pos -t "Velocity" -i gradient.bem -d gradient.dat -g -f 1 -o gradient.pos

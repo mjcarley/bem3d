@@ -1,0 +1,211 @@
+\section{Computing fields}
+\label{group__radiation}\index{Computing fields@{Computing fields}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+gint {\bf bem3d\+\_\+radiation\+\_\+func\+\_\+laplace} (G\+Array $\ast$G, G\+Array $\ast$d\+G, G\+Array $\ast$phi, G\+Array $\ast$dphi, G\+Array $\ast$f, gpointer data)
+\item 
+gint {\bf bem3d\+\_\+radiation\+\_\+func\+\_\+helmholtz} (G\+Array $\ast$G, G\+Array $\ast$d\+G, G\+Array $\ast$phi, G\+Array $\ast$dphi, G\+Array $\ast$f, gpointer data)
+\item 
+gint {\bf bem3d\+\_\+mesh\+\_\+radiation\+\_\+point} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, {\bf B\+E\+M3\+D\+Configuration} $\ast$config, {\bf B\+E\+M3\+D\+Parameters} $\ast$gdata, {\bf B\+E\+M3\+D\+Lookup\+Func} lf, gpointer ldata, Gts\+Point $\ast$x, G\+Array $\ast$f)
+\item 
+gint {\bf bem3d\+\_\+element\+\_\+radiation\+\_\+point} ({\bf B\+E\+M3\+D\+Element} $\ast$e, {\bf B\+E\+M3\+D\+Configuration} $\ast$config, {\bf B\+E\+M3\+D\+Parameters} $\ast$gdata, {\bf B\+E\+M3\+D\+Lookup\+Func} lfunc, gpointer ldata, Gts\+Point $\ast$x, G\+Array $\ast$G, G\+Array $\ast$d\+Gdn, G\+Array $\ast$phi, G\+Array $\ast$dphi)
+\item 
+gint {\bf bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, {\bf B\+E\+M3\+D\+Configuration} $\ast$config, {\bf B\+E\+M3\+D\+Parameters} $\ast$gdata, {\bf B\+E\+M3\+D\+Lookup\+Func} lfunc, gpointer ldata, {\bf B\+E\+M3\+D\+Mesh} $\ast$s, {\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$f)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\index{Computing fields@{Computing fields}!bem3d\+\_\+element\+\_\+radiation\+\_\+point@{bem3d\+\_\+element\+\_\+radiation\+\_\+point}}
+\index{bem3d\+\_\+element\+\_\+radiation\+\_\+point@{bem3d\+\_\+element\+\_\+radiation\+\_\+point}!Computing fields@{Computing fields}}
+\subsubsection[{bem3d\+\_\+element\+\_\+radiation\+\_\+point}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+radiation\+\_\+point (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{{\bf B\+E\+M3\+D\+Configuration} $\ast$}]{config, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{gdata, }
+\item[{{\bf B\+E\+M3\+D\+Lookup\+Func}}]{lfunc, }
+\item[{gpointer}]{ldata, }
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{G\+Array $\ast$}]{G, }
+\item[{G\+Array $\ast$}]{d\+Gdn, }
+\item[{G\+Array $\ast$}]{phi, }
+\item[{G\+Array $\ast$}]{dphi}
+\end{DoxyParamCaption}
+)}\label{group__radiation_gab386ad3815e6fa259695ebb0cb95a42a}
+Compute the field radiated to a point from a B\+E\+M3\+D\+Element with known solution
+
+
+\begin{DoxyParams}{Parameters}
+{\em e} & B\+E\+M3\+D\+Element \\
+\hline
+{\em config} & \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration} for problem; \\
+\hline
+{\em gdata} & \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} to pass to Green\textquotesingle{}s function; \\
+\hline
+{\em lfunc} & lookup function for solution \\
+\hline
+{\em ldata} & user data to pass to lf \\
+\hline
+{\em x} & field point \\
+\hline
+{\em G} & integral of Green\textquotesingle{}s function \\
+\hline
+{\em d\+Gdn} & integral of Green\textquotesingle{}s function normal derivative \\
+\hline
+{\em phi} & solution at element nodes \\
+\hline
+{\em dphi} & solution normal derivative at element nodes\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+global\+\_\+index, bem3d\+\_\+element\+\_\+node\+\_\+func, bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+position(), bem3d\+\_\+element\+\_\+shape\+\_\+func, bem3d\+\_\+greens\+\_\+function\+\_\+func, bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real, and bem3d\+\_\+quadrature\+\_\+rule\+\_\+new().
+
+\index{Computing fields@{Computing fields}!bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh@{bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh}}
+\index{bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh@{bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh}!Computing fields@{Computing fields}}
+\subsubsection[{bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{{\bf B\+E\+M3\+D\+Configuration} $\ast$}]{config, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{gdata, }
+\item[{{\bf B\+E\+M3\+D\+Lookup\+Func}}]{lfunc, }
+\item[{gpointer}]{ldata, }
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{s, }
+\item[{{\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__radiation_gaf7e1f8394b2d261020b17d51846660af}
+Computed the field radiated to a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} from a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} with known solution
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} for geometry; \\
+\hline
+{\em config} & \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration} for problem; \\
+\hline
+{\em gdata} & \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} to pass to Green\textquotesingle{}s function; \\
+\hline
+{\em lfunc} & lookup function for solution \\
+\hline
+{\em ldata} & user data to pass to lfunc \\
+\hline
+{\em s} & \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} on which to compute field \\
+\hline
+{\em f} & \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block containing computed field\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+
+
+References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, bem3d\+\_\+mesh\+\_\+foreach\+\_\+node(), bem3d\+\_\+mesh\+\_\+node\+\_\+index\+\_\+max, and bem3d\+\_\+mesh\+\_\+node\+\_\+index\+\_\+min.
+
+\index{Computing fields@{Computing fields}!bem3d\+\_\+mesh\+\_\+radiation\+\_\+point@{bem3d\+\_\+mesh\+\_\+radiation\+\_\+point}}
+\index{bem3d\+\_\+mesh\+\_\+radiation\+\_\+point@{bem3d\+\_\+mesh\+\_\+radiation\+\_\+point}!Computing fields@{Computing fields}}
+\subsubsection[{bem3d\+\_\+mesh\+\_\+radiation\+\_\+point}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+mesh\+\_\+radiation\+\_\+point (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{{\bf B\+E\+M3\+D\+Configuration} $\ast$}]{config, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{gdata, }
+\item[{{\bf B\+E\+M3\+D\+Lookup\+Func}}]{lf, }
+\item[{gpointer}]{ldata, }
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{G\+Array $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__radiation_ga105574415fa7a9d888a32070320f417f}
+Compute the field radiated to a point from a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} with known solution
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} for geometry; \\
+\hline
+{\em config} & \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration} for problem; \\
+\hline
+{\em gdata} & \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} to pass to Green\textquotesingle{}s function; \\
+\hline
+{\em lf} & lookup function for solution \\
+\hline
+{\em ldata} & user data to pass to lf \\
+\hline
+{\em x} & field point \\
+\hline
+{\em f} & radiated solution\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+
+
+References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, bem3d\+\_\+mesh\+\_\+foreach\+\_\+element(), bem3d\+\_\+mesh\+\_\+node\+\_\+index\+\_\+max, and bem3d\+\_\+mesh\+\_\+node\+\_\+index\+\_\+min.
+
+\index{Computing fields@{Computing fields}!bem3d\+\_\+radiation\+\_\+func\+\_\+helmholtz@{bem3d\+\_\+radiation\+\_\+func\+\_\+helmholtz}}
+\index{bem3d\+\_\+radiation\+\_\+func\+\_\+helmholtz@{bem3d\+\_\+radiation\+\_\+func\+\_\+helmholtz}!Computing fields@{Computing fields}}
+\subsubsection[{bem3d\+\_\+radiation\+\_\+func\+\_\+helmholtz}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+radiation\+\_\+func\+\_\+helmholtz (
+\begin{DoxyParamCaption}
+\item[{G\+Array $\ast$}]{G, }
+\item[{G\+Array $\ast$}]{d\+G, }
+\item[{G\+Array $\ast$}]{phi, }
+\item[{G\+Array $\ast$}]{dphi, }
+\item[{G\+Array $\ast$}]{f, }
+\item[{gpointer}]{data}
+\end{DoxyParamCaption}
+)}\label{group__radiation_ga886a546ae39b9d1dde4a0b40212bc0c4}
+Standard built-\/in radiation function for Helmholtz equation, which can be used for any complex problem
+
+
+\begin{DoxyParams}{Parameters}
+{\em G} & integral of Green\textquotesingle{}s function \\
+\hline
+{\em d\+G} & integral of normal derivative of Green\textquotesingle{}s function \\
+\hline
+{\em phi} & solution at nodes \\
+\hline
+{\em dphi} & normal derivative of solution at nodes \\
+\hline
+{\em f} & radiated solution integral of $Gd\phi/dn+dG/dn\phi$ \\
+\hline
+{\em data} & user data, ignored in this function\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+\index{Computing fields@{Computing fields}!bem3d\+\_\+radiation\+\_\+func\+\_\+laplace@{bem3d\+\_\+radiation\+\_\+func\+\_\+laplace}}
+\index{bem3d\+\_\+radiation\+\_\+func\+\_\+laplace@{bem3d\+\_\+radiation\+\_\+func\+\_\+laplace}!Computing fields@{Computing fields}}
+\subsubsection[{bem3d\+\_\+radiation\+\_\+func\+\_\+laplace}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+radiation\+\_\+func\+\_\+laplace (
+\begin{DoxyParamCaption}
+\item[{G\+Array $\ast$}]{G, }
+\item[{G\+Array $\ast$}]{d\+G, }
+\item[{G\+Array $\ast$}]{phi, }
+\item[{G\+Array $\ast$}]{dphi, }
+\item[{G\+Array $\ast$}]{f, }
+\item[{gpointer}]{data}
+\end{DoxyParamCaption}
+)}\label{group__radiation_ga4d4db6b9d4deb81683c45315ed28a34b}
+Standard built-\/in radiation function for Laplace equation, which can be used for any real problem
+
+
+\begin{DoxyParams}{Parameters}
+{\em G} & integral of Green\textquotesingle{}s function \\
+\hline
+{\em d\+G} & integral of normal derivative of Green\textquotesingle{}s function \\
+\hline
+{\em phi} & solution at nodes \\
+\hline
+{\em dphi} & normal derivative of solution at nodes \\
+\hline
+{\em f} & radiated solution integral of $Gd\phi/dn+dG/dn\phi$ \\
+\hline
+{\em data} & user data, ignored in this function\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}

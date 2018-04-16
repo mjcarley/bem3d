@@ -1,0 +1,43 @@
+\section{Mesh partitioning}
+\label{group__partition}\index{Mesh partitioning@{Mesh partitioning}}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+GtsGraph $\ast$ {\bf bem3d\_\-mesh\_\-graph} ({\bf BEM3DMesh} $\ast$m)
+\item 
+{\bf BEM3DMesh} $\ast$ {\bf bem3d\_\-mesh\_\-graph\_\-mesh} (GtsGraph $\ast$g, {\bf BEM3DMesh} $\ast$m)
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+Functions for \doxyref{BEM3DMesh}{p.}{structBEM3DMesh} partitioning, intended for use in indexing and fast multipole calculations. 
+
+\subsection{Function Documentation}
+\index{partition@{partition}!bem3d\_\-mesh\_\-graph@{bem3d\_\-mesh\_\-graph}}
+\index{bem3d\_\-mesh\_\-graph@{bem3d\_\-mesh\_\-graph}!partition@{partition}}
+\subsubsection[{bem3d\_\-mesh\_\-graph}]{\setlength{\rightskip}{0pt plus 5cm}GtsGraph$\ast$ bem3d\_\-mesh\_\-graph ({\bf BEM3DMesh} $\ast$ {\em m})}\label{group__partition_g9282e3760745dff374056900efc6e643}
+
+
+Generate a graph for the connectivity of the elements of a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh}.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em m}]a \doxyref{BEM3DMesh}{p.}{structBEM3DMesh}.\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]a graph of BEM3DENode's for the elements of {\em m\/}. \end{Desc}
+\index{partition@{partition}!bem3d\_\-mesh\_\-graph\_\-mesh@{bem3d\_\-mesh\_\-graph\_\-mesh}}
+\index{bem3d\_\-mesh\_\-graph\_\-mesh@{bem3d\_\-mesh\_\-graph\_\-mesh}!partition@{partition}}
+\subsubsection[{bem3d\_\-mesh\_\-graph\_\-mesh}]{\setlength{\rightskip}{0pt plus 5cm}{\bf BEM3DMesh}$\ast$ bem3d\_\-mesh\_\-graph\_\-mesh (GtsGraph $\ast$ {\em g}, \/  {\bf BEM3DMesh} $\ast$ {\em m})}\label{group__partition_gb5b03f3645cf97b20474bd346e6b4a93}
+
+
+Generate a mesh using the elements of a mesh contained in a graph.
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em g}]GtsGraph for elements of {\em m\/}; \item[{\em m}]\doxyref{BEM3DMesh}{p.}{structBEM3DMesh}.\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]a new \doxyref{BEM3DMesh}{p.}{structBEM3DMesh} composed of the elements of {\em m\/} contained in {\em g\/}. \end{Desc}

@@ -1,0 +1,18 @@
+\section{B\+E\+M3\+D\+Element\+Build\+Func Struct Reference}
+\label{structBEM3DElementBuildFunc}\index{B\+E\+M3\+D\+Element\+Build\+Func@{B\+E\+M3\+D\+Element\+Build\+Func}}
+
+
+\subsection{Detailed Description}
+Build an element from edge and vertex data
+
+
+\begin{DoxyParams}{Parameters}
+{\em e} & an array of edges \\
+\hline
+{\em v} & an array of vertices\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the newly built element
+\end{DoxyReturn}
+The function should insert the vertices into the new element and construct new faces and edges as required to build up the element. Note that the ordering is important for the shape functions. 

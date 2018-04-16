@@ -1,0 +1,293 @@
+head	1.1;
+access;
+symbols;
+locks
+	ensmjc:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	2009.08.17.15.28.59;	author ensmjc;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/* bem3d-field.c
+ * 
+ * Copyright (C) 2006, 2008 Michael Carley
+ * 
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /*HAVE_CONFIG_H*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <unistd.h>
+#include <mcheck.h>
+
+#include <glib.h>
+#include <gts.h>
+
+#include <wmpi.h>
+
+#include "bem3d.h"
+#include "bem3d-private.h"
+
+gint lookup_func_block(gint i, gint j, BEM3DMeshData *f,
+		       GArray *s, GArray *ds) ;
+gint lookup_func_block_c(gint i, gint j, 
+			 BEM3DMeshData *f,
+			 GArray *s, GArray *ds) ;
+
+gint lookup_func_block(gint i, gint j, 
+		       BEM3DMeshData *f,
+		       GArray *s, GArray *ds)
+
+{
+  gdouble *x ;
+
+  x = bem3d_mesh_data_get(f, i) ;
+
+  if ( f != NULL ) {
+    g_array_index(s, gdouble, j) = x[0] ;
+    g_array_index(ds, gdouble, j) = x[1] ;
+    return 0 ;
+  }
+
+  g_error("%s: vertex %d not found in data", __FUNCTION__, i) ;
+
+  return 0 ;
+}
+
+gint lookup_func_block_c(gint i, gint j, 
+			 BEM3DMeshData *f,
+			 GArray *s, GArray *ds)
+
+{
+  gdouble *x ;
+
+  x = bem3d_mesh_data_get(f, i) ;
+
+  if ( f != NULL ) {
+    g_array_index(s, gdouble, 2*j) = x[0] ;
+    g_array_index(s, gdouble, 2*j+1) = x[1] ;
+    g_array_index(ds, gdouble, 2*j) = x[2] ;
+    g_array_index(ds, gdouble, 2*j+1) = x[3] ;
+    return 0 ;
+  }
+
+  g_error("%s: vertex %d not found in data", __FUNCTION__, i) ;
+
+  return 0 ;
+}
+
+gint main(gint argc, gchar **argv)
+
+{
+  BEM3DMesh *s, *m ;
+  GPtrArray *meshes, *mdata ;
+  GtsFile *fp ;
+  gint i ;
+  gchar ch, p[32], *progname ;
+  gchar *ipfile, *sfile, *opfile, *incfile ;
+  BEM3DGreensFunc gfunc ;
+  BEM3DParameters gdata ;
+  BEM3DLookupFunc lfunc ;
+  BEM3DRadiationFunc rfunc ;
+  BEM3DMeshData *sdata ;
+  gint ifunc, nmp, ndp ;
+  gdouble k, M ;
+  gboolean calc_gradient ;
+  FILE *input, *output ;
+
+  wmpi_initialize(&argc, &argv) ;
+  progname = g_strdup(g_basename(argv[0])) ;
+  /*computational geometry*/
+  meshes = g_ptr_array_new() ; mdata = g_ptr_array_new() ;
+  /*surface for radiated field*/
+  s = bem3d_mesh_new(bem3d_mesh_class(), gts_face_class(),
+		   gts_edge_class(), gts_vertex_class()) ;
+
+  sprintf(p, "P%03d: ", wmpi_rank()) ;
+  bem3d_logging_init(stderr, p, G_LOG_LEVEL_MESSAGE, wmpi_shutdown) ;
+  bem3d_shapefunc_lookup_init() ;
+
+  /*default test case is a Laplace equation (k=0)*/
+  gfunc = bem3d_greens_func_laplace ;
+  rfunc = bem3d_radiation_func_laplace ;
+  lfunc = (BEM3DLookupFunc)lookup_func_block ;
+  k = 0.0 ; M = 0.0 ;
+  ipfile = opfile = sfile = incfile = NULL ;
+  ifunc = 0 ;
+  calc_gradient = FALSE ;
+  nmp = ndp = 0 ;
+  while ( (ch = getopt(argc, argv, "d:ghi:I:k:M:o:s:")) != EOF ) {
+    switch (ch) {
+    default:
+          case 'h':
+      fprintf(stderr, 
+	      "%s: compute the radiated field from a BEM3D solution\n\n",
+	      progname) ;
+      fprintf(stderr, "Usage: %s <options>\n", progname) ;
+      fprintf(stderr, 
+	      "Options:\n"
+	      "        -d <data file name>\n"
+	      "        -h (print this message and exit)\n"
+	      "        -i <bem3d input file> (can be repeated)\n"
+	      "        -I <incident field file>\n"
+	      "        -k # (wave number for Helmholtz calculation\n"
+	      "        -M # (Mach number for convected Helmholtz equation)\n"
+	      "        -o <output file name>\n"
+	      "        -s <surface file name> (a BEM3D file of points "
+	      "where the\n"
+	      "           field will be computed)\n") ;
+      return 0 ;
+      break ;
+    case 'd':
+      input = fopen(optarg, "r") ;
+      bem3d_mesh_data_read(&sdata, input) ;
+      g_ptr_array_add(mdata, sdata) ;
+      ndp += bem3d_mesh_data_node_number(sdata) ;
+      fclose(input) ;
+      break ;
+    case 'g': calc_gradient = TRUE ; break ;
+    case 'i': 
+      ipfile = g_strdup(optarg) ;
+      m = bem3d_mesh_new(bem3d_mesh_class(), gts_face_class(),
+			 gts_edge_class(), gts_vertex_class()) ;
+      input = fopen(ipfile, "r") ;
+      if ( input == NULL ) {
+	if ( wmpi_rank() == 0 ) 
+	  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,
+		"cannot open file %s\n", ipfile) ;
+	wmpi_shutdown() ;
+	return(1) ;
+      }
+      fp = gts_file_new(input) ;
+      bem3d_mesh_read(m, fp) ;
+      fclose(input) ;
+      g_ptr_array_add(meshes, m) ;
+      nmp += bem3d_mesh_node_number(m) ;
+      break ;
+    case 'I': incfile = g_strdup(optarg) ; break ;
+    case 'k': 
+      sscanf(optarg, "%lg", &k) ;
+      /*use Helmholtz equation*/
+	if ( wmpi_rank() == 0 ) 
+	  fprintf(stderr, "%s: complex wave equation, k=%f\n", 
+		  progname, k) ;
+      gfunc = bem3d_greens_func_helmholtz ;
+      rfunc = bem3d_radiation_func_helmholtz ;
+      lfunc = (BEM3DLookupFunc)lookup_func_block_c ;
+      break ;
+    case 'M': sscanf(optarg, "%lg", &M) ; break ;
+    case 'o': opfile = g_strdup(optarg) ; break ;
+    case 's': sfile = g_strdup(optarg) ; break ;
+    }
+  }
+
+  fprintf(stderr, "%s", BEM3D_STARTUP_MESSAGE) ;
+
+  if ( nmp > ndp ) {
+    fprintf(stderr, "%s: number of data points (%d) does not match "
+	    "number of nodes (%d)\n", progname, ndp, nmp) ;
+    return 1 ;
+  }
+
+  bem3d_parameters_wavenumber(&gdata) = k ;
+  bem3d_parameters_mach_number(&gdata) = M ;
+
+  if ( M != 0.0 ) {
+    gfunc = bem3d_greens_func_convected_helmholtz ;
+  }
+
+  if ( calc_gradient ) {
+    g_assert(gfunc == bem3d_greens_func_laplace ) ;
+
+    if ( gfunc == bem3d_greens_func_laplace )
+      gfunc = bem3d_greens_func_gradient_laplace ;
+  }
+
+  if ( sfile == NULL ) input = stdin ;
+  else {
+    input = fopen(sfile, "r") ;
+    if ( input == NULL ) {
+      fprintf(stderr, "%s: cannot open input file %s\n", progname, sfile) ;
+      return -1 ;
+    }
+  }
+
+  fp = gts_file_new(input) ;
+  bem3d_mesh_read(s, fp) ;
+
+  if ( input != stdin ) fclose(input) ;
+
+  fprintf(stderr, "%s: surface file %s read\n", progname, sfile) ;
+  fprintf(stderr, "nodes: %d; elements: %d\n", 
+	  bem3d_mesh_node_number(s), bem3d_mesh_element_number(s)) ;
+
+  if ( incfile != NULL ) {
+    input = fopen(incfile, "r") ;
+    if ( input == NULL ) {
+      fprintf(stderr, 
+	      "%s: cannot open incident field file %s\n", 
+	      progname, incfile) ;
+      return -1 ;
+    }
+    bem3d_mesh_data_read(&sdata, input) ;
+    fclose(input) ;
+  } else {
+    sdata = bem3d_mesh_data_new(s, 8) ;
+    bem3d_mesh_data_clear(sdata) ;
+  }
+
+  for ( i = 0 ; i < meshes->len ; i ++ ) {
+    bem3d_mesh_radiation_mesh(g_ptr_array_index(meshes,i),
+			      gfunc, &gdata, NULL, NULL,
+			      lfunc, g_ptr_array_index(mdata,i),
+			      rfunc, NULL,
+			      s, sdata) ;
+  }
+
+  if ( opfile != NULL ) {
+    output = fopen(opfile, "w") ;
+    if ( output == NULL ) {
+      fprintf(stderr, "%s: cannot open output file %s\n", 
+	      progname, opfile) ;
+      exit(1) ;
+    }
+  } else 
+    output = stdout ;
+
+  bem3d_mesh_data_write(sdata, output) ;
+  
+  wmpi_shutdown() ;
+
+  return 0 ;
+}
+@

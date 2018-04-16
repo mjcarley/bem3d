@@ -1,0 +1,63 @@
+\section{Logging functions and function status codes}
+\label{group__logging}\index{Logging functions and function status codes@{Logging functions and function status codes}}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bf bem3d\+\_\+error} \{ \\*
+{\bfseries B\+E\+M3\+D\+\_\+\+F\+A\+I\+L\+U\+R\+E} = -\/1, 
+{\bfseries B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S} = 0, 
+{\bfseries B\+E\+M3\+D\+\_\+\+E\+I\+N\+V\+A\+L} = 1, 
+{\bfseries B\+E\+M3\+D\+\_\+\+I\+T\+E\+R\+M\+A\+X} = 2, 
+\\*
+{\bfseries B\+E\+M3\+D\+\_\+\+U\+N\+K\+N\+O\+W\+N\+\_\+\+F\+O\+R\+M\+A\+T} = 3, 
+{\bfseries B\+E\+M3\+D\+\_\+\+N\+U\+L\+L\+\_\+\+A\+R\+G\+U\+M\+E\+N\+T} = 4, 
+{\bfseries B\+E\+M3\+D\+\_\+\+A\+R\+G\+U\+M\+E\+N\+T\+\_\+\+W\+R\+O\+N\+G\+\_\+\+T\+Y\+P\+E} = 5, 
+{\bfseries B\+E\+M3\+D\+\_\+\+A\+R\+G\+U\+M\+E\+N\+T\+\_\+\+O\+U\+T\+\_\+\+O\+F\+\_\+\+R\+A\+N\+G\+E} = 6, 
+\\*
+{\bfseries B\+E\+M3\+D\+\_\+\+B\+L\+O\+C\+K\+\_\+\+F\+U\+L\+L} = 7, 
+{\bfseries B\+E\+M3\+D\+\_\+\+F\+I\+L\+E\+\_\+\+E\+R\+R\+O\+R} = 8
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+gint {\bf bem3d\+\_\+logging\+\_\+init} (F\+I\+L\+E $\ast$f, gchar $\ast$p, G\+Log\+Level\+Flags log\+\_\+level, gpointer exit\+\_\+func)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Enumeration Type Documentation}
+\index{Logging functions and function status codes@{Logging functions and function status codes}!bem3d\+\_\+error@{bem3d\+\_\+error}}
+\index{bem3d\+\_\+error@{bem3d\+\_\+error}!Logging functions and function status codes@{Logging functions and function status codes}}
+\subsubsection[{bem3d\+\_\+error}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf bem3d\+\_\+error}}\label{group__logging_gafedd6c0ca9ef1a73e3d6faf645feaaea}
+Return codes for B\+E\+M3\+D functions. 
+
+\subsection{Function Documentation}
+\index{Logging functions and function status codes@{Logging functions and function status codes}!bem3d\+\_\+logging\+\_\+init@{bem3d\+\_\+logging\+\_\+init}}
+\index{bem3d\+\_\+logging\+\_\+init@{bem3d\+\_\+logging\+\_\+init}!Logging functions and function status codes@{Logging functions and function status codes}}
+\subsubsection[{bem3d\+\_\+logging\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+logging\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{F\+I\+L\+E $\ast$}]{f, }
+\item[{gchar $\ast$}]{p, }
+\item[{G\+Log\+Level\+Flags}]{log\+\_\+level, }
+\item[{gpointer}]{exit\+\_\+func}
+\end{DoxyParamCaption}
+)}\label{group__logging_ga55107ede94d9fceca96dff82103d31bf}
+Initialize B\+E\+M3\+D logging
+
+
+\begin{DoxyParams}{Parameters}
+{\em f} & file stream for messages, if N\+U\+L\+L, stderr is used; \\
+\hline
+{\em p} & string to prepend to messages, or N\+U\+L\+L; \\
+\hline
+{\em log\+\_\+level} & maximum logging level to handle (see g\+\_\+log); \\
+\hline
+{\em exit\+\_\+func} & function to call if exiting on an error, or N\+U\+L\+L.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\end{DoxyReturn}

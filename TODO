@@ -1,0 +1,29 @@
+REMOVE STATIC VARIABLES (thread safety) and switch to workspaces
+
+quadrature rules for quad elements;
+
+bem3d-data-process for processing of data/solution files;
+
+Sanity checking for element build functions (check edges really do
+connect properly) and/or add/check for missing nodes
+
+Integration of quantities on surfaces (e.g. for lift coefficients)
+
+Parallel implementation of BEM3DMeshData;
+
+Loadable modules;
+
+Green's functions including source and field normals for calculations
+in a Burton and Miller stylee (using Francis method?);
+
+Adapt quadrature order to required multipole order in mfunc_...
+
+Automated attempt to pick wake lines, using motion specification
+
+bem3d-aero to store matrices for rigid body problems
+
+Command line motion and function variable setting (to override angle
+of attack, for example)
+
+Line continuation in reading motion and function files (to make files
+more readable)

@@ -1,0 +1,95 @@
+head	1.1;
+access;
+symbols;
+locks
+	ensmjc:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/* bem3d
+ * 
+ * Copyright (C) 2006, 2009 Michael Carley
+ * 
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /*HAVE_CONFIG_H*/
+
+#include <stdio.h>
+#include <string.h>
+
+#include <glib.h>
+
+#include "bem3d-private.h"
+
+static gchar *file_mode_string(gchar *mode)
+
+{
+  gchar *mode_strings[] = {"reading", "writing", "appending",
+			   "unknown operation"} ;
+
+  switch (mode[0]) {
+  default: return mode_strings[3] ; break ;
+  case 'r': return mode_strings[0] ; break ;
+  case 'w': return mode_strings[1] ; break ;
+  case 'a': return mode_strings[2] ; break ;
+  }
+
+  return NULL ;
+}
+
+FILE *file_open(gchar *fname, gchar *namedefault, gchar *mode, 
+		FILE *fdefault)
+
+{
+  FILE *f ;
+
+  if ( !strcmp(fname, namedefault) ) return fdefault ;
+
+  f = fopen(fname, mode) ;
+
+  if ( f == NULL )
+    g_error("%s: cannot open file \"%s\" for %s (mode \"%s\")", 
+	    __FUNCTION__, fname, file_mode_string(mode), mode) ;
+
+  return f ;
+}
+
+gint file_close(FILE *f)
+
+{
+  if ( (f != stdin) && (f != stdout) && (f != stderr) ) fclose(f) ;
+
+  return 0 ;
+}
+
+@
