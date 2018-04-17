@@ -1,6 +1,6 @@
 /* fmm.c
  * 
- * Copyright (C) 2017 Michael Carley
+ * Copyright (C) 2017, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ BEM3DFMMWorkspace *bem3d_fmm_workspace_alloc(BEM3DFastMultipole solver,
   return w ;
 }
 
-gint near_vertex(BEM3DElement *e, gpointer data[])
+static gint near_vertex(BEM3DElement *e, gpointer data[])
 
 {
   gdouble r = *((gdouble *)data[1]) ;
@@ -122,9 +122,9 @@ gint near_vertex(BEM3DElement *e, gpointer data[])
   return 0 ;
 }
 
-gint insert_correction_weights(GArray *gcorr, GArray *dgcorr,
-			       GArray *icorr, gint i0, gint nc,
-			       gint idx, gdouble *G, gdouble *dG)
+static gint insert_correction_weights(GArray *gcorr, GArray *dgcorr,
+				      GArray *icorr, gint i0, gint nc,
+				      gint idx, gdouble *G, gdouble *dG)
 
 {
   gint i, j ;
@@ -159,9 +159,9 @@ gint insert_correction_weights(GArray *gcorr, GArray *dgcorr,
   return 0 ;
 }
 
-gint correction_gfunc(gdouble *x, gdouble *y, gdouble *n,
-		      BEM3DParameters *p, gdouble *g, gdouble *dg,
-		      BEM3DFastMultipoleProblem problem)
+static gint correction_gfunc(gdouble *x, gdouble *y, gdouble *n,
+			     BEM3DParameters *p, gdouble *g, gdouble *dg,
+			     BEM3DFastMultipoleProblem problem)
 
 {
   gdouble R, R2, r[3], C, S, k ;
@@ -186,10 +186,10 @@ gint correction_gfunc(gdouble *x, gdouble *y, gdouble *n,
   return 0 ;
 }
 
-gint subtract_correction(gint *indices, gdouble *w, gint ppe,
-			 gdouble *g, gdouble *dg, 
-			 GArray *gcorr, GArray *dgcorr, GArray *icorr,
-			 gint i0, gint nc)
+static gint subtract_correction(gint *indices, gdouble *w, gint ppe,
+				gdouble *g, gdouble *dg, 
+				GArray *gcorr, GArray *dgcorr, GArray *icorr,
+				gint i0, gint nc)
 
 {
   gint i, j, k ;
@@ -216,7 +216,7 @@ gint subtract_correction(gint *indices, gdouble *w, gint ppe,
   return 0 ;
 }
 
-gint correction_terms(gint i, GtsVertex *v, gpointer data[])
+static gint correction_terms(gint i, GtsVertex *v, gpointer data[])
 
 {
   BEM3DFMMMatrix *m = data[0] ;
