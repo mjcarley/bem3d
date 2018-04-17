@@ -1,6 +1,6 @@
 /* bem3d-solve.c
  * 
- * Copyright (C) 2006 Michael Carley
+ * Copyright (C) 2006, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -281,7 +281,8 @@ static gint sisl_matrix_vector_mul_B(sisl_matrix_t *B, sisl_vector_t *v,
   gsl_complex vc, wc, *cc ;
   gint i, j, k, *idx ;
   gdouble *wt ;
-
+  gint chk = 0 ;
+  
   g_assert(sisl_matrix_density(B) == SISL_MATRIX_USER_DEFINED) ;
 
   s = mtx->skel ;
@@ -301,7 +302,7 @@ static gint sisl_matrix_vector_mul_B(sisl_matrix_t *B, sisl_vector_t *v,
 
       for ( j = 0 ; j < s->ppe ; j ++ ) {
 	/* zc = sisl_vector_get_complex(v,idx[j]) ;  */
-
+	
 	scratch[2*i+0] +=  wt[j]*vp[2*idx[j]+0]*0.25*M_1_PI ;
 	scratch[2*i+1] +=  wt[j]*vp[2*idx[j]+1]*0.25*M_1_PI ;
       }
@@ -395,7 +396,7 @@ gint main(gint argc, gchar **argv)
   gsl_complex zc ;
   BEM3DConfiguration *config ;
   gdouble tol ;
-
+  
   wmpi_initialize(&argc, &argv) ;
   progname = g_strdup(g_path_get_basename(argv[0])) ;
 
@@ -413,7 +414,8 @@ gint main(gint argc, gchar **argv)
 
   bem3d_configuration_init() ;
   config = bem3d_configuration_new() ;
-
+  bem3d_parameters_wavenumber(&param) = G_MAXDOUBLE ;
+  
   while ( (ch = getopt(argc, argv, "hC:d:i:k:m:t:o:")) != EOF ) {
     switch (ch) {
     default:
@@ -428,7 +430,8 @@ gint main(gint argc, gchar **argv)
 		"        -h (print this message and exit)\n"
 		"        -C <configuration file name>\n"
 		"        -d <data file name> (for boundary conditions)\n"
-		"        -k # (wave number for Helmholtz calculation\n"
+		"        -i <bem3d input file> (for FMM calculations)\n"
+		"        -k # (wave number for FMM Helmholtz calculation)\n"
 		"        -m <matrix file name from bem3d-assemble>\n"
 		"        -t # (iterative solver convergence tolerance: %lg)\n"
 		"        -o <output file name> (for mesh block data)\n",
@@ -548,6 +551,14 @@ gint main(gint argc, gchar **argv)
     if ( mstride == 1 ) rc = SISL_REAL ;
     if ( mstride == 2 ) rc = SISL_COMPLEX ;
 
+    if ( rc == SISL_COMPLEX &&
+	 bem3d_parameters_wavenumber(&param) == G_MAXDOUBLE ) {
+      fprintf(stderr,
+	      "%s: P%d: wavenumber not set for complex FMM calculation\n",
+	      progname, wmpi_rank()) ;
+      return 1 ;
+    }
+    
     order = config->skel_order ;
     r_correct = config->fmm_radius ;
 
@@ -647,8 +658,11 @@ gint main(gint argc, gchar **argv)
     fprintf(stderr, "%s: starting solution: t=%f\n",
 	    progname, g_timer_elapsed(t, NULL)) ;
 
+
   w = sisl_solver_workspace_new() ;
+
   sisl_matrix_vector_mul(B, dphi, rhs) ;
+
 
 #ifdef FMM_MATRIX_CHECK
   sisl_matrix_vector_mul(A, rhs, dphi) ;
@@ -659,7 +673,9 @@ gint main(gint argc, gchar **argv)
 
 #endif /*FMM_MATRIX_CHECK*/
 
+
   sisl_solve(SISL_SOLVER_BICGSTAB, A, phi, rhs, tol, 128, w, &perf) ;
+
   wmpi_pause() ;
   if ( wmpi_rank() == 0 ) 
     fprintf(stderr, "%s: system solved: t=%f\n",
