@@ -1,10 +1,15 @@
-head	1.4;
+head	1.5;
 access;
 symbols;
 locks
-	ensmjc:1.4; strict;
+	ensmjc:1.5; strict;
 comment	@ * @;
 
+
+1.5
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.4;
 
 1.4
 date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
@@ -31,14 +36,14 @@ desc
 @@
 
 
-1.4
+1.5
 log
 @*** empty log message ***
 @
 text
 @/* radiation.c
  * 
- * Copyright (C) 2006 Michael Carley
+ * Copyright (C) 2006, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,41 +158,75 @@ static void radiation_real(GArray *G, GArray *dG, gint nc,
 			   GArray *phi, GArray *dphi,
 			   GArray *f)
 {
-  gint i, j ;
+  gint i, j, idx ;
 
-  for ( j = 0 ; j < nc ; j ++ ) 
-    for ( i = 0 ; i < phi->len ; i ++ ) 
+  /* for ( i = 0 ; i < G->len ; i ++ ) */
+  /*   fprintf(stderr, "%lg ", g_array_index(G, gdouble, i)) ; */
+  /* fprintf(stderr, "\n") ; */
+
+  /* for ( i = 0 ; i < dG->len ; i ++ ) */
+  /*   fprintf(stderr, "%lg ", g_array_index(dG, gdouble, i)) ; */
+  /* fprintf(stderr, "\n") ; */
+
+  /* for ( i = 0 ; i < phi->len ; i ++ ) */
+  /*   fprintf(stderr, "%lg ", g_array_index(phi, gdouble, i)) ; */
+  /* fprintf(stderr, "\n") ; */
+
+  /* for ( i = 0 ; i < dphi->len ; i ++ ) */
+  /*   fprintf(stderr, "%lg ", g_array_index(dphi, gdouble, i)) ; */
+  /* fprintf(stderr, "\n") ; */
+  
+  for ( j = 0 ; j < nc ; j ++ ) {
+    for ( i = 0 ; i < phi->len ; i ++ ) {
+      idx = i*nc + j ;
       g_array_index(f, gdouble, j) +=
-	g_array_index(dG, gdouble, j*phi->len+i)*
+	g_array_index(dG, gdouble, idx)*
 	g_array_index(phi, gdouble, i) -
-	g_array_index(G, gdouble, j*phi->len+i)*
+	g_array_index(G, gdouble, idx)*
 	g_array_index(dphi, gdouble, i) ;
+    }
+  }
+
+  /* for ( i = 0 ; i < f->len ; i ++ ) */
+  /*   fprintf(stderr, "%lg ", g_array_index(f, gdouble, i)) ; */
+  /* fprintf(stderr, "\n") ; */
+
+  /* exit(0) ; */
   
   return ;
 }
 
-static void radiation_complex(GArray *G, GArray *dG,
+static void radiation_complex(GArray *G, GArray *dG, gint nc,
 			      GArray *phi, GArray *dphi,
 			      GArray *f)
 {
-  gint i ;
+  gint i, j, idx ;
 
-  for ( i = 0 ; i < (G->len)/2 ; i ++ ) {
-    g_array_index(f, gdouble, 0) +=
-      g_array_index(dG, gdouble, 2*i)*g_array_index(phi, gdouble, 2*i) -
-      g_array_index(dG, gdouble, 2*i+1)*g_array_index(phi, gdouble, 2*i+1) -
-      g_array_index(G, gdouble, 2*i)*g_array_index(dphi, gdouble, 2*i) +
-      g_array_index(G, gdouble, 2*i+1)*g_array_index(dphi, gdouble, 2*i+1) ;
-    g_array_index(f, gdouble, 1) +=
-      g_array_index(dG, gdouble, 2*i)*g_array_index(phi, gdouble, 2*i+1) +
-      g_array_index(dG, gdouble, 2*i+1)*g_array_index(phi, gdouble, 2*i) -
-      g_array_index(G, gdouble, 2*i)*g_array_index(dphi, gdouble, 2*i+1) -
-      g_array_index(G, gdouble, 2*i+1)*g_array_index(dphi, gdouble, 2*i) ;
+  for ( j = 0 ; j < nc ; j ++ ) {
+    for ( i = 0 ; i < (phi->len)/2 ; i ++ ) {
+      idx = nc*i + j ;
+      g_array_index(f, gdouble, 2*j+0) +=
+	g_array_index(dG, gdouble, 2*idx+0)*
+	g_array_index(phi, gdouble, 2*i+0) -
+	g_array_index(dG, gdouble, 2*idx+1)*
+	g_array_index(phi, gdouble, 2*i+1) -
+	g_array_index(G, gdouble, 2*idx+0)*
+	g_array_index(dphi, gdouble, 2*i+0) +
+	g_array_index(G, gdouble, 2*idx+1)*
+	g_array_index(dphi, gdouble, 2*i+1) ;
+      g_array_index(f, gdouble, 2*j+1) += 
+	g_array_index(dG, gdouble, 2*idx+0)*
+	g_array_index(phi, gdouble, 2*i+1) +
+	g_array_index(dG, gdouble, 2*idx+1)*
+	g_array_index(phi, gdouble, 2*i+0) -
+	g_array_index(G, gdouble, 2*idx+0)*
+	g_array_index(dphi, gdouble, 2*i+1) -
+	g_array_index(G, gdouble, 2*idx+1)*
+	g_array_index(dphi, gdouble, 2*i+0) ;
+    }
   }
-
   return ;
 }
-
 
 static void element_radiation_point(BEM3DElement *e, 
 				    BEM3DConfiguration *config,
@@ -238,13 +277,16 @@ static void element_radiation_point(BEM3DElement *e,
   /* get the size of the Green's function */
   if ( bem3d_greens_function_is_real(&gfunc) ) stride = 1 ;
   else stride = 2 ;
-  nc = bem3d_quadrature_component_number(q) ;
+  nc = bem3d_greens_function_component_number(&gfunc) ;
   
   g_array_set_size(G,bem3d_element_node_number(e)*stride*nc) ; 
   g_array_set_size(dGdn,bem3d_element_node_number(e)*stride*nc) ;  
   g_array_set_size(phi,bem3d_element_node_number(e)*stride) ; 
   g_array_set_size(dphi,bem3d_element_node_number(e)*stride) ;  
   g_array_set_size(f,stride*nc) ; 
+
+  g_array_set_size(G, stride*bem3d_element_node_number(e)*nc) ;
+  g_array_set_size(dGdn, stride*bem3d_element_node_number(e)*nc) ;
 
   for ( i = 0 ; i < G->len ; i ++ ) 
     g_array_index(G,gdouble,i) = g_array_index(dGdn,gdouble,i) = 0.0 ;
@@ -256,25 +298,39 @@ static void element_radiation_point(BEM3DElement *e,
     wt = bem3d_quadrature_weight(q,i) ;
     shfunc(s, t, L, dLds, dLdt, NULL) ;
     bem3d_element_position(e, L, &y) ;
-    /* if (  x->x == y.x && x->y == y.y && x->z == y.z )  */
-    /*   g_error("%s: coincident points (%lg,%lg,%lg)", __FUNCTION__, */
-    /* 	      x->x, x->y, x->z) ; */
     bem3d_element_normal(e, dLds, dLdt, n, &J) ;
     bem3d_greens_function_func(&gfunc)(x, &y, n, gdata, g, dgdn) ;
     cpfunc(s, t, L, NULL, NULL, NULL) ;
     J *= wt ;
-    stride = g->len ;
-    g_array_set_size(G, stride*bem3d_element_node_number(e)) ;
-    g_array_set_size(dGdn, stride*bem3d_element_node_number(e)) ;
     for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
       w = J*L[j] ;
-      for ( k = 0 ; k < stride ; k ++ ) {
-  	g_array_index(G,gdouble,j*stride+k) +=
+      for ( k = 0 ; k < stride*nc ; k ++ ) {
+  	g_array_index(G,gdouble,j*stride*nc+k) +=
  	  g_array_index(g,gdouble,k)*w ;
-	g_array_index(dGdn,gdouble,j*stride+k) +=
+	g_array_index(dGdn,gdouble,j*stride*nc+k) +=
 	  g_array_index(dgdn,gdouble,k)*w ;
       }
     }
+    /* fprintf(stderr, "%lg\n", w) ; */
+    
+    /* fprintf(stderr, "G: ") ; */
+    /* for ( j = 0 ; j < G->len ; j ++ ) */
+    /*   fprintf(stderr, "%lg ", g_array_index(G,gdouble,j)) ; */
+    /* fprintf(stderr, "\n") ; */
+    /* fprintf(stderr, "g: ") ; */
+    /* for ( j = 0 ; j < g->len ; j ++ ) */
+    /*   fprintf(stderr, "%lg ", g_array_index(g,gdouble,j)) ; */
+    /* fprintf(stderr, "\n") ; */
+    /* fprintf(stderr, "dG: ") ; */
+    /* for ( j = 0 ; j < dGdn->len ; j ++ ) */
+    /*   fprintf(stderr, "%lg ", g_array_index(dGdn,gdouble,j)) ; */
+    /* fprintf(stderr, "\n") ; */
+    /* fprintf(stderr, "dgdn: ") ; */
+    /* for ( j = 0 ; j < g->len ; j ++ ) */
+    /*   fprintf(stderr, "%lg ", g_array_index(dgdn,gdouble,j)) ; */
+    /* fprintf(stderr, "\n") ; */
+
+    /* exit(0) ; */
   }
 
   if ( bem3d_quadrature_free_number(q) != 0 ) {
@@ -284,47 +340,39 @@ static void element_radiation_point(BEM3DElement *e,
 	      __FUNCTION__, bem3d_quadrature_free_number(q), 
 	      bem3d_element_node_number(e)) ;
     /*we should not arrive here in complex problems*/
-    g_assert(q->wfree == 1) ; g_assert(stride == 1) ;
+    g_assert(q->wfree == 1) ;
+    /* g_assert(stride == 1) ; */
     k = 0 ;
-    for ( j = 0 ; j < bem3d_element_node_number(e)*nc ; j ++ ) {
-      g_array_index(G,gdouble,j*stride+k) += 
-	bem3d_quadrature_free_term_g(q,j) ;
-      g_array_index(dGdn,gdouble,j*stride+k) += 
-	bem3d_quadrature_free_term_dg(q,j) ;
+    for ( j = 0 ; j < bem3d_element_node_number(e)*nc*stride ; j ++ ) {
+      g_array_index(G,gdouble,j) += bem3d_quadrature_free_term_g(q,j) ;
+      g_array_index(dGdn,gdouble,j) += bem3d_quadrature_free_term_dg(q,j) ;
+      /* g_array_index(G,gdouble,j*stride+k) +=  */
+      /* 	bem3d_quadrature_free_term_g(q,j) ; */
+      /* g_array_index(dGdn,gdouble,j*stride+k) +=  */
+      /* 	bem3d_quadrature_free_term_dg(q,j) ; */
     }
   }
 
-  g_array_set_size(phi, bem3d_element_node_number(e)) ;
-  g_array_set_size(dphi, bem3d_element_node_number(e)) ;
+  g_array_set_size(phi, stride*bem3d_element_node_number(e)) ;
+  g_array_set_size(dphi, stride*bem3d_element_node_number(e)) ;
   for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
     lfunc(bem3d_element_global_index(e, j), j, ldata, phi, dphi) ;
   }
-  
-  /* for ( j = 0 ; j < 6 ; j ++ ) { */
-  /*   fprintf(stderr, "%lg %lg %lg %lg\n", */
-  /* 	    g_array_index(phi, gdouble, j), */
-  /* 	    g_array_index(dphi, gdouble, j), */
-  /* 	    g_array_index(G, gdouble, j), */
-  /* 	    g_array_index(dG, gdouble, j)) ; */
-  /* } */
-
 
   if ( bem3d_greens_function_is_real(&gfunc) ) {
     radiation_real(G, dGdn, nc, phi, dphi, f) ;
   } else {
-    radiation_complex(G, dGdn, phi, dphi, f) ;
+    radiation_complex(G, dGdn, nc, phi, dphi, f) ;
   }
-
+  
   return ;
 }
-
 
 static gint mesh_radiation_point(BEM3DElement *e, gpointer data[])
 
 {
   GtsPoint *x = (GtsPoint *)data[BEM3D_BMESH_DATA_POINT] ;
   BEM3DConfiguration *config = data[BEM3D_BMESH_DATA_CONFIG] ; 
-  BEM3DGreensFunction *gfunc ; /* = data[BEM3D_BMESH_DATA_GFUNC] ; */
   BEM3DParameters *gdata = data[BEM3D_BMESH_DATA_GDATA] ;
   BEM3DLookupFunc lf = (BEM3DLookupFunc)data[BEM3D_BMESH_DATA_LFUNC] ;
   gpointer ldata = data[BEM3D_BMESH_DATA_LDATA] ;
@@ -336,15 +384,6 @@ static gint mesh_radiation_point(BEM3DElement *e, gpointer data[])
     dg = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
     phi = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
     dphi = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
-  }
-
-  gfunc = &(config->gfunc) ;
-  if ( bem3d_greens_function_is_real(gfunc) ) {
-/*     g_array_set_size(f, 4) ; */
-/*     radiation_real(g, dg, phi, dphi, f) ; */
-  } else {
-    g_array_set_size(f, 2) ;
-/*     radiation_complex(g, dg, phi, dphi, f) ; */
   }
 
   element_radiation_point(e, config, gdata, lf, ldata,
@@ -376,7 +415,8 @@ gint bem3d_mesh_radiation_point(BEM3DMesh *m,
 
 {
   gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
-  gint j ;
+  gint j, len ;
+  BEM3DGreensFunction gfunc ;
 
   g_debug("%s: ", __FUNCTION__) ;
 
@@ -398,8 +438,12 @@ gint bem3d_mesh_radiation_point(BEM3DMesh *m,
   data[BEM3D_BMESH_DATA_IMAX] = &(bem3d_mesh_node_index_max(m)) ;
   data[BEM3D_BMESH_DATA_F] = f ;  
 
-  g_array_set_size(f, 16) ;
-  for ( j = 0 ; j < f->len ; j ++ ) g_array_index(f,gdouble,j)=0.0 ;  
+  gfunc = config->gfunc ;
+  len = bem3d_greens_function_component_number(&gfunc) ;
+  if ( !bem3d_greens_function_is_real(&gfunc) ) len *= 2 ;
+  
+  g_array_set_size(f, len) ;
+  for ( j = 0 ; j < f->len ; j ++ ) g_array_index(f,gdouble,j) = 0.0 ;  
   bem3d_mesh_foreach_element(m, (BEM3DElementFunc)mesh_radiation_point,
 			     data) ;
 
@@ -505,8 +549,7 @@ gint bem3d_element_radiation_point(BEM3DElement *e,
     cpfunc(s, t, L, NULL, NULL, NULL) ;
     J *= wt ;
     stride = g->len ;
-    g_array_set_size(G, stride*bem3d_element_node_number(e)) ;
-    g_array_set_size(dGdn, stride*bem3d_element_node_number(e)) ;
+
     for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
       w = J*L[j] ;
       for ( k = 0 ; k < stride ; k ++ ) {
@@ -516,6 +559,7 @@ gint bem3d_element_radiation_point(BEM3DElement *e,
 	  g_array_index(dgdn,gdouble,k)*w ;
       }
     }
+
   }
 
   if ( bem3d_quadrature_free_number(q) != 0 ) {
@@ -552,15 +596,12 @@ static gint mesh_radiation_mesh(gint i, GtsVertex *v, gpointer data[])
   BEM3DLookupFunc lf = (BEM3DLookupFunc)data[BEM3D_BMESH_DATA_LFUNC] ;
   gpointer ldata = data[BEM3D_BMESH_DATA_LDATA] ;
   BEM3DMeshData *fm = (BEM3DMeshData *)data[BEM3D_BMESH_DATA_F] ;
-  gint j ;
-  static GArray *g = NULL, *f = NULL ;
+  static GArray *f = NULL ;
 
-  if ( g == NULL ) {
+  if ( f == NULL ) {
     f = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
-    g = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
   }
 
-  for ( j = 0 ; j < f->len ; j ++ ) g_array_index(f,gdouble,j)=0.0 ;
   bem3d_mesh_radiation_point(m, config, gdata, lf, ldata, GTS_POINT(v), f) ;
   bem3d_mesh_data_add(fm, i, f) ;
 
@@ -568,7 +609,7 @@ static gint mesh_radiation_mesh(gint i, GtsVertex *v, gpointer data[])
 }
 
 /** 
- * Computed the field radiated to a BEM3DMesh from a BEM3DMesh with
+ * Compute the field radiated to a BEM3DMesh from a BEM3DMesh with
  * known solution
  * 
  * @@param m BEM3DMesh for geometry;
@@ -584,9 +625,7 @@ static gint mesh_radiation_mesh(gint i, GtsVertex *v, gpointer data[])
 
 gint bem3d_mesh_radiation_mesh(BEM3DMesh *m,
 			       BEM3DConfiguration *config,
-			       /* BEM3DGreensFunction *gfunc,  */
 			       BEM3DParameters *gdata,
-			       /* BEM3DQuadratureRuleFunc qfunc, gpointer qdata, */
 			       BEM3DLookupFunc lfunc, gpointer ldata,
 			       BEM3DMesh *s, BEM3DMeshData *f)
 
@@ -623,6 +662,148 @@ gint bem3d_mesh_radiation_mesh(BEM3DMesh *m,
  * @@}
  * 
  */
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2006 Michael Carley
+d118 1
+a118 1
+  gint i, j ;
+d120 19
+a138 2
+  for ( j = 0 ; j < nc ; j ++ ) 
+    for ( i = 0 ; i < phi->len ; i ++ ) 
+d140 1
+a140 1
+	g_array_index(dG, gdouble, j*phi->len+i)*
+d142 1
+a142 1
+	g_array_index(G, gdouble, j*phi->len+i)*
+d144 8
+d156 1
+a156 1
+static void radiation_complex(GArray *G, GArray *dG,
+d160 1
+a160 1
+  gint i ;
+d162 22
+a183 11
+  for ( i = 0 ; i < (G->len)/2 ; i ++ ) {
+    g_array_index(f, gdouble, 0) +=
+      g_array_index(dG, gdouble, 2*i)*g_array_index(phi, gdouble, 2*i) -
+      g_array_index(dG, gdouble, 2*i+1)*g_array_index(phi, gdouble, 2*i+1) -
+      g_array_index(G, gdouble, 2*i)*g_array_index(dphi, gdouble, 2*i) +
+      g_array_index(G, gdouble, 2*i+1)*g_array_index(dphi, gdouble, 2*i+1) ;
+    g_array_index(f, gdouble, 1) +=
+      g_array_index(dG, gdouble, 2*i)*g_array_index(phi, gdouble, 2*i+1) +
+      g_array_index(dG, gdouble, 2*i+1)*g_array_index(phi, gdouble, 2*i) -
+      g_array_index(G, gdouble, 2*i)*g_array_index(dphi, gdouble, 2*i+1) -
+      g_array_index(G, gdouble, 2*i+1)*g_array_index(dphi, gdouble, 2*i) ;
+a184 1
+
+a187 1
+
+d237 1
+a237 1
+  nc = bem3d_quadrature_component_number(q) ;
+d245 3
+a257 3
+    /* if (  x->x == y.x && x->y == y.y && x->z == y.z )  */
+    /*   g_error("%s: coincident points (%lg,%lg,%lg)", __FUNCTION__, */
+    /* 	      x->x, x->y, x->z) ; */
+a261 3
+    stride = g->len ;
+    g_array_set_size(G, stride*bem3d_element_node_number(e)) ;
+    g_array_set_size(dGdn, stride*bem3d_element_node_number(e)) ;
+d264 2
+a265 2
+      for ( k = 0 ; k < stride ; k ++ ) {
+  	g_array_index(G,gdouble,j*stride+k) +=
+d267 1
+a267 1
+	g_array_index(dGdn,gdouble,j*stride+k) +=
+d271 20
+d300 2
+a301 1
+    g_assert(q->wfree == 1) ; g_assert(stride == 1) ;
+d303 7
+a309 5
+    for ( j = 0 ; j < bem3d_element_node_number(e)*nc ; j ++ ) {
+      g_array_index(G,gdouble,j*stride+k) += 
+	bem3d_quadrature_free_term_g(q,j) ;
+      g_array_index(dGdn,gdouble,j*stride+k) += 
+	bem3d_quadrature_free_term_dg(q,j) ;
+d313 2
+a314 2
+  g_array_set_size(phi, bem3d_element_node_number(e)) ;
+  g_array_set_size(dphi, bem3d_element_node_number(e)) ;
+a317 9
+  
+  /* for ( j = 0 ; j < 6 ; j ++ ) { */
+  /*   fprintf(stderr, "%lg %lg %lg %lg\n", */
+  /* 	    g_array_index(phi, gdouble, j), */
+  /* 	    g_array_index(dphi, gdouble, j), */
+  /* 	    g_array_index(G, gdouble, j), */
+  /* 	    g_array_index(dG, gdouble, j)) ; */
+  /* } */
+
+d322 1
+a322 1
+    radiation_complex(G, dGdn, phi, dphi, f) ;
+d324 1
+a324 1
+
+a327 1
+
+a332 1
+  BEM3DGreensFunction *gfunc ; /* = data[BEM3D_BMESH_DATA_GFUNC] ; */
+a345 9
+  gfunc = &(config->gfunc) ;
+  if ( bem3d_greens_function_is_real(gfunc) ) {
+/*     g_array_set_size(f, 4) ; */
+/*     radiation_real(g, dg, phi, dphi, f) ; */
+  } else {
+    g_array_set_size(f, 2) ;
+/*     radiation_complex(g, dg, phi, dphi, f) ; */
+  }
+
+d375 2
+a376 1
+  gint j ;
+d398 6
+a403 2
+  g_array_set_size(f, 16) ;
+  for ( j = 0 ; j < f->len ; j ++ ) g_array_index(f,gdouble,j)=0.0 ;  
+d509 1
+a509 2
+    g_array_set_size(G, stride*bem3d_element_node_number(e)) ;
+    g_array_set_size(dGdn, stride*bem3d_element_node_number(e)) ;
+d519 1
+d556 1
+a556 2
+  gint j ;
+  static GArray *g = NULL, *f = NULL ;
+d558 1
+a558 1
+  if ( g == NULL ) {
+a559 1
+    g = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
+a561 1
+  for ( j = 0 ; j < f->len ; j ++ ) g_array_index(f,gdouble,j)=0.0 ;
+d569 1
+a569 1
+ * Computed the field radiated to a BEM3DMesh from a BEM3DMesh with
+a584 1
+			       /* BEM3DGreensFunction *gfunc,  */
+a585 1
+			       /* BEM3DQuadratureRuleFunc qfunc, gpointer qdata, */
 @
 
 

@@ -1,10 +1,15 @@
-head	1.1;
+head	1.2;
 access;
 symbols;
 locks
-	ensmjc:1.1; strict;
+	ensmjc:1.2; strict;
 comment	@ * @;
 
+
+1.2
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.1;
 
 1.1
 date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
@@ -16,14 +21,14 @@ desc
 @@
 
 
-1.1
+1.2
 log
-@Initial revision
+@*** empty log message ***
 @
 text
 @/* configure.c
  * 
- * Copyright (C) 2010 by Michael Carley
+ * Copyright (C) 2010, 2017, 2018 by Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +47,10 @@ text
 
 /**
  * @@defgroup config Configuring BEM3D
+ *
+ * BEM3D codes can be configured at run-time using glib key files and
+ * the following functions.
+ *
  * @@{
  * 
  */
@@ -66,11 +75,25 @@ GHashTable *idmap = NULL, *varmap = NULL ;
 
 /*pre-defined structs for Green's functions*/
 BEM3DGreensFunction greens_func_laplace = 
-  {bem3d_greens_func_laplace, TRUE, 1} ;
+  {bem3d_greens_func_laplace, TRUE, 0, 1} ;
+BEM3DGreensFunction greens_func_gradient_laplace = 
+  {bem3d_greens_func_gradient_laplace, TRUE, 0, 4} ;
 BEM3DGreensFunction greens_func_helmholtz = 
-  {bem3d_greens_func_helmholtz, FALSE, 1} ;
+  {bem3d_greens_func_helmholtz, FALSE, 0, 1} ;
 BEM3DGreensFunction greens_func_helmholtz_hs = 
-  {bem3d_greens_func_helmholtz_hs, FALSE, 1} ;
+  {bem3d_greens_func_helmholtz_hs, FALSE,
+   BEM3D_GREENS_FUNC_PRECOMPUTE_NORMAL |
+   BEM3D_GREENS_FUNC_PRECOMPUTE_LAMBDA,
+   1} ;
+BEM3DGreensFunction greens_func_gradient_helmholtz = 
+  {bem3d_greens_func_gradient_helmholtz, FALSE, 0, 4} ;
+
+/** 
+ * Allocate a new ::BEM3DConfiguration, filled with default settings
+ * (Laplace, ::bem3d_quadrature_rule_default, direct solver).
+ * 
+ * @@return newly allocated ::BEM3DConfiguration
+ */
 
 BEM3DConfiguration *bem3d_configuration_new()
 
@@ -87,22 +110,16 @@ BEM3DConfiguration *bem3d_configuration_new()
   c->qrule = bem3d_quadrature_rule_default ;
   c->qdata = bem3d_quadrature_selector_default() ;
 
+  c->solver = BEM3D_SOLVER_DIRECT ;
+  c->fmm    = BEM3D_FMM_FMMLIB3D_1_2 ;
+
+  c->skel_order = 1 ;
+  c->fmm_radius = 1.0 ;
+  c->fmm_tol    = 1e-6 ;
+  c->bc_default_admittance[0] = c->bc_default_admittance[1] = 0 ;
+
   return c ;
 }
-
-/* static void configuration_set_pointer(GKeyFile *k, gchar *s, gpointer *p) */
-
-/* { */
-/*   gchar *v ; */
-
-/*   if ( !g_key_file_has_key(k, "BEM3D", s, NULL) ) return ; */
-
-/*   v = g_key_file_get_value(k, "BEM3D", s, NULL) ; */
-
-/*   *p = bem3d_configuration_pointer_from_identifier(v) ; */
-
-/*   return ; */
-/* } */
 
 static void parse_quadrature_key(GKeyFile *key, gchar *group, 
 				 gchar *k, BEM3DQuadratureSelector *s)
@@ -165,6 +182,8 @@ static void quadrature_rules_set(GKeyFile *key, gchar *group,
   gchar **w ;
   GError *error = NULL ;
 
+  if ( !g_key_file_has_group(key, "BEM3D::Quadrature") ) return ;
+
   w = g_key_file_get_keys(key, "BEM3D::Quadrature", (gsize *)(&nk), &error) ;
   if ( error != NULL ) g_error("%s: %s", __FUNCTION__, error->message) ;
 
@@ -196,6 +215,9 @@ static void physics_set(GKeyFile *key, BEM3DConfiguration *c)
   gchar *v ;
   GError *error = NULL ;
   BEM3DGreensFunction *p ;
+  gint ret ;
+
+  if ( !g_key_file_has_group(key, "BEM3D::Physics") ) return ;
 
   if ( g_key_file_has_key(key, "BEM3D::Physics", "greens_function", &error) ) {
     /*set Green's function*/
@@ -204,6 +226,66 @@ static void physics_set(GKeyFile *key, BEM3DConfiguration *c)
       g_error("%s: unrecognized Green's function (%s) in key file", 
 	      __FUNCTION__, v) ;
     c->gfunc = *p ;
+  }
+
+  if ( g_key_file_has_key(key, "BEM3D::Physics", "surface_admittance", 
+			  &error) ) {
+    /*default surface admittance for boundary conditions*/
+    v = g_key_file_get_value(key, "BEM3D::Physics", "surface_admittance", 
+			     NULL) ;
+    if ( (ret = parse_complex(v, c->bc_default_admittance)) != 0 )
+      g_error("%s: cannot parse default admittance \"%s\"", __FUNCTION__, v) ;  
+  }
+
+  return ;
+}
+
+static void general_set(GKeyFile *key, BEM3DConfiguration *c)
+
+/*set Green's function and other physical data for problem*/
+
+{
+  gchar *v ;
+  GError *error = NULL ;
+  gpointer p ;
+
+  if ( !g_key_file_has_group(key, "BEM3D::Solver") ) return ;
+
+  if ( g_key_file_has_key(key, "BEM3D::Solver", "solver", &error) ) {
+    /*set solver*/
+    v = g_key_file_get_value(key, "BEM3D::Solver", "solver", NULL) ;
+    if ( (p = bem3d_configuration_pointer_from_identifier(v)) == NULL ) 
+      g_error("%s: unrecognized solver (%s) in key file", 
+	      __FUNCTION__, v) ;
+    c->solver = GPOINTER_TO_INT(p) ;
+  }
+
+  error = NULL ;
+  if ( g_key_file_has_key(key, "BEM3D::Solver", "fmm", &error) ) {
+    /*set solver*/
+    v = g_key_file_get_value(key, "BEM3D::Solver", "fmm", NULL) ;
+    if ( (p = bem3d_configuration_pointer_from_identifier(v)) == NULL ) 
+      g_error("%s: unrecognized fast multipole method solver (%s) in key file", 
+	      __FUNCTION__, v) ;
+    c->fmm = GPOINTER_TO_INT(p) ;
+  }
+
+  if ( g_key_file_has_key(key, "BEM3D::Solver", "tolerance_fmm", &error) ) {
+    /*set solver*/
+    v = g_key_file_get_value(key, "BEM3D::Solver", "tolerance_fmm", NULL) ;
+    c->fmm_tol = atof(v) ;
+  }
+
+  if ( g_key_file_has_key(key, "BEM3D::Solver", "radius_fmm", &error) ) {
+    /*set solver*/
+    v = g_key_file_get_value(key, "BEM3D::Solver", "radius_fmm", NULL) ;
+    c->fmm_radius = atof(v) ;
+  }
+
+  if ( g_key_file_has_key(key, "BEM3D::Solver", "skeleton_order", &error) ) {
+    /*set solver*/
+    v = g_key_file_get_value(key, "BEM3D::Solver", "skeleton_order", NULL) ;
+    c->skel_order = atoi(v) ;
   }
 
   return ;
@@ -216,7 +298,7 @@ static void physics_set(GKeyFile *key, BEM3DConfiguration *c)
  * place. Values not in the "BEM3D" group are ignored.
  * 
  * @@param c a ::BEM3DConfiguration;
- * @@param k a ::GKeyFile containing settings for \a c.
+ * @@param k a GKeyFile containing settings for \a c.
  * 
  * @@return ::BEM3D_SUCCESS on success.
  */
@@ -237,6 +319,9 @@ gint bem3d_configuration_set(BEM3DConfiguration *c, gpointer k)
   /*Green's function and other physical data*/
   physics_set(key, c) ;
 
+  /*general solver settings*/
+  general_set(key, c) ;
+
 #else
   g_message("%s: key file support not available with this version of GLIB",
 	    __FUNCTION__) ;
@@ -244,6 +329,15 @@ gint bem3d_configuration_set(BEM3DConfiguration *c, gpointer k)
 
   return BEM3D_SUCCESS ;
 }
+
+/** 
+ * Read BEM3D configuration data from a key file.
+ * 
+ * @@param c a ::BEM3DConfiguration
+ * @@param file a GLIB format key file containing configuration data
+ * 
+ * @@return ::BEM3D_SUCCESS on success.
+ */
 
 gint bem3d_configuration_read(BEM3DConfiguration *c, gchar *file)
 
@@ -272,6 +366,15 @@ gint bem3d_configuration_read(BEM3DConfiguration *c, gchar *file)
   return BEM3D_SUCCESS ;
 }
 
+/** 
+ * Initialize internal data for ::BEM3DConfiguration. This function
+ * should be called before any configurations are set or used, i.e. at
+ * the start of any program.
+ * 
+ * 
+ * @@return ::BEM3D_SUCCESS on success
+ */
+
 gint bem3d_configuration_init(void)
 
 {
@@ -296,28 +399,78 @@ gint bem3d_configuration_init(void)
 				     bem3d_quadrature_rule_wx) ;
   bem3d_configuration_add_identifier("bem3d_quadrature_hayami", 
 				     bem3d_quadrature_rule_hayami) ;
+  bem3d_configuration_add_identifier("bem3d_quadrature_series", 
+				     bem3d_quadrature_rule_series) ;
 
   /*Green's functions*/
   bem3d_configuration_add_identifier("bem3d_greens_function_laplace", 
 				     &greens_func_laplace) ;
+  bem3d_configuration_add_identifier("bem3d_greens_function_gradient_laplace", 
+				     &greens_func_gradient_laplace) ;
   bem3d_configuration_add_identifier("bem3d_greens_function_helmholtz", 
 				     &greens_func_helmholtz) ;
-  bem3d_configuration_add_identifier("bem3d_greens_function_helmholtz_hypersingular", 
+  bem3d_configuration_add_identifier("bem3d_greens_function_gradient_helmholtz", 
+				     &greens_func_gradient_helmholtz) ;
+  bem3d_configuration_add_identifier("bem3d_greens_function_helmholtz_hyper", 
 				     &greens_func_helmholtz_hs) ;
   
+  /*solver settings*/
+  bem3d_configuration_add_identifier("bem3d_fmm_fmmlib3d1.2",
+				     GINT_TO_POINTER(BEM3D_FMM_FMMLIB3D_1_2)) ;
+  bem3d_configuration_add_identifier("bem3d_solver_direct",
+				     GINT_TO_POINTER(BEM3D_SOLVER_DIRECT)) ;
+  bem3d_configuration_add_identifier("bem3d_solver_fmm",
+				     GINT_TO_POINTER(BEM3D_SOLVER_FMM)) ;
+
   return BEM3D_SUCCESS ;
 }
+
+/** 
+ * Add an identifier to the configuration data. This allows the
+ * identifier to be recognized by the bem3d_configuration_
+ * functions. For example,
+ *
+ * bem3d_configuration_add_identifier("bem3d_quadrature_polar",
+ * bem3d_quadrature_rule_polar) ;
+ * 
+ * adds the identifier "bem3d_quadrature_polar" which refers to the
+ * quadrature function of the same name, allowing a key file to
+ * contain a configuration line of the form
+ *
+ * quadrature[1] = bem3d_quadrature_polar(0.0,16,16)
+ *
+ * @@param id name of identifier;
+ * @@param v a pointer to the identified object
+ * 
+ * @@return ::BEM3D_SUCCESS on success
+ */
 
 gint bem3d_configuration_add_identifier(const gchar *id, gpointer v)
 
 {
+  gboolean rt ;
+
   g_assert(idmap != NULL && varmap != NULL) ;
 
+  rt = (g_hash_table_lookup(idmap, id) != NULL) ;
+  if ( rt ) g_error("%s: value %s already in idmap", __FUNCTION__, id) ; 
   g_hash_table_insert(idmap, (gpointer)id, v) ;
+
+  rt = (g_hash_table_lookup(varmap, id) != NULL) ;
+  if ( rt ) g_error("%s: value %s already in varmap", __FUNCTION__, id) ;
   g_hash_table_insert(varmap, v, (gpointer)id) ;
 
   return BEM3D_SUCCESS ;
 }
+
+/** 
+ * Find the identifier associated with a given object, set using
+ * ::bem3d_configuration_add_identifier
+ * 
+ * @@param v pointer to an object
+ * 
+ * @@return the identifier associated with \a v
+ */
 
 gchar *bem3d_configuration_identifier_from_pointer(gpointer v)
 
@@ -327,16 +480,91 @@ gchar *bem3d_configuration_identifier_from_pointer(gpointer v)
   return g_hash_table_lookup(varmap, v) ;
 }
 
+/** 
+ * Look up the object associated with a given configuration
+ * identifier, set using ::bem3d_configuration_add_identifier
+ * 
+ * @@param id identifier used in configuration settings;
+ * 
+ * @@return a pointer to the object associated with \a id
+ */
+
 gpointer bem3d_configuration_pointer_from_identifier(const gchar *id)
 
 {
+  gpointer p ;
+
   if ( idmap == NULL ) return NULL ;
 
-  return g_hash_table_lookup(idmap, id) ;
+  p = g_hash_table_lookup(idmap, id) ;
+
+  return p ;
 }
 
 /**
  * @@}
  * 
  */
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2010 by Michael Carley
+d22 4
+d50 3
+a52 1
+  {bem3d_greens_func_laplace, TRUE, 1} ;
+d54 1
+a54 1
+  {bem3d_greens_func_helmholtz, FALSE, 1} ;
+d56 13
+a68 1
+  {bem3d_greens_func_helmholtz_hs, FALSE, 1} ;
+d85 8
+a95 14
+/* static void configuration_set_pointer(GKeyFile *k, gchar *s, gpointer *p) */
+
+/* { */
+/*   gchar *v ; */
+
+/*   if ( !g_key_file_has_key(k, "BEM3D", s, NULL) ) return ; */
+
+/*   v = g_key_file_get_value(k, "BEM3D", s, NULL) ; */
+
+/*   *p = bem3d_configuration_pointer_from_identifier(v) ; */
+
+/*   return ; */
+/* } */
+
+d157 2
+d190 3
+d203 60
+d273 1
+a273 1
+ * @@param k a ::GKeyFile containing settings for \a c.
+d294 3
+d305 9
+d341 9
+d374 2
+d380 2
+d384 3
+a386 1
+  bem3d_configuration_add_identifier("bem3d_greens_function_helmholtz_hypersingular", 
+d389 8
+d400 20
+d423 2
+d427 2
+d430 3
+d438 9
+d455 9
+d467 2
+d471 3
+a473 1
+  return g_hash_table_lookup(idmap, id) ;
 @

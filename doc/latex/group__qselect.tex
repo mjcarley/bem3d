@@ -3,32 +3,28 @@
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-{\bf B\+E\+M3\+D\+Quadrature\+Selector} $\ast$ {\bf bem3d\+\_\+quadrature\+\_\+selector\+\_\+new} (void)
+\textbf{ B\+E\+M3\+D\+Quadrature\+Selector} $\ast$ \textbf{ bem3d\+\_\+quadrature\+\_\+selector\+\_\+new} (void)
 \item 
-gint {\bf bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear} ({\bf B\+E\+M3\+D\+Quadrature\+Selector} $\ast$s)
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear} (\textbf{ B\+E\+M3\+D\+Quadrature\+Selector} $\ast$s)
 \item 
-gint {\bf bem3d\+\_\+quadrature\+\_\+selector\+\_\+add} ({\bf B\+E\+M3\+D\+Quadrature\+Selector} $\ast$s, {\bf B\+E\+M3\+D\+Quadrature\+Rule\+Func} f, gdouble p, gint N, gint M)
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+selector\+\_\+add} (\textbf{ B\+E\+M3\+D\+Quadrature\+Selector} $\ast$s, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule\+Func} f, gdouble p, gint N, gint M)
 \item 
-gint {\bf bem3d\+\_\+quadrature\+\_\+select} ({\bf B\+E\+M3\+D\+Quadrature\+Selector} $\ast$s, gdouble p, {\bf B\+E\+M3\+D\+Quadrature\+Rule\+Func} $\ast$f, gpointer $\ast$data)
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+select} (\textbf{ B\+E\+M3\+D\+Quadrature\+Selector} $\ast$s, gdouble p, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule\+Func} $\ast$f, gpointer $\ast$data)
 \item 
-{\bf B\+E\+M3\+D\+Quadrature\+Selector} $\ast$ {\bf bem3d\+\_\+quadrature\+\_\+selector\+\_\+default} ()
+\textbf{ B\+E\+M3\+D\+Quadrature\+Selector} $\ast$ \textbf{ bem3d\+\_\+quadrature\+\_\+selector\+\_\+default} ()
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-B\+E\+M3\+D has a built-\/in method for selecting quadrature rules (which can be overridden using a \doxyref{configuration file }{p.}{group__config}. The selection is performed using a parameter $\sigma$, calculated from geometrical properties of the element, and of the point. For an element, define $\mathbf{c}=\overline{\mathbf{x}_{i}}$, the mean of the element vertices. Then $R_{s}$ is defined as the maximum value of $\sqrt{2}|\mathbf{c}-\mathbf{x}_{i}|$, so that a sphere containing the element is defined. The point-\/element distance is defined as $R_{p}=|\mathbf{c}-\mathbf{x}|$. For field points which coincide with an element vertex $\sigma=0$. For $R_{p}<R_{s}$, $\sigma=z_{n}/R_{s}$ where $z_{n}$ is the approximate normal distance from the field point to the plane of the element. For $R_{p}\geq R_{s}$, $\sigma=R_{p}/R_{s}$. 
+B\+E\+M3D has a built-\/in method for selecting quadrature rules (which can be overridden using a \doxyref{configuration file }{p.}{group__config}. The selection is performed using a parameter $\sigma$, calculated from geometrical properties of the element, and of the point. For an element, define $\mathbf{c}=\overline{\mathbf{x}_{i}}$, the mean of the element vertices. Then $R_{s}$ is defined as the maximum value of $\sqrt{2}|\mathbf{c}-\mathbf{x}_{i}|$, so that a sphere containing the element is defined. The point-\/element distance is defined as $R_{p}=|\mathbf{c}-\mathbf{x}|$. For field points which coincide with an element vertex $\sigma=0$. For $R_{p}<R_{s}$, $\sigma=z_{n}/R_{s}$ where $z_{n}$ is the approximate normal distance from the field point to the plane of the element. For $R_{p}\geq R_{s}$, $\sigma=R_{p}/R_{s}$. 
 
 \subsection{Function Documentation}
+\mbox{\label{group__qselect_ga03636975762307c184032a836a980058}} 
 \index{Quadrature selection@{Quadrature selection}!bem3d\+\_\+quadrature\+\_\+select@{bem3d\+\_\+quadrature\+\_\+select}}
 \index{bem3d\+\_\+quadrature\+\_\+select@{bem3d\+\_\+quadrature\+\_\+select}!Quadrature selection@{Quadrature selection}}
-\subsubsection[{bem3d\+\_\+quadrature\+\_\+select}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+quadrature\+\_\+select (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Quadrature\+Selector} $\ast$}]{s, }
-\item[{gdouble}]{p, }
-\item[{{\bf B\+E\+M3\+D\+Quadrature\+Rule\+Func} $\ast$}]{f, }
-\item[{gpointer $\ast$}]{data}
-\end{DoxyParamCaption}
-)}\label{group__qselect_ga03636975762307c184032a836a980058}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+select()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+select (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Selector} $\ast$}]{s,  }\item[{gdouble}]{p,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule\+Func} $\ast$}]{f,  }\item[{gpointer $\ast$}]{data }\end{DoxyParamCaption})}
+
 Select a quadrature for a given parameter
 
 
@@ -49,17 +45,12 @@ Select a quadrature for a given parameter
 
 Referenced by bem3d\+\_\+quadrature\+\_\+rule\+\_\+default().
 
+\mbox{\label{group__qselect_gabfe9ed5ed02e45dc9440e04cea6dc35f}} 
 \index{Quadrature selection@{Quadrature selection}!bem3d\+\_\+quadrature\+\_\+selector\+\_\+add@{bem3d\+\_\+quadrature\+\_\+selector\+\_\+add}}
 \index{bem3d\+\_\+quadrature\+\_\+selector\+\_\+add@{bem3d\+\_\+quadrature\+\_\+selector\+\_\+add}!Quadrature selection@{Quadrature selection}}
-\subsubsection[{bem3d\+\_\+quadrature\+\_\+selector\+\_\+add}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+quadrature\+\_\+selector\+\_\+add (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Quadrature\+Selector} $\ast$}]{s, }
-\item[{{\bf B\+E\+M3\+D\+Quadrature\+Rule\+Func}}]{f, }
-\item[{gdouble}]{p, }
-\item[{gint}]{N, }
-\item[{gint}]{M}
-\end{DoxyParamCaption}
-)}\label{group__qselect_gabfe9ed5ed02e45dc9440e04cea6dc35f}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+selector\+\_\+add()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+selector\+\_\+add (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Selector} $\ast$}]{s,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule\+Func}}]{f,  }\item[{gdouble}]{p,  }\item[{gint}]{N,  }\item[{gint}]{M }\end{DoxyParamCaption})}
+
 Add a new quadrature to a selection rule
 
 
@@ -84,13 +75,12 @@ Add a new quadrature to a selection rule
 
 Referenced by bem3d\+\_\+quadrature\+\_\+selector\+\_\+default().
 
+\mbox{\label{group__qselect_ga72b30b0d0936a65eafccdbca1ad9b63d}} 
 \index{Quadrature selection@{Quadrature selection}!bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear@{bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear}}
 \index{bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear@{bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear}!Quadrature selection@{Quadrature selection}}
-\subsubsection[{bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Quadrature\+Selector} $\ast$}]{s}
-\end{DoxyParamCaption}
-)}\label{group__qselect_ga72b30b0d0936a65eafccdbca1ad9b63d}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+selector\+\_\+clear (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Selector} $\ast$}]{s }\end{DoxyParamCaption})}
+
 Clear a quadrature selection rule
 
 
@@ -101,14 +91,13 @@ Clear a quadrature selection rule
 \begin{DoxyReturn}{Returns}
 0 on success 
 \end{DoxyReturn}
+\mbox{\label{group__qselect_gaafd9c083c658b4c2254ec9e35b8b6995}} 
 \index{Quadrature selection@{Quadrature selection}!bem3d\+\_\+quadrature\+\_\+selector\+\_\+default@{bem3d\+\_\+quadrature\+\_\+selector\+\_\+default}}
 \index{bem3d\+\_\+quadrature\+\_\+selector\+\_\+default@{bem3d\+\_\+quadrature\+\_\+selector\+\_\+default}!Quadrature selection@{Quadrature selection}}
-\subsubsection[{bem3d\+\_\+quadrature\+\_\+selector\+\_\+default}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Quadrature\+Selector}$\ast$ bem3d\+\_\+quadrature\+\_\+selector\+\_\+default (
-\begin{DoxyParamCaption}
-\item[{void}]{}
-\end{DoxyParamCaption}
-)}\label{group__qselect_gaafd9c083c658b4c2254ec9e35b8b6995}
-Default quadrature selection rule which is reasonably good for most problems. For points close to, or on, an element, polar or Hayami\textquotesingle{}s P\+A\+R\+T quadrature is used, switching to a symmetric high-\/order rule further away.
+\subsubsection{bem3d\+\_\+quadrature\+\_\+selector\+\_\+default()}
+{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Quadrature\+Selector}$\ast$ bem3d\+\_\+quadrature\+\_\+selector\+\_\+default (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Default quadrature selection rule which is reasonably good for most problems. For points close to, or on, an element, polar or Hayami\textquotesingle{}s P\+A\+RT quadrature is used, switching to a symmetric high-\/order rule further away.
 
 \begin{DoxyReturn}{Returns}
 pointer to quadrature selector 
@@ -121,13 +110,12 @@ References bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar(), bem3d\+\_\+quadrature\+
 
 Referenced by bem3d\+\_\+configuration\+\_\+new().
 
+\mbox{\label{group__qselect_ga961747b637f04a5dcfb2c6612c9389cb}} 
 \index{Quadrature selection@{Quadrature selection}!bem3d\+\_\+quadrature\+\_\+selector\+\_\+new@{bem3d\+\_\+quadrature\+\_\+selector\+\_\+new}}
 \index{bem3d\+\_\+quadrature\+\_\+selector\+\_\+new@{bem3d\+\_\+quadrature\+\_\+selector\+\_\+new}!Quadrature selection@{Quadrature selection}}
-\subsubsection[{bem3d\+\_\+quadrature\+\_\+selector\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Quadrature\+Selector}$\ast$ bem3d\+\_\+quadrature\+\_\+selector\+\_\+new (
-\begin{DoxyParamCaption}
-\item[{void}]{}
-\end{DoxyParamCaption}
-)}\label{group__qselect_ga961747b637f04a5dcfb2c6612c9389cb}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+selector\+\_\+new()}
+{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Quadrature\+Selector}$\ast$ bem3d\+\_\+quadrature\+\_\+selector\+\_\+new (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
 Allocate a new \doxyref{B\+E\+M3\+D\+Quadrature\+Selector}{p.}{structBEM3DQuadratureSelector}
 
 \begin{DoxyReturn}{Returns}

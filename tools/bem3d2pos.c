@@ -1,6 +1,6 @@
 /* bem3d2pos.c
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -100,15 +100,16 @@ gint main(gint argc, gchar **argv)
       fprintf(stderr, "Usage: %s <options>\n", progname) ;
       fprintf(stderr, 
 	      "Options:\n"
+	      "        -h print this message and exit\n"
 	      "        -d <data file name>\n"
 	      "        -e <edge file name (possibly multiple)>\n"
-	      "        -f # (field of data to plot)\n"
-	      "        -g (output three components of gradient)\n"
-	      "        -h (print this message and exit)\n"
-	      "        -l # (set logging level)\n"
+	      "        -f # field of data to plot (%d)\n"
+	      "        -g output three components of gradient\n"
+	      "        -l # set logging level\n"
 	      "        -i <bem3d input file>\n"
 	      "        -o <output file name>\n"
-	      "        -t <title for GMSH view>\n") ;
+	      "        -t <title for GMSH view>\n",
+	      field) ;
       return 0 ;
       break ;
     case 'd': datafile = g_strdup(optarg) ; break ;

@@ -1,6 +1,6 @@
 /* functions.c
  * 
- * Copyright (C) 2006, 2010 Michael Carley
+ * Copyright (C) 2006, 2010, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
  * node normal, and \a i for node index. Functions are applied to data
  * at each node of a mesh with input and output data in
  * ::BEM3DMeshData structs. Input and output data are specified in
- * functions as \a f and \g, with components given as \a f[0],
+ * functions as \a f and \a g, with components given as \a f[0],
  * etc. Output data are given in \a f.
  *
  * @{

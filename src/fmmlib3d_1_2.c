@@ -1,6 +1,6 @@
 /* fmmlib3d_1_2.c
  * 
- * Copyright (C) 2017 Michael Carley
+ * Copyright (C) 2017, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,6 @@
 #ifdef HAVE_FMMLIB3D_1_2
 
 #include "fmmlib3d_1_2.h"
-
-
-
 
 void hfmm3dparttarg_(gint *ier, gint *iprec, _fmmlib12_c *z,
 		     gint *nsource, gdouble *source,
@@ -86,7 +83,7 @@ static gint real_fill(gdouble *dest, gdouble *src, gint n)
   return 0 ;
 }
 
-gint fmmlib3d_1_2_set_prec(gdouble tol)
+static gint fmmlib3d_1_2_set_prec(gdouble tol)
 
 {
   gdouble prec[] = {0.5, 0.5e-1, 0.5e-2, 0.5e-3, 0.5e-6, 0.5e-9, 0.5e-12, 
@@ -111,18 +108,19 @@ gint _bem3d_fmm_helmholtz_fmmlib3d_1_2(BEM3DFastMultipole solver,
 {
   gint ier, iprec ;
   gboolean ifcharge, ifdipole, ifpot, iffld, ifpottarg, iffldtarg ;
-  gdouble *charge, *dipstr, *pot, *fld, *pottarg, *fldtarg ;
+  gdouble *charge, *dipstr,  *pottarg, *fldtarg ;
+  /* gdouble *pot, *fld ; */
   _fmmlib12_c zk, dum[3] ;
 
   g_assert(solver == BEM3D_FMM_FMMLIB3D_1_2) ;
   g_assert(problem == BEM3D_FMM_HELMHOLTZ) ;
   
-  ifcharge = FALSE ;  charge  = dum ;
-  ifdipole = FALSE ;  dipstr  = dum ;
-  ifpot    = FALSE ;  pot     = dum ;
-  iffld    = FALSE ;  fld     = dum ;
-  ifpottarg = FALSE ; pottarg = dum ;
-  iffldtarg = FALSE ; fldtarg = dum ;
+  ifcharge = FALSE ;  charge  = (gdouble *)dum ;
+  ifdipole = FALSE ;  dipstr  = (gdouble *)dum ;
+  ifpot    = FALSE ;  /* pot     = (gdouble *)dum ; */
+  iffld    = FALSE ;  /* fld     = (gdouble *)dum ; */
+  ifpottarg = FALSE ; pottarg = (gdouble *)dum ;
+  iffldtarg = FALSE ; fldtarg = (gdouble *)dum ;
 
   if (  q != NULL ) { ifcharge = TRUE ; charge = q ; }
   if ( dq != NULL ) { ifdipole = TRUE ; dipstr = dq ; }
@@ -141,8 +139,8 @@ gint _bem3d_fmm_helmholtz_fmmlib3d_1_2(BEM3DFastMultipole solver,
 		  &(s->ns), s->x,
 		  &ifcharge, charge,
 		  &ifdipole, dipstr, s->n,
-		  &ifpot, dum,
-		  &iffld, dum,
+		  &ifpot, (gdouble *)dum,
+		  &iffld, (gdouble *)dum,
 		  &(s->nt), &(s->x[3*(s->ns)]),
 		  &ifpottarg, pottarg,
 		  &iffldtarg, fldtarg) ;
@@ -169,7 +167,8 @@ gint _bem3d_fmm_laplace_fmmlib3d_1_2(BEM3DFastMultipole solver,
 {
   gint ier, iprec ;
   gboolean ifcharge, ifdipole, ifpot, iffld, ifpottarg, iffldtarg ;
-  gdouble *charge, *dipstr, *pot, *fld, *pottarg, *fldtarg, dum[6] ;
+  gdouble *charge, *dipstr, *pottarg, *fldtarg, dum[6] ;
+  /* gdouble *pot, *fld ; */
   gdouble *buf ;
 
   g_assert(solver == BEM3D_FMM_FMMLIB3D_1_2) ;
@@ -177,8 +176,8 @@ gint _bem3d_fmm_laplace_fmmlib3d_1_2(BEM3DFastMultipole solver,
 
   ifcharge = FALSE ;  charge  = dum ;
   ifdipole = FALSE ;  dipstr  = dum ;
-  ifpot = FALSE ;     pot     = dum ;
-  iffld = FALSE ;     fld     = dum ;
+  ifpot = FALSE ;     /* pot     = dum ; */
+  iffld = FALSE ;     /* fld     = dum ; */
   ifpottarg = FALSE ; pottarg = dum ;
   iffldtarg = FALSE ; fldtarg = dum ;
 

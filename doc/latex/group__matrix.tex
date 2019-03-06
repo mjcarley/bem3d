@@ -3,16 +3,16 @@
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-typedef gdouble {\bf B\+E\+M3\+D\+Matrix}[9]
+typedef gdouble \textbf{ B\+E\+M3\+D\+Matrix}[9]
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-gint {\bf bem3d\+\_\+matrix\+\_\+vector\+\_\+mul} ({\bf B\+E\+M3\+D\+Matrix} m, Gts\+Vector v, Gts\+Vector w)
+gint \textbf{ bem3d\+\_\+matrix\+\_\+vector\+\_\+mul} (\textbf{ B\+E\+M3\+D\+Matrix} m, Gts\+Vector v, Gts\+Vector w)
 \item 
-gdouble {\bf bem3d\+\_\+matrix\+\_\+det} ({\bf B\+E\+M3\+D\+Matrix} m)
+gdouble \textbf{ bem3d\+\_\+matrix\+\_\+det} (\textbf{ B\+E\+M3\+D\+Matrix} m)
 \item 
-gint {\bf bem3d\+\_\+matrix\+\_\+inverse} ({\bf B\+E\+M3\+D\+Matrix} m, {\bf B\+E\+M3\+D\+Matrix} im)
+gint \textbf{ bem3d\+\_\+matrix\+\_\+inverse} (\textbf{ B\+E\+M3\+D\+Matrix} m, \textbf{ B\+E\+M3\+D\+Matrix} im)
 \end{DoxyCompactItemize}
 
 
@@ -20,19 +20,21 @@ gint {\bf bem3d\+\_\+matrix\+\_\+inverse} ({\bf B\+E\+M3\+D\+Matrix} m, {\bf B\+
 Some basic matrix definitions and operations. 
 
 \subsection{Typedef Documentation}
+\mbox{\label{group__matrix_gaba4faa907078bfbd72ee3b3770638893}} 
 \index{Matrix operations@{Matrix operations}!B\+E\+M3\+D\+Matrix@{B\+E\+M3\+D\+Matrix}}
 \index{B\+E\+M3\+D\+Matrix@{B\+E\+M3\+D\+Matrix}!Matrix operations@{Matrix operations}}
-\subsubsection[{B\+E\+M3\+D\+Matrix}]{\setlength{\rightskip}{0pt plus 5cm}typedef gdouble B\+E\+M3\+D\+Matrix[9]}\label{group__matrix_gaba4faa907078bfbd72ee3b3770638893}
+\subsubsection{B\+E\+M3\+D\+Matrix}
+{\footnotesize\ttfamily typedef gdouble B\+E\+M3\+D\+Matrix[9]}
+
 A basic definition of a 3x3 matrix. 
 
 \subsection{Function Documentation}
+\mbox{\label{group__matrix_gaa0bbe004ce0629cbc872f0915c8e3c30}} 
 \index{Matrix operations@{Matrix operations}!bem3d\+\_\+matrix\+\_\+det@{bem3d\+\_\+matrix\+\_\+det}}
 \index{bem3d\+\_\+matrix\+\_\+det@{bem3d\+\_\+matrix\+\_\+det}!Matrix operations@{Matrix operations}}
-\subsubsection[{bem3d\+\_\+matrix\+\_\+det}]{\setlength{\rightskip}{0pt plus 5cm}gdouble bem3d\+\_\+matrix\+\_\+det (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Matrix}}]{m}
-\end{DoxyParamCaption}
-)}\label{group__matrix_gaa0bbe004ce0629cbc872f0915c8e3c30}
+\subsubsection{bem3d\+\_\+matrix\+\_\+det()}
+{\footnotesize\ttfamily gdouble bem3d\+\_\+matrix\+\_\+det (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Matrix}}]{m }\end{DoxyParamCaption})}
+
 Evaluate the determinant of a \doxyref{B\+E\+M3\+D\+Matrix}{p.}{group__matrix_gaba4faa907078bfbd72ee3b3770638893}
 
 
@@ -47,14 +49,12 @@ determinant of {\itshape m}
 
 Referenced by bem3d\+\_\+matrix\+\_\+inverse().
 
+\mbox{\label{group__matrix_ga384d0e3f3b3b3742f50bc9f982587b14}} 
 \index{Matrix operations@{Matrix operations}!bem3d\+\_\+matrix\+\_\+inverse@{bem3d\+\_\+matrix\+\_\+inverse}}
 \index{bem3d\+\_\+matrix\+\_\+inverse@{bem3d\+\_\+matrix\+\_\+inverse}!Matrix operations@{Matrix operations}}
-\subsubsection[{bem3d\+\_\+matrix\+\_\+inverse}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+matrix\+\_\+inverse (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Matrix}}]{m, }
-\item[{{\bf B\+E\+M3\+D\+Matrix}}]{im}
-\end{DoxyParamCaption}
-)}\label{group__matrix_ga384d0e3f3b3b3742f50bc9f982587b14}
+\subsubsection{bem3d\+\_\+matrix\+\_\+inverse()}
+{\footnotesize\ttfamily gint bem3d\+\_\+matrix\+\_\+inverse (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Matrix}}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Matrix}}]{im }\end{DoxyParamCaption})}
+
 Find the inverse of a \doxyref{B\+E\+M3\+D\+Matrix}{p.}{group__matrix_gaba4faa907078bfbd72ee3b3770638893}.
 
 
@@ -65,7 +65,7 @@ Find the inverse of a \doxyref{B\+E\+M3\+D\+Matrix}{p.}{group__matrix_gaba4faa90
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success or \+::\+B\+E\+M3\+D\+\_\+\+F\+A\+I\+L\+U\+R\+E if {\itshape m} is singular. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success or \+::\+B\+E\+M3\+D\+\_\+\+F\+A\+I\+L\+U\+RE if {\itshape m} is singular. 
 \end{DoxyReturn}
 
 
@@ -75,15 +75,12 @@ References bem3d\+\_\+matrix\+\_\+det().
 
 Referenced by bem3d\+\_\+element\+\_\+gradient\+\_\+weights().
 
+\mbox{\label{group__matrix_ga42c67c979b1fe4813cd8d0e7a0b27a28}} 
 \index{Matrix operations@{Matrix operations}!bem3d\+\_\+matrix\+\_\+vector\+\_\+mul@{bem3d\+\_\+matrix\+\_\+vector\+\_\+mul}}
 \index{bem3d\+\_\+matrix\+\_\+vector\+\_\+mul@{bem3d\+\_\+matrix\+\_\+vector\+\_\+mul}!Matrix operations@{Matrix operations}}
-\subsubsection[{bem3d\+\_\+matrix\+\_\+vector\+\_\+mul}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+matrix\+\_\+vector\+\_\+mul (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Matrix}}]{m, }
-\item[{Gts\+Vector}]{v, }
-\item[{Gts\+Vector}]{w}
-\end{DoxyParamCaption}
-)}\label{group__matrix_ga42c67c979b1fe4813cd8d0e7a0b27a28}
+\subsubsection{bem3d\+\_\+matrix\+\_\+vector\+\_\+mul()}
+{\footnotesize\ttfamily gint bem3d\+\_\+matrix\+\_\+vector\+\_\+mul (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Matrix}}]{m,  }\item[{Gts\+Vector}]{v,  }\item[{Gts\+Vector}]{w }\end{DoxyParamCaption})}
+
 Multiply a \doxyref{B\+E\+M3\+D\+Matrix}{p.}{group__matrix_gaba4faa907078bfbd72ee3b3770638893} by a Gts\+Vector.
 
 

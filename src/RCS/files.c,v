@@ -1,10 +1,15 @@
-head	1.2;
+head	1.3;
 access;
 symbols;
 locks
-	ensmjc:1.2; strict;
+	ensmjc:1.3; strict;
 comment	@ * @;
 
+
+1.3
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.2;
 
 1.2
 date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
@@ -21,14 +26,14 @@ desc
 @@
 
 
-1.2
+1.3
 log
 @*** empty log message ***
 @
 text
 @/* files.c
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1005,6 +1010,17 @@ guint bem3d_gmsh_read(BEM3DMesh *m, FILE *f)
  * 
  */
 
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2006, 2009 Michael Carley
 @
 
 

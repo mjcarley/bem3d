@@ -1,6 +1,6 @@
 /* fmmlib3d_1_2.c
  * 
- * Copyright (C) 2017 Michael Carley
+ * Copyright (C) 2017, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

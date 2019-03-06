@@ -1,0 +1,5 @@
+BEM3DFunction
+# surface force assuming f[2] contains pressure coefficent
+f[3] = -nx*f[2]
+f[4] = -ny*f[2]
+f[5] = -nz*f[2]

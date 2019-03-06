@@ -1,34 +1,25 @@
-\section{G\+M\+S\+H meshing and visualization}
+\section{G\+M\+SH meshing and visualization}
 \label{group__gmsh}\index{G\+M\+S\+H meshing and visualization@{G\+M\+S\+H meshing and visualization}}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-gint {\bf bem3d\+\_\+gmsh\+\_\+write\+\_\+element} ({\bf B\+E\+M3\+D\+Element} $\ast$e, {\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint nv, gint $\ast$indices\+\_\+g, gint $\ast$indices\+\_\+d, gchar $\ast$ename, gint k, gint nf, F\+I\+L\+E $\ast$fp)
+gint \textbf{ bem3d\+\_\+gmsh\+\_\+write\+\_\+element} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint nv, gint $\ast$indices\+\_\+g, gint $\ast$indices\+\_\+d, gchar $\ast$ename, gint k, gint nf, F\+I\+LE $\ast$fp)
 \item 
-gint {\bf bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, {\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint k, gchar $\ast$view, bem3d\+\_\+gmsh\+\_\+mode\+\_\+t mode, F\+I\+L\+E $\ast$fp)
+gint \textbf{ bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint k, gchar $\ast$view, bem3d\+\_\+gmsh\+\_\+mode\+\_\+t mode, F\+I\+LE $\ast$fp)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Functions for reading and writing G\+M\+S\+H files. G\+M\+S\+H is a meshing and post-\/processing program available from {\tt http\+://geuz.\+org/gmsh/} and described in Geuzaine, C. and Remacle, J.-\/\+F., `\+Gmsh\+: a three-\/dimensional finite element mesh generator with built-\/in pre-\/ and post-\/processing facilities\textquotesingle{}, International Journal for Numerical Methods in Engineering, 2009, {\tt http\+://dx.\+doi.\+org/10.\+1002/nme.\+2579} 
+Functions for reading and writing G\+M\+SH files. G\+M\+SH is a meshing and post-\/processing program available from {\tt http\+://geuz.\+org/gmsh/} and described in Geuzaine, C. and Remacle, J.-\/F., \`{}\+Gmsh\+: a three-\/dimensional finite element mesh generator with built-\/in pre-\/ and post-\/processing facilities\textquotesingle{}, International Journal for Numerical Methods in Engineering, 2009, {\tt http\+://dx.\+doi.\+org/10.\+1002/nme.\+2579} 
 
 \subsection{Function Documentation}
+\mbox{\label{group__gmsh_ga83ac0ef0dad6e3d54bab17a72ac6b00f}} 
 \index{G\+M\+S\+H meshing and visualization@{G\+M\+S\+H meshing and visualization}!bem3d\+\_\+gmsh\+\_\+write\+\_\+element@{bem3d\+\_\+gmsh\+\_\+write\+\_\+element}}
 \index{bem3d\+\_\+gmsh\+\_\+write\+\_\+element@{bem3d\+\_\+gmsh\+\_\+write\+\_\+element}!G\+M\+S\+H meshing and visualization@{G\+M\+S\+H meshing and visualization}}
-\subsubsection[{bem3d\+\_\+gmsh\+\_\+write\+\_\+element}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+gmsh\+\_\+write\+\_\+element (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
-\item[{{\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f, }
-\item[{gint}]{nv, }
-\item[{gint $\ast$}]{indices\+\_\+g, }
-\item[{gint $\ast$}]{indices\+\_\+d, }
-\item[{gchar $\ast$}]{ename, }
-\item[{gint}]{k, }
-\item[{gint}]{nf, }
-\item[{F\+I\+L\+E $\ast$}]{fp}
-\end{DoxyParamCaption}
-)}\label{group__gmsh_ga83ac0ef0dad6e3d54bab17a72ac6b00f}
-Write an element in the G\+M\+S\+H .pos visualization format, including the corresponding nodal data.
+\subsubsection{bem3d\+\_\+gmsh\+\_\+write\+\_\+element()}
+{\footnotesize\ttfamily gint bem3d\+\_\+gmsh\+\_\+write\+\_\+element (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{gint}]{nv,  }\item[{gint $\ast$}]{indices\+\_\+g,  }\item[{gint $\ast$}]{indices\+\_\+d,  }\item[{gchar $\ast$}]{ename,  }\item[{gint}]{k,  }\item[{gint}]{nf,  }\item[{F\+I\+LE $\ast$}]{fp }\end{DoxyParamCaption})}
+
+Write an element in the G\+M\+SH .pos visualization format, including the corresponding nodal data.
 
 
 \begin{DoxyParams}{Parameters}
@@ -36,13 +27,13 @@ Write an element in the G\+M\+S\+H .pos visualization format, including the corr
 \hline
 {\em f} & data block for the mesh containing e; \\
 \hline
-{\em nv} & number of vertices in G\+M\+S\+H element; \\
+{\em nv} & number of vertices in G\+M\+SH element; \\
 \hline
 {\em indices\+\_\+g} & array of indices specifying the order in which to write the element vertices; \\
 \hline
 {\em indices\+\_\+d} & array of indices for the data for each vertex; \\
 \hline
-{\em ename} & element name for G\+M\+S\+H parser; \\
+{\em ename} & element name for G\+M\+SH parser; \\
 \hline
 {\em k} & field of f to write; \\
 \hline
@@ -52,25 +43,19 @@ Write an element in the G\+M\+S\+H .pos visualization format, including the corr
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+mesh\+\_\+data\+\_\+get().
 
+\mbox{\label{group__gmsh_ga17416456cfe12bf5bb7105d8e8f5c64b}} 
 \index{G\+M\+S\+H meshing and visualization@{G\+M\+S\+H meshing and visualization}!bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh@{bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh}}
 \index{bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh@{bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh}!G\+M\+S\+H meshing and visualization@{G\+M\+S\+H meshing and visualization}}
-\subsubsection[{bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
-\item[{{\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f, }
-\item[{gint}]{k, }
-\item[{gchar $\ast$}]{view, }
-\item[{bem3d\+\_\+gmsh\+\_\+mode\+\_\+t}]{mode, }
-\item[{F\+I\+L\+E $\ast$}]{fp}
-\end{DoxyParamCaption}
-)}\label{group__gmsh_ga17416456cfe12bf5bb7105d8e8f5c64b}
-Write a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} and corresponding data to a G\+M\+S\+H .pos file for visualization.
+\subsubsection{bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh()}
+{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+write\+\_\+gmsh (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{gint}]{k,  }\item[{gchar $\ast$}]{view,  }\item[{bem3d\+\_\+gmsh\+\_\+mode\+\_\+t}]{mode,  }\item[{F\+I\+LE $\ast$}]{fp }\end{DoxyParamCaption})}
+
+Write a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} and corresponding data to a G\+M\+SH .pos file for visualization.
 
 
 \begin{DoxyParams}{Parameters}
@@ -80,17 +65,13 @@ Write a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} and corresponding data 
 \hline
 {\em k} & index of data block field to write; \\
 \hline
-{\em view} & title of view or N\+U\+L\+L; \\
+{\em view} & title of view or N\+U\+LL; \\
 \hline
-{\em mode} & B\+E\+M3\+D\+\_\+\+G\+M\+S\+H\+\_\+\+S\+C\+A\+L\+A\+R $\vert$ B\+E\+M3\+D\+\_\+\+G\+M\+S\+H\+\_\+\+V\+E\+C\+T\+O\+R $\vert$ B\+E\+M3\+D\+\_\+\+G\+M\+S\+H\+\_\+\+T\+E\+N\+S\+O\+R, if a vector or tensor mode is chosen, the 3 or 9 elements are written starting from the indicated field index {\itshape k}. The data block must be wide enough to accomodate this. \\
+{\em mode} & B\+E\+M3\+D\+\_\+\+G\+M\+S\+H\+\_\+\+S\+C\+A\+L\+AR $\vert$ B\+E\+M3\+D\+\_\+\+G\+M\+S\+H\+\_\+\+V\+E\+C\+T\+OR $\vert$ B\+E\+M3\+D\+\_\+\+G\+M\+S\+H\+\_\+\+T\+E\+N\+S\+OR, if a vector or tensor mode is chosen, the 3 or 9 elements are written starting from the indicated field index {\itshape k}. The data block must be wide enough to accomodate this. \\
 \hline
 {\em fp} & file pointer for output.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
-
-
-References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, and bem3d\+\_\+mesh\+\_\+foreach\+\_\+element().
-

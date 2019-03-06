@@ -1,6 +1,6 @@
 /* quadrature.c
  * 
- * Copyright (C) 2006--2013 Michael Carley
+ * Copyright (C) 2006--2013, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /**
- * @defgroup Quadrature Quadrature rules
+ * @defgroup quadrature Quadrature rules
  * @{
  * 
  */
@@ -45,6 +45,9 @@
 #include "bem3d-private.h"
 
 #include "polar.h"
+#include "htriquad.h"
+
+#include "trace.h"
 
 gint triangle_axes(gdouble *x1, gdouble *x2, gdouble *x3,
 		   gdouble *s, gdouble *t, gdouble *n) ;
@@ -1407,7 +1410,7 @@ gint bem3d_quadrature_rule_hayami(GtsPoint *xs, BEM3DElement *e,
     g_error("%s: number of angular quadrature points (%d) must be greater "
 	    "than zero", __FUNCTION__, M) ;
 
-  bem3d_quadrature_rule_realloc(q, M*N) ;
+  bem3d_quadrature_rule_realloc(q, 3*M*N) ;
   bem3d_quadrature_clear(q) ;
   
   qm = gqr_rule_realloc(qm, M) ; qn = gqr_rule_realloc(qn, N) ;
@@ -1929,6 +1932,331 @@ gint bem3d_quadrature_rule_gauss(GtsPoint *p, BEM3DElement *e,
   bem3d_quadrature_vertex_number(q) = n ;
 
   return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Semi-analytical series expansion for Helmholtz potential
+ * 
+ * @param p field point (ignored)
+ * @param e element to integrate over
+ * @param q quadrature rule to fill
+ * @param gfunc ignored;
+ * @param param ignored;
+ * @param data pointer ignored.
+ * 
+ * @return ::BEM3D_SUCCESS on success
+ */
+
+gint bem3d_quadrature_rule_series(GtsPoint *xs, BEM3DElement *e,
+				  BEM3DQuadratureRule *q, 
+				  BEM3DGreensFunction *gfunc,
+				  BEM3DParameters *param,
+				  gpointer data)
+
+{
+  gdouble tol, buf[24], lmr, lmi ;
+  gint qmax, Q = 25, i, polar[] = {8, 8} ;
+  
+  tol = 1e-9 ; qmax = 0 ;
+  
+  g_debug("%s: ", __FUNCTION__) ;
+
+  g_return_val_if_fail(xs != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(GTS_IS_POINT(xs), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(q != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  if ( bem3d_greens_function_func(gfunc) == bem3d_greens_func_laplace )
+    return bem3d_quadrature_rule_wx(xs, e, q, gfunc, param, &Q) ;
+    /* return bem3d_quadrature_rule_polar(xs, e, q, gfunc, param, polar) ; */
+
+  g_assert(bem3d_parameters_wavenumber(param) != 0.0) ;
+  
+  if ( bem3d_element_vertex_number(e) != 3 )
+    g_error("%s: only implemented for triangular elements", 
+	    __FUNCTION__) ;
+
+  if ( bem3d_element_node_number(e) != 3
+       &&
+       bem3d_element_node_number(e) != 1 )
+    g_error("%s: only implemented for linear or constant elements", 
+	    __FUNCTION__) ;
+
+  if ( (bem3d_greens_function_func(gfunc) != bem3d_greens_func_helmholtz) &&
+       (bem3d_greens_function_func(gfunc) != bem3d_greens_func_helmholtz_hs) &&
+       (bem3d_greens_function_func(gfunc) != NULL ) )
+    g_error("%s: Green's function should be "
+	    "bem3d_greens_func_helmholtz or NULL", __FUNCTION__) ;
+
+  if ( bem3d_greens_function_is_real(gfunc) ) 
+    g_error("%s: only implemented for complex quadratures", __FUNCTION__) ;
+
+  bem3d_quadrature_clear(q) ;
+
+  if ( bem3d_element_node_number(e) == 3 ) {
+    /*linear triangular elements*/
+    i = bem3d_element_find_node(e, GTS_VERTEX(xs)) ;
+
+    Q = htri_quad_shape_1(&(GTS_POINT(xs)->x),
+			  &(GTS_POINT(bem3d_element_vertex(e,0))->x),
+			  &(GTS_POINT(bem3d_element_vertex(e,1))->x),
+			  &(GTS_POINT(bem3d_element_vertex(e,2))->x),
+			  bem3d_parameters_wavenumber(param),
+			  tol, qmax, q->free_g, q->free_dg, buf) ;
+  
+    if ( Q != 0 )
+      return bem3d_quadrature_rule_polar(xs, e, q, gfunc, param, polar) ;
+
+    bem3d_quadrature_free_number(q) = 3 ;
+
+    for ( Q = 0 ; Q < 6 ; Q ++ ) {
+      q->free_g[Q] *= 0.25*M_1_PI ;
+      g_assert(!isnan(q->free_g[Q])) ;
+      q->free_dg[Q] *= -0.25*M_1_PI ;
+      g_assert(!isnan(q->free_dg[Q])) ;
+    }
+
+    i = bem3d_element_find_node(e, GTS_VERTEX(xs)) ;
+    if ( i != -1 ) {
+      q->free_dg[0] = q->free_dg[1] =
+    	q->free_dg[2] = q->free_dg[3] =
+    	q->free_dg[4] = q->free_dg[5] = 0.0 ;
+    }
+    
+    return BEM3D_SUCCESS ;
+  }
+
+  if ( bem3d_greens_function_func(gfunc) == bem3d_greens_func_helmholtz ) {
+    /*regular Helmholtz problem*/
+    /* if ( _bem3d_trace_set(0) && _bem3d_trace_set(1) ) */
+    /*   fprintf(stderr, "Hello\n") ; */
+
+    Q = htri_quad_shape_0(&(GTS_POINT(xs)->x),
+    			  &(GTS_POINT(bem3d_element_vertex(e,0))->x),
+    			  &(GTS_POINT(bem3d_element_vertex(e,1))->x),
+    			  &(GTS_POINT(bem3d_element_vertex(e,2))->x),
+    			  bem3d_parameters_wavenumber(param),
+    			  tol, qmax, q->free_g, q->free_dg, buf) ;
+    /* g_assert(Q != -1) ; */
+    /* fprintf(stderr, "%d\n", Q) ; */
+    if ( Q != 0 )
+      return bem3d_quadrature_rule_polar(xs, e, q, gfunc, param, polar) ;
+
+    bem3d_quadrature_free_number(q) = 1 ;
+
+    for ( Q = 0 ; Q < 2 ; Q ++ ) {
+      q->free_g[Q] *= 0.25*M_1_PI ;
+      g_assert(!isnan(q->free_g[Q])) ;
+      q->free_dg[Q] *= -0.25*M_1_PI ;
+      g_assert(!isnan(q->free_dg[Q])) ;
+    }
+
+    i = bem3d_element_find_node(e, GTS_VERTEX(xs)) ;
+    if ( i != -1 ) {
+      q->free_dg[0] = q->free_dg[1] = 0.0 ;
+    }
+    
+    return BEM3D_SUCCESS ;
+  }
+
+  if ( bem3d_greens_function_func(gfunc) != bem3d_greens_func_helmholtz_hs )
+    g_error("%s: if you have arrived here you should be using a "
+	    "hypersingular formulation", __FUNCTION__) ;
+
+  /* polar[0] = 8 ; polar[1] = 8 ; */
+  
+  i = bem3d_element_find_node(e, GTS_VERTEX(xs)) ;
+  if ( i == -1 ) {
+    /*collocation point not on element, fall back to numerical quadrature*/
+    return bem3d_quadrature_rule_polar(xs, e, q, gfunc, param, polar) ;
+    /* Q = 25 ; */
+    /* return bem3d_quadrature_rule_wx(xs, e, q, gfunc, param, &Q) ;     */
+  }
+
+  qmax = 0 ;
+  /*buf will contain integrals of G, dGdz, d2Gdz2*/
+  Q = htri_quad_shape_0(&(GTS_POINT(xs)->x),
+			&(GTS_POINT(bem3d_element_vertex(e,0))->x),
+			&(GTS_POINT(bem3d_element_vertex(e,1))->x),
+			&(GTS_POINT(bem3d_element_vertex(e,2))->x),
+			bem3d_parameters_wavenumber(param),
+			tol, qmax, &(buf[0]), &(buf[2]), &(buf[4])) ;
+
+  /* if ( Q != 0 ) */
+  /*   return bem3d_quadrature_rule_polar(xs, e, q, gfunc, param, polar) ; */
+  
+  bem3d_quadrature_free_number(q) = 1 ;
+  
+  lmr = bem3d_parameters_lambda_real(param) ;
+  lmi = bem3d_parameters_lambda_imag(param) ;
+
+  /* q->free_g[0] = buf[0] + (lmr*buf[2] - lmi*buf[3]) ; */
+  /* q->free_g[1] = buf[1] + (lmr*buf[3] + lmi*buf[2]) ; */
+  /*zero here because at the moment we are only dealing with self term*/
+  q->free_g[0] = buf[0] + 0*(lmr*buf[2] - lmi*buf[3]) ;
+  q->free_g[1] = buf[1] + 0*(lmr*buf[3] + lmi*buf[2]) ;
+
+  /*negative on d/dn because this should be d/dn1*/
+  q->free_dg[0] = -0*buf[2] - (lmr*buf[4] - lmi*buf[5]) ;
+  q->free_dg[1] = -0*buf[3] - (lmr*buf[5] + lmi*buf[4]) ;
+
+  q->free_g[0]  *= 0.25*M_1_PI ; q->free_g[1]  *= 0.25*M_1_PI ;
+  q->free_dg[0] *= 0.25*M_1_PI ; q->free_dg[1] *= 0.25*M_1_PI ;
+  
+  return BEM3D_SUCCESS ;
+}
+
+static gint quad_subtriangle_mzht(gdouble k, gdouble *y1, gdouble *y2,
+				  gqr_rule_t *rule, gdouble *g, gdouble *dg)
+
+{
+  gdouble dth, thbar, th, S, C, R, l1, l2, l3, phi ;
+  /* static gdouble A = 0.0 ; */
+  gint i ;
+  
+  l1 = sqrt(y1[0]*y1[0] + y1[1]*y1[1]) ;
+  l2 = sqrt(y2[0]*y2[0] + y2[1]*y2[1]) ;
+  l3 = sqrt((y1[0]-y2[0])*(y1[0]-y2[0]) +
+	    (y1[1]-y2[1])*(y1[1]-y2[1])) ;
+  
+  dth = acos((l1*l1 + l2*l2 - l3*l3)/l1/l2*0.5) ;
+  phi = atan2(l1 - l2*cos(dth), l2*sin(dth)) ;
+
+  g_assert(dth > 0.0) ;
+  
+  gqr_rule_scale(rule, 0, dth, &thbar, &dth) ;
+  /* fprintf(stderr, "%lg %lg\n", thbar, dth) ; */
+
+  for ( i = 0 ; i < gqr_rule_length(rule) ; i ++ ) {
+    th = thbar + gqr_rule_abscissa(rule, i)*dth ;
+
+    R = l1*cos(phi)/cos(th-phi) ;
+    
+    S = sin(k*R)*0.25*M_1_PI ; C = cos(k*R)*0.25*M_1_PI ;
+    g[0] += S/k*dth*gqr_rule_weight(rule, i) ;
+    g[1] -= C/k*dth*gqr_rule_weight(rule, i) ;
+
+    dg[0] -= C/R*dth*gqr_rule_weight(rule, i) ;
+    dg[1] -= S/R*dth*gqr_rule_weight(rule, i) ;
+
+    /* A += dth*gqr_rule_weight(rule, i)*R*R*0.5 ; */
+  }
+
+  /* fprintf(stderr, "%lg\n", A) ; */
+  
+  g_assert(!isnan(g[0])) ; g_assert(!isnan(g[1])) ;
+  g_assert(!isnan(dg[0])) ; g_assert(!isnan(dg[1])) ;
+
+  return 0 ;
+}
+
+
+/*
+  Quadrature rule based on Matsumoto, Zheng, Harada, Takahashi, 2010,
+  doi:10.1299/jcst.4.194
+*/
+
+gint bem3d_quadrature_rule_mzht(GtsPoint *xs, BEM3DElement *e,
+				BEM3DQuadratureRule *q, 
+				BEM3DGreensFunction *gfunc,
+				BEM3DParameters *param,
+				gpointer data)
+
+{
+  gint i, ngp, polar[2] ;
+  gdouble *x1, *x2, *x3, *xf, lmr, lmi, alr, ali ;
+  gdouble y1[3], y2[3], y3[3], yf[3], s[3], t[3], n[3], og[3], k ;
+  GtsPoint *v ;
+  gqr_rule_t *rule ;
+  
+  g_debug("%s: ", __FUNCTION__) ;
+
+  g_return_val_if_fail(xs != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(GTS_IS_POINT(xs), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(q != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  /* bem3d_quadrature_clear(q) ; */
+
+  if ( bem3d_element_vertex_number(e) != 3 )
+    g_error("%s: only implemented for triangular elements", 
+	    __FUNCTION__) ;
+  if ( bem3d_element_node_number(e) != 1 )
+    g_error("%s: only implemented for zero-order elements", 
+	    __FUNCTION__) ;
+
+  /*check for collocation point on element*/
+  i = bem3d_element_find_node(e, GTS_VERTEX(xs)) ;
+  ngp = 25 ; polar[0] = 16 ; polar[1] = 16 ;
+  k = bem3d_parameters_wavenumber(param) ;
+  if ( (i == -1) ) {
+    /*collocation point not on element, fall back to numerical quadrature*/
+    /* return bem3d_quadrature_rule_wx(xs, e, q, gfunc, param, &ngp) ; */
+    v = GTS_POINT(bem3d_element_node(e,0)) ;
+    if ( gts_point_distance(v, GTS_POINT(xs)) > 0.125 || k == 0.0 ) 
+      return bem3d_quadrature_rule_wx(xs, e, q, gfunc, param, &ngp) ;
+    return bem3d_quadrature_rule_polar(xs, e, q, gfunc, param, polar) ;
+    return bem3d_quadrature_rule_hayami(xs, e, q, gfunc, param, polar) ;
+  }
+
+  if ( k == 0.0 ) {
+    return bem3d_quadrature_rule_polar(xs, e, q, gfunc, param, polar) ;
+  }
+  
+  bem3d_quadrature_clear(q) ;
+  /* memset(q->free_g, 0, 32*sizeof(gdouble)) ; */
+  /* memset(q->free_dg, 0, 32*sizeof(gdouble)) ; */
+  /* memset(q->rule, 0, sizeof(gdouble)*(q->n)*3) ; */
+  ngp = 8 ;
+  
+  x1 = &(GTS_POINT(bem3d_element_vertex(e,0))->x) ;
+  x2 = &(GTS_POINT(bem3d_element_vertex(e,1))->x) ;
+  x3 = &(GTS_POINT(bem3d_element_vertex(e,2))->x) ;
+  xf = &(GTS_POINT(xs)->x) ;
+
+  htri_triangle_axes(x1, x2, x3, xf, og, s, t, n) ;
+  htri_triangle_project(og, s, t, n, x1, y1) ;
+  htri_triangle_project(og, s, t, n, x2, y2) ;
+  htri_triangle_project(og, s, t, n, x3, y3) ;
+  htri_triangle_project(og, s, t, n, xf, yf) ;
+
+  /* fprintf(stderr, "%lg %lg %lg %lg\n", y1[2], y2[2], y3[2], yf[2]) ; */
+  /* fprintf(stderr, "%lg %lg %lg %lg %lg %lg\n", */
+  /* 	  xf[0], xf[1], xf[2], og[0], og[1], og[2]) ; */
+  
+  rule = gqr_rule_alloc(ngp) ;
+  gqr_rule_select(rule, GQR_GAUSS_LEGENDRE, ngp, NULL) ;
+
+  g_assert(k != 0.0) ;
+  
+  bem3d_quadrature_free_number(q) = 1 ;
+  s[0] = 0.0 ; s[1] = 0.5/k ;
+  og[0] = 0.0 ; og[1] = 0.5*k ;
+
+  /*accumulate the dg terms in og for post-multiplication by lambda*/
+  quad_subtriangle_mzht(k, y1, y2, rule, s, og) ;
+  quad_subtriangle_mzht(k, y2, y3, rule, s, og) ;
+  quad_subtriangle_mzht(k, y3, y1, rule, s, og) ;
+
+  gqr_rule_free(rule) ;
+
+  /*multiply dg by lambda*/
+  lmr = bem3d_parameters_lambda_real(param) ;
+  lmi = bem3d_parameters_lambda_imag(param) ;
+  q->free_dg[0] = lmr*og[0] - lmi*og[1] ;
+  q->free_dg[1] = lmr*og[1] + lmi*og[0] ;
+
+  alr = bem3d_parameters_coupling_real(param) ;
+  ali = bem3d_parameters_coupling_imag(param) ;
+  q->free_g[0] = alr*s[0] - ali*s[1] ;
+  q->free_g[1] = alr*s[1] + ali*s[0] ;
+  
+  g_assert(!isnan(q->free_g[0])) ; g_assert(!isnan(q->free_g[1])) ;
+  g_assert(!isnan(q->free_dg[0])) ; g_assert(!isnan(q->free_dg[1])) ;
+
+  return 0 ;
 }
 
 /**

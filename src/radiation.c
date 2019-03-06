@@ -1,6 +1,6 @@
 /* radiation.c
  * 
- * Copyright (C) 2006 Michael Carley
+ * Copyright (C) 2006, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,9 +197,7 @@ static void element_radiation_point(BEM3DElement *e,
   BEM3DShapeFunc shfunc, cpfunc ;
   BEM3DGreensFunction gfunc ;
   static BEM3DQuadratureRule *q = NULL ;
-  static GArray *g = NULL ;
-  static GArray *dgdn = NULL ;
-  static gdouble *L = NULL, *dLds = NULL, *dLdt = NULL ;
+  gdouble L[32], dLds[32], dLdt[32], g[16], dgdn[16] ;
   BEM3DQuadratureRuleFunc qfunc ;
   gpointer qdata ;
   gint i, j, k, stride = 0, nc ;
@@ -211,14 +209,6 @@ static void element_radiation_point(BEM3DElement *e,
 
   shfunc = bem3d_element_shape_func(e) ;
   cpfunc = bem3d_element_node_func(e) ;
-
-  if ( g == NULL ) {
-    g = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
-    dgdn = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
-    L = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-    dLds = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-    dLdt = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-  }
   
   if ( q == NULL ) q = bem3d_quadrature_rule_new(1024, 1) ;
 
@@ -236,14 +226,14 @@ static void element_radiation_point(BEM3DElement *e,
   else stride = 2 ;
   nc = bem3d_greens_function_component_number(&gfunc) ;
   
-  g_array_set_size(G,bem3d_element_node_number(e)*stride*nc) ; 
-  g_array_set_size(dGdn,bem3d_element_node_number(e)*stride*nc) ;  
+  g_array_set_size(G,bem3d_element_node_number(e)*stride*nc) ;
+  g_array_set_size(dGdn,bem3d_element_node_number(e)*stride*nc) ;
   g_array_set_size(phi,bem3d_element_node_number(e)*stride) ; 
   g_array_set_size(dphi,bem3d_element_node_number(e)*stride) ;  
   g_array_set_size(f,stride*nc) ; 
 
-  g_array_set_size(G, stride*bem3d_element_node_number(e)*nc) ;
-  g_array_set_size(dGdn, stride*bem3d_element_node_number(e)*nc) ;
+  /* g_array_set_size(G, stride*bem3d_element_node_number(e)*nc) ; */
+  /* g_array_set_size(dGdn, stride*bem3d_element_node_number(e)*nc) ; */
 
   for ( i = 0 ; i < G->len ; i ++ ) 
     g_array_index(G,gdouble,i) = g_array_index(dGdn,gdouble,i) = 0.0 ;
@@ -262,10 +252,10 @@ static void element_radiation_point(BEM3DElement *e,
     for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
       w = J*L[j] ;
       for ( k = 0 ; k < stride*nc ; k ++ ) {
-  	g_array_index(G,gdouble,j*stride*nc+k) +=
- 	  g_array_index(g,gdouble,k)*w ;
-	g_array_index(dGdn,gdouble,j*stride*nc+k) +=
-	  g_array_index(dgdn,gdouble,k)*w ;
+  	g_array_index(G,gdouble,j*stride*nc+k) += g[k]*w ;
+ 	  /* g_array_index(g,gdouble,k)*w ; */
+	g_array_index(dGdn,gdouble,j*stride*nc+k) += dgdn[k]*w ;
+	  /* g_array_index(dgdn,gdouble,k)*w ; */
       }
     }
     /* fprintf(stderr, "%lg\n", w) ; */
@@ -297,13 +287,16 @@ static void element_radiation_point(BEM3DElement *e,
 	      __FUNCTION__, bem3d_quadrature_free_number(q), 
 	      bem3d_element_node_number(e)) ;
     /*we should not arrive here in complex problems*/
-    g_assert(q->wfree == 1) ; g_assert(stride == 1) ;
+    g_assert(q->wfree == 1) ;
+    /* g_assert(stride == 1) ; */
     k = 0 ;
-    for ( j = 0 ; j < bem3d_element_node_number(e)*nc ; j ++ ) {
-      g_array_index(G,gdouble,j*stride+k) += 
-	bem3d_quadrature_free_term_g(q,j) ;
-      g_array_index(dGdn,gdouble,j*stride+k) += 
-	bem3d_quadrature_free_term_dg(q,j) ;
+    for ( j = 0 ; j < bem3d_element_node_number(e)*nc*stride ; j ++ ) {
+      g_array_index(G,gdouble,j) += bem3d_quadrature_free_term_g(q,j) ;
+      g_array_index(dGdn,gdouble,j) += bem3d_quadrature_free_term_dg(q,j) ;
+      /* g_array_index(G,gdouble,j*stride+k) +=  */
+      /* 	bem3d_quadrature_free_term_g(q,j) ; */
+      /* g_array_index(dGdn,gdouble,j*stride+k) +=  */
+      /* 	bem3d_quadrature_free_term_dg(q,j) ; */
     }
   }
 
@@ -433,9 +426,7 @@ gint bem3d_element_radiation_point(BEM3DElement *e,
   BEM3DGreensFunction gfunc ;
   BEM3DShapeFunc shfunc, cpfunc ;
   static BEM3DQuadratureRule *q = NULL ;
-  static GArray *g = NULL ;
-  static GArray *dgdn = NULL ;
-  static gdouble *L = NULL, *dLds = NULL, *dLdt = NULL ;
+  gdouble L[32], dLds[32], dLdt[32], g[16], dgdn[16] ;
   BEM3DQuadratureRuleFunc qfunc ;
   gpointer qdata ;
   gint i, j, k, stride = 0, nc ;
@@ -459,14 +450,6 @@ gint bem3d_element_radiation_point(BEM3DElement *e,
   shfunc = bem3d_element_shape_func(e) ;
   cpfunc = bem3d_element_node_func(e) ;
 
-  if ( g == NULL ) {
-    g = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
-    dgdn = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
-    L = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-    dLds = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-    dLdt = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-  }
-  
   if ( q == NULL ) q = bem3d_quadrature_rule_new(1024, 1) ;
 
   gfunc = config->gfunc ;
@@ -490,6 +473,10 @@ gint bem3d_element_radiation_point(BEM3DElement *e,
   for ( i = 0 ; i < G->len ; i ++ ) 
     g_array_index(G,gdouble,i) = g_array_index(dGdn,gdouble,i) = 0.0 ;
 
+  if ( bem3d_greens_function_is_real(&gfunc) ) stride = 1 ;
+  else stride = 2 ;
+  stride *= bem3d_greens_function_component_number(&gfunc) ;
+  
   for ( i = 0 ; i < bem3d_quadrature_vertex_number(q) ; i ++ ) {
     g_assert(i < bem3d_quadrature_vertex_number_max(q)) ;
     g_assert(nc == 1) ;
@@ -502,15 +489,12 @@ gint bem3d_element_radiation_point(BEM3DElement *e,
     bem3d_greens_function_func(&gfunc)(x, &y, n, gdata, g, dgdn) ;
     cpfunc(s, t, L, NULL, NULL, NULL) ;
     J *= wt ;
-    stride = g->len ;
 
     for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
       w = J*L[j] ;
       for ( k = 0 ; k < stride ; k ++ ) {
-  	g_array_index(G,gdouble,j*stride+k) +=
- 	  g_array_index(g,gdouble,k)*w ;
-	g_array_index(dGdn,gdouble,j*stride+k) +=
-	  g_array_index(dgdn,gdouble,k)*w ;
+  	g_array_index(G,gdouble,j*stride+k) += g[k]*w ;
+	g_array_index(dGdn,gdouble,j*stride+k) += dgdn[k]*w ;
       }
     }
 

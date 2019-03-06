@@ -1,0 +1,10 @@
+#!/bin/bash
+
+## solve for the 30 degree swept wing test case in Sytsma, H. S.,
+## Hewitt, B. L. and Rubbert, P. E., AGARD-AG-241, `A comparison of
+## panel methods for subsonic flow computation', 1979.
+bem3d-aero -i roberts.bem -m roberts.mtn -C roberts.cfg \
+    -e roberts.edg \
+    -o Data/roberts-%04d.bem -O Data/roberts-%04d.dat \
+    -w Data/wake-%04d.bem -W Data/wake-%04d.dat \
+    -S 0 -d 0.125 -f 8 -Z 1e-3 -t 1e-6

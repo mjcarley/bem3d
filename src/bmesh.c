@@ -1,6 +1,6 @@
 /* bmesh.c
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -898,7 +898,7 @@ static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
     g = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
   }
 
-  for ( j = 0 ; j < f->len ; j ++ ) g_array_index(f,gdouble,j)=0.0 ;
+  for ( j = 0 ; j < f->len ; j ++ ) g_array_index(f,gdouble,j) = 0.0 ;
   bem3d_mesh_radiation_point(m, config, gdata,
 			     lf, ldata, GTS_POINT(v), f) ;
   g_array_set_size(zero, f->len) ;
@@ -907,6 +907,9 @@ static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
 	&(g_array_index(f,gdouble,0)),
 	f->len, edata) ;
 
+  /* fprintf(stderr, "%d %lg %lg\n", i, */
+  /* 	  ((gdouble *)edata)[2*i+0], ((gdouble *)edata)[2*i+1]) ; */
+  
   return ;
 }
 
@@ -914,7 +917,7 @@ static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
  * Integrate the normal derivative of the Green's function over a
  * mesh.
  * 
- * @param m BEM3DMEsh 
+ * @param m BEM3DMesh 
  * @param config ::BEM3DConfiguration for the problem;
  * @param gdata ::BEM3DParameters to pass to Green's function;
  * @param lfunc BEM3DLookupFunc; use ::bem3d_lookup_func_unit 
@@ -953,6 +956,61 @@ gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
   data[BEM3D_BMESH_DATA_EDATA] = edata ;
 
   bem3d_mesh_foreach_node(m, (BEM3DNodeFunc)mesh_quad_gfunc,
+			  (gpointer )(&data[0])) ;
+
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Integrate the normal derivative of the Green's function over a mesh
+ * at points on a different mesh. This is intended for use where a
+ * surface is broken into two or more disjoint patches which combine
+ * to form a single closed surface. The integratation is performed
+ * over \a m1 for each point on \a m2. The two meshes can be the same.
+ * 
+ * @param m1 BEM3DMesh 
+ * @param m2 BEM3DMesh 
+ * @param config ::BEM3DConfiguration for the problem;
+ * @param gdata ::BEM3DParameters to pass to Green's function;
+ * @param lfunc BEM3DLookupFunc; use ::bem3d_lookup_func_unit 
+ * (for real problems) 
+ * or bem3d_lookup_func_unit_c (for complex) 
+ * @param ldata data to pass to the lookup function 
+ * @param efunc equation function for problem. This will be called with 
+ * the row and column numbers equal.
+ * @param edata user data to pass to efunc
+ * 
+ * @return ::BEM3D_SUCCESS on success
+ */
+
+gint bem3d_mesh_disjoint_quad_dgdn(BEM3DMesh *m1,
+				   BEM3DMesh *m2,
+				   BEM3DConfiguration *config,
+				   BEM3DParameters *gdata,
+				   BEM3DLookupFunc lfunc, gpointer ldata,
+				   BEM3DEquationFunc efunc, gpointer edata)
+
+{
+  gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
+
+  g_return_val_if_fail(m1 != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m1), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(m2 != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_MESH(m2), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(gdata != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(efunc != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  data[BEM3D_BMESH_DATA_MESH] = m1 ; 
+  data[BEM3D_BMESH_DATA_CONFIG] = config ; 
+  data[BEM3D_BMESH_DATA_GDATA] = gdata ;
+  data[BEM3D_BMESH_DATA_LFUNC] = (gpointer)lfunc ;
+  data[BEM3D_BMESH_DATA_LDATA] = ldata ;
+  data[BEM3D_BMESH_DATA_IMIN] = &(bem3d_mesh_node_index_min(m2)) ;
+  data[BEM3D_BMESH_DATA_IMAX] = &(bem3d_mesh_node_index_max(m2)) ;
+  data[BEM3D_BMESH_DATA_EFUNC] = efunc ;
+  data[BEM3D_BMESH_DATA_EDATA] = edata ;
+
+  bem3d_mesh_foreach_node(m2, (BEM3DNodeFunc)mesh_quad_gfunc,
 			  (gpointer )(&data[0])) ;
 
   return BEM3D_SUCCESS ;

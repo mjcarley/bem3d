@@ -1,6 +1,6 @@
 /* operators.c
  * 
- * Copyright (C) 2006, 2008 Michael Carley
+ * Copyright (C) 2006, 2008, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@
  * BEM3D contains a number of functions for computing differential
  * operators applied to surface quantities. These are returned in a
  * ::BEM3DOperator which can be applied to surface data using the
- * appropriate functions. For example:
+ * appropriate functions. For example, to compute an estimate of the
+ * gradient of a function defined at nodes of a mesh:
  * @code
  * BEM3DOperator *op ;
  * GtsVector df ;
@@ -55,6 +56,10 @@
  * }
  *
  * @endcode
+ *
+ * For now, these operators are limited to first order triangular
+ * elements.
+ *
  * @{
  * 
  */
@@ -136,11 +141,11 @@ static void average_normal_mwa(BEM3DElement *e, GtsVertex *v,
   BEM3DShapeFunc shf ;
   GtsVector ne ;
 
-  if ( (i = bem3d_element_find_vertex(e, v)) == -1 ) 
+  if ( (i = bem3d_element_find_vertex(e, v)) == -1 )
     g_error("%s: vertex %p is not on element %p", __FUNCTION__, v, e) ;
 
   shf = bem3d_element_shape_func(e) ;
-  shf(bem3d_element_vertex_xi(e,i), bem3d_element_vertex_eta(e,i), 
+  shf(bem3d_element_vertex_xi(e,i), bem3d_element_vertex_eta(e,i),
       L, dLds, dLdt, NULL) ;
 
   bem3d_element_normal(e, dLds, dLdt, ne, &J) ;
@@ -296,11 +301,16 @@ static void average_normal_mwe(BEM3DElement *e, GtsVertex *v,
 
   g_assert(bem3d_element_shape_func(e) == bem3d_shfunc_t1 ) ;
 
-  if ( (i = bem3d_element_find_vertex(e, v)) == -1 ) 
+  /* if ( (i = bem3d_element_find_vertex(e, v)) == -1 )  */
+  /*   g_error("%s: vertex %p is not on element %p", __FUNCTION__, v, e) ; */
+
+  if ( (i = bem3d_element_find_node(e, v)) == -1 )
     g_error("%s: vertex %p is not on element %p", __FUNCTION__, v, e) ;
 
   shf = bem3d_element_shape_func(e) ;
-  shf(bem3d_element_vertex_xi(e,i), bem3d_element_vertex_eta(e,i), 
+  /* shf(bem3d_element_vertex_xi(e,i), bem3d_element_vertex_eta(e,i),  */
+  /*     L, dLds, dLdt, NULL) ; */
+  shf(bem3d_element_node_xi(e,i), bem3d_element_node_eta(e,i), 
       L, dLds, dLdt, NULL) ;
 
   bem3d_element_normal(e, dLds, dLdt, ne, &J) ;
@@ -332,6 +342,8 @@ gint bem3d_node_normal(BEM3DMesh *m, gint i, GtsVector n,
 {
   GSList *e, *j ;
   GtsVertex *v ;
+  gdouble L[32], dLds[32], dLdt[32], J ;
+  BEM3DShapeFunc shf ;
 
   g_return_val_if_fail(m != NULL, BEM3D_EINVAL) ;
   g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_EINVAL) ;
@@ -340,6 +352,31 @@ gint bem3d_node_normal(BEM3DMesh *m, gint i, GtsVector n,
 
   e = bem3d_mesh_node_elements(m, i) ;
   v = bem3d_mesh_node_from_index(m,i) ;
+
+#if 0
+  fprintf(stderr, "%p %p %p\n", e->data, e->next->data, e->next->next->data) ;
+  scanf("%*c") ;
+  
+  if ( e->next == NULL ) {
+    /*check for single-element case and do no averaging*/
+    n[0] = n[1] = n[2] = 0.0 ;
+    n[0] = 1.0 ; 
+    return BEM3D_SUCCESS ;
+  }
+#endif
+
+  /*check for zero-order element*/
+  if ( e->next == NULL ) {
+    shf = bem3d_element_shape_func(BEM3D_ELEMENT(e->data)) ;
+
+    shf(0.5, 0.5, L, dLds, dLdt, NULL) ;
+
+    bem3d_element_normal(BEM3D_ELEMENT(e->data), dLds, dLdt, n, &J) ;
+
+    gts_vector_normalize(n) ;
+    
+    return BEM3D_SUCCESS ;
+  }
 
   n[0] = n[1] = n[2] = 0.0 ;
 
@@ -523,10 +560,11 @@ static void average_gradient_mwselr(BEM3DElement *e, GtsVertex *v,
  * quantity at a node of a BEM3DMesh. Currently, the function is only
  * implemented for linear triangles, using the gradient discretization
  * of Xu, G., `Convergent discrete Laplace-Beltrami operators over
- * triangular surfaces', Proceedings of the Geometric Modeling and
+ * triangular surfaces', Proceedings of Geometric Modeling and
  * Processing 2004 (GMP 04),
- * http://dx.doi.org/10.1109/GMAP.2004.1290041
- * 
+ * http://dx.doi.org/10.1109/GMAP.2004.1290041 If any other element
+ * type is detected, the function returns silently.
+ *
  * @param m a ::BEM3DMesh;
  * @param i index of a node of \a m;
  * @param op on exit, contains the operator for \f$\nabla_{T}f\f$;
@@ -544,16 +582,37 @@ gint bem3d_operator_gradient(BEM3DMesh *m, gint i, BEM3DOperator *op,
   GtsVertex *v ;
   gdouble tw ;
   gint k ;
-
+  BEM3DElement *el ;
+  
   g_return_val_if_fail(m != NULL, BEM3D_EINVAL) ;
   g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_EINVAL) ;
   g_return_val_if_fail(i >= 0, BEM3D_EINVAL) ;  
   g_return_val_if_fail(op != NULL, BEM3D_EINVAL) ;
 
+  g_array_set_size(op->id, 0) ; g_array_set_size(op->w, 0) ;
+
   e = bem3d_mesh_node_elements(m, i) ;
   v = bem3d_mesh_node_from_index(m,i) ;
 
-  g_array_set_size(op->id, 0) ; g_array_set_size(op->w, 0) ;
+  el = BEM3D_ELEMENT(e->data) ;
+  if ( el->shf != bem3d_shfunc_t1 ) {
+    /* || el->cpf != bem3d_shfunc_t1 ) { */
+    g_error("%s: only handles linear triangular elements for now",
+    	    __FUNCTION__) ;
+    return 0 ;
+  }
+
+  op->nc = 3 ;
+  if ( el->cpf == bem3d_shfunc_t0 ) {
+    /*zero-order, constant element*/
+    g_array_set_size(op->id, 1) ;
+    g_array_set_size(op->w, 3) ;
+    g_array_index(op->w, gdouble, 0) = g_array_index(op->w, gdouble, 1) =
+      g_array_index(op->w, gdouble, 2) = 0.0 ;
+    g_array_index(op->w, gint, 0) = i ;
+    return BEM3D_SUCCESS ;
+  }
+  
   for ( j = e ; j != NULL ; j = j->next ) 
     insert_element_nodes(BEM3D_ELEMENT(j->data), op->id) ;
 

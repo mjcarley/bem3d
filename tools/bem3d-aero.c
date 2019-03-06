@@ -1,6 +1,6 @@
 /* bem3d-aero.c
  * 
- * Copyright (C) 2006, 2009, 2010 Michael Carley
+ * Copyright (C) 2006, 2009, 2010, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -165,12 +165,13 @@ static gint self_assemble(BEM3DElement *e, gpointer data[])
   g_array_set_size(dGdn,bem3d_element_node_number(e)) ;
   bem3d_element_assemble_equations(e, p, config, &pm, G, dGdn) ;
 
-  if ( isnan(g_array_index(G,gdouble,0)) || isnan(g_array_index(G,gdouble,1)) ||
+  if ( isnan(g_array_index(G,gdouble,0)) ||
+       isnan(g_array_index(G,gdouble,1)) ||
        isnan(g_array_index(G,gdouble,2)) ||
-       isnan(g_array_index(dGdn,gdouble,0)) || isnan(g_array_index(dGdn,gdouble,1)) ||
+       isnan(g_array_index(dGdn,gdouble,0)) ||
+       isnan(g_array_index(dGdn,gdouble,1)) ||
        isnan(g_array_index(dGdn,gdouble,2)) )
     fprintf(stderr, "NaN\n") ;
-	     
   
   for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
     k = bem3d_element_global_index(e,j) ;
@@ -425,6 +426,13 @@ static gint set_bc(gint i, GtsVertex *v, gpointer data[])
   dd = bem3d_mesh_data_get(d,i) ;
   g_array_index(dphi, gdouble, i) = dd[1] = gts_vector_scalar(u,n) ;
 
+  fprintf(stderr, "%d %lg (%lg, %lg, %lg) (%lg, %lg, %lg)\n",
+	  i, dd[1],
+	  n[0], n[1], n[2],
+	  u[0], u[1], u[2]) ;
+  
+  /* g_assert(!isnan(dd[1])) ; */
+  
   return 0 ;
 }
 
@@ -899,14 +907,14 @@ gint main(gint argc, gchar **argv)
       file_close(output) ;
       g_string_printf(fname, g_ptr_array_index(wdatafiles, i), s) ;
       output = file_open(fname->str, "-", "w", stdout) ;
-      bem3d_mesh_data_write(g_ptr_array_index(wakedata, i), output) ;
+      bem3d_mesh_data_write(g_ptr_array_index(wakedata, i), output, NULL) ;
       file_close(output) ;
     }
 
     for ( i = 0 ; i < aerodata->len ; i ++ ) {    
       g_string_printf(fname, g_ptr_array_index(adatafiles, i), s) ;
       output = file_open(fname->str, "-", "w", stdout) ;
-      bem3d_mesh_data_write(g_ptr_array_index(aerodata,i), output) ;
+      bem3d_mesh_data_write(g_ptr_array_index(aerodata,i), output, NULL) ;
       file_close(output) ;
     }
 

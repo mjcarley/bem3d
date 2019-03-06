@@ -3,45 +3,45 @@
 \subsection*{Data Structures}
 \begin{DoxyCompactItemize}
 \item 
-struct {\bf B\+E\+M3\+D\+Operator}
+struct \textbf{ B\+E\+M3\+D\+Operator}
 \end{DoxyCompactItemize}
 \subsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define {\bf bem3d\+\_\+operator\+\_\+size}(op)
+\#define \textbf{ bem3d\+\_\+operator\+\_\+size}(op)
 \item 
-\#define {\bf bem3d\+\_\+operator\+\_\+length}(op)
+\#define \textbf{ bem3d\+\_\+operator\+\_\+length}(op)
 \item 
-\#define {\bf bem3d\+\_\+operator\+\_\+index}(op,  i)
+\#define \textbf{ bem3d\+\_\+operator\+\_\+index}(op,  i)
 \item 
-\#define {\bf bem3d\+\_\+operator\+\_\+weight}(op,  i)
+\#define \textbf{ bem3d\+\_\+operator\+\_\+weight}(op,  i)
 \end{DoxyCompactItemize}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-enum {\bf B\+E\+M3\+D\+Average} \{ \\*
-{\bf B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E}, 
-{\bf B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A}, 
-{\bf B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+L\+R}, 
-{\bf B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+A\+T}, 
-\\*
-{\bf B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+L\+R}, 
-{\bf B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+L\+R}
+enum \textbf{ B\+E\+M3\+D\+Average} \{ \newline
+\textbf{ B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WE}, 
+\textbf{ B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WA}, 
+\textbf{ B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+LR}, 
+\textbf{ B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+AT}, 
+\newline
+\textbf{ B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+LR}, 
+\textbf{ B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+LR}
  \}
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-{\bf B\+E\+M3\+D\+Operator} $\ast$ {\bf bem3d\+\_\+operator\+\_\+new} (void)
+\textbf{ B\+E\+M3\+D\+Operator} $\ast$ \textbf{ bem3d\+\_\+operator\+\_\+new} (void)
 \item 
-gint {\bf bem3d\+\_\+node\+\_\+normal} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, gint i, Gts\+Vector n, {\bf B\+E\+M3\+D\+Average} mode)
+gint \textbf{ bem3d\+\_\+node\+\_\+normal} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, gint i, Gts\+Vector n, \textbf{ B\+E\+M3\+D\+Average} mode)
 \item 
-gint {\bf bem3d\+\_\+operator\+\_\+gradient} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, gint i, {\bf B\+E\+M3\+D\+Operator} $\ast$op, {\bf B\+E\+M3\+D\+Average} mode)
+gint \textbf{ bem3d\+\_\+operator\+\_\+gradient} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, gint i, \textbf{ B\+E\+M3\+D\+Operator} $\ast$op, \textbf{ B\+E\+M3\+D\+Average} mode)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-B\+E\+M3\+D contains a number of functions for computing differential operators applied to surface quantities. These are returned in a \doxyref{B\+E\+M3\+D\+Operator}{p.}{structBEM3DOperator} which can be applied to surface data using the appropriate functions. For example\+: 
+B\+E\+M3D contains a number of functions for computing differential operators applied to surface quantities. These are returned in a \doxyref{B\+E\+M3\+D\+Operator}{p.}{structBEM3DOperator} which can be applied to surface data using the appropriate functions. For example, to compute an estimate of the gradient of a function defined at nodes of a mesh\+: 
 \begin{DoxyCode}
 BEM3DOperator *op ;
 GtsVector df ;
@@ -57,76 +57,80 @@ df[0] = df[1] = df[2] = 0.0 ;
    df[2] += f[bem3d_operator_index(op,j)]*opi[2] ;
 \}
 \end{DoxyCode}
- 
+
+
+For now, these operators are limited to first order triangular elements. 
 
 \subsection{Macro Definition Documentation}
+\mbox{\label{group__operators_ga854876719aee728dbf8c5f0c1c5ec84d}} 
 \index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+operator\+\_\+index@{bem3d\+\_\+operator\+\_\+index}}
 \index{bem3d\+\_\+operator\+\_\+index@{bem3d\+\_\+operator\+\_\+index}!Differential (and other) operators@{Differential (and other) operators}}
-\subsubsection[{bem3d\+\_\+operator\+\_\+index}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+operator\+\_\+index(
-\begin{DoxyParamCaption}
-\item[{}]{op, }
-\item[{}]{i}
-\end{DoxyParamCaption}
-)}\label{group__operators_ga854876719aee728dbf8c5f0c1c5ec84d}
-Global index of the {\itshape i} th node forming the operator {\itshape op} \index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+operator\+\_\+length@{bem3d\+\_\+operator\+\_\+length}}
+\subsubsection{bem3d\+\_\+operator\+\_\+index}
+{\footnotesize\ttfamily \#define bem3d\+\_\+operator\+\_\+index(\begin{DoxyParamCaption}\item[{}]{op,  }\item[{}]{i }\end{DoxyParamCaption})}
+
+Global index of the {\itshape i} th node forming the operator {\itshape op} \mbox{\label{group__operators_gaa4808f9cb5ce8e3975414570531f1fb1}} 
+\index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+operator\+\_\+length@{bem3d\+\_\+operator\+\_\+length}}
 \index{bem3d\+\_\+operator\+\_\+length@{bem3d\+\_\+operator\+\_\+length}!Differential (and other) operators@{Differential (and other) operators}}
-\subsubsection[{bem3d\+\_\+operator\+\_\+length}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+operator\+\_\+length(
-\begin{DoxyParamCaption}
-\item[{}]{op}
-\end{DoxyParamCaption}
-)}\label{group__operators_gaa4808f9cb5ce8e3975414570531f1fb1}
-The number of nodes used in computing a \doxyref{B\+E\+M3\+D\+Operator}{p.}{structBEM3DOperator} {\itshape op} \index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+operator\+\_\+size@{bem3d\+\_\+operator\+\_\+size}}
+\subsubsection{bem3d\+\_\+operator\+\_\+length}
+{\footnotesize\ttfamily \#define bem3d\+\_\+operator\+\_\+length(\begin{DoxyParamCaption}\item[{}]{op }\end{DoxyParamCaption})}
+
+The number of nodes used in computing a \doxyref{B\+E\+M3\+D\+Operator}{p.}{structBEM3DOperator} {\itshape op} \mbox{\label{group__operators_ga12c3855d8c377cb14b04403617abeb9f}} 
+\index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+operator\+\_\+size@{bem3d\+\_\+operator\+\_\+size}}
 \index{bem3d\+\_\+operator\+\_\+size@{bem3d\+\_\+operator\+\_\+size}!Differential (and other) operators@{Differential (and other) operators}}
-\subsubsection[{bem3d\+\_\+operator\+\_\+size}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+operator\+\_\+size(
-\begin{DoxyParamCaption}
-\item[{}]{op}
-\end{DoxyParamCaption}
-)}\label{group__operators_ga12c3855d8c377cb14b04403617abeb9f}
-The number of elements in a \doxyref{B\+E\+M3\+D\+Operator}{p.}{structBEM3DOperator} {\itshape op}, e.\+g. three elements for a gradient operator, one for a Laplacian. \index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+operator\+\_\+weight@{bem3d\+\_\+operator\+\_\+weight}}
+\subsubsection{bem3d\+\_\+operator\+\_\+size}
+{\footnotesize\ttfamily \#define bem3d\+\_\+operator\+\_\+size(\begin{DoxyParamCaption}\item[{}]{op }\end{DoxyParamCaption})}
+
+The number of elements in a \doxyref{B\+E\+M3\+D\+Operator}{p.}{structBEM3DOperator} {\itshape op}, e.\+g. three elements for a gradient operator, one for a Laplacian. \mbox{\label{group__operators_ga356c28a17ecf2cadcf42eedf73b1f417}} 
+\index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+operator\+\_\+weight@{bem3d\+\_\+operator\+\_\+weight}}
 \index{bem3d\+\_\+operator\+\_\+weight@{bem3d\+\_\+operator\+\_\+weight}!Differential (and other) operators@{Differential (and other) operators}}
-\subsubsection[{bem3d\+\_\+operator\+\_\+weight}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+operator\+\_\+weight(
-\begin{DoxyParamCaption}
-\item[{}]{op, }
-\item[{}]{i}
-\end{DoxyParamCaption}
-)}\label{group__operators_ga356c28a17ecf2cadcf42eedf73b1f417}
+\subsubsection{bem3d\+\_\+operator\+\_\+weight}
+{\footnotesize\ttfamily \#define bem3d\+\_\+operator\+\_\+weight(\begin{DoxyParamCaption}\item[{}]{op,  }\item[{}]{i }\end{DoxyParamCaption})}
+
 Weight for the x-\/component of {\itshape i} th node forming the operator {\itshape op} 
 
 \subsection{Enumeration Type Documentation}
+\mbox{\label{group__operators_gab4643c303f563fb00005135a808e33ba}} 
 \index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+Average@{B\+E\+M3\+D\+Average}}
 \index{B\+E\+M3\+D\+Average@{B\+E\+M3\+D\+Average}!Differential (and other) operators@{Differential (and other) operators}}
-\subsubsection[{B\+E\+M3\+D\+Average}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf B\+E\+M3\+D\+Average}}\label{group__operators_gab4643c303f563fb00005135a808e33ba}
-Modes of calculating differential operators and vertex normals from quantities on connected elements. \begin{Desc}
-\item[Enumerator]\par
-\begin{description}
-\index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E}}\item[{\em 
-B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\label{group__operators_ggab4643c303f563fb00005135a808e33baad2d8ae687ff16ac18847d6e4a7bc6278}
-}]Mean weighted equally \index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A}}\item[{\em 
-B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\label{group__operators_ggab4643c303f563fb00005135a808e33baaa9be4758d433597f6fe6b70d048f0d68}
-}]Mean weighted by angle \index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+L\+R@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+L\+R}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+L\+R@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+L\+R}}\item[{\em 
-B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+L\+R\label{group__operators_ggab4643c303f563fb00005135a808e33baa6769e16cf024026c36a53be7b6e055c9}
-}]Mean weighted by sine and edge length reciprocal \index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+A\+T@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+A\+T}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+A\+T@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+A\+T}}\item[{\em 
-B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+A\+T\label{group__operators_ggab4643c303f563fb00005135a808e33baa5996973eaef7e3527687e6bb5b08bbc6}
-}]Mean weighted by areas of adjacent triangles \index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+L\+R@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+L\+R}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+L\+R@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+L\+R}}\item[{\em 
-B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+L\+R\label{group__operators_ggab4643c303f563fb00005135a808e33baa3ad759a41e94170b3db74debf9471b3f}
-}]Mean weighted by edge length reciprocals \index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+L\+R@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+L\+R}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+L\+R@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+L\+R}}\item[{\em 
-B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+L\+R\label{group__operators_ggab4643c303f563fb00005135a808e33baa07f298fcccd380af326e6ecc4f3482e3}
-}]Mean weighted by square root of edge length reciprocals \end{description}
-\end{Desc}
+\subsubsection{B\+E\+M3\+D\+Average}
+{\footnotesize\ttfamily enum \textbf{ B\+E\+M3\+D\+Average}}
+
+Modes of calculating differential operators and vertex normals from quantities on connected elements. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WE@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WE}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WE@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WE}}}\mbox{\label{group__operators_ggab4643c303f563fb00005135a808e33baad2d8ae687ff16ac18847d6e4a7bc6278}} 
+B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WE&Mean weighted equally \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WA@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WA}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WA@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WA}}}\mbox{\label{group__operators_ggab4643c303f563fb00005135a808e33baaa9be4758d433597f6fe6b70d048f0d68}} 
+B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WA&Mean weighted by angle \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+LR@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+LR}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+LR@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+LR}}}\mbox{\label{group__operators_ggab4643c303f563fb00005135a808e33baa6769e16cf024026c36a53be7b6e055c9}} 
+B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+LR&Mean weighted by sine and edge length reciprocal \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+AT@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+AT}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+AT@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+AT}}}\mbox{\label{group__operators_ggab4643c303f563fb00005135a808e33baa5996973eaef7e3527687e6bb5b08bbc6}} 
+B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+AT&Mean weighted by areas of adjacent triangles \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+LR@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+LR}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+LR@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+LR}}}\mbox{\label{group__operators_ggab4643c303f563fb00005135a808e33baa3ad759a41e94170b3db74debf9471b3f}} 
+B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+LR&Mean weighted by edge length reciprocals \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+LR@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+LR}!Differential (and other) operators@{Differential (and other) operators}}\index{Differential (and other) operators@{Differential (and other) operators}!B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+LR@{B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+LR}}}\mbox{\label{group__operators_ggab4643c303f563fb00005135a808e33baa07f298fcccd380af326e6ecc4f3482e3}} 
+B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+LR&Mean weighted by square root of edge length reciprocals \\
+\hline
+
+\end{DoxyEnumFields}
 
 
 \subsection{Function Documentation}
+\mbox{\label{group__operators_gafef1fdaa7240bf4d90fcd8fe6f0e901b}} 
 \index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+node\+\_\+normal@{bem3d\+\_\+node\+\_\+normal}}
 \index{bem3d\+\_\+node\+\_\+normal@{bem3d\+\_\+node\+\_\+normal}!Differential (and other) operators@{Differential (and other) operators}}
-\subsubsection[{bem3d\+\_\+node\+\_\+normal}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+node\+\_\+normal (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
-\item[{gint}]{i, }
-\item[{Gts\+Vector}]{n, }
-\item[{{\bf B\+E\+M3\+D\+Average}}]{mode}
-\end{DoxyParamCaption}
-)}\label{group__operators_gafef1fdaa7240bf4d90fcd8fe6f0e901b}
-Compute the surface normal at a node as the weighted average, where appropriate, of the normals on each of the elements of a mesh using the node, using the methods in Jin, S., Lewis, R. and West, D., `\+A comparison of algorithms for vertex normal computation\textquotesingle{}, The Visual Computer, 21(1-\/2)\+:71--82, {\tt http\+://dx.\+doi.\+org/10.\+1007/s00371-\/004-\/0271-\/1}
+\subsubsection{bem3d\+\_\+node\+\_\+normal()}
+{\footnotesize\ttfamily gint bem3d\+\_\+node\+\_\+normal (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{gint}]{i,  }\item[{Gts\+Vector}]{n,  }\item[{\textbf{ B\+E\+M3\+D\+Average}}]{mode }\end{DoxyParamCaption})}
+
+Compute the surface normal at a node as the weighted average, where appropriate, of the normals on each of the elements of a mesh using the node, using the methods in Jin, S., Lewis, R. and West, D., `A comparison of algorithms for vertex normal computation', The Visual Computer, 21(1-\/2)\+:71--82, {\tt http\+://dx.\+doi.\+org/10.\+1007/s00371-\/004-\/0271-\/1}
 
 
 \begin{DoxyParams}{Parameters}
@@ -144,19 +148,15 @@ Compute the surface normal at a node as the weighted average, where appropriate,
 \end{DoxyReturn}
 
 
-References B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+A\+T, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+L\+R, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+L\+R, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+L\+R, B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, bem3d\+\_\+mesh\+\_\+node\+\_\+elements(), and bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index().
+References B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+WE, bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+shape\+\_\+func, B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, bem3d\+\_\+mesh\+\_\+node\+\_\+elements(), and bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index().
 
+\mbox{\label{group__operators_gab03357d45593995da0c7fd9fd19604e3}} 
 \index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+operator\+\_\+gradient@{bem3d\+\_\+operator\+\_\+gradient}}
 \index{bem3d\+\_\+operator\+\_\+gradient@{bem3d\+\_\+operator\+\_\+gradient}!Differential (and other) operators@{Differential (and other) operators}}
-\subsubsection[{bem3d\+\_\+operator\+\_\+gradient}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+operator\+\_\+gradient (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
-\item[{gint}]{i, }
-\item[{{\bf B\+E\+M3\+D\+Operator} $\ast$}]{op, }
-\item[{{\bf B\+E\+M3\+D\+Average}}]{mode}
-\end{DoxyParamCaption}
-)}\label{group__operators_gab03357d45593995da0c7fd9fd19604e3}
-Compute the operator for computation of the surface gradient of a quantity at a node of a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}. Currently, the function is only implemented for linear triangles, using the gradient discretization of Xu, G., `\+Convergent discrete Laplace-\/\+Beltrami operators over triangular surfaces\textquotesingle{}, Proceedings of the Geometric Modeling and Processing 2004 (G\+M\+P 04), {\tt http\+://dx.\+doi.\+org/10.\+1109/\+G\+M\+A\+P.\+2004.\+1290041}
+\subsubsection{bem3d\+\_\+operator\+\_\+gradient()}
+{\footnotesize\ttfamily gint bem3d\+\_\+operator\+\_\+gradient (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{gint}]{i,  }\item[{\textbf{ B\+E\+M3\+D\+Operator} $\ast$}]{op,  }\item[{\textbf{ B\+E\+M3\+D\+Average}}]{mode }\end{DoxyParamCaption})}
+
+Compute the operator for computation of the surface gradient of a quantity at a node of a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}. Currently, the function is only implemented for linear triangles, using the gradient discretization of Xu, G., `Convergent discrete Laplace-\/\+Beltrami operators over triangular surfaces', Proceedings of Geometric Modeling and Processing 2004 (G\+MP 04), {\tt http\+://dx.\+doi.\+org/10.\+1109/\+G\+M\+A\+P.\+2004.\+1290041} If any other element type is detected, the function returns silently.
 
 
 \begin{DoxyParams}{Parameters}
@@ -170,25 +170,20 @@ Compute the operator for computation of the surface gradient of a quantity at a 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success, an error code otherwise. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success, an error code otherwise. 
 \end{DoxyReturn}
 
 
-References B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+A\+A\+T, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+E\+L\+R, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+R\+E\+L\+R, B\+E\+M3\+D\+\_\+\+A\+V\+E\+R\+A\+G\+E\+\_\+\+M\+W\+S\+E\+L\+R, B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, bem3d\+\_\+mesh\+\_\+node\+\_\+elements(), and bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index().
+References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, bem3d\+\_\+mesh\+\_\+node\+\_\+elements(), bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index(), bem3d\+\_\+shfunc\+\_\+t0(), and bem3d\+\_\+shfunc\+\_\+t1().
 
+\mbox{\label{group__operators_ga29789d93b4e16fd96c5b17c78fcba780}} 
 \index{Differential (and other) operators@{Differential (and other) operators}!bem3d\+\_\+operator\+\_\+new@{bem3d\+\_\+operator\+\_\+new}}
 \index{bem3d\+\_\+operator\+\_\+new@{bem3d\+\_\+operator\+\_\+new}!Differential (and other) operators@{Differential (and other) operators}}
-\subsubsection[{bem3d\+\_\+operator\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Operator}$\ast$ bem3d\+\_\+operator\+\_\+new (
-\begin{DoxyParamCaption}
-\item[{void}]{}
-\end{DoxyParamCaption}
-)}\label{group__operators_ga29789d93b4e16fd96c5b17c78fcba780}
+\subsubsection{bem3d\+\_\+operator\+\_\+new()}
+{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Operator}$\ast$ bem3d\+\_\+operator\+\_\+new (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
 Allocate a new \doxyref{B\+E\+M3\+D\+Operator}{p.}{structBEM3DOperator}.
 
 \begin{DoxyReturn}{Returns}
 a newly allocated \doxyref{B\+E\+M3\+D\+Operator}{p.}{structBEM3DOperator}. 
 \end{DoxyReturn}
-
-
-Referenced by bem3d\+\_\+function\+\_\+apply().
-

@@ -1,10 +1,15 @@
-head	1.4;
+head	1.5;
 access;
 symbols;
 locks
-	ensmjc:1.4; strict;
+	ensmjc:1.5; strict;
 comment	@ * @;
 
+
+1.5
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.4;
 
 1.4
 date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
@@ -31,14 +36,14 @@ desc
 @@
 
 
-1.4
+1.5
 log
 @*** empty log message ***
 @
 text
 @/* gfunc.c
  * 
- * Copyright (C) 2006, 2008 Michael Carley
+ * Copyright (C) 2006, 2008, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +91,7 @@ text
  * @@param x field point
  * @@param y source point
  * @@param n normal at source point
- * @@param p a ::BEM3DParameters, ignored in this function;
+ * @@param p a ::BEM3DParameters struct, ignored in this function;
  * @@param G single element GArray containing Green's function
  * @@param dGdn single element GArray containing normal derivative of
  * Green's function
@@ -108,7 +113,7 @@ gint bem3d_greens_func_laplace(GtsPoint *x, GtsPoint *y,
   g_return_val_if_fail(GTS_IS_POINT(x), BEM3D_ARGUMENT_WRONG_TYPE) ;
   g_return_val_if_fail(y != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(n != NULL, BEM3D_NULL_ARGUMENT) ;
-  g_return_val_if_fail(p != NULL, BEM3D_NULL_ARGUMENT) ;
+  /* g_return_val_if_fail(p != NULL, BEM3D_NULL_ARGUMENT) ; */
   g_return_val_if_fail(G != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(dGdn != NULL, BEM3D_NULL_ARGUMENT) ;
 
@@ -135,9 +140,9 @@ gint bem3d_greens_func_laplace(GtsPoint *x, GtsPoint *y,
  * @@param x field point
  * @@param y source point
  * @@param n normal at source point
- * @@param p a ::BEM3DParameters, ignored in this function;
- * @@param G three element GArray containing gradient of Green's function
- * @@param dGdn three element GArray containing gradient of normal 
+ * @@param p a ::BEM3DParameters struct, ignored in this function;
+ * @@param G four element GArray containing Green's function and its gradient
+ * @@param dGdn four element GArray containing value and gradient of normal 
  * derivative of Green's function
  * 
  * @@return ::BEM3D_SUCCESS on success 
@@ -162,34 +167,111 @@ gint bem3d_greens_func_gradient_laplace(GtsPoint *x, GtsPoint *y,
   g_return_val_if_fail(G != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(dGdn != NULL, BEM3D_NULL_ARGUMENT) ;
 
-  g_array_set_size(G, 3) ; g_array_set_size(dGdn, 3) ;
+  g_array_set_size(G, 4) ; g_array_set_size(dGdn, 4) ;
   R2 = gts_point_distance2(x, y) ;
   if ( R2 == 0.0 ) 
-  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_ERROR,
-	"%s: coincident points x=(%g,%g,%g); y=(%g,%g,%g)",
-	__FUNCTION__,
-	GTS_POINT(x)->x, GTS_POINT(x)->y, GTS_POINT(x)->z,
-	GTS_POINT(y)->x, GTS_POINT(y)->y, GTS_POINT(y)->z) ;
+    g_log(G_LOG_DOMAIN, G_LOG_LEVEL_ERROR,
+	  "%s: coincident points x=(%g,%g,%g); y=(%g,%g,%g)",
+	  __FUNCTION__,
+	  GTS_POINT(x)->x, GTS_POINT(x)->y, GTS_POINT(x)->z,
+	  GTS_POINT(y)->x, GTS_POINT(y)->y, GTS_POINT(y)->z) ;
   R = sqrt(R2) ;
 
   gts_vector_init(r, y, x) ;
   nablaR[0] = r[0]/R ; nablaR[1] = r[1]/R ;
   nablaR[2] = r[2]/R ;
 
-  g = 0.25*M_1_PI/R2 ;
-  g_array_index(G,gdouble,0) = g*nablaR[0] ;
-  g_array_index(G,gdouble,1) = g*nablaR[1] ;
-  g_array_index(G,gdouble,2) = g*nablaR[2] ;
+  g = 0.25*M_1_PI/R ;
+  g_array_index(G, gdouble, 0) = g ;
 
-  dRdn = gts_vector_scalar(r,n)/R ;
-  g_array_index(dGdn,gdouble,0) = 3*dRdn*nablaR[0] - n[0] ;
-  g_array_index(dGdn,gdouble,1) = 3*dRdn*nablaR[1] - n[1] ;
-  g_array_index(dGdn,gdouble,2) = 3*dRdn*nablaR[2] - n[2] ;
+  dRdn = -gts_vector_scalar(r,n)/R ;
+  g_array_index(dGdn, gdouble, 0) = -dRdn*g/R ;
+
+  g = -0.25*M_1_PI/R2 ;
+  g_array_index(G,gdouble,1) = g*nablaR[0] ;
+  g_array_index(G,gdouble,2) = g*nablaR[1] ;
+  g_array_index(G,gdouble,3) = g*nablaR[2] ;
+
+  g_array_index(dGdn,gdouble,1) = 3*dRdn*nablaR[0] + n[0] ;
+  g_array_index(dGdn,gdouble,2) = 3*dRdn*nablaR[1] + n[1] ;
+  g_array_index(dGdn,gdouble,3) = 3*dRdn*nablaR[2] + n[2] ;
 
   g /= R ;
-  g_array_index(dGdn,gdouble,0) *= -g ;
   g_array_index(dGdn,gdouble,1) *= -g ;
   g_array_index(dGdn,gdouble,2) *= -g ;
+  g_array_index(dGdn,gdouble,3) *= -g ;
+  
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Green's function for gradient of Helmholtz equation:
+ * \f$G=\exp(\mathrm{J} kR)/4\pi R\f$, \f$R=|\mathbf{x}-\mathbf{y}|\f$
+ *
+ * @@param x field point
+ * @@param y source point
+ * @@param n normal at source point
+ * @@param p a ::BEM3DParameters struct;
+ * @@param G eight element GArray containing real and imaginary parts of
+ * value and gradient of Green's function
+ * @@param dGdn eight element GArray containing real and imaginary parts
+ * of value and gradient of normal derivative of Green's function
+ *
+ * @@return ::BEM3D_SUCCESS on success 
+ */
+
+gint bem3d_greens_func_gradient_helmholtz(GtsPoint *x, GtsPoint *y,
+					  GtsVector n, BEM3DParameters *p,
+					  GArray *G, GArray *dGdn)
+
+{
+  gdouble R2, R, k, dRdn ;
+  GtsVector r, nablaR ;
+  gsl_complex E, *g, *dgdn ;
+  gint i ;
+  
+  g_return_val_if_fail(x != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(GTS_IS_POINT(x), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(y != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(n != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(p != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(G != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(dGdn != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  if ( G->len != 8 ) g_array_set_size(G, 8) ;
+  if ( dGdn->len != 8 ) g_array_set_size(dGdn, 8) ;
+
+  k = bem3d_parameters_wavenumber(p) ;
+
+  g_assert((R2 = gts_point_distance2(x, y)) != 0.0) ;
+  R = sqrt(R2) ;
+  gts_vector_init(r, y, x) ;
+  nablaR[0] = r[0]/R ; nablaR[1] = r[1]/R ; nablaR[2] = r[2]/R ;
+  dRdn = -gts_vector_scalar(r,n)/R ;
+
+  GSL_SET_COMPLEX(&E, 0.25*M_1_PI*cos(k*R), 0.25*M_1_PI*sin(k*R)) ;
+  g = (gsl_complex *)(&(g_array_index(G,gdouble,0))) ; 
+  dgdn = (gsl_complex *)(&(g_array_index(dGdn,gdouble,0))) ;
+
+  GSL_SET_COMPLEX(g, 1.0/R, 0) ;
+  GSL_SET_COMPLEX(dgdn, -1.0/R2*dRdn, k/R*dRdn) ;
+  *g = gsl_complex_mul(*g, E) ;
+  *dgdn = gsl_complex_mul(*dgdn, E) ;
+
+  E = gsl_complex_div_real(E, R2) ;
+  for ( i = 0 ; i < 3 ; i ++ ) {
+    GSL_SET_COMPLEX(&(g[i+1]), (-1.0*nablaR[i]), (k*R*nablaR[i])) ;
+    g[i+1] = gsl_complex_mul(g[i+1], E) ;
+  }
+
+  E = gsl_complex_div_real(E, R) ;
+  
+  for ( i = 0 ; i < 3 ; i ++ ) {
+    GSL_SET_COMPLEX(&(dgdn[i+1]),
+		    ((3.0-k*k*R2)*dRdn*nablaR[i]+n[i]),
+		    ((-3.0*k*R)*dRdn*nablaR[i]-k*R*n[i])) ;
+    dgdn[i+1] = gsl_complex_mul(dgdn[i+1], E) ;
+  }
   
   return BEM3D_SUCCESS ;
 }
@@ -201,7 +283,7 @@ gint bem3d_greens_func_gradient_laplace(GtsPoint *x, GtsPoint *y,
  * @@param x field point
  * @@param y source point
  * @@param n normal at source point
- * @@param p a ::BEM3DParameters;
+ * @@param p a ::BEM3DParameters struct;
  * @@param G two element GArray containing real and imaginary parts of
  * Green's function
  * @@param dGdn two element GArray containing real and imaginary parts
@@ -253,14 +335,15 @@ gint bem3d_greens_func_helmholtz(GtsPoint *x, GtsPoint *y,
   return BEM3D_SUCCESS ;
 }
 
+#if 0
 /** 
  * Green's function for Helmholtz equation, hypersingular formulation:
  * \f$G=\exp(\mathrm{J} kR)/4\pi R\f$, \f$R=|\mathbf{x}-\mathbf{y}|\f$
  *
  * @@param x field point
  * @@param y source point
- * @@param n normal at source point
- * @@param p a ::BEM3DParameters;
+ * @@param ny normal at source point
+ * @@param p a ::BEM3DParameters struct;
  * @@param G two element GArray containing real and imaginary parts of
  * Green's function
  * @@param dGdn two element GArray containing real and imaginary parts
@@ -341,6 +424,96 @@ gint bem3d_greens_func_helmholtz_hs(GtsPoint *x, GtsPoint *y,
 
   return BEM3D_SUCCESS ;
 }
+#endif
+
+/** 
+ * Green's function for Helmholtz equation, Burton and Miller
+ * hypersingular formulation: \f$G=\exp(\mathrm{J} kR)/4\pi R\f$,
+ * \f$R=|\mathbf{x}-\mathbf{y}|\f$
+ *
+ * @@param x field point
+ * @@param y source point
+ * @@param ny normal at source point
+ * @@param p a ::BEM3DParameters struct;
+ * @@param G two element GArray containing real and imaginary parts of
+ * Green's function
+ * @@param dGdn two element GArray containing real and imaginary parts
+ * of normal derivative of Green's function
+ *
+ * @@return ::BEM3D_SUCCESS on success 
+ */
+
+gint bem3d_greens_func_helmholtz_hs(GtsPoint *x, GtsPoint *y,
+				    GtsVector ny, BEM3DParameters *p,
+				    GArray *G, GArray *dGdn)
+
+{
+  gdouble R2, R, dRx, dRy, k, *nx ;
+  GtsVector r ;
+  gsl_complex E, *g, *dgdn, g0, dgy, dgx, dgxy, lambda ;
+
+/*   g_debug("%s: ", __FUNCTION__) ; */
+
+  g_return_val_if_fail(x != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(GTS_IS_POINT(x), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(y != NULL, BEM3D_NULL_ARGUMENT) ;
+/*   g_return_val_if_fail(GTS_IS_POINT(y), BEM3D_ARGUMENT_WRONG_TYPE) ; */
+  g_return_val_if_fail(ny != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(p != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(G != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(dGdn != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  if ( G->len != 2 ) g_array_set_size(G, 2) ;
+  if ( dGdn->len != 2) g_array_set_size(dGdn, 2) ;
+
+  k = bem3d_parameters_wavenumber(p) ;
+  nx = bem3d_parameters_normal(p) ;
+  GSL_SET_COMPLEX(&lambda,
+		  bem3d_parameters_lambda_real(p),
+		  bem3d_parameters_lambda_imag(p)) ;
+
+  g_assert((R2 = gts_point_distance2(x, y)) != 0.0) ;
+  R = sqrt(R2) ;
+
+  GSL_SET_COMPLEX(&E, 0.25*M_1_PI*cos(k*R), 0.25*M_1_PI*sin(k*R)) ;
+  g = (gsl_complex *)(&(g_array_index(G,gdouble,0))) ;
+  dgdn = (gsl_complex *)(&(g_array_index(dGdn,gdouble,0))) ;
+
+  gts_vector_init(r, y, x) ; 
+  dRx =  gts_vector_scalar(r, nx)/R ;
+  dRy = -gts_vector_scalar(r, ny)/R ;
+			  
+  /*build up different bits of the formulation*/
+  /*basic Green's function*/
+  g0 = gsl_complex_mul_real(E, 1.0/R) ;
+
+  /*normal derivatives*/
+  GSL_SET_COMPLEX(&dgy, -1.0, k*R) ;
+  dgy = gsl_complex_mul(dgy, E) ;
+
+  /*normal derivative w.r.t. field normal*/
+  dgx = gsl_complex_mul_real(dgy, dRx/R/R) ;
+
+  /*normal derivative w.r.t. source normal*/
+  dgy = gsl_complex_mul_real(dgy, dRy/R/R) ;
+
+  /*double derivative*/
+  /* GSL_SET_COMPLEX(&dgxy, */
+  /* 		  (((3.0-k*k*R*R)*dRx*dRy + gts_vector_scalar(nx,ny))/R/R/R), */
+  /* 		  ((-3*k*R*dRx*dRy - k*R*gts_vector_scalar(nx,ny))/R/R/R)) ; */
+  GSL_SET_COMPLEX(&dgxy,
+		  ((3.0-k*k*R*R)*dRx*dRy + gts_vector_scalar(nx,ny))/R/R/R,
+		  (-3*k*R*dRx*dRy - k*R*gts_vector_scalar(nx,ny))/R/R/R) ;
+  dgxy = gsl_complex_mul(dgxy, E) ;
+
+  *g = gsl_complex_mul(lambda, dgx) ;
+  *g = gsl_complex_add(*g, g0) ;
+
+  *dgdn = gsl_complex_mul(lambda, dgxy) ;
+  *dgdn = gsl_complex_add(*dgdn, dgy) ;
+  
+  return BEM3D_SUCCESS ;
+}
 
 /** 
  * Green's function for convected Helmholtz equation:
@@ -349,7 +522,7 @@ gint bem3d_greens_func_helmholtz_hs(GtsPoint *x, GtsPoint *y,
  * @@param x field point
  * @@param y source point
  * @@param n normal at source point
- * @@param p a ::BEM3DParameters;
+ * @@param p a ::BEM3DParameters struct;
  * @@param G two element GArray containing real and imaginary parts of
  * Green's function
  * @@param dGdn two element GArray containing real and imaginary parts
@@ -420,8 +593,8 @@ BEM3DParameters *bem3d_parameters_new(void)
 
   p = (BEM3DParameters *)g_malloc(sizeof(BEM3DParameters)) ;
 
-  memset(p->f,0,BEM3D_PARAMETERS_SIZE*sizeof(gdouble)) ;
-  memset(p->n,0,BEM3D_PARAMETERS_SIZE*sizeof(gint)) ;
+  memset(p->f,0,BEM3D_PARAMETERS_REAL_SIZE*sizeof(gdouble)) ;
+  memset(p->n,0,BEM3D_PARAMETERS_INT_SIZE*sizeof(gint)) ;
 
   return p ;
 }
@@ -431,6 +604,68 @@ BEM3DParameters *bem3d_parameters_new(void)
  * 
  */
 
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2006, 2008 Michael Carley
+d51 1
+a51 1
+ * @@param p a ::BEM3DParameters, ignored in this function;
+d73 1
+a73 1
+  g_return_val_if_fail(p != NULL, BEM3D_NULL_ARGUMENT) ;
+d100 3
+a102 3
+ * @@param p a ::BEM3DParameters, ignored in this function;
+ * @@param G three element GArray containing gradient of Green's function
+ * @@param dGdn three element GArray containing gradient of normal 
+d127 1
+a127 1
+  g_array_set_size(G, 3) ; g_array_set_size(dGdn, 3) ;
+d130 5
+a134 5
+  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_ERROR,
+	"%s: coincident points x=(%g,%g,%g); y=(%g,%g,%g)",
+	__FUNCTION__,
+	GTS_POINT(x)->x, GTS_POINT(x)->y, GTS_POINT(x)->z,
+	GTS_POINT(y)->x, GTS_POINT(y)->y, GTS_POINT(y)->z) ;
+d141 14
+a154 9
+  g = 0.25*M_1_PI/R2 ;
+  g_array_index(G,gdouble,0) = g*nablaR[0] ;
+  g_array_index(G,gdouble,1) = g*nablaR[1] ;
+  g_array_index(G,gdouble,2) = g*nablaR[2] ;
+
+  dRdn = gts_vector_scalar(r,n)/R ;
+  g_array_index(dGdn,gdouble,0) = 3*dRdn*nablaR[0] - n[0] ;
+  g_array_index(dGdn,gdouble,1) = 3*dRdn*nablaR[1] - n[1] ;
+  g_array_index(dGdn,gdouble,2) = 3*dRdn*nablaR[2] - n[2] ;
+a156 1
+  g_array_index(dGdn,gdouble,0) *= -g ;
+d159 73
+d243 1
+a243 1
+ * @@param p a ::BEM3DParameters;
+d295 1
+d302 2
+a303 2
+ * @@param n normal at source point
+ * @@param p a ::BEM3DParameters;
+d384 90
+d482 1
+a482 1
+ * @@param p a ::BEM3DParameters;
+d553 2
+a554 2
+  memset(p->f,0,BEM3D_PARAMETERS_SIZE*sizeof(gdouble)) ;
+  memset(p->n,0,BEM3D_PARAMETERS_SIZE*sizeof(gint)) ;
 @
 
 

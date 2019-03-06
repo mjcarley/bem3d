@@ -1,6 +1,6 @@
 /* location.c
  * 
- * Copyright (C) 2006 Michael Carley
+ * Copyright (C) 2006, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -402,7 +402,8 @@ gint bem3d_element_edge_nearest_point(BEM3DElement *e, gint i, gint j,
 
   } while ( (k < kmax) && (status == GSL_CONTINUE) ) ;
 
-  if ( t < 0 ) t = 0.0 ; if ( t > 1 ) t = 1.0 ;
+  if ( t < 0 ) { t = 0.0 ; }
+  if ( t > 1 ) { t = 1.0 ; }
   *xi = (1-t)*bem3d_element_vertex_xi(e,i) + t*bem3d_element_vertex_xi(e,j) ;
   *eta = (1-t)*bem3d_element_vertex_eta(e,i) + t*bem3d_element_vertex_eta(e,j) ;
 

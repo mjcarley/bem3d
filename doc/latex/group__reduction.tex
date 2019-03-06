@@ -1,0 +1,221 @@
+\section{Functions for data reduction}
+\label{group__reduction}\index{Functions for data reduction@{Functions for data reduction}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+max} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint $\ast$idata, gint $\ast$ni, gdouble $\ast$ddata, gint $\ast$nd, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+min} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint $\ast$idata, gint $\ast$ni, gdouble $\ast$ddata, gint $\ast$nd, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+sum} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint $\ast$idata, gint $\ast$ni, gdouble $\ast$ddata, gint $\ast$nd, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+int} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint $\ast$idata, gint $\ast$ni, gdouble $\ast$ddata, gint $\ast$nd, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+apply} (gchar $\ast$func, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint $\ast$idata, gint $\ast$ni, gdouble $\ast$ddata, gint $\ast$nd, gpointer data)
+\item 
+gchar $\ast$ \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+description} (gchar $\ast$str)
+\item 
+gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+list} (F\+I\+LE $\ast$output, gchar $\ast$format, gboolean describe)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\label{group__reduction_ga4087cc8edda72f364aa066348123a7e8}} 
+\index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+apply@{bem3d\+\_\+reduction\+\_\+func\+\_\+apply}}
+\index{bem3d\+\_\+reduction\+\_\+func\+\_\+apply@{bem3d\+\_\+reduction\+\_\+func\+\_\+apply}!Functions for data reduction@{Functions for data reduction}}
+\subsubsection{bem3d\+\_\+reduction\+\_\+func\+\_\+apply()}
+{\footnotesize\ttfamily gint bem3d\+\_\+reduction\+\_\+func\+\_\+apply (\begin{DoxyParamCaption}\item[{gchar $\ast$}]{func,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{gint $\ast$}]{idata,  }\item[{gint $\ast$}]{ni,  }\item[{gdouble $\ast$}]{ddata,  }\item[{gint $\ast$}]{nd,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Apply a named reduction operation to a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} on a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}. Reduction operations can be listed by calling \doxyref{bem3d\+\_\+reduction\+\_\+func\+\_\+list}{p.}{group__reduction_ga9859de54a3d7d9a82f66e151ec5cf36e}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em func} & the name of reduction operation \\
+\hline
+{\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
+\hline
+{\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} containing data for {\itshape m} \\
+\hline
+{\em idata} & array containing integer data on exit \\
+\hline
+{\em ni} & number of entries in {\itshape idata} on exit \\
+\hline
+{\em ddata} & array containing double precision data on exit \\
+\hline
+{\em nd} & number of entries in {\itshape ddata} on exit \\
+\hline
+{\em data} & ignored\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+\mbox{\label{group__reduction_ga9468b7a903aca8fe097462e011cb6c05}} 
+\index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+description@{bem3d\+\_\+reduction\+\_\+func\+\_\+description}}
+\index{bem3d\+\_\+reduction\+\_\+func\+\_\+description@{bem3d\+\_\+reduction\+\_\+func\+\_\+description}!Functions for data reduction@{Functions for data reduction}}
+\subsubsection{bem3d\+\_\+reduction\+\_\+func\+\_\+description()}
+{\footnotesize\ttfamily gchar$\ast$ bem3d\+\_\+reduction\+\_\+func\+\_\+description (\begin{DoxyParamCaption}\item[{gchar $\ast$}]{str }\end{DoxyParamCaption})}
+
+Short description of a reduction operation.
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & the name of the reduction operation, e.\+g. `max'\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to a string containing a description of the operation, or N\+U\+LL if not found. 
+\end{DoxyReturn}
+\mbox{\label{group__reduction_ga8abc72eb60ec1a4c770fe39fb1a738a6}} 
+\index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+int@{bem3d\+\_\+reduction\+\_\+func\+\_\+int}}
+\index{bem3d\+\_\+reduction\+\_\+func\+\_\+int@{bem3d\+\_\+reduction\+\_\+func\+\_\+int}!Functions for data reduction@{Functions for data reduction}}
+\subsubsection{bem3d\+\_\+reduction\+\_\+func\+\_\+int()}
+{\footnotesize\ttfamily gint bem3d\+\_\+reduction\+\_\+func\+\_\+int (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{gint $\ast$}]{idata,  }\item[{gint $\ast$}]{ni,  }\item[{gdouble $\ast$}]{ddata,  }\item[{gint $\ast$}]{nd,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Surface integral of data
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
+\hline
+{\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} containing data for {\itshape m} \\
+\hline
+{\em idata} & ignored \\
+\hline
+{\em ni} & ignored \\
+\hline
+{\em ddata} & surface integral on {\itshape m} of data in each column of {\itshape f} \\
+\hline
+{\em nd} & on exit 1 \\
+\hline
+{\em data} & ignored\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+mesh\+\_\+foreach\+\_\+element(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+new().
+
+\mbox{\label{group__reduction_ga9859de54a3d7d9a82f66e151ec5cf36e}} 
+\index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+list@{bem3d\+\_\+reduction\+\_\+func\+\_\+list}}
+\index{bem3d\+\_\+reduction\+\_\+func\+\_\+list@{bem3d\+\_\+reduction\+\_\+func\+\_\+list}!Functions for data reduction@{Functions for data reduction}}
+\subsubsection{bem3d\+\_\+reduction\+\_\+func\+\_\+list()}
+{\footnotesize\ttfamily gint bem3d\+\_\+reduction\+\_\+func\+\_\+list (\begin{DoxyParamCaption}\item[{F\+I\+LE $\ast$}]{output,  }\item[{gchar $\ast$}]{format,  }\item[{gboolean}]{describe }\end{DoxyParamCaption})}
+
+Write a list of available reduction operations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em output} & a F\+I\+LE stream to write information to; \\
+\hline
+{\em format} & a `printf' format string for the data; \\
+\hline
+{\em describe} & if T\+R\+UE, also write the short description of the reduction operation\\
+\hline
+\end{DoxyParams}
+The format string should be appropriate to the setting of {\itshape describe}. If {\itshape describe} is F\+A\+L\+SE, {\itshape format} should contain one entry of `s' (for the name of the operation); if T\+R\+UE, {\itshape format} should contain `s' twice (one for the name of the operation and one for its description).
+
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+\mbox{\label{group__reduction_ga10cfd7ae7c31f96d0ca9564f75a4983b}} 
+\index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+max@{bem3d\+\_\+reduction\+\_\+func\+\_\+max}}
+\index{bem3d\+\_\+reduction\+\_\+func\+\_\+max@{bem3d\+\_\+reduction\+\_\+func\+\_\+max}!Functions for data reduction@{Functions for data reduction}}
+\subsubsection{bem3d\+\_\+reduction\+\_\+func\+\_\+max()}
+{\footnotesize\ttfamily gint bem3d\+\_\+reduction\+\_\+func\+\_\+max (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{gint $\ast$}]{idata,  }\item[{gint $\ast$}]{ni,  }\item[{gdouble $\ast$}]{ddata,  }\item[{gint $\ast$}]{nd,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Maximum value of entries in each column of data
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
+\hline
+{\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} containing data for {\itshape m} \\
+\hline
+{\em idata} & on exit, index of maximum value in each column \\
+\hline
+{\em ni} & on exit 1 \\
+\hline
+{\em ddata} & maximum value in each column of {\itshape f} \\
+\hline
+{\em nd} & on exit 1 \\
+\hline
+{\em data} & ignored\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+mesh\+\_\+data\+\_\+get(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
+
+\mbox{\label{group__reduction_ga75ddf4c8ceb054511d24f4ea7bf139b9}} 
+\index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+min@{bem3d\+\_\+reduction\+\_\+func\+\_\+min}}
+\index{bem3d\+\_\+reduction\+\_\+func\+\_\+min@{bem3d\+\_\+reduction\+\_\+func\+\_\+min}!Functions for data reduction@{Functions for data reduction}}
+\subsubsection{bem3d\+\_\+reduction\+\_\+func\+\_\+min()}
+{\footnotesize\ttfamily gint bem3d\+\_\+reduction\+\_\+func\+\_\+min (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{gint $\ast$}]{idata,  }\item[{gint $\ast$}]{ni,  }\item[{gdouble $\ast$}]{ddata,  }\item[{gint $\ast$}]{nd,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Minimum value of entries in each column of data
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
+\hline
+{\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} containing data for {\itshape m} \\
+\hline
+{\em idata} & on exit, index of minimum value in each column \\
+\hline
+{\em ni} & on exit 1 \\
+\hline
+{\em ddata} & minimum value in each column of {\itshape f} \\
+\hline
+{\em nd} & on exit 1 \\
+\hline
+{\em data} & ignored\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+mesh\+\_\+data\+\_\+get(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
+
+\mbox{\label{group__reduction_ga2d32523f739945b6cb9c5e08f35c729e}} 
+\index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+sum@{bem3d\+\_\+reduction\+\_\+func\+\_\+sum}}
+\index{bem3d\+\_\+reduction\+\_\+func\+\_\+sum@{bem3d\+\_\+reduction\+\_\+func\+\_\+sum}!Functions for data reduction@{Functions for data reduction}}
+\subsubsection{bem3d\+\_\+reduction\+\_\+func\+\_\+sum()}
+{\footnotesize\ttfamily gint bem3d\+\_\+reduction\+\_\+func\+\_\+sum (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{gint $\ast$}]{idata,  }\item[{gint $\ast$}]{ni,  }\item[{gdouble $\ast$}]{ddata,  }\item[{gint $\ast$}]{nd,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Sum of entries in each column
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
+\hline
+{\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} containing data for {\itshape m} \\
+\hline
+{\em idata} & ignored \\
+\hline
+{\em ni} & ignored \\
+\hline
+{\em ddata} & sum of entries in each column of {\itshape f} \\
+\hline
+{\em nd} & on exit 1 \\
+\hline
+{\em data} & ignored\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+mesh\+\_\+data\+\_\+get(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
+

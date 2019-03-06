@@ -1,6 +1,6 @@
 /* bem3d-dump.c
  * 
- * Copyright (C) 2006 Michael Carley
+ * Copyright (C) 2006, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -44,7 +44,7 @@ gint main(gint argc, gchar **argv)
 
   bem3d_shapefunc_lookup_init() ;
   loglevel = G_LOG_LEVEL_MESSAGE ;
-  while ( (ch = getopt(argc, argv, "h:")) != EOF ) {
+  while ( (ch = getopt(argc, argv, "h")) != EOF ) {
     switch (ch) {
     default: 
     case 'h':

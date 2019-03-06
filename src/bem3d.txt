@@ -6,35 +6,43 @@ three-dimensional boundary element calculations.
 
 @section start Getting started
 
-To solve a basic problem for acoustic scattering from a sphere,
-start with:
+A set of basic calculations are distributed with the source code in
+the directory \c examples.
+
+To solve a basic problem for acoustic scattering from a sphere, in the
+\c Scatter subdirectory start with:
  @verbatim 
  bem3d-sphere -e 1 -r 3 > sphere.bem
  bem3d-assemble -k 5.0 -i sphere.bem > sphere.mtx
- bem3d-source -k 5.0 -i sphere.bem -p > plane.dat
- bem3d-boundary -i sphere.bem -d plane.dat -o bndry.dat
- bem3d-solve -d bndry.dat -m sphere.mtx -o sphere.dat @endverbatim
+ bem3d-function -E 4 -i sphere.bem -F plane.fn -o bc-plane.dat
+ bem3d-solve -C sphere.cfg -d bc-plane.dat -m sphere.mtx -o solution.dat
+ @endverbatim
 
 These commands generate a spherical surface mesh, assemble the
 corresponding BEM matrices for the Helmholtz equation with
 wavenumber \f$k=5.0\f$, impose a plane wave boundary condition and
 solve for the surface potential. To compute the field radiated by
-the surface potential:
- @verbatim
- bem3d-plane -i32 -j32 -v-3,-3,0 -v3,-3,0 -v3,3,0 -v-3,3,0 > plane.gts
- gts2bem3d < plane.gts > plane.bem
- bem3d-field -k 5.0 -i sphere.bem -d sphere.dat -s plane.bem > plane.dat @endverbatim
-which generates a GTS file for a plane surface spanning the points
-\f$(-3,-3,0)\f$, \f$(3,-3,0)\f$, \f$(3,3,0)\f$ and \f$(-3,3,0)\f$,
-converts it to BEM elements and computes the radiated field on the
-surface. 
+the surface potential, using a \c gmsh surface
+@verbatim
+gmsh -2 field.geo
+
+msh2bem3d < field.msh > field.bem
+
+bem3d-field -C sphere.cfg -d solution.dat -i sphere.bem \
+	    -s field.bem -o field.dat
+
+@endverbatim
+which generates a BEM3D file for a plane surface computes the radiated
+field on the surface. 
 
 To visualize the results, the data can be output as GMSH .pos files
 using the geometry and result files:
  @verbatim
- bem3d2pos -d sphere.dat -i sphere.bem -o sphere.pos
- bem3d2pos -d plane.dat -i plane.bem -o plane.pos 
- gmsh plane.pos sphere.pos @endverbatim
+ bem3d2pos -t "Surface" -i sphere.bem -d solution.dat -o sphere.pos
+ bem3d2pos -t "Field" -i field.bem -d field.dat -o field.pos
+
+ gmsh field.pos sphere.pos
+ @endverbatim
 
 @image html example.png "GMSH visualization of plane wave scattering"
 

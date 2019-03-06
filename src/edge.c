@@ -1,6 +1,6 @@
 /* edge.c
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -353,7 +353,7 @@ static void orient_edges(BEM3DMesh *m, GSList *e, BEM3DEdge *edge)
  * @param e GSList of vertices of \a m which are sharp (from 
  * ::bem3d_mesh_sharp_vertices).
  * 
- * @return a GSList of ::BEM3DEdges, each of which is a connected,
+ * @return a GSList of ::BEM3DEdge, each of which is a connected,
  * oriented edge on \a m.
  */
 

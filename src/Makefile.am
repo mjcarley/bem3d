@@ -54,7 +54,16 @@ libbem3d_la_SOURCES = \
 	skeleton.c \
 	fmm.c \
 	fmmlib3d_1_2.c \
-	fmmlib3d_1_2.h
+	fmmlib3d_1_2.h \
+	htriquad.c \
+	htriquad.h \
+	binomials.c \
+	binomials.h \
+	expansions.c \
+	htri-transforms.c \
+	trace.c \
+	trace.h \
+	reduction.c
 
 if USE_FMMLIB3D_1_2
 libbem3d_la_SOURCES += \

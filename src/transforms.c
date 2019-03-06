@@ -68,7 +68,6 @@ gint triangle_rotation_matrix(gdouble *x1, gdouble *x2, gdouble *x3,
   Output: 
           transformation matrix A such that a point p in the original system 
 	  transforms to [A](p-x1)
-
 	  in the transformed system, x1 is transformed to the origin
  */
 

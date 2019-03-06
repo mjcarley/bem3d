@@ -1,6 +1,6 @@
 /* skeleton.c
  * 
- * Copyright (C) 2017 Michael Carley
+ * Copyright (C) 2017, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,6 @@ BEM3DMeshSkeleton *bem3d_mesh_skeleton_new(BEM3DMesh *m, gint order_max)
 static gint source_points(BEM3DElement *e, gpointer data[])
 
 {
-  gint *ne = data[0] ;
   BEM3DQuadratureRule *q = data[1] ;
   BEM3DMeshSkeleton *skel = data[2] ;
   BEM3DShapeFunc shfunc = bem3d_element_shape_func(e) ;

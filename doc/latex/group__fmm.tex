@@ -1,76 +1,90 @@
 \section{Fast Multipole Method}
 \label{group__fmm}\index{Fast Multipole Method@{Fast Multipole Method}}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \+\_\+\+B\+E\+M3\+D\+F\+M\+M\+Matrix \textbf{ B\+E\+M3\+D\+F\+M\+M\+Matrix}
+\end{DoxyCompactItemize}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-enum {\bf B\+E\+M3\+D\+Fast\+Multipole} \{ {\bf B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2} = 1
+enum \textbf{ B\+E\+M3\+D\+Fast\+Multipole} \{ \textbf{ B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2} = 1
  \}
 \item 
-enum {\bf B\+E\+M3\+D\+Fast\+Multipole\+Problem} \{ {\bf B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+C\+E}, 
-{\bf B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+T\+Z}
+enum \textbf{ B\+E\+M3\+D\+Fast\+Multipole\+Problem} \{ \textbf{ B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+CE}, 
+\textbf{ B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+TZ}
  \}
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-B\+E\+M3\+D\+F\+M\+M\+Matrix $\ast$ {\bf bem3d\+\_\+fmm\+\_\+matrix\+\_\+new} ({\bf B\+E\+M3\+D\+Fast\+Multipole} solver, {\bf B\+E\+M3\+D\+Fast\+Multipole\+Problem} problem, {\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$skel, {\bf B\+E\+M3\+D\+Configuration} $\ast$config, {\bf B\+E\+M3\+D\+Parameters} $\ast$param, gdouble r)
+\textbf{ B\+E\+M3\+D\+F\+M\+M\+Matrix} $\ast$ \textbf{ bem3d\+\_\+fmm\+\_\+matrix\+\_\+new} (\textbf{ B\+E\+M3\+D\+Fast\+Multipole} solver, \textbf{ B\+E\+M3\+D\+Fast\+Multipole\+Problem} problem, \textbf{ B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$skel, \textbf{ B\+E\+M3\+D\+Configuration} $\ast$config, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gdouble r)
 \item 
-gchar $\ast$ {\bf bem3d\+\_\+solver\+\_\+name} (B\+E\+M3\+D\+Solver s)
+gchar $\ast$ \textbf{ bem3d\+\_\+solver\+\_\+name} (\textbf{ B\+E\+M3\+D\+Solver} s)
 \item 
-B\+E\+M3\+D\+Solver {\bf bem3d\+\_\+solver\+\_\+type} (gchar $\ast$s)
+\textbf{ B\+E\+M3\+D\+Solver} \textbf{ bem3d\+\_\+solver\+\_\+type} (gchar $\ast$s)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-The Fast Multipole Method (F\+M\+M) is a standard technique for accelerating B\+E\+M calculations. B\+E\+M3\+D includes an interface to F\+M\+M solvers developed by other groups, identified by \doxyref{B\+E\+M3\+D\+Fast\+Multipole}{p.}{group__fmm_gab908afe0c8ff3880fd8e79ea00234aff} 
+The Fast Multipole Method (F\+MM) is a standard technique for accelerating B\+EM calculations. B\+E\+M3D includes an interface to F\+MM solvers developed by other groups, identified by \doxyref{B\+E\+M3\+D\+Fast\+Multipole}{p.}{group__fmm_gab908afe0c8ff3880fd8e79ea00234aff} 
+
+\subsection{Typedef Documentation}
+\mbox{\label{group__fmm_ga0d3f5d1d046406e6bc84693f0d5116f3}} 
+\index{Fast Multipole Method@{Fast Multipole Method}!B\+E\+M3\+D\+F\+M\+M\+Matrix@{B\+E\+M3\+D\+F\+M\+M\+Matrix}}
+\index{B\+E\+M3\+D\+F\+M\+M\+Matrix@{B\+E\+M3\+D\+F\+M\+M\+Matrix}!Fast Multipole Method@{Fast Multipole Method}}
+\subsubsection{B\+E\+M3\+D\+F\+M\+M\+Matrix}
+{\footnotesize\ttfamily typedef struct \+\_\+\+B\+E\+M3\+D\+F\+M\+M\+Matrix \textbf{ B\+E\+M3\+D\+F\+M\+M\+Matrix}}
+
+A (non-\/) matrix type for using Fast Multipole Method summations in solvers. 
 
 \subsection{Enumeration Type Documentation}
+\mbox{\label{group__fmm_gab908afe0c8ff3880fd8e79ea00234aff}} 
 \index{Fast Multipole Method@{Fast Multipole Method}!B\+E\+M3\+D\+Fast\+Multipole@{B\+E\+M3\+D\+Fast\+Multipole}}
 \index{B\+E\+M3\+D\+Fast\+Multipole@{B\+E\+M3\+D\+Fast\+Multipole}!Fast Multipole Method@{Fast Multipole Method}}
-\subsubsection[{B\+E\+M3\+D\+Fast\+Multipole}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf B\+E\+M3\+D\+Fast\+Multipole}}\label{group__fmm_gab908afe0c8ff3880fd8e79ea00234aff}
-Selection of different fast multipole implementations linked into the library \begin{Desc}
-\item[Enumerator]\par
-\begin{description}
-\index{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2}!Fast Multipole Method@{Fast Multipole Method}}\index{Fast Multipole Method@{Fast Multipole Method}!B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2}}\item[{\em 
-B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2\label{group__fmm_ggab908afe0c8ff3880fd8e79ea00234affa8cd3840463a235efa62e065afa81b387}
-}]fmmlib3d-\/1.\+2, {\tt https\+://github.\+com/zgimbutas/fmmlib3d} \end{description}
-\end{Desc}
+\subsubsection{B\+E\+M3\+D\+Fast\+Multipole}
+{\footnotesize\ttfamily enum \textbf{ B\+E\+M3\+D\+Fast\+Multipole}}
+
+Selection of different fast multipole implementations linked into the library \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2}!Fast Multipole Method@{Fast Multipole Method}}\index{Fast Multipole Method@{Fast Multipole Method}!B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2}}}\mbox{\label{group__fmm_ggab908afe0c8ff3880fd8e79ea00234affa8cd3840463a235efa62e065afa81b387}} 
+B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2&fmmlib3d-\/1.\+2, {\tt https\+://github.\+com/zgimbutas/fmmlib3d} \\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\label{group__fmm_gaa6f3e73f1e19d3277c8ee633e869d647}} 
 \index{Fast Multipole Method@{Fast Multipole Method}!B\+E\+M3\+D\+Fast\+Multipole\+Problem@{B\+E\+M3\+D\+Fast\+Multipole\+Problem}}
 \index{B\+E\+M3\+D\+Fast\+Multipole\+Problem@{B\+E\+M3\+D\+Fast\+Multipole\+Problem}!Fast Multipole Method@{Fast Multipole Method}}
-\subsubsection[{B\+E\+M3\+D\+Fast\+Multipole\+Problem}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf B\+E\+M3\+D\+Fast\+Multipole\+Problem}}\label{group__fmm_gaa6f3e73f1e19d3277c8ee633e869d647}
-Selection of problem type for fast multipole calculation. Not all F\+M\+M solvers will be able to solve all problems. \begin{Desc}
-\item[Enumerator]\par
-\begin{description}
-\index{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+C\+E@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+C\+E}!Fast Multipole Method@{Fast Multipole Method}}\index{Fast Multipole Method@{Fast Multipole Method}!B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+C\+E@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+C\+E}}\item[{\em 
-B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+C\+E\label{group__fmm_ggaa6f3e73f1e19d3277c8ee633e869d647ac3938c2c26280542a8f9aa7b5a4bcce8}
-}]Laplace equation \index{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+T\+Z@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+T\+Z}!Fast Multipole Method@{Fast Multipole Method}}\index{Fast Multipole Method@{Fast Multipole Method}!B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+T\+Z@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+T\+Z}}\item[{\em 
-B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+T\+Z\label{group__fmm_ggaa6f3e73f1e19d3277c8ee633e869d647aa55f056e8f8d3c3a6d4d6c04670f47fa}
-}]Helmholtz equation \end{description}
-\end{Desc}
+\subsubsection{B\+E\+M3\+D\+Fast\+Multipole\+Problem}
+{\footnotesize\ttfamily enum \textbf{ B\+E\+M3\+D\+Fast\+Multipole\+Problem}}
+
+Selection of problem type for fast multipole calculation. Not all F\+MM solvers will be able to solve all problems. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+CE@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+CE}!Fast Multipole Method@{Fast Multipole Method}}\index{Fast Multipole Method@{Fast Multipole Method}!B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+CE@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+CE}}}\mbox{\label{group__fmm_ggaa6f3e73f1e19d3277c8ee633e869d647ac3938c2c26280542a8f9aa7b5a4bcce8}} 
+B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+CE&Laplace equation \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+TZ@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+TZ}!Fast Multipole Method@{Fast Multipole Method}}\index{Fast Multipole Method@{Fast Multipole Method}!B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+TZ@{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+TZ}}}\mbox{\label{group__fmm_ggaa6f3e73f1e19d3277c8ee633e869d647aa55f056e8f8d3c3a6d4d6c04670f47fa}} 
+B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+TZ&Helmholtz equation \\
+\hline
+
+\end{DoxyEnumFields}
 
 
 \subsection{Function Documentation}
+\mbox{\label{group__fmm_ga539d1105d7fedc93ea5bfdfc4eb14b00}} 
 \index{Fast Multipole Method@{Fast Multipole Method}!bem3d\+\_\+fmm\+\_\+matrix\+\_\+new@{bem3d\+\_\+fmm\+\_\+matrix\+\_\+new}}
 \index{bem3d\+\_\+fmm\+\_\+matrix\+\_\+new@{bem3d\+\_\+fmm\+\_\+matrix\+\_\+new}!Fast Multipole Method@{Fast Multipole Method}}
-\subsubsection[{bem3d\+\_\+fmm\+\_\+matrix\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}B\+E\+M3\+D\+F\+M\+M\+Matrix$\ast$ bem3d\+\_\+fmm\+\_\+matrix\+\_\+new (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Fast\+Multipole}}]{solver, }
-\item[{{\bf B\+E\+M3\+D\+Fast\+Multipole\+Problem}}]{problem, }
-\item[{{\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{skel, }
-\item[{{\bf B\+E\+M3\+D\+Configuration} $\ast$}]{config, }
-\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{param, }
-\item[{gdouble}]{r}
-\end{DoxyParamCaption}
-)}\label{group__fmm_ga539d1105d7fedc93ea5bfdfc4eb14b00}
-Generate a new \+::\+B\+E\+M3\+D\+F\+M\+M\+Matrix which can be used in matrix-\/free calculations. The underlying calculation method uses a set of point sources to represent the mesh, in {\itshape skel}. This is then `corrected\textquotesingle{} by subtracting sources which lie within distance {\itshape r} of a collocation point and adding the integrated contribution from those elements calculated using the quadrature rules set in the configuration {\itshape config}.
+\subsubsection{bem3d\+\_\+fmm\+\_\+matrix\+\_\+new()}
+{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+F\+M\+M\+Matrix}$\ast$ bem3d\+\_\+fmm\+\_\+matrix\+\_\+new (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Fast\+Multipole}}]{solver,  }\item[{\textbf{ B\+E\+M3\+D\+Fast\+Multipole\+Problem}}]{problem,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{skel,  }\item[{\textbf{ B\+E\+M3\+D\+Configuration} $\ast$}]{config,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gdouble}]{r }\end{DoxyParamCaption})}
+
+Generate a new \doxyref{B\+E\+M3\+D\+F\+M\+M\+Matrix}{p.}{group__fmm_ga0d3f5d1d046406e6bc84693f0d5116f3} which can be used in matrix-\/free calculations. The underlying calculation method uses a set of point sources to represent the mesh, in {\itshape skel}. This is then `corrected' by subtracting sources which lie within distance {\itshape r} of a collocation point and adding the integrated contribution from those elements calculated using the quadrature rules set in the configuration {\itshape config}.
 
 
 \begin{DoxyParams}{Parameters}
-{\em solver} & the F\+M\+M solver to be used; \\
+{\em solver} & the F\+MM solver to be used; \\
 \hline
-{\em problem} & problem to be solved by F\+M\+M solver (e.\+g. Helmholtz or Laplace) \\
+{\em problem} & problem to be solved by F\+MM solver (e.\+g. Helmholtz or Laplace) \\
 \hline
-{\em skel} & a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} for the source points which will be passed to the F\+M\+M solver; \\
+{\em skel} & a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} for the source points which will be passed to the F\+MM solver; \\
 \hline
 {\em config} & configuration for the problem (including quadrature rules for correction calculation); \\
 \hline
@@ -80,20 +94,19 @@ Generate a new \+::\+B\+E\+M3\+D\+F\+M\+M\+Matrix which can be used in matrix-\/
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+mesh\+\_\+foreach\+\_\+node().
 
+\mbox{\label{group__fmm_ga2642f97835ada43a952e039746187850}} 
 \index{Fast Multipole Method@{Fast Multipole Method}!bem3d\+\_\+solver\+\_\+name@{bem3d\+\_\+solver\+\_\+name}}
 \index{bem3d\+\_\+solver\+\_\+name@{bem3d\+\_\+solver\+\_\+name}!Fast Multipole Method@{Fast Multipole Method}}
-\subsubsection[{bem3d\+\_\+solver\+\_\+name}]{\setlength{\rightskip}{0pt plus 5cm}gchar$\ast$ bem3d\+\_\+solver\+\_\+name (
-\begin{DoxyParamCaption}
-\item[{B\+E\+M3\+D\+Solver}]{s}
-\end{DoxyParamCaption}
-)}\label{group__fmm_ga2642f97835ada43a952e039746187850}
-Return a string giving a name to a \+::\+B\+E\+M3\+D\+Solver
+\subsubsection{bem3d\+\_\+solver\+\_\+name()}
+{\footnotesize\ttfamily gchar$\ast$ bem3d\+\_\+solver\+\_\+name (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Solver}}]{s }\end{DoxyParamCaption})}
+
+Return a string giving a name to a \doxyref{B\+E\+M3\+D\+Solver}{p.}{group__config_ga795c07626d3e4c4e2fe832a3fa32a161}
 
 
 \begin{DoxyParams}{Parameters}
@@ -103,14 +116,13 @@ Return a string giving a name to a \+::\+B\+E\+M3\+D\+Solver
 \begin{DoxyReturn}{Returns}
 a string containing a human-\/readable name for {\itshape s} 
 \end{DoxyReturn}
+\mbox{\label{group__fmm_ga602a453cd81707fd71c61fa08a0f671a}} 
 \index{Fast Multipole Method@{Fast Multipole Method}!bem3d\+\_\+solver\+\_\+type@{bem3d\+\_\+solver\+\_\+type}}
 \index{bem3d\+\_\+solver\+\_\+type@{bem3d\+\_\+solver\+\_\+type}!Fast Multipole Method@{Fast Multipole Method}}
-\subsubsection[{bem3d\+\_\+solver\+\_\+type}]{\setlength{\rightskip}{0pt plus 5cm}B\+E\+M3\+D\+Solver bem3d\+\_\+solver\+\_\+type (
-\begin{DoxyParamCaption}
-\item[{gchar $\ast$}]{s}
-\end{DoxyParamCaption}
-)}\label{group__fmm_ga602a453cd81707fd71c61fa08a0f671a}
-Inverse of \doxyref{bem3d\+\_\+solver\+\_\+name}{p.}{group__fmm_ga2642f97835ada43a952e039746187850}, given a human-\/readable name for a solver, return the corresponding \+::\+B\+E\+M3\+D\+Solver
+\subsubsection{bem3d\+\_\+solver\+\_\+type()}
+{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Solver} bem3d\+\_\+solver\+\_\+type (\begin{DoxyParamCaption}\item[{gchar $\ast$}]{s }\end{DoxyParamCaption})}
+
+Inverse of \doxyref{bem3d\+\_\+solver\+\_\+name}{p.}{group__fmm_ga2642f97835ada43a952e039746187850}, given a human-\/readable name for a solver, return the corresponding \doxyref{B\+E\+M3\+D\+Solver}{p.}{group__config_ga795c07626d3e4c4e2fe832a3fa32a161}
 
 
 \begin{DoxyParams}{Parameters}
@@ -118,5 +130,5 @@ Inverse of \doxyref{bem3d\+\_\+solver\+\_\+name}{p.}{group__fmm_ga2642f97835ada4
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-the \+::\+B\+E\+M3\+D\+Solver corresponding to {\itshape s} 
+the \doxyref{B\+E\+M3\+D\+Solver}{p.}{group__config_ga795c07626d3e4c4e2fe832a3fa32a161} corresponding to {\itshape s} 
 \end{DoxyReturn}

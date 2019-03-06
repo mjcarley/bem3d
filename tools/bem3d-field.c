@@ -1,6 +1,6 @@
 /* bem3d-field.c
  * 
- * Copyright (C) 2006, 2008 Michael Carley
+ * Copyright (C) 2006, 2008, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -140,7 +140,7 @@ gint main(gint argc, gchar **argv)
 	      "        -C <configuration file name>\n"
 	      "        -d <data file name>\n"
 	      "        -i <bem3d input file> (can be repeated)\n"
-	      "        -k # (wave number for Helmholtz calculation\n"
+	      "        -k # (wave number for Helmholtz calculation)\n"
 	      "        -M # (Mach number for convected Helmholtz equation)\n"
 	      "        -o <output file name>\n"
 	      "        -s <surface file name> (a BEM3D file of points "
@@ -205,9 +205,9 @@ gint main(gint argc, gchar **argv)
   bem3d_parameters_wavenumber(&gdata) = k ;
   bem3d_parameters_mach_number(&gdata) = M ;
 
-  if ( M != 0.0 ) {
-    config->gfunc.func = bem3d_greens_func_convected_helmholtz ;
-  }
+  /* if ( M != 0.0 ) { */
+  /*   config->gfunc.func = bem3d_greens_func_convected_helmholtz ; */
+  /* } */
 
   if ( opfile != NULL )
     output = file_open(opfile, "-", "w", stdout) ;
@@ -243,12 +243,8 @@ gint main(gint argc, gchar **argv)
 	fprintf(output, " %lg", g_array_index(field,gdouble,i)) ;
       fprintf(output, "\n") ;
       lineno ++ ;
-      /* nc = fscanf(input, "%c", line) ; */
-      /* fprintf(stderr, "%d\n", nc) ; */
       if ( (nc = fscanf(input, "%*c")) == EOF ) break ;
     }
-      /* fprintf(stderr, "%d\n", nc) ; */
-
   } else {
     fp = gts_file_new(input) ;
     bem3d_mesh_read(s, fp) ;
@@ -268,7 +264,7 @@ gint main(gint argc, gchar **argv)
 				s, sdata) ;
     }
 
-    bem3d_mesh_data_write(sdata, output) ;
+    bem3d_mesh_data_write(sdata, output, NULL) ;
   }
   
   file_close(output) ;

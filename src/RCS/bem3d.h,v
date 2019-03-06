@@ -1,10 +1,15 @@
-head	1.4;
+head	1.5;
 access;
 symbols;
 locks
-	ensmjc:1.4; strict;
+	ensmjc:1.5; strict;
 comment	@ * @;
 
+
+1.5
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.4;
 
 1.4
 date	2017.07.03.10.47.49;	author ensmjc;	state Exp;
@@ -31,14 +36,14 @@ desc
 @@
 
 
-1.4
+1.5
 log
 @*** empty log message ***
 @
 text
 @/* bem3d.h
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +62,8 @@ text
 
 #ifndef BEM3D_H_INCLUDED
 #define BEM3D_H_INCLUDED
+
+/*@@file */
 
 #ifdef __cplusplus
 extern "C" {
@@ -191,14 +198,15 @@ typedef enum {
 
 #define BEM3D_PARAMETERS_WAVENUMBER     0
 #define BEM3D_PARAMETERS_MACH_NUMBER    1
-#define BEM3D_PARAMETERS_AMPLITUDE_REAL 2
-#define BEM3D_PARAMETERS_AMPLITUDE_IMAG 3
 #define BEM3D_PARAMETERS_NORMAL         4
 #define BEM3D_PARAMETERS_LAMBDA_REAL    7
 #define BEM3D_PARAMETERS_LAMBDA_IMAG    8
 #define BEM3D_PARAMETERS_CONDITIONING   9
+#define BEM3D_PARAMETERS_JACOBIAN       10
+#define BEM3D_PARAMETERS_JACOBIAN_INV   19
 
-#define BEM3D_PARAMETERS_SIZE           16
+#define BEM3D_PARAMETERS_REAL_SIZE      64
+#define BEM3D_PARAMETERS_INT_SIZE       16
 
   /**
    * @@typedef BEM3DShapeFunc
@@ -440,9 +448,21 @@ typedef enum {
   typedef gint (*BEM3DLookupFunc)(gint i, gint j, gpointer ldata, 
 				  GArray *f, GArray *g) ;
 
+  /**
+   * Solver selection to choose between, for example, direct and Fast
+   * Multipole Method in configuration files.
+   *
+   * @@ingroup config
+   */
+
+  typedef enum {
+    BEM3D_SOLVER_DIRECT = 1,
+    BEM3D_SOLVER_FMM    = 2
+  } BEM3DSolver ;
+
   struct _BEM3DParameters {
-    gdouble f[BEM3D_PARAMETERS_SIZE] ;
-    gint    n[BEM3D_PARAMETERS_SIZE] ;
+    gdouble f[BEM3D_PARAMETERS_REAL_SIZE] ;
+    gint    n[BEM3D_PARAMETERS_INT_SIZE] ;
     gpointer user_data ;
   } ;
 
@@ -497,9 +517,16 @@ typedef enum {
   struct _BEM3DGreensFunction {
     BEM3DGreensFunc func ;
     gboolean real ;
+    guint precompute ;
     gint nc ;
   } ;
 
+  /*used in precompute field to set quantities for pre-calculation before
+   calling Green's functions, etc*/
+#define BEM3D_GREENS_FUNC_PRECOMPUTE_NORMAL   1 << 0
+#define BEM3D_GREENS_FUNC_PRECOMPUTE_JACOBIAN 1 << 1
+#define BEM3D_GREENS_FUNC_PRECOMPUTE_LAMBDA   1 << 2
+  
   /**
    * @@ingroup gfunc
    * The ::BEM3DGreensFunc of a ::BEM3DGreensFunction.
@@ -509,7 +536,7 @@ typedef enum {
    * @@return the ::BEM3DGreensFunc of \a g.
    * @@hideinitializer
    */
-#define bem3d_greens_function_func(g)             ((g)->func)
+#define bem3d_greens_function_func(_g)             ((_g)->func)
 
   /**
    * @@ingroup gfunc
@@ -520,7 +547,7 @@ typedef enum {
    * @@return TRUE if \a g is real.
    * @@hideinitializer
    */
-#define bem3d_greens_function_is_real(g)          ((g)->real)
+#define bem3d_greens_function_is_real(_g)          ((_g)->real)
 
   /**
    * @@ingroup gfunc
@@ -531,8 +558,58 @@ typedef enum {
    * @@return the number of values returned for one call to \a g.
    * @@hideinitializer
    */
-#define bem3d_greens_function_component_number(g) ((g)->nc)
+#define bem3d_greens_function_component_number(_g) ((_g)->nc)
 
+  /**
+   * @@ingroup gfunc
+   * Check if field point normal is to be pre-computed
+   *
+   * @@param g a pointer to a ::BEM3DGreensFunction.
+   *
+   * @@return TRUE if normal must be computed before calling \a g
+   * @@hideinitializer
+   */
+#define bem3d_greens_function_compute_normal(_g) \
+  ((_g)->precompute & BEM3D_GREENS_FUNC_PRECOMPUTE_NORMAL)
+
+  /**
+   * @@ingroup gfunc
+   * Check if coupling constant for hypersingular formulations is used 
+   * and should be computed
+   *
+   * @@param g a pointer to a ::BEM3DGreensFunction.
+   *
+   * @@return TRUE if coupling constant \f$\lambda\f$ is used
+   * @@hideinitializer
+   */
+#define bem3d_greens_function_compute_lambda(_g) \
+  ((_g)->precompute & BEM3D_GREENS_FUNC_PRECOMPUTE_LAMBDA)
+
+  
+  /**
+   * @@ingroup gfunc
+   * Precompute field of a Green's function, defining quantities to be
+   * calculated before calling the Green's function proper
+   *
+   * @@param g a pointer to a ::BEM3DGreensFunction.
+   *
+   * @@hideinitializer
+   */
+#define bem3d_greens_function_compute(_g) ((_g)->precompute)
+
+  /**
+   * @@ingroup gfunc
+   * Check if field point Jacobian matrix is to be pre-computed
+   *
+   * @@param g a pointer to a ::BEM3DGreensFunction.
+   *
+   * @@return TRUE if Jacobian (and inverse) must be computed before calling \a g
+   * @@hideinitializer
+   */
+#define bem3d_greens_function_compute_jacobian(_g) \
+  ((_g)->precompute & BEM3D_GREENS_FUNC_PRECOMPUTE_JACOBIAN)
+
+  
   /**
    * @@ingroup gfunc
    * Wavenumber in a ::BEM3DParameters struct 
@@ -543,7 +620,7 @@ typedef enum {
    * @@hideinitializer
    */
 
-#define bem3d_parameters_wavenumber(p) ((p)->f[BEM3D_PARAMETERS_WAVENUMBER]) 
+#define bem3d_parameters_wavenumber(_p) ((_p)->f[BEM3D_PARAMETERS_WAVENUMBER]) 
 
   /**
    * @@ingroup gfunc
@@ -555,55 +632,10 @@ typedef enum {
    * @@hideinitializer
    */
 
-#define bem3d_parameters_mach_number(p) ((p)->f[BEM3D_PARAMETERS_MACH_NUMBER])
+#define bem3d_parameters_mach_number(_p) ((_p)->f[BEM3D_PARAMETERS_MACH_NUMBER])
 
-  /**
-   * @@ingroup gfunc 
-   * Real part of amplitude in a ::BEM3DParameters
-   * struct. The real and imaginary parts are aligned so that they can
-   * be extracted together and cast, if necessary, to a gsl_complex
-   * type. That is:
-   * @@verbatim
-   &(bem3d_parameters_amplitude_real(p)) @@endverbatim   
-   * is a pointer to an array of type gdouble of length two, containing 
-   * the real and imaginary parts of the magnitude.
-   *
-   * @@param p a pointer to a ::BEM3DParameters struct
-   *
-   * @@return the real part of the amplitude contained in \a p
-   * @@hideinitializer
-   */
 
-#define bem3d_parameters_amplitude_real(p)	\
-  ((p)->f[BEM3D_PARAMETERS_AMPLITUDE_REAL]) 
-
-  /**
-   * @@ingroup gfunc
-   * Imaginary part of amplitude in a ::BEM3DParameters struct 
-   *
-   * @@param p a pointer to a ::BEM3DParameters struct
-   *
-   * @@return the imaginary part of the amplitude contained in \a p
-   * @@hideinitializer
-   */
-
-#define bem3d_parameters_amplitude_imag(p)	\
-  ((p)->f[BEM3D_PARAMETERS_AMPLITUDE_IMAG]) 
-
-  /**
-   * @@ingroup gfunc
-   *
-   * Normal to surface at evaluation point (e.g. in hypersingular
-   * scattering calculations)
-   *
-   * @@param p a pointer to a ::BEM3DParameters struct
-   *
-   * @@return pointer to three element array of normal components (can be cast
-   * to GtsVector)
-   * @@hideinitializer
-   */
-
-#define bem3d_parameters_normal(p) (&((p)->f[BEM3D_PARAMETERS_NORMAL])) 
+#define bem3d_parameters_normal(_p) (&((_p)->f[BEM3D_PARAMETERS_NORMAL])) 
 
   /**
    * @@ingroup gfunc
@@ -619,7 +651,7 @@ typedef enum {
    * @@hideinitializer
    */
 
-#define bem3d_parameters_lambda_real(p) ((p)->f[BEM3D_PARAMETERS_LAMBDA_REAL])
+#define bem3d_parameters_lambda_real(_p) ((_p)->f[BEM3D_PARAMETERS_LAMBDA_REAL])
 
   /**
    * @@ingroup gfunc
@@ -634,7 +666,7 @@ typedef enum {
    * @@hideinitializer
    */
 
-#define bem3d_parameters_lambda_imag(p) ((p)->f[BEM3D_PARAMETERS_LAMBDA_IMAG])
+#define bem3d_parameters_lambda_imag(_p) ((_p)->f[BEM3D_PARAMETERS_LAMBDA_IMAG])
 
   /**
    * @@ingroup gfunc
@@ -648,8 +680,39 @@ typedef enum {
    *
    * @@hideinitializer
    */
-#define bem3d_parameters_conditioning(p) ((p)->f[BEM3D_PARAMETERS_CONDITIONING])
+#define bem3d_parameters_conditioning(_p) ((_p)->f[BEM3D_PARAMETERS_CONDITIONING])
 
+  /**
+   * @@ingroup gfunc
+   *
+   * Pointer to Jacobian matrix at field point for conversion between
+   * physical and local element coordinates
+   *
+   * @@param p a pointer to a ::BEM3DParameters struct
+   *
+   * @@return pointer to nine-element array of doubles for 3x3 Jacobian
+   * \f$\partial x_{i}/\partial \xi_{j}\f$
+   *
+   * @@hideinitializer
+   */
+#define bem3d_parameters_jacobian(_p) (&((_p)->f[BEM3D_PARAMETERS_JACOBIAN]))
+
+  /**
+   * @@ingroup gfunc
+   *
+   * Pointer to inverse Jacobian matrix at field point for conversion
+   * between physical and local element coordinates
+   *
+   * @@param p a pointer to a ::BEM3DParameters struct
+   *
+   * @@return pointer to nine-element array of doubles for 3x3 inverse
+   * Jacobian \f$\partial \xi_{i}/\partial x_{j}\f$
+   *
+   * @@hideinitializer
+   */
+#define bem3d_parameters_jacobian_inverse(_p)		\
+  (&((_p)->f[BEM3D_PARAMETERS_JACOBIAN_INV]))
+    
   /**
    * @@ingroup gfunc
    * User data in a ::BEM3DParameters struct 
@@ -660,7 +723,7 @@ typedef enum {
    * @@hideinitializer
    */
 
-#define bem3d_parameters_user_data(p) ((p)->user_data)
+#define bem3d_parameters_user_data(_p) ((_p)->user_data)
 
   /**
    * @@struct BEM3DQuadratureRuleFunc
@@ -686,22 +749,6 @@ typedef enum {
 					  BEM3DGreensFunction *gfunc,
 					  BEM3DParameters *param,
 					  gpointer data) ;
-
-#if 0
-  /** 
-   * @@ingroup gfunc
-   * 
-   * The averaging mode to be used in computing the normal for Green's
-   * function calculations.
-   *
-   * @@param p a pointer to a ::BEM3DParameters struct;
-   * 
-   * @@return the ::BEM3DAverage mode for computing normals.
-   * @@hideinitializer
-   */
-
-#define bem3d_parameters_normal_mode(p) ((p)-nmode)
-#endif
 
   /**
    * Quadrature selection rule structure. 
@@ -731,7 +778,6 @@ typedef enum {
    * @@hideinitializer
    */
 
-
 typedef struct _BEM3DEdge         BEM3DEdge;
 
 struct _BEM3DEdge {
@@ -744,6 +790,12 @@ struct _BEM3DEdge {
   GPtrArray *e, *v ;
   BEM3DMesh *m ;
 };
+
+  /**
+   * @@struct BEM3DEdgeClass
+   * The basic class for a BEM3DEdge.
+   * @@ingroup edge
+   */
 
 typedef struct _BEM3DEdgeClass    BEM3DEdgeClass;
 
@@ -871,6 +923,16 @@ struct _BEM3DEdgeClass {
 
   typedef gdouble BEM3DMatrix[9] ;
 
+  /**
+   * @@struct BEM3DMotion
+   * 
+   * Data structure containing specification of motion of mesh nodes,
+   * with facilities for analytical evaluation of quantities such as
+   * velocity, for use in setting boundary conditions.
+   *
+   * @@hideinitializer
+   */
+
 typedef struct _BEM3DMotion         BEM3DMotion;
 
 struct _BEM3DMotion {
@@ -925,7 +987,14 @@ struct _BEM3DMotionClass {
 #define bem3d_motion_evaluator_d2y(mt)     ((mt)->fd2y)
 #define bem3d_motion_evaluator_d2z(mt)     ((mt)->fd2z)
 
-typedef struct _BEM3DFunction         BEM3DFunction;
+  /**
+   * Basic function class which allows the evaluation of analytical
+   * functions of mesh data, including differentiation. 
+   *
+   * @@ingroup functions
+   */
+
+  typedef struct _BEM3DFunction         BEM3DFunction;
 
 struct _BEM3DFunction {
   /*< private >*/
@@ -949,17 +1018,6 @@ struct _BEM3DFunctionClass {
   /* add extra methods here */
 };
 
-typedef struct _BEM3DConfiguration BEM3DConfiguration ;
-
-struct _BEM3DConfiguration {
-  GPtrArray               *keys ;
-  BEM3DGreensFunction     gfunc ;
-  BEM3DQuadratureRuleFunc qrule ;
-  BEM3DQuadratureSelector *qdata ;
-  GString                 *job ;
-  GString                 *gfunc_comment, *qrule_comment ;
-} ;
-
 #define BEM3D_FUNCTION(obj)            GTS_OBJECT_CAST (obj,\
 					         BEM3DFunction,\
 					         bem3d_function_class ())
@@ -975,6 +1033,112 @@ BEM3DFunctionClass * bem3d_function_class  (void);
 
 #define bem3d_function_function_number(f)      ((f->functions->len)) 
 
+
+  /**
+   * @@struct BEM3DMeshSkeleton
+   * 
+   * A data structure which represents a ::BEM3DMesh as an array of
+   * points, mainly for use in interfacing to Fast Multipole Method
+   * codes.
+   *
+   * @@hideinitializer
+   */
+
+  typedef struct _BEM3DMeshSkeleton BEM3DMeshSkeleton ;
+
+  struct _BEM3DMeshSkeleton {
+    BEM3DMesh *m ;
+    gint nnodes, /*number of mesh nodes*/
+      nelem,     /*number of mesh elements*/
+      npts,      /*number of points allocated*/
+      order,     /*order of source point interpolation*/
+      ns,        /*number of source points*/
+      nt,        /*number of target (collocation) points*/
+      imin,      /*minimum index on the mesh (indexing assumed contiguous)*/
+      imax,      /*minimum index on the mesh (indexing assumed contiguous)*/
+      *idx,      /*indices of nodes for source interpolation*/
+      ppe ;      /*(maximum) points per element*/
+    BEM3DAverage anorm ; /*averaging for normal calculations*/
+    gdouble *x, *n, *w ;  /*positions and normals, and interpolation weights*/
+    GHashTable *e ; /*to tie elements to their point sources*/
+  } ;
+
+  /**
+   * Selection of different fast multipole implementations linked into
+   * the library
+   *
+   * @@ingroup fmm
+   */
+
+  typedef enum {
+    BEM3D_FMM_FMMLIB3D_1_2 = 1,    /**< fmmlib3d-1.2, 
+				https://github.com/zgimbutas/fmmlib3d*/ 
+  } BEM3DFastMultipole ;
+
+  /**
+   * Selection of problem type for fast multipole calculation. Not all
+   * FMM solvers will be able to solve all problems.
+   *
+   * @@ingroup fmm
+   */
+
+  typedef enum {
+    BEM3D_FMM_LAPLACE,          /**< Laplace equation*/
+    BEM3D_FMM_HELMHOLTZ         /**< Helmholtz equation*/
+  } BEM3DFastMultipoleProblem ;
+
+  typedef struct _BEM3DFMMWorkspace BEM3DFMMWorkspace ;
+
+  struct _BEM3DFMMWorkspace {
+    BEM3DFastMultipole solver ;
+    gint nda ;            /*number of doubles allocated in d*/
+    gdouble *d ;          /*double array*/
+  } ;
+
+
+  /**
+   * A (non-) matrix type for using Fast Multipole Method summations
+   * in solvers.
+   *
+   * @@ingroup fmm
+   */
+
+  typedef struct _BEM3DFMMMatrix BEM3DFMMMatrix ;
+  struct _BEM3DFMMMatrix {
+    BEM3DFastMultipole solver ;
+    BEM3DFastMultipoleProblem problem ;
+    BEM3DMeshSkeleton *skel ;
+    gdouble tol, *C ;
+    GArray *gcorr, *dgcorr,  /*correction weights for G and dGdn*/
+      *icorr ;               /*correction indices*/
+    gint *idxcorr ;          /*node indices into correction arrays*/
+  } ;
+
+  /**
+   * @@struct BEM3DConfiguration
+   * 
+   * A data structure containing settings for BEM3D calculations,
+   * including choice of solver (direct or FMM), quadrature rules, and
+   * Green's function.
+   *
+   * @@hideinitializer
+   */
+
+typedef struct _BEM3DConfiguration BEM3DConfiguration ;
+
+struct _BEM3DConfiguration {
+  GPtrArray               *keys ;
+  BEM3DGreensFunction     gfunc ;
+  BEM3DQuadratureRuleFunc qrule ;
+  BEM3DQuadratureSelector *qdata ;
+  BEM3DSolver             solver ;
+  BEM3DFastMultipole      fmm ;
+  gint                    skel_order ;
+  gdouble                 fmm_radius, fmm_tol, bc_default_admittance[2] ;
+  GString                 *job ;
+  GString                 *gfunc_comment, *qrule_comment ;
+} ;
+  
   /** 
    * @@ingroup belement
    * 
@@ -1040,13 +1204,13 @@ BEM3DFunctionClass * bem3d_function_class  (void);
   /** 
    * @@ingroup belement
    * 
-   * @@param e a ::BEM3DElement
+   * @@param _e a ::BEM3DElement
    * @@param _i local index of a collocation point
    *
    * @@return the global index of the \a i th collocation point of \a e.
    * @@hideinitializer
    */
-#define bem3d_element_global_index(e,_i) (e->i[(_i)])
+#define bem3d_element_global_index(_e,_i) (_e->i[(_i)])
 
   /** 
    * @@ingroup belement
@@ -1186,7 +1350,7 @@ BEM3DFunctionClass * bem3d_function_class  (void);
   /** 
    * @@ingroup belement
    * 
-   * @@param m a ::BEM3DMEsh
+   * @@param m a ::BEM3DMesh
    * @@param el a ::BEM3DElement
    *
    * @@return TRUE if \a el is an element of \a m, FALSE otherwise.
@@ -1222,6 +1386,15 @@ BEM3DFunctionClass * bem3d_function_class  (void);
 			    GtsVector normal, gdouble *J) ;
   gdouble bem3d_element_jacobian(BEM3DElement *e, gdouble *dLds, 
 				 gdouble *dLdt) ;
+  gint bem3d_element_jacobian_matrix_normal(BEM3DElement *e,
+					    gdouble *dLds, gdouble *dLdt,
+					    GtsVector normal, gdouble *J,
+					    gdouble *Ji) ;
+gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
+					     GtsPoint *x, gint ix,
+					     BEM3DConfiguration *config,
+					     BEM3DParameters *gdata,
+					     gdouble *a, gdouble *b) ;
   gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
 					BEM3DConfiguration *config,
 					BEM3DParameters *gdata,
@@ -1283,6 +1456,9 @@ BEM3DFunctionClass * bem3d_function_class  (void);
   gint bem3d_greens_func_gradient_laplace(GtsPoint *x, GtsPoint *y,
 					  GtsVector n, BEM3DParameters *p,
 					  GArray *G, GArray *dGdn) ;
+  gint bem3d_greens_func_gradient_helmholtz(GtsPoint *x, GtsPoint *y,
+					    GtsVector n, BEM3DParameters *p,
+					    GArray *G, GArray *dGdn) ;
   BEM3DParameters *bem3d_parameters_new(void) ;
 
   gint bem3d_radiation_func_laplace(GArray *G, GArray *dG,
@@ -1292,27 +1468,20 @@ BEM3DFunctionClass * bem3d_function_class  (void);
 				      GArray *phi, GArray *dphi,
 				      GArray *f, gpointer data) ;
   gint bem3d_mesh_radiation_point(BEM3DMesh *m,
-				  /* BEM3DGreensFunction *gf,  */
 				  BEM3DConfiguration *config,
 				  BEM3DParameters *gdata,
-				  /* BEM3DQuadratureRuleFunc qf, gpointer qdata, */
 				  BEM3DLookupFunc lf, gpointer ldata,
-/* 				  BEM3DRadiationFunc rf, gpointer rdata, */
 				  GtsPoint *x, GArray *f) ;
   gint bem3d_element_radiation_point(BEM3DElement *e, 
 				     BEM3DConfiguration *config,
 				     BEM3DParameters *gdata,	     
-/* 				     BEM3DQuadratureRuleFunc qfunc,  */
-/* 				     gpointer qdata, */
 				     BEM3DLookupFunc lfunc, gpointer ldata,
 				     GtsPoint *x, 
 				     GArray *G, GArray *dGdn,
 				     GArray *phi, GArray *dphi) ;
   gint bem3d_mesh_radiation_mesh(BEM3DMesh *m,
-				 /* BEM3DGreensFunction *gf, */
 				 BEM3DConfiguration *config,
 				 BEM3DParameters *gdata,
-				 /* BEM3DQuadratureRuleFunc qf, gpointer qdata, */
 				 BEM3DLookupFunc lf, gpointer ldata,
 				 BEM3DMesh *s, BEM3DMeshData *f) ;
 
@@ -1330,16 +1499,10 @@ BEM3DFunctionClass * bem3d_function_class  (void);
   gint bem3d_mesh_discretize(GtsSurface *s, gint nne,
 			     BEM3DElementBuildFunc bfunc,
 			     BEM3DMesh *m) ;
-gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n,
-				   BEM3DConfiguration *config,
-				   BEM3DParameters *gdata,
-				   BEM3DEquationFunc efunc, gpointer edata) ;
-  /* gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n, */
-  /* 				     BEM3DGreensFunction *gf,  */
-  /* 				     BEM3DParameters *gdata, */
-  /* 				     BEM3DEquationFunc ef, gpointer edata, */
-  /* 				     BEM3DQuadratureRuleFunc qf,  */
-  /* 				     gpointer qdata) ; */
+  gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n,
+				     BEM3DConfiguration *config,
+				     BEM3DParameters *gdata,
+				     BEM3DEquationFunc efunc, gpointer edata) ;
   gint bem3d_equation_func_simple(gint i, gint j,
 				  gdouble *G, gdouble *dGdn, gint n,
 				  gpointer *e) ;
@@ -1349,23 +1512,20 @@ gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n,
   gint bem3d_mesh_foreach_node(BEM3DMesh *m, BEM3DNodeFunc f, gpointer data) ;
   gint bem3d_mesh_element_clear_reserved(BEM3DMesh *m) ;
   gint bem3d_mesh_set_bc(BEM3DMesh *m, BEM3DBCFunc bcf, gpointer bdata) ;
-gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
-			  BEM3DConfiguration *config,
-			  /* BEM3DGreensFunction *gfunc,  */
-			  BEM3DParameters *gdata,
-			  /* BEM3DQuadratureRuleFunc qfunc, gpointer qdata, */
-			  BEM3DLookupFunc lfunc, gpointer ldata,
-			  BEM3DEquationFunc efunc, gpointer edata) ;
-  /* gint bem3d_mesh_quad_dgdn(BEM3DMesh *m, */
-  /* 			    BEM3DGreensFunction *gfunc,  */
-  /* 			    BEM3DParameters *gdata, */
-  /* 			    BEM3DQuadratureRuleFunc qfunc, gpointer qdata, */
-  /* 			    BEM3DLookupFunc lfunc, gpointer ldata, */
-  /* 			    BEM3DEquationFunc efunc, gpointer edata) ; */
+  gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
+			    BEM3DConfiguration *config,
+			    BEM3DParameters *gdata,
+			    BEM3DLookupFunc lfunc, gpointer ldata,
+			    BEM3DEquationFunc efunc, gpointer edata) ;
+
   gint bem3d_mesh_merge(BEM3DMesh *m, BEM3DMesh *n) ;
   gint bem3d_mesh_element_moments(BEM3DMesh *m, gint H) ;
+  gint bem3d_mesh_element_node_number_max(BEM3DMesh *m) ;
+  gint bem3d_mesh_index_range(BEM3DMesh *m, gint *imin, gint *imax) ;
+  BEM3DElement *bem3d_mesh_element_sample(BEM3DMesh *m) ;
 
   BEM3DElement *bem3d_mesh_face_element(BEM3DMesh *m, GtsFace *f) ;
+  gdouble bem3d_mesh_surface_area(BEM3DMesh *m, gint ngp) ;
 
   /**
    * The number of elements (numerical entries) per node in a ::BEM3DMeshData.
@@ -1458,20 +1618,17 @@ gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
 			  GLogLevelFlags log_level,
 			  gpointer exit_func) ;
 
-#define bem3d_quadrature_clear(q) ((q)->n=(q)->nfree=0) 
-#define bem3d_quadrature_vertex_number(q) ((q)->n)
-#define bem3d_quadrature_vertex_number_max(q) ((q)->nmax)
-#define bem3d_quadrature_component_number(q) ((q)->nc)
-/* #define bem3d_quadrature_xi(q,i) ((q)->s[(i)]) */
-/* #define bem3d_quadrature_eta(q,i) ((q)->t[(i)]) */
-/* #define bem3d_quadrature_weight(q,i) ((q)->w[(i)]) */
-#define bem3d_quadrature_xi(q,_i) ((q)->rule[(3*(_i)+0)])
-#define bem3d_quadrature_eta(q,_i) ((q)->rule[(3*(_i)+1)])
-#define bem3d_quadrature_weight(q,_i) ((q)->rule[(3*(_i)+2)])
+#define bem3d_quadrature_clear(_q) ((_q)->n=(_q)->nfree=0) 
+#define bem3d_quadrature_vertex_number(_q) ((_q)->n)
+#define bem3d_quadrature_vertex_number_max(_q) ((_q)->nmax)
+#define bem3d_quadrature_component_number(_q) ((_q)->nc)
+#define bem3d_quadrature_xi(_q,_i) ((_q)->rule[(3*(_i)+0)])
+#define bem3d_quadrature_eta(_q,_i) ((_q)->rule[(3*(_i)+1)])
+#define bem3d_quadrature_weight(_q,_i) ((_q)->rule[(3*(_i)+2)])
 
-#define bem3d_quadrature_free_number(q) ((q)->nfree)
-#define bem3d_quadrature_free_term_g(q,i) ((q)->free_g[(q)->wfree*(i)])
-#define bem3d_quadrature_free_term_dg(q,i) ((q)->free_dg[(q)->wfree*(i)])
+#define bem3d_quadrature_free_number(_q) ((_q)->nfree)
+#define bem3d_quadrature_free_term_g(_q,_i) ((_q)->free_g[(_q)->wfree*(_i)])
+#define bem3d_quadrature_free_term_dg(_q,_i) ((_q)->free_dg[(_q)->wfree*(_i)])
 
   BEM3DQuadratureRule *bem3d_quadrature_rule_new(gint n, gint nc) ;
   gint bem3d_quadrature_rule_free(BEM3DQuadratureRule *q) ;
@@ -1532,6 +1689,11 @@ gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
 					     BEM3DGreensFunction *gfunc, 
 					     BEM3DParameters *param,
 					     gpointer data) ;
+gint bem3d_quadrature_rule_series(GtsPoint *xs, BEM3DElement *e,
+				  BEM3DQuadratureRule *q, 
+				  BEM3DGreensFunction *gfunc,
+				  BEM3DParameters *param,
+				  gpointer data) ;
 
 gint bem3d_quadrature_rule_decomp(GtsPoint *xs, BEM3DElement *e,
 				  BEM3DQuadratureRule *q, 
@@ -1554,7 +1716,7 @@ gint bem3d_quadrature_rule_decomp_gradient(GtsPoint *xs, BEM3DElement *e,
   gint bem3d_geometry_plane(GtsSurface *s, gint ni, gint nj) ;
   GtsVertex *bem3d_vertex_from_segments(GtsSegment *s1, GtsSegment *s2) ;
   gint bem3d_mesh_data_write(BEM3DMeshData *f, FILE *fp) ;
-  gint bem3d_mesh_data_read(BEM3DMeshData **f, FILE *fp) ;
+  gint bem3d_mesh_data_read(BEM3DMeshData **f, FILE *fp, gint width) ;
   gint bem3d_mesh_write_gmsh(BEM3DMesh *m, BEM3DMeshData *f, gint k,
 			     gchar *view, bem3d_gmsh_mode_t mode,
 			     FILE *fp) ;
@@ -1638,10 +1800,12 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
   gint bem3d_function_apply(BEM3DFunction *f, 
 			    BEM3DMotion *m,
 			    gdouble t,
-			    BEM3DMeshData *d) ;
+			    BEM3DMeshData *d,
+			    BEM3DMeshData *e) ;
   gboolean bem3d_function_token_is_reserved(gchar *var) ;
   gint bem3d_function_write(BEM3DFunction *f, FILE *fid) ; 
   gint bem3d_function_read(BEM3DFunction *f, GtsFile *fid) ;
+  gint bem3d_function_insert_string(BEM3DFunction *fn, gchar *str) ;
 
   BEM3DConfiguration *bem3d_configuration_new(void) ;
   gint bem3d_configuration_init(void) ;
@@ -1651,6 +1815,272 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
   gpointer bem3d_configuration_pointer_from_identifier(const gchar *id) ;  
   gint bem3d_configuration_set(BEM3DConfiguration *c, gpointer k)  ;
 
+  BEM3DMeshSkeleton *bem3d_mesh_skeleton_new(BEM3DMesh *m, gint order_max) ;
+  gint bem3d_mesh_skeleton_init(BEM3DMeshSkeleton *s, BEM3DQuadratureRule *q,
+				BEM3DAverage anorm) ;
+  gint bem3d_mesh_skeleton_write(BEM3DMeshSkeleton *s, FILE *f) ;
+  gint bem3d_mesh_skeleton_read(BEM3DMeshSkeleton *s, FILE *f) ;
+
+  gint bem3d_fmm_calculate(BEM3DFastMultipole solver,
+			   BEM3DFastMultipoleProblem problem,
+			   BEM3DParameters *param,
+			   BEM3DMeshSkeleton *s, 
+			   gdouble tol,
+			   gdouble *q, gdouble *dq,
+			   gdouble *p, gdouble *dp,
+			   BEM3DFMMWorkspace *w) ;
+  
+  BEM3DFMMWorkspace *bem3d_fmm_workspace_alloc(BEM3DFastMultipole solver,
+					       BEM3DMeshSkeleton *skel) ;
+  BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
+				       BEM3DFastMultipoleProblem problem,
+				       BEM3DMeshSkeleton *skel,
+				       BEM3DConfiguration *config,
+				       BEM3DParameters *param,
+				       gdouble r) ;
+  gchar *bem3d_solver_name(BEM3DSolver s) ;
+  BEM3DSolver bem3d_solver_type(gchar *s) ;
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /*BEM3D_H_INCLUDED*/
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2006, 2009 Michael Carley
+d23 2
+a157 2
+#define BEM3D_PARAMETERS_AMPLITUDE_REAL 2
+#define BEM3D_PARAMETERS_AMPLITUDE_IMAG 3
+d162 2
+d165 2
+a166 1
+#define BEM3D_PARAMETERS_SIZE           16
+d408 12
+d421 2
+a422 2
+    gdouble f[BEM3D_PARAMETERS_SIZE] ;
+    gint    n[BEM3D_PARAMETERS_SIZE] ;
+d477 1
+d481 6
+d496 1
+a496 1
+#define bem3d_greens_function_func(g)             ((g)->func)
+d507 1
+a507 1
+#define bem3d_greens_function_is_real(g)          ((g)->real)
+d518 1
+a518 1
+#define bem3d_greens_function_component_number(g) ((g)->nc)
+d522 1
+a522 1
+   * Wavenumber in a ::BEM3DParameters struct 
+d524 1
+a524 1
+   * @@param p a pointer to a ::BEM3DParameters struct
+d526 1
+a526 1
+   * @@return the value of the wavenumber contained in \a p
+d529 2
+d532 12
+a543 1
+#define bem3d_parameters_wavenumber(p) ((p)->f[BEM3D_PARAMETERS_WAVENUMBER]) 
+d545 1
+d548 2
+a549 1
+   * Mach number in a ::BEM3DParameters struct 
+d551 1
+a551 1
+   * @@param p a pointer to a ::BEM3DParameters struct
+a552 1
+   * @@return the value of the Mach number field of \a p
+d555 1
+a555 2
+
+#define bem3d_parameters_mach_number(p) ((p)->f[BEM3D_PARAMETERS_MACH_NUMBER])
+d558 2
+a559 9
+   * @@ingroup gfunc 
+   * Real part of amplitude in a ::BEM3DParameters
+   * struct. The real and imaginary parts are aligned so that they can
+   * be extracted together and cast, if necessary, to a gsl_complex
+   * type. That is:
+   * @@verbatim
+   &(bem3d_parameters_amplitude_real(p)) @@endverbatim   
+   * is a pointer to an array of type gdouble of length two, containing 
+   * the real and imaginary parts of the magnitude.
+d561 1
+a561 1
+   * @@param p a pointer to a ::BEM3DParameters struct
+d563 1
+a563 1
+   * @@return the real part of the amplitude contained in \a p
+d566 2
+d569 1
+a569 3
+#define bem3d_parameters_amplitude_real(p)	\
+  ((p)->f[BEM3D_PARAMETERS_AMPLITUDE_REAL]) 
+
+d572 1
+a572 1
+   * Imaginary part of amplitude in a ::BEM3DParameters struct 
+d576 1
+a576 1
+   * @@return the imaginary part of the amplitude contained in \a p
+d580 1
+a580 2
+#define bem3d_parameters_amplitude_imag(p)	\
+  ((p)->f[BEM3D_PARAMETERS_AMPLITUDE_IMAG]) 
+d584 1
+a584 3
+   *
+   * Normal to surface at evaluation point (e.g. in hypersingular
+   * scattering calculations)
+d588 1
+a588 2
+   * @@return pointer to three element array of normal components (can be cast
+   * to GtsVector)
+d592 4
+a595 1
+#define bem3d_parameters_normal(p) (&((p)->f[BEM3D_PARAMETERS_NORMAL])) 
+d611 1
+a611 1
+#define bem3d_parameters_lambda_real(p) ((p)->f[BEM3D_PARAMETERS_LAMBDA_REAL])
+d626 1
+a626 1
+#define bem3d_parameters_lambda_imag(p) ((p)->f[BEM3D_PARAMETERS_LAMBDA_IMAG])
+d640 16
+a655 1
+#define bem3d_parameters_conditioning(p) ((p)->f[BEM3D_PARAMETERS_CONDITIONING])
+d659 16
+d683 1
+a683 1
+#define bem3d_parameters_user_data(p) ((p)->user_data)
+a709 16
+#if 0
+  /** 
+   * @@ingroup gfunc
+   * 
+   * The averaging mode to be used in computing the normal for Green's
+   * function calculations.
+   *
+   * @@param p a pointer to a ::BEM3DParameters struct;
+   * 
+   * @@return the ::BEM3DAverage mode for computing normals.
+   * @@hideinitializer
+   */
+
+#define bem3d_parameters_normal_mode(p) ((p)-nmode)
+#endif
+
+a737 1
+
+d751 6
+d883 10
+d947 8
+a954 1
+typedef struct _BEM3DFunction         BEM3DFunction;
+a977 11
+typedef struct _BEM3DConfiguration BEM3DConfiguration ;
+
+struct _BEM3DConfiguration {
+  GPtrArray               *keys ;
+  BEM3DGreensFunction     gfunc ;
+  BEM3DQuadratureRuleFunc qrule ;
+  BEM3DQuadratureSelector *qdata ;
+  GString                 *job ;
+  GString                 *gfunc_comment, *qrule_comment ;
+} ;
+
+d993 106
+d1164 1
+a1164 1
+   * @@param e a ::BEM3DElement
+d1170 1
+a1170 1
+#define bem3d_element_global_index(e,_i) (e->i[(_i)])
+d1310 1
+a1310 1
+   * @@param m a ::BEM3DMEsh
+d1346 9
+d1416 3
+a1427 1
+				  /* BEM3DGreensFunction *gf,  */
+a1429 1
+				  /* BEM3DQuadratureRuleFunc qf, gpointer qdata, */
+a1430 1
+/* 				  BEM3DRadiationFunc rf, gpointer rdata, */
+a1434 2
+/* 				     BEM3DQuadratureRuleFunc qfunc,  */
+/* 				     gpointer qdata, */
+a1439 1
+				 /* BEM3DGreensFunction *gf, */
+a1441 1
+				 /* BEM3DQuadratureRuleFunc qf, gpointer qdata, */
+d1459 4
+a1462 10
+gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n,
+				   BEM3DConfiguration *config,
+				   BEM3DParameters *gdata,
+				   BEM3DEquationFunc efunc, gpointer edata) ;
+  /* gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n, */
+  /* 				     BEM3DGreensFunction *gf,  */
+  /* 				     BEM3DParameters *gdata, */
+  /* 				     BEM3DEquationFunc ef, gpointer edata, */
+  /* 				     BEM3DQuadratureRuleFunc qf,  */
+  /* 				     gpointer qdata) ; */
+d1472 6
+a1477 13
+gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
+			  BEM3DConfiguration *config,
+			  /* BEM3DGreensFunction *gfunc,  */
+			  BEM3DParameters *gdata,
+			  /* BEM3DQuadratureRuleFunc qfunc, gpointer qdata, */
+			  BEM3DLookupFunc lfunc, gpointer ldata,
+			  BEM3DEquationFunc efunc, gpointer edata) ;
+  /* gint bem3d_mesh_quad_dgdn(BEM3DMesh *m, */
+  /* 			    BEM3DGreensFunction *gfunc,  */
+  /* 			    BEM3DParameters *gdata, */
+  /* 			    BEM3DQuadratureRuleFunc qfunc, gpointer qdata, */
+  /* 			    BEM3DLookupFunc lfunc, gpointer ldata, */
+  /* 			    BEM3DEquationFunc efunc, gpointer edata) ; */
+d1480 3
+d1485 1
+d1578 11
+a1588 14
+#define bem3d_quadrature_clear(q) ((q)->n=(q)->nfree=0) 
+#define bem3d_quadrature_vertex_number(q) ((q)->n)
+#define bem3d_quadrature_vertex_number_max(q) ((q)->nmax)
+#define bem3d_quadrature_component_number(q) ((q)->nc)
+/* #define bem3d_quadrature_xi(q,i) ((q)->s[(i)]) */
+/* #define bem3d_quadrature_eta(q,i) ((q)->t[(i)]) */
+/* #define bem3d_quadrature_weight(q,i) ((q)->w[(i)]) */
+#define bem3d_quadrature_xi(q,_i) ((q)->rule[(3*(_i)+0)])
+#define bem3d_quadrature_eta(q,_i) ((q)->rule[(3*(_i)+1)])
+#define bem3d_quadrature_weight(q,_i) ((q)->rule[(3*(_i)+2)])
+
+#define bem3d_quadrature_free_number(q) ((q)->nfree)
+#define bem3d_quadrature_free_term_g(q,i) ((q)->free_g[(q)->wfree*(i)])
+#define bem3d_quadrature_free_term_dg(q,i) ((q)->free_dg[(q)->wfree*(i)])
+d1649 5
+d1676 1
+a1676 1
+  gint bem3d_mesh_data_read(BEM3DMeshData **f, FILE *fp) ;
+d1760 2
+a1761 1
+			    BEM3DMeshData *d) ;
+d1765 1
+d1775 14
+a1788 95
 #ifdef BEM3D_HAVE_GMC  
   typedef struct _BEM3DFMMMatrix BEM3DFMMMatrix ;
 
@@ -1746,7 +2176,8 @@ gint bem3d_mesh_radiation_mesh_amm(GNode *tree,
 				      gpointer ldata,
 				      GmcFieldType field,
 				      GtsPoint *p, GArray *f) ;
-  
+d1790 10
+a1799 46
 #else
   typedef struct _BEM3DFMMMatrix BEM3DFMMMatrix ;
 
@@ -1793,12 +2224,6 @@ gint bem3d_mesh_radiation_mesh_amm(GNode *tree,
   gint bem3d_fmm_matrix_free(BEM3DFMMMatrix *f) ;
   gint bem3d_fmm_matrix_write(BEM3DFMMMatrix *m, FILE *f) ;
   BEM3DFMMMatrix *bem3d_fmm_matrix_read(GtsFile *f) ;
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-#endif /*BEM3D_H_INCLUDED*/
 @
 
 

@@ -1,10 +1,15 @@
-head	1.1;
+head	1.2;
 access;
 symbols;
 locks
-	ensmjc:1.1; strict;
+	ensmjc:1.2; strict;
 comment	@ * @;
 
+
+1.2
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.1;
 
 1.1
 date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
@@ -16,14 +21,14 @@ desc
 @@
 
 
-1.1
+1.2
 log
-@Initial revision
+@*** empty log message ***
 @
 text
 @/* edge.c
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,7 +381,7 @@ static void orient_edges(BEM3DMesh *m, GSList *e, BEM3DEdge *edge)
  * @@param e GSList of vertices of \a m which are sharp (from 
  * ::bem3d_mesh_sharp_vertices).
  * 
- * @@return a GSList of ::BEM3DEdges, each of which is a connected,
+ * @@return a GSList of ::BEM3DEdge, each of which is a connected,
  * oriented edge on \a m.
  */
 
@@ -783,4 +788,18 @@ gint bem3d_invert_edge(BEM3DEdge *e)
  * 
  */
 
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2006, 2009 Michael Carley
+d356 1
+a356 1
+ * @@return a GSList of ::BEM3DEdges, each of which is a connected,
 @

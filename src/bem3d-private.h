@@ -5,6 +5,24 @@
 #include <gts.h>
 #include "bem3d.h"
 
+#define _invert3x3(_Ai,_A)						\
+  do {                                                                  \
+    gdouble _det = 1.0/((_A)[0]*((_A)[8]*(_A)[4]-(_A)[7]*(_A)[5]) -     \
+                        (_A)[3]*((_A)[8]*(_A)[1]-(_A)[7]*(_A)[2]) +     \
+                        (_A)[6]*((_A)[5]*(_A)[1]-(_A)[4]*(_A)[2])) ;    \
+    (_Ai)[0] =  _det*((_A)[8]*(_A)[4] - (_A)[7]*(_A)[5]) ;              \
+    (_Ai)[1] = -_det*((_A)[8]*(_A)[1] - (_A)[7]*(_A)[2]) ;              \
+    (_Ai)[2] =  _det*((_A)[5]*(_A)[1] - (_A)[4]*(_A)[2]) ;              \
+                                                                        \
+    (_Ai)[3] = -_det*((_A)[8]*(_A)[3] - (_A)[6]*(_A)[5]) ;              \
+    (_Ai)[4] =  _det*((_A)[8]*(_A)[0] - (_A)[6]*(_A)[2]) ;              \
+    (_Ai)[5] = -_det*((_A)[5]*(_A)[0] - (_A)[3]*(_A)[2]) ;              \
+                                                                        \
+    (_Ai)[6] =  _det*((_A)[7]*(_A)[3] - (_A)[6]*(_A)[4]) ;              \
+    (_Ai)[7] = -_det*((_A)[7]*(_A)[0] - (_A)[6]*(_A)[1]) ;              \
+    (_Ai)[8] =  _det*((_A)[4]*(_A)[0] - (_A)[3]*(_A)[1]) ;              \
+  } while (0)
+
 #define BEM3D_STARTUP_MESSAGE \
 "This is free software; see the source code for copying conditions.\n\
 There is ABSOLUTELY NO WARRANTY, not even for MERCHANTABILITY or\n\
@@ -54,7 +72,8 @@ FITNESS FOR A PARTICULAR PURPOSE.\n"
 #define g_error(format...) g_log(G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, format)
 #endif
 
-extern BEM3DGreensFunction greens_func_laplace, greens_func_helmholtz ;
+extern BEM3DGreensFunction greens_func_laplace, greens_func_helmholtz,
+  greens_func_helmholtz_hs, greens_func_helmholtz_lc ;
 
 /* GtsEdge *connect_vertices(GtsVertex *v1, GtsVertex *v2) ; */
 void rotation_indices(gint nc, gint rot[]) ;
@@ -88,5 +107,7 @@ FILE *file_open(gchar *fname, gchar *namedefault, gchar *mode,
 gint file_close(FILE *f) ;
 
 gint parse_complex(gchar *v, gdouble z[]) ;
+
+gint printf_fixed_width(gchar *str, gint width, gchar *prefix, FILE *f) ;
 
 #endif /*_BEM_PRIVATE_H_INCLUDED_*/

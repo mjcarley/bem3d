@@ -652,7 +652,8 @@ USE_FMMLIB3D_1_2_TRUE
 WMPI
 SISL
 GQR
-GSL
+GSL_LIBS
+GSL_CFLAGS
 GTS
 gts_LIBS
 gts_CFLAGS
@@ -811,6 +812,8 @@ PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
 gts_CFLAGS
 gts_LIBS
+GSL_CFLAGS
+GSL_LIBS
 libmatheval_CFLAGS
 libmatheval_LIBS'
 
@@ -1475,6 +1478,8 @@ Some influential environment variables:
               path overriding pkg-config's built-in search path
   gts_CFLAGS  C compiler flags for gts, overriding pkg-config
   gts_LIBS    linker flags for gts, overriding pkg-config
+  GSL_CFLAGS  C compiler flags for GSL, overriding pkg-config
+  GSL_LIBS    linker flags for GSL, overriding pkg-config
   libmatheval_CFLAGS 
               C compiler flags for libmatheval, overriding pkg-config
   libmatheval_LIBS 
@@ -16424,57 +16429,112 @@ $as_echo "yes" >&6; }
 		        gts_libs=`pkg-config --libs gts`
 fi
 
-# Extract the first word of "gsl-config", so it can be a program name with args.
-set dummy gsl-config; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_prog_GSL+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test -n "$GSL"; then
-  ac_cv_prog_GSL="$GSL" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_GSL="yes"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
 
-  test -z "$ac_cv_prog_GSL" && ac_cv_prog_GSL="no"
-fi
-fi
-GSL=$ac_cv_prog_GSL
-if test -n "$GSL"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GSL" >&5
-$as_echo "$GSL" >&6; }
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl" >&5
+$as_echo_n "checking for gsl... " >&6; }
+
+if test -n "$GSL_CFLAGS"; then
+    pkg_cv_GSL_CFLAGS="$GSL_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gsl\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "gsl") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GSL_CFLAGS=`$PKG_CONFIG --cflags "gsl" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes 
 else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$GSL_LIBS"; then
+    pkg_cv_GSL_LIBS="$GSL_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gsl\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "gsl") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GSL_LIBS=`$PKG_CONFIG --libs "gsl" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes 
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-fi
-
-
-if test x$GSL = xyes ; then
-   gsl_cflags=`gsl-config --cflags`
-   gsl_libs=`gsl-config --libs`
+        
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
 else
-  echo \#################################################################
-  echo \#
-  echo \# GNU Scientific Library not available or not properly installed.
-  echo \# You can get the most recent version from 
-  echo \#      http://www.gnu.org/software/gsl/
-  echo \#
-  echo \#################################################################
-  exit
+        _pkg_short_errors_supported=no
 fi
+        if test $_pkg_short_errors_supported = yes; then
+	        GSL_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "gsl" 2>&1`
+        else
+	        GSL_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "gsl" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$GSL_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements (gsl) were not met:
+
+$GSL_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables GSL_CFLAGS
+and GSL_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5        
+elif test $pkg_failed = untried; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables GSL_CFLAGS
+and GSL_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }        
+else
+	GSL_CFLAGS=$pkg_cv_GSL_CFLAGS
+	GSL_LIBS=$pkg_cv_GSL_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+	
+fi 
+
+#AC_CHECK_PROG(GSL, gsl-config, yes, no)
+#if test x$GSL = xyes ; then
+#   gsl_cflags=`gsl-config --cflags`
+#   gsl_libs=`gsl-config --libs`
+#else
+#  echo \#################################################################
+#  echo \#
+#  echo \# GNU Scientific Library not available or not properly installed.
+#  echo \# You can get the most recent version from 
+#  echo \#      http://www.gnu.org/software/gsl/
+#  echo \#
+#  echo \#################################################################
+#  exit
+#fi
 
 # Extract the first word of "gqr-config", so it can be a program name with args.
 set dummy gqr-config; ac_word=$2
@@ -16783,8 +16843,8 @@ fi
 
 
 
-CFLAGS="$CFLAGS $libmatheval_CFLAGS $gts_cflags $gqr_cflags $gsl_cflags"
-LDFLAGS="$LDFLAGS $gts_libs $gqr_libs $gsl_libs"
+CFLAGS="$CFLAGS $libmatheval_CFLAGS $gts_cflags $gqr_cflags $GSL_CFLAGS"
+LDFLAGS="$LDFLAGS $gts_libs $gqr_libs $GSL_LIBS"
 
 
 
@@ -16837,12 +16897,12 @@ fi
 
 #AC_CHECK_LIB(matheval, evaluator_evaluate)
 
-LIBS="$gqr_libs $gsl_libs $libmatheval_LIBS $gts_libs $LIBS"
+LIBS="$gqr_libs $GSL_LIBS $libmatheval_LIBS $gts_libs $LIBS"
 
 ac_config_commands="$ac_config_commands default-1"
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/bem3d-config tools/Makefile doc/Makefile doc/html/Makefile mpitools/Makefile mpitools/bem3d-pbs-run"
+ac_config_files="$ac_config_files Makefile src/Makefile src/bem3d-config tools/Makefile doc/Makefile doc/html/Makefile mpitools/Makefile mpitools/bem3d-pbs-run mpitools/bem3d-pbs-launch"
 
 
 cat >confcache <<\_ACEOF
@@ -17954,6 +18014,7 @@ do
     "doc/html/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/Makefile" ;;
     "mpitools/Makefile") CONFIG_FILES="$CONFIG_FILES mpitools/Makefile" ;;
     "mpitools/bem3d-pbs-run") CONFIG_FILES="$CONFIG_FILES mpitools/bem3d-pbs-run" ;;
+    "mpitools/bem3d-pbs-launch") CONFIG_FILES="$CONFIG_FILES mpitools/bem3d-pbs-launch" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

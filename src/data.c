@@ -1,6 +1,6 @@
 /* data.c
  * 
- * Copyright (C) 2006, 2010 Michael Carley
+ * Copyright (C) 2006, 2010, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,16 +273,19 @@ static void _data_write(gpointer key, gpointer value, gpointer data[])
  * @e NP @e NE BEM3DMeshData
  *
  * where @e NP is the number of nodes in the block and @e NE is the
- * number of elements per point, followed by @e NP lines each
- * containing @e NE numerical entries.
+ * number of numerical entries per point, followed by @e NP lines each
+ * containing @e NE numerical entries. If \a header is not NULL, it is
+ * used in place of the standard first line. If it contains C
+ * formatting strings %d, these generate @e NP and @e NE. 
  * 
  * @param f ::BEM3DMeshData block;
- * @param fp file pointer.
+ * @param fp file pointer;
+ * @param header first line of output file (may be NULL)
  * 
  * @return 0 on success.
  */
 
-gint bem3d_mesh_data_write(BEM3DMeshData *f, FILE *fp)
+gint bem3d_mesh_data_write(BEM3DMeshData *f, FILE *fp, gchar *header)
 
 {
   gpointer data[2] ;
@@ -290,9 +293,13 @@ gint bem3d_mesh_data_write(BEM3DMeshData *f, FILE *fp)
   g_return_val_if_fail (f != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail (fp != NULL, BEM3D_NULL_ARGUMENT) ;
 
-  fprintf(fp, "%d %d BEM3DMeshData\n", 
-	  g_hash_table_size(f->t), bem3d_mesh_data_element_number(f)) ;
-
+  if ( header == NULL ) 
+    fprintf(fp, "%d %d BEM3DMeshData\n", 
+	    g_hash_table_size(f->t), bem3d_mesh_data_element_number(f)) ;
+  else
+    fprintf(fp, header, 
+	    g_hash_table_size(f->t), bem3d_mesh_data_element_number(f)) ;
+    
   data[0] = f ; data[1] = fp ;
   g_hash_table_foreach(f->t, (GHFunc)_data_write, data) ;
 
@@ -454,6 +461,74 @@ gint bem3d_mesh_data_expand(BEM3DMeshData *d, gint ne)
   d->d = f ; bem3d_mesh_data_element_number(d) = ne ;
 
   return BEM3D_SUCCESS ;
+}
+
+static void _data_merge(gpointer key, gpointer value, gpointer data[])
+
+{
+  BEM3DMeshData *f1 = data[0] ;
+  BEM3DMeshData *fm = data[1] ;
+  gdouble *d1, *dm ;
+  gint i, j ;
+  
+  i = GPOINTER_TO_INT(key)-1 ;
+
+  if ( bem3d_mesh_data_get(fm, i) != NULL ) return ;
+  bem3d_mesh_data_add_node(fm, i) ;
+  d1 = bem3d_mesh_data_get(f1, i) ;
+  dm = bem3d_mesh_data_get(fm, i) ;
+  
+  for ( j = 0 ; j < bem3d_mesh_data_element_number(f1) ; j ++ ) dm[j] = d1[j] ;
+  
+  return ;
+}
+
+/** 
+ * Merge two data blocks into a single block. This is intended for
+ * merging data generated for two disjoint meshes, with different
+ * indices. If an index appears in both blocks the behaviour is
+ * undefined. The output block will be sized to accomodate all data
+ * from both inputs, with zero padding where required.
+ * 
+ * @param f1 an input ::BEM3DMeshData;
+ * @param f2 another input ::BEM3DMeshData;
+ * @param strict (not currently used).
+ * 
+ * @return a new ::BEM3DMeshData containing the data from \a f1 and \a
+ * f2.
+ */
+
+BEM3DMeshData *bem3d_mesh_data_merge(BEM3DMeshData *f1,
+				     BEM3DMeshData *f2,
+				     gboolean strict)
+
+{
+  BEM3DMeshData *d = NULL ;
+  gint nn, ne ;
+  gpointer data[2] ;
+    
+  /*number of elements in new data block*/
+  ne = MAX(bem3d_mesh_data_element_number(f1),
+	   bem3d_mesh_data_element_number(f2)) ;
+  /*number of nodes*/
+  nn = bem3d_mesh_data_node_number(f1) + bem3d_mesh_data_node_number(f2) ;
+
+  d = bem3d_mesh_data_sized_new(ne, nn) ;
+
+  data[1] = d ;
+  if ( !strict ) {
+    data[0] = f1 ;
+    g_hash_table_foreach(f1->t, (GHFunc)_data_merge, data) ;
+    data[0] = f2 ;
+    g_hash_table_foreach(f2->t, (GHFunc)_data_merge, data) ;
+
+    return d ;
+  }
+
+  /*yet to decide how strict "strict" is*/
+  g_assert_not_reached() ; 
+  
+  return d ;  
 }
 
 /**

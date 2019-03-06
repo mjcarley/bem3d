@@ -1,6 +1,6 @@
 /* bem3d-assemble.c
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -32,6 +32,8 @@
 #include "bem3d.h"
 #include "bem3d-private.h"
 
+#include "trace.h"
+
 #include <gsl/gsl_complex.h>
 #include <gsl/gsl_complex_math.h>
 
@@ -42,6 +44,27 @@
 #endif /*HAVE_GQR*/
 
 /* #define FMM_DIRECT_CONSTANT */
+
+#define ADATA_MESHES        0
+#define ADATA_CONFIG        1
+#define ADATA_GDATA         2
+#define ADATA_ROW_A         3
+#define ADATA_ROW_B         4
+#define ADATA_N_NODES       5
+#define ADATA_WIDTH         6
+#define ADATA_POINT         7
+#define ADATA_INDEX         8
+#define ADATA_MESH          9
+#define ADATA_OUTPUT       10
+#define ADATA_IMIN         11
+#define ADATA_IMAX         12
+#define ADATA_C            13
+#define ADATA_GRADIENT_W_S 14
+#define ADATA_GRADIENT_W_T 15
+#define ADATA_GRADIENT_W_I 16
+#define ADATA_GRADIENT_N_W 17
+
+#define ADATA_SIZE     32
 
 static gint skeleton_set_unit_sources(BEM3DMeshSkeleton *s, gdouble *dq)
 
@@ -72,80 +95,172 @@ static gint equation_func_C(gint i, gint j,
 static void _assemble_element(BEM3DElement *e, gpointer adata[])
 
 {
-  BEM3DConfiguration *config = adata[1] ;
-  BEM3DParameters *gdata = adata[2] ;
-  gdouble *a = adata[3] ;
-  gdouble *b = adata[4] ;
-  gint np = *(gint *)adata[5] ;
-  gint nc = *(gint *)adata[6] ;
-  GtsVertex *x = (GtsVertex *)adata[7] ;
+  BEM3DConfiguration *config = adata[ADATA_CONFIG] ;
+  BEM3DParameters *gdata = adata[ADATA_GDATA] ;
+  gdouble *a = adata[ADATA_ROW_A] ;
+  gdouble *b = adata[ADATA_ROW_B] ;
+  GtsVertex *x = (GtsVertex *)adata[ADATA_POINT] ;
+  gint i = *((gint *)(adata[ADATA_INDEX])) ;
+
+  bem3d_element_assemble_equations_direct(e, GTS_POINT(x), i, config, gdata,
+					  a, b) ;
+  return ;
+}
+
+static void _assemble_element_ch(BEM3DElement *e, gpointer adata[])
+
+{
+  BEM3DConfiguration *config = adata[ADATA_CONFIG] ;
+  BEM3DParameters *gdata = adata[ADATA_GDATA] ;
+  gdouble *a = adata[ADATA_ROW_A] ;
+  gdouble *b = adata[ADATA_ROW_B] ;
+  GtsVertex *x = (GtsVertex *)adata[ADATA_POINT] ;
+  gint i = *((gint *)(adata[ADATA_INDEX])) ;
+  gint j, nc = 2, idx ;
   static GArray *G = NULL ;
-  static GArray *dGdn = NULL ;
-  gint i, j, k, stride ;
+  static GArray *dG = NULL ;
 
   if ( G == NULL ) {
-    G = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
-    dGdn = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
+    G = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
+    dG = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
+  }
+  
+  bem3d_element_assemble_equations(e, GTS_POINT(x), config, gdata, G, dG) ;
+
+  for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
+    idx = bem3d_element_global_index(e,j) ;
+    a[idx*nc+0] += g_array_index(dG, gdouble, 6*j+0) ;
+    a[idx*nc+1] += g_array_index(dG, gdouble, 6*j+1) ;
+    b[idx*nc+0] += g_array_index(G, gdouble, 6*j+0) ;
+    b[idx*nc+1] += g_array_index(G, gdouble, 6*j+1) ;
   }
 
-  g_array_set_size(G,bem3d_element_node_number(e)*nc) ; 
-  g_array_set_size(dGdn,bem3d_element_node_number(e)*nc) ;
-  bem3d_element_assemble_equations(e, GTS_POINT(x), config, gdata,
-				   G, dGdn) ;
-  stride = nc ;
-  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
-    k = bem3d_element_global_index(e, i) ;
-    for ( j = 0 ; j < stride ; j ++ ) {
-      g_assert(k*stride+j < np*nc) ;
-      b[k*stride+j] += g_array_index(G,gdouble,(stride*i+j)) ;
-      a[k*stride+j] += g_array_index(dGdn,gdouble,(stride*i+j)) ;
+  if ( !bem3d_element_has_node(e, x) ) {
+    for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
+      idx = bem3d_element_global_index(e,j) ;
+      /*d2G/dndn1 ...*/
+      a[idx*nc+0] += g_array_index(dG, gdouble, 6*j+4) ;
+      a[idx*nc+1] += g_array_index(dG, gdouble, 6*j+5) ;
+      a[i*nc+0] -= g_array_index(dG, gdouble, 6*j+4) ;
+      a[i*nc+1] -= g_array_index(dG, gdouble, 6*j+5) ;
+
+      a[idx*nc+0] += g_array_index(dG, gdouble, 6*j+2) ;
+      a[idx*nc+1] += g_array_index(dG, gdouble, 6*j+3) ;
     }
+    
+    return ;
   }
-
+  
+  /*handle the hypersingular self terms for the element*/
+  for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
+    /*k^2 G ...*/
+    a[i*nc+0] += g_array_index(dG, gdouble, 6*j+2) ;
+    a[i*nc+1] += g_array_index(dG, gdouble, 6*j+3) ;
+  }
+  
   return ;
 }
 
 static void _assemble_rows(gint i, GtsVertex *v, gpointer adata[])
 
 {
-  GPtrArray *meshes = adata[0] ;
-  BEM3DParameters *gdata = adata[2] ;
-  gdouble *a = adata[3] ;
-  gdouble *b = adata[4] ;
-  gint np = *(gint *)adata[5] ;
-  gint nc = *(gint *)adata[6] ;
-  FILE *output = (FILE *)adata[10] ;
-  guint imin = *(guint *)adata[11] ;
-  guint imax = *(guint *)adata[12] ;
-  gdouble *C = (gdouble *)adata[13] ;
-  gint im = *(gint *)adata[14] ;
-  gboolean hypersingular = *(gboolean *)adata[15] ;
-  gdouble alpha ;
-  gsl_complex lambda ;
+  GPtrArray *meshes = adata[ADATA_MESHES] ;
+  BEM3DConfiguration *config = adata[ADATA_CONFIG] ;
+  BEM3DParameters *gdata = adata[ADATA_GDATA] ;
+  gdouble *a = adata[ADATA_ROW_A] ;
+  gdouble *b = adata[ADATA_ROW_B] ;
+  gint np = *(gint *)adata[ADATA_N_NODES] ;
+  gint nc = *(gint *)adata[ADATA_WIDTH] ;
+  FILE *output = (FILE *)adata[ADATA_OUTPUT] ;
+  guint imin = *(guint *)adata[ADATA_IMIN] ;
+  guint imax = *(guint *)adata[ADATA_IMAX] ;
+  gdouble *C = (gdouble *)adata[ADATA_C] ;
+  gint im = *(gint *)adata[ADATA_MESH] ;
+  gdouble *J, *Ji, L[32], dLds[32], dLdt[32] ;
+  BEM3DElement *e = NULL ;
+  BEM3DGreensFunction gfunc ;
+  BEM3DShapeFunc shfunc ;
+  gdouble *nx ;
+  gsl_complex lambda, al ;
   gint j ;
-
+  
   if ( (i < imin) || (i > imax ) ) return ;
 
-  for ( j = 0 ; j < nc*np ; j ++ ) a[j] = b[j] = 0.0 ;
-  adata[7] = v ;
-  alpha = bem3d_parameters_conditioning(gdata) ;
-  lambda = *((gsl_complex *)(&(bem3d_parameters_lambda_real(gdata)))) ;
+  /* fprintf(stderr, "%lg ", C[i]) ; */
+  
+  nx = bem3d_parameters_normal(gdata) ;
+  nx[0] = nx[1] = nx[2] = 0.0 ;
+  memset(a, 0, nc*np*sizeof(gdouble)) ; memset(b, 0, nc*np*sizeof(gdouble)) ;
 
+  adata[ADATA_POINT] = v ; adata[ADATA_INDEX] = &i ;
+  GSL_SET_COMPLEX(&lambda,
+		  bem3d_parameters_lambda_real(gdata),
+		  bem3d_parameters_lambda_imag(gdata)) ;
+  GSL_SET_COMPLEX(&al,
+		  bem3d_parameters_coupling_real(gdata),
+		  bem3d_parameters_coupling_imag(gdata)) ;
+  
+  gfunc = config->gfunc ;
   /*local normal for hypersingular formulations*/
-  if ( hypersingular ) 
-    bem3d_node_normal(g_ptr_array_index(meshes,im), i,
-		      bem3d_parameters_normal(gdata), BEM3D_AVERAGE_MWA) ;
+  if ( bem3d_greens_function_compute_normal(&gfunc) ) {
+    if ( bem3d_greens_function_compute_jacobian(&gfunc) ) {
+      g_assert(meshes->len == 1) ;
+      J = bem3d_parameters_jacobian(gdata) ;
+      Ji = bem3d_parameters_jacobian_inverse(gdata) ;
+      e = bem3d_element_from_node(g_ptr_array_index(meshes,0), v, i) ;
+      j = bem3d_element_find_node(e, v) ;
+      shfunc = bem3d_element_shape_func(e) ;
+      shfunc(bem3d_element_node_xi(e,j), bem3d_element_node_eta(e,j),
+	     L, dLds, dLdt, NULL) ;
+      bem3d_element_jacobian_matrix_normal(e, dLds, dLdt, 
+					   nx, J, Ji) ;      
+      shfunc = bem3d_element_node_func(e) ;
+      shfunc(bem3d_element_node_xi(e,j), bem3d_element_node_eta(e,j),
+	     L, dLds, dLdt, NULL) ;
+    }
+    else {
+      bem3d_node_normal(g_ptr_array_index(meshes,im), i, nx,
+			BEM3D_AVERAGE_MWA) ;
+    }
+  }
 
-  for ( j = 0 ; j < meshes->len ; j ++ )
-    bem3d_mesh_foreach_element(g_ptr_array_index(meshes,j),
-			       (BEM3DElementFunc)_assemble_element, 
-			       adata) ;
-  if ( hypersingular ) {
-    a[i*nc+0] -= C[i]*(1.0-alpha) ;
-    b[i*nc+0] += alpha*GSL_REAL(lambda)*C[i] ;
-    b[i*nc+1] += alpha*GSL_IMAG(lambda)*C[i] ;
-  } else
-    a[i*nc+0] -= C[i] ;
+  if ( bem3d_greens_function_compute_gradient(&gfunc) ) {
+    if ( bem3d_parameters_gradient(gdata) == NULL ) {
+      bem3d_parameters_gradient(gdata) = bem3d_operator_new() ;
+    }
+    bem3d_operator_gradient(g_ptr_array_index(meshes,0), i,
+			    bem3d_parameters_gradient(gdata),
+			    BEM3D_AVERAGE_MWA) ;
+  }
+  
+  /* if ( i == 0 ) _bem3d_set_trace(0) ; */
+
+  if ( gfunc.size == nc ) {
+    /*"standard" Green's function with no special treatment for self
+      terms*/
+    for ( j = 0 ; j < meshes->len ; j ++ )
+      bem3d_mesh_foreach_element(g_ptr_array_index(meshes,j),
+				 (BEM3DElementFunc)_assemble_element, 
+				 adata) ;
+  } else {
+    /*we need to do something different here*/
+    /* fprintf(stderr, "Hello\n") ; */
+    for ( j = 0 ; j < meshes->len ; j ++ )
+      bem3d_mesh_foreach_element(g_ptr_array_index(meshes,j),
+				 (BEM3DElementFunc)_assemble_element_ch, 
+				 adata) ;
+  }
+  
+  /* _bem3d_unset_trace(0) ; */
+
+  /*this works for hypersingular and standard formulations as long as
+    lambda is set to zero by default for standard methods*/
+  /* fprintf(stderr, "%lg ", a[i*nc+0]) ; */
+  /* C[i] = 0.5 ; */
+  a[i*nc+0] -= C[i]*GSL_REAL(al) ;
+  a[i*nc+1] -= C[i]*GSL_IMAG(al) ;
+  b[i*nc+0] += GSL_REAL(lambda)*C[i] ;
+  b[i*nc+1] += GSL_IMAG(lambda)*C[i] ;
 
   fprintf(output, "%d ", i) ;
   for ( j = 0 ; j < np*nc ; j ++ ) fprintf(output, " %1.16e", a[j]) ;
@@ -170,21 +285,21 @@ gint main(gint argc, gchar **argv)
   BEM3DQuadratureRule *quad ;
   BEM3DFMMWorkspace *work ;
   GPtrArray *meshes ;
+  gboolean meshes_closed ;
   GtsFile *fp ;
   GTimer *t ;
-  gint i, j, idx, np, nc, w, order ;
+  gint i, j, np, nc, w, order ;
   gchar ch, *ipfile, *opfile, p[32], *progname ;
   BEM3DLookupFunc dgfunc ;
   BEM3DParameters gdata ;
-  gpointer adata[16] ;
+  gpointer adata[ADATA_SIZE] ;
   gdouble k ;
   gdouble *a, *b, *C, *unit, r_correct ;
-  guint imin, imax ;
+  gint imin, imax ;
   GLogLevelFlags loglevel ;
   FILE *input, *output ;
   BEM3DConfiguration *config ;
   BEM3DGreensFunction gfunc ;
-  gboolean hypersingular ;
 
   wmpi_initialize(&argc, &argv) ;
 
@@ -192,13 +307,23 @@ gint main(gint argc, gchar **argv)
 
   /*computational geometry*/
   meshes = g_ptr_array_new() ;
-
+  m = NULL ;
+  
   dgfunc = (BEM3DLookupFunc)bem3d_lookup_func_unit ;
 
   order = 7 ; anorm = BEM3D_AVERAGE_MWA ;
+  bem3d_parameters_init(&gdata) ;
 
+  meshes_closed = TRUE ;
+  
   bem3d_parameters_wavenumber(&gdata) = 0.0 ;
-  w = 1 ; hypersingular = FALSE ;
+  /*this is required to ensure correct evaluation for
+    non-hypersingular methods*/
+  bem3d_parameters_lambda_real(&gdata) = 
+    bem3d_parameters_lambda_imag(&gdata) = 0.0 ;
+  bem3d_parameters_coupling_real(&gdata) = 1.0 ;
+  bem3d_parameters_coupling_imag(&gdata) = 0.0 ;
+  w = 1 ;
   ipfile = opfile = NULL ;
   output = stdout ;
   loglevel = G_LOG_LEVEL_MESSAGE ;
@@ -271,18 +396,29 @@ gint main(gint argc, gchar **argv)
 	      bem3d_parameters_wavenumber(&gdata)) ;
 
   if ( config->gfunc.real == FALSE ) w = 2 ;
-  if ( config->gfunc.func == bem3d_greens_func_helmholtz_hs ) {
-    hypersingular = TRUE ;
+  if ( bem3d_greens_function_compute_lambda(&(config->gfunc)) ) {
     bem3d_parameters_lambda_real(&gdata) = 0.0 ;
-    bem3d_parameters_lambda_imag(&gdata) = 
-      1.0/bem3d_parameters_wavenumber(&gdata) ;
-    bem3d_parameters_conditioning(&gdata) = 0.1 ;
+    bem3d_parameters_lambda_imag(&gdata) = 0.0 ;
+      /* -1.0/bem3d_parameters_wavenumber(&gdata) ; */
+    bem3d_parameters_coupling_real(&gdata) = 1.0 ;
+    bem3d_parameters_coupling_imag(&gdata) = 0.0 ;
+      /* -1.0/bem3d_parameters_wavenumber(&gdata); */
   }
 
   for ( (i = 0), (np = 0) ; i < meshes->len ; i ++ ) {
     nc = bem3d_mesh_node_number(g_ptr_array_index(meshes,i)) ;
-    if ( wmpi_rank() == 0 )
-      fprintf(stderr, "%s: mesh %d, %d collocation points\n", progname, i, nc) ;
+
+    if ( wmpi_rank() == 0 ) {
+      fprintf(stderr, "%s: ", progname) ;
+      if ( gts_surface_is_closed(GTS_SURFACE(g_ptr_array_index(meshes,i))) ) {
+	fprintf(stderr, "closed ") ;
+      } else {
+	meshes_closed = FALSE ;
+	fprintf(stderr, "open ") ;
+      }
+
+      fprintf(stderr, "mesh %d, %d collocation points\n", i, nc) ;
+    }
     np += nc ;
   }
   
@@ -314,16 +450,15 @@ gint main(gint argc, gchar **argv)
     fprintf(stderr, "%s: P%d: nodes: %d--%d\n", 
 	    progname, wmpi_rank(), imin, imax) ;
   
-    adata[0] = meshes ;
-    adata[1] = config ;
-    adata[2] = &gdata ;
-    adata[3] = a ; adata[4] = b ;
-    adata[5] = &np ; adata[6] = &w ;
-    adata[10] = output ;
-    adata[11] = &imin ; adata[12] = &imax ; 
-    adata[13] = C ;
-    adata[14] = &i ;
-    adata[15] = &hypersingular ;
+    adata[ADATA_MESHES] = meshes ;
+    adata[ADATA_CONFIG] = config ;
+    adata[ADATA_GDATA] = &gdata ;
+    adata[ADATA_ROW_A] = a ; adata[ADATA_ROW_B] = b ;
+    adata[ADATA_N_NODES] = &np ; adata[ADATA_WIDTH] = &w ;
+    adata[ADATA_OUTPUT] = output ;
+    adata[ADATA_IMIN] = &imin ; adata[ADATA_IMAX] = &imax ; 
+    adata[ADATA_C] = C ;
+    adata[ADATA_MESH] = &i ;
 
     fprintf(stderr, "%s: starting assembly: t=%f\n", 
 	    progname, g_timer_elapsed(t, NULL)) ;
@@ -333,11 +468,28 @@ gint main(gint argc, gchar **argv)
     for ( i = 0 ; i < np ; i ++ ) C[i] = 1.0 ;
     gfunc = config->gfunc ;
     config->gfunc = greens_func_laplace ;
-    for ( i = 0 ; i < meshes->len ; i ++ )
-      bem3d_mesh_quad_dgdn(g_ptr_array_index(meshes,i),
-			   config, &gdata, dgfunc, NULL, 
-			   (BEM3DEquationFunc)equation_func_C, C) ;
+    if ( meshes_closed ) {
+      for ( i = 0 ; i < meshes->len ; i ++ )
+	bem3d_mesh_quad_dgdn(g_ptr_array_index(meshes,i),
+			     config, &gdata, dgfunc, NULL, 
+			     (BEM3DEquationFunc)equation_func_C, C) ;
+    } else {
+      /*if we have any open meshes, assume they are disjoint parts of the
+       same surface and treat accordingly*/
+      for ( i = 0 ; i < meshes->len ; i ++ )
+	for ( j = 0 ; j < meshes->len ; j ++ )
+	  bem3d_mesh_disjoint_quad_dgdn(g_ptr_array_index(meshes,i),
+					g_ptr_array_index(meshes,j),
+					config, &gdata, dgfunc, NULL, 
+					(BEM3DEquationFunc)equation_func_C, C) ;
+    }
 
+    /* for ( i = 0 ; i < np ; i ++ ) fprintf(stderr, "%d %lg\n", i, C[i]) ; */
+
+    /* fprintf(stderr, "%lg %lg %lg\n", C[21], C[22], C[23]) ; */
+
+    /* exit(1) ; */
+    
     config->gfunc = gfunc ;
     bem3d_parameters_wavenumber(&gdata) = k ;
 

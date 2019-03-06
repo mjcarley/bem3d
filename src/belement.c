@@ -1,6 +1,6 @@
 /* belement.c
  * 
- * Copyright (C) 2006 Michael Carley
+ * Copyright (C) 2006, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
 
 #include "bem3d.h"
 #include "bem3d-private.h"
+
+#include "trace.h"
 
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_min.h>
@@ -590,6 +592,67 @@ gint bem3d_element_normal(BEM3DElement *e, gdouble *dLds, gdouble *dLdt,
 }
 
 /** 
+ * Compute Jacobian matrix, inverse and normal to an element. 
+ * 
+ * @param e a ::BEM3DElement;
+ * @param dLds shape function derivatives \f$\partial L_{i}/\partial \xi\f$; 
+ * @param dLdt shape function derivatives \f$\partial L_{i}/\partial \eta\f$; 
+ * @param normal GtsVector for normal;
+ * @param J nine-element matrix for Jacobian;
+ * @param Ji nine-element matrix for inverse of Jacobian or NULL.
+ * 
+ * @return 0 on success. If \a normal, \a J, and/or \a Ji are NULL,
+ * they are not computed, though if \a Ji is not NULL, \a J must also
+ * be defined.
+ */
+
+gint bem3d_element_jacobian_matrix_normal(BEM3DElement *e,
+					  gdouble *dLds, gdouble *dLdt,
+					  GtsVector normal, gdouble *J,
+					  gdouble *Ji)
+
+{
+  gint i ;
+  GtsVector dxds, dxdt, dxdn ;
+  
+  g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(dLds != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(dLdt != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  dxdt[0] = dxdt[1] = dxdt[2] = 0.0 ;
+  dxds[0] = dxds[1] = dxds[2] = 0.0 ;
+
+  for ( i = 0 ; i < bem3d_element_vertex_number(e) ; i ++ ) {
+    dxds[0] += GTS_POINT(e->v[i])->x*dLds[i] ;
+    dxds[1] += GTS_POINT(e->v[i])->y*dLds[i] ;
+    dxds[2] += GTS_POINT(e->v[i])->z*dLds[i] ;
+    dxdt[0] += GTS_POINT(e->v[i])->x*dLdt[i] ;
+    dxdt[1] += GTS_POINT(e->v[i])->y*dLdt[i] ;
+    dxdt[2] += GTS_POINT(e->v[i])->z*dLdt[i] ;
+  }
+
+  gts_vector_cross(dxdn,dxds,dxdt) ;
+
+  if ( J != NULL ) {
+    J[0] = dxds[0] ; J[1] = dxds[1] ; J[2] = dxds[2] ; 
+    J[3] = dxdt[0] ; J[4] = dxdt[1] ; J[5] = dxdt[2] ; 
+    J[6] = dxdn[0] ; J[7] = dxdn[1] ; J[8] = dxdn[2] ;
+    if ( Ji != NULL ) _invert3x3(Ji,J) ;
+  }
+
+  if ( normal == NULL ) return BEM3D_SUCCESS ;
+
+  dxdt[0] = gts_vector_norm(dxdn) ;
+
+  normal[0] = dxdn[0]/dxdt[0] ;
+  normal[1] = dxdn[1]/dxdt[0] ;
+  normal[2] = dxdn[2]/dxdt[0] ;
+
+  return BEM3D_SUCCESS ;
+}
+
+/** 
  * Assemble equations for ::BEM3DElement and GtsPoint.
  * 
  * The integration of the Green's function and its normal derivative
@@ -614,10 +677,8 @@ gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
 {
   BEM3DShapeFunc shfunc = bem3d_element_shape_func(e) ;
   BEM3DShapeFunc cpfunc = bem3d_element_node_func(e) ;
-  static BEM3DQuadratureRule *q = NULL ;
-  static GArray *g = NULL ;
-  static GArray *dgdn = NULL ;
-  static gdouble *L = NULL, *dLds = NULL, *dLdt = NULL ;
+  static BEM3DQuadratureRule *q = NULL ;  
+  gdouble L[32], dLds[32], dLdt[32], g[16], dgdn[16] ;
   BEM3DQuadratureRuleFunc qf ;
   gpointer qd ;
   BEM3DGreensFunction gfunc ;
@@ -631,21 +692,8 @@ gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
   g_return_val_if_fail(x != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(G != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(dGdn != NULL, BEM3D_NULL_ARGUMENT) ;
-
-  if ( g == NULL ) {
-    g = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
-    dgdn = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
-    L = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-    dLds = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-    dLdt = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-  }
   
   if ( q == NULL ) q = bem3d_quadrature_rule_new(0, 1) ;
-
-  /* if ( qfunc == NULL ) qf = bem3d_quadrature_rule_default ; */
-  /* else qf = qfunc ; */
-  /* if ( qdata == NULL ) qd = bem3d_quadrature_selector_default() ; */
-  /* else qd = qdata ; */
 
   gfunc = config->gfunc ;
 
@@ -657,8 +705,9 @@ gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
   /* 	__FUNCTION__, bem3d_quadrature_rule_sum_weights(q)) ; */
 
   /*get the size of the Green's function*/
-  if ( bem3d_greens_function_is_real(&gfunc) ) stride = 1 ;
-  else stride = 2 ;
+  /* if ( bem3d_greens_function_is_real(&gfunc) ) stride = 1 ; */
+  /* else stride = 2 ; */
+  stride = gfunc.size ;
   g_array_set_size(G,bem3d_element_node_number(e)*stride) ; 
   g_array_set_size(dGdn,bem3d_element_node_number(e)*stride) ;  
 
@@ -678,10 +727,8 @@ gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
     for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
       w = J*L[j] ;
       for ( k = 0 ; k < stride ; k ++ ) {
-	g_array_index(G,gdouble,j*stride+k) +=
-	  g_array_index(g,gdouble,k)*w ;
-	g_array_index(dGdn,gdouble,j*stride+k) +=
-	  g_array_index(dgdn,gdouble,k)*w ;
+	g_array_index(G,gdouble,j*stride+k) += g[k]*w ;
+	g_array_index(dGdn,gdouble,j*stride+k) += dgdn[k]*w ;
       }
     }
   }
@@ -692,14 +739,11 @@ gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
 	      "does not match number of nodes on element (%d)",
 	      __FUNCTION__, bem3d_quadrature_free_number(q), 
 	      bem3d_element_node_number(e)) ;
-    /*we should not arrive here in complex problems*/
-    g_assert(q->wfree == 1) ; g_assert(stride == 1) ;
-    k = 0 ;
-    for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
-      g_array_index(G,gdouble,j*stride+k) += 
-	bem3d_quadrature_free_term_g(q,j) ;
-      g_array_index(dGdn,gdouble,j*stride+k) += 
-	bem3d_quadrature_free_term_dg(q,j) ;
+    /*we should not arrive here in vector problems*/
+    g_assert(q->wfree == 1) ;
+    for ( j = 0 ; j < bem3d_element_node_number(e)*stride ; j ++ ) {
+      g_array_index(G,gdouble,j) += bem3d_quadrature_free_term_g(q,j) ;
+      g_array_index(dGdn,gdouble,j) += bem3d_quadrature_free_term_dg(q,j) ;
     }
   }
 
@@ -707,7 +751,8 @@ gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
 }
 
 /** 
- * Check if a GtsVertex is on a ::BEM3DElement.
+ * Check if a GtsVertex is a vertex of the geometry of a
+ * ::BEM3DElement.
  * 
  * @param e ::BEM3DElement;
  * @param v GtsVertex.
@@ -727,6 +772,33 @@ gboolean bem3d_element_has_vertex(BEM3DElement *e, GtsVertex *v)
 
   for ( i = 0 ; i < bem3d_element_vertex_number(e) ; i ++ ) {
     if ( e->v[i] == v ) return TRUE ;
+  }
+
+  return FALSE ;
+}
+
+/** 
+ * Check if a GtsVertex is a node (collocation point) of a
+ * ::BEM3DElement.
+ * 
+ * @param e ::BEM3DElement;
+ * @param v GtsVertex.
+ * 
+ * @return TRUE if \a v is a node of \a e, FALSE otherwise. 
+ */
+
+gboolean bem3d_element_has_node(BEM3DElement *e, GtsVertex *v)
+
+{
+  gint i ;
+
+  g_return_val_if_fail(e != NULL, FALSE) ;
+  g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(v != NULL, FALSE) ;
+  g_return_val_if_fail(GTS_IS_VERTEX(v), BEM3D_ARGUMENT_WRONG_TYPE) ;
+
+  for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
+    if ( e->c[i] == v ) return TRUE ;
   }
 
   return FALSE ;
@@ -1297,6 +1369,105 @@ GSList *bem3d_elements_from_vertices(BEM3DMesh *m, GtsVertex *v1,
       e = g_slist_prepend(e, i->data) ;
   
   return e ;
+}
+
+/** 
+ * Assemble equations for an element inserting directly into matrix
+ * rows. Coefficients are accumulated directly in rows assuming
+ * zero-offset indexing, with stride 1 for real problems and 2 for
+ * complex, as determined from the Green's function.
+ * 
+ * @param e a ::BEM3DElement
+ * @param x field (collocation) point
+ * @param ix index of \a x
+ * @param config ::BEM3DConfiguration for the problem
+ * @param gdata parameters for Green's function
+ * @param a matrix row which multiplies potential (\f$\phi\f$)
+ * @param b matrix row which multiplies normal derivative of 
+ * potential (\f$\partial\phi/\partial n\f$)
+ * 
+ * @return ::BEM3D_SUCCESS on success
+ */
+
+gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
+					     GtsPoint *x, gint ix,
+					     BEM3DConfiguration *config,
+					     BEM3DParameters *gdata,
+					     gdouble *a, gdouble *b)
+
+{
+  BEM3DShapeFunc shfunc = bem3d_element_shape_func(e) ;
+  BEM3DShapeFunc cpfunc = bem3d_element_node_func(e) ;
+  gdouble L[32], dLds[32], dLdt[32], g[16], dgdn[16] ;
+  static BEM3DQuadratureRule *q = NULL ;
+  BEM3DQuadratureRuleFunc qf ;
+  gpointer qd ;
+  BEM3DGreensFunction gfunc ;
+  gint i, j, k, idx, stride ;
+  gdouble s, t, J, w, wt ;
+  GtsPoint y ;
+  GtsVector n ;
+
+  g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(x != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  if ( q == NULL ) q = bem3d_quadrature_rule_new(0, 1) ;
+  
+  gfunc = config->gfunc ;
+
+  qf = config->qrule ; qd = config->qdata ;
+
+  qf(x, e, q, &gfunc, gdata, qd) ;
+
+  if ( (bem3d_quadrature_free_number(q) != 0) &&
+       (bem3d_quadrature_free_number(q) != bem3d_element_node_number(e)) ) {
+    g_error("%s: number of free terms (%d) in quadrature rule "
+	    "does not match number of nodes on element (%d)",
+	    __FUNCTION__, bem3d_quadrature_free_number(q), 
+	    bem3d_element_node_number(e)) ;
+  }
+  
+  /* g_debug("%s: quadrature rule weights total: %g", */
+  /* 	__FUNCTION__, bem3d_quadrature_rule_sum_weights(q)) ; */
+
+  /*get the size of the Green's function*/
+  if ( bem3d_greens_function_is_real(&gfunc) ) stride = 1 ;
+  else stride = 2 ;
+  
+  for ( i = 0 ; i < bem3d_quadrature_vertex_number(q) ; i ++ ) {
+    s = bem3d_quadrature_xi(q,i) ;
+    t = bem3d_quadrature_eta(q,i) ;
+    wt = bem3d_quadrature_weight(q,i) ;
+    shfunc(s, t, L, dLds, dLdt, NULL) ;
+    bem3d_element_position(e, L, &y) ;
+    bem3d_element_normal(e, dLds, dLdt, n, &J) ;
+    bem3d_greens_function_func(&gfunc)(x, &y, n, gdata, g, dgdn) ;
+    cpfunc(s, t, L, NULL, NULL, NULL) ;
+    J *= wt ;
+    for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
+      w = J*L[j] ;
+      idx = bem3d_element_global_index(e,j) ;
+      for ( k = 0 ; k < stride ; k ++ ) {
+	a[idx*stride+k] += dgdn[k]*w ;
+	b[idx*stride+k] += g[k]*w ;
+      }
+    }
+  }
+
+  if ( bem3d_quadrature_free_number(q) != 0 ) {
+    /*we should not arrive here in vector problems*/
+    g_assert(q->wfree == 1) ;
+    for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
+      idx = bem3d_element_global_index(e,j) ;
+      for ( k = 0 ; k < stride ; k ++ ) {
+	a[idx*stride+k] += bem3d_quadrature_free_term_dg(q,(j*stride+k)) ;
+	b[idx*stride+k] += bem3d_quadrature_free_term_g(q,(j*stride+k)) ;
+      }
+    }
+  }  
+
+  return BEM3D_SUCCESS ;
 }
 
 /**

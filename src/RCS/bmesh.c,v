@@ -1,10 +1,15 @@
-head	1.4;
+head	1.5;
 access;
 symbols;
 locks
-	ensmjc:1.4; strict;
+	ensmjc:1.5; strict;
 comment	@ * @;
 
+
+1.5
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.4;
 
 1.4
 date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
@@ -31,14 +36,14 @@ desc
 @@
 
 
-1.4
+1.5
 log
 @*** empty log message ***
 @
 text
 @/* bmesh.c
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -840,8 +845,8 @@ gint bem3d_mesh_foreach_node(BEM3DMesh *m, BEM3DNodeFunc f,
 }
 
 gint bem3d_equation_func_simple(gint i, gint j,
-			      gdouble *G, gdouble *dGdn, 
-			      gint n, gpointer *e)
+				gdouble *G, gdouble *dGdn, 
+				gint n, gpointer *e)
 {
   gint np = *(gint *)e[0] ;
   gdouble *A = (gdouble *)e[1] ;
@@ -1189,10 +1194,153 @@ gint bem3d_mesh_element_moments(BEM3DMesh *m, gint H)
   return BEM3D_SUCCESS ;
 }
 
+static gint biggest_element(BEM3DElement *e, gint *nv)
+
+{
+  *nv = MAX(*nv, bem3d_element_node_number(e)) ;
+
+  return 0 ;
+}
+
+/** 
+ * Find the largest number of nodes on an element of a ::BEM3DMesh
+ * 
+ * @@param m a ::BEM3DMesh
+ * 
+ * @@return the maximum number of nodes on an element of \a m 
+ */
+
+gint bem3d_mesh_element_node_number_max(BEM3DMesh *m)
+
+{
+  gint nv = 0 ;
+
+  bem3d_mesh_foreach_element(m, (BEM3DElementFunc)biggest_element, &nv) ;
+
+  return nv ;
+}
+
+static gint index_range(gint i, GtsVertex *v, gpointer *data)
+
+{
+  gint *imin = data[0] ;
+  gint *imax = data[1] ;
+
+  *imin = MIN(i, *imin) ;
+  *imax = MAX(i, *imax) ;
+
+  return 0 ;
+}
+
+/** 
+ * Find the maximum and minimum indices of a ::BEM3DMesh
+ * 
+ * @@param m a ::BEM3DMesh
+ * @@param imin minimum index
+ * @@param imax maximum index
+ * 
+ * @@return BEM3D_SUCCESS on success
+ */
+
+gint bem3d_mesh_index_range(BEM3DMesh *m, gint *imin, gint *imax)
+
+{
+  gpointer data[2] = {imin, imax} ;
+
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(imin, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(imax, BEM3D_NULL_ARGUMENT) ;
+
+  *imin = G_MAXINT ; *imax = -1 ;
+  bem3d_mesh_foreach_node(m, (BEM3DNodeFunc)index_range, data) ;
+
+  return 0 ;
+}
+
+static gint element_sample(BEM3DElement *e, BEM3DElement **s)
+
+{
+  *s = e ;
+
+  return 1 ;
+}
+
+/** 
+ * Select a sample element from a ::BEM3DMesh
+ * 
+ * @@param m a ::BEM3DMesh
+ * 
+ * @@return a randomly chosen element from \a m
+ */
+
+BEM3DElement *bem3d_mesh_element_sample(BEM3DMesh *m)
+
+{
+  BEM3DElement *e ;
+
+  g_return_val_if_fail(m != NULL, NULL) ;
+
+  bem3d_mesh_foreach_element(m, (BEM3DElementFunc)element_sample, &e) ;
+  
+  return e ;
+}
+
+static gint element_area(BEM3DElement *e, gpointer data[])
+
+{
+  gint *ngp = data[0] ;
+  gdouble *S = data[1] ;
+
+  *S += bem3d_element_area(e, *ngp) ;
+
+  return 0 ;
+}
+
+/** 
+ * Surface area of a ::BEM3DMesh by integrating over elements. This
+ * gives an accurate estimate of surface area for meshes with
+ * curvilinear elements.
+ * 
+ * @@param m a ::BEM3DMesh
+ * @@param ngp number of points in quadrature rule, for call to 
+ * ::bem3d_element_area 
+ * 
+ * @@return surface area of \a m
+ */
+
+gdouble bem3d_mesh_surface_area(BEM3DMesh *m, gint ngp)
+
+{
+  gdouble S ;
+  gpointer data[] = {&ngp, &S} ;
+
+  S = 0 ;
+
+  bem3d_mesh_foreach_element(m, (BEM3DElementFunc)element_area, data) ;
+
+  return S ;
+}
+
 /**
  * @@}
  * 
  */
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2006, 2009 Michael Carley
+d805 2
+a806 2
+			      gdouble *G, gdouble *dGdn, 
+			      gint n, gpointer *e)
+d1152 127
 @
 
 

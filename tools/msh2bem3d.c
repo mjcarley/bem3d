@@ -1,6 +1,6 @@
 /* msh2bem3d.c
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -38,8 +38,8 @@ This treats edges with an angle between elements greater than 89 degrees
 as sharp and assigns multiple indices to the corresponding nodes as
 necessary. As an example, this also shows the use of the option which
 sets the first index, here 573. This is useful in problems with multiple 
-geometries where each must be indexed starting from the last index of the
-previous geometry. 
+surfaces where each must be indexed starting from the last index of the
+previous surface. 
 
 In scattering problems, it is sufficient merely to properly index
 nodes on sharp edges. In aerodynamic problems where a wake is shed,
@@ -77,7 +77,7 @@ gint main(gint argc, gchar **argv)
 
 {
   FILE *input, *output ;
-  BEM3DMesh *m ;
+  BEM3DMesh *m, *m0 ;
   gint n ;
   gdouble sharp_edge_angle ;
   gchar *efile, *ufile ;
@@ -86,30 +86,33 @@ gint main(gint argc, gchar **argv)
   GSList *s, *e ;
   gchar ch, *progname ;
   extern char *optarg;
-  gboolean orient = TRUE ;
+  gboolean orient, zero_order ;
 
   progname = g_strdup(g_path_get_basename(argv[0])) ;
 
   n = 0 ; efile = ufile = NULL ; 
   loglevel = G_LOG_LEVEL_MESSAGE ;
   sharp_edge_angle = 90.0 ;
-  while ( (ch = getopt(argc, argv, "a:e:hl:n:u:")) != EOF ) {
+  orient = TRUE ; zero_order = FALSE ;
+  
+  while ( (ch = getopt(argc, argv, "a:e:hl:n:u:0")) != EOF ) {
     switch (ch) {
     default: 
     case 'h':
       fprintf(stderr, 
 	      "%s: convert MSH to BEM3D format\n\n", progname) ;
       fprintf(stderr, 
-	      "Usage %s <options> < input.msh > output.bem\n",
+	      "Usage: %s <options> < input.msh > output.bem\n",
 	      progname) ;
       fprintf(stderr, 
 	      "Options:\n"
+	      "        -h print this message and exit\n"
 	      "        -a # (angle for determining sharp edges)\n"
 	      "        -e <edge file name template>\n"
-	      "        -h print this message and exit\n"
 	      "        -l # (set logging level)\n"
 	      "        -n # (index of first node)\n"
-	      "        -u <file name for list of unlinked sharp nodes>\n") ;
+	      "        -u <file name for list of unlinked sharp nodes>\n"
+	      "        -0 output zero-order (constant source) elements\n") ;
       return 0 ;
       break ;
     case 'a': sharp_edge_angle = atof(optarg) ; break ;
@@ -118,6 +121,7 @@ gint main(gint argc, gchar **argv)
     case 'n': n = atoi(optarg) ; break ;
     /* case 'o': orient = TRUE ; break ; */
     case 'u': ufile = g_strdup(optarg) ; break ;
+    case '0': zero_order = TRUE ; break ;
     }
   }
 
@@ -128,13 +132,31 @@ gint main(gint argc, gchar **argv)
 
   sharp_edge_angle *= M_PI/180.0 ;
   input = stdin ;
-  m = bem3d_mesh_new(bem3d_mesh_class(),
-		   gts_face_class(),
-		   gts_edge_class(),
-		   gts_vertex_class()) ;
 
+  m = bem3d_mesh_new(bem3d_mesh_class(),
+		     gts_face_class(),
+		     gts_edge_class(),
+		     gts_vertex_class()) ;
   bem3d_gmsh_read(m, input) ;
 
+  if ( zero_order ) {
+    m0 = bem3d_mesh_new(bem3d_mesh_class(),
+			gts_face_class(),
+			gts_edge_class(),
+			gts_vertex_class()) ;
+    bem3d_mesh_discretize(GTS_SURFACE(m), 1,
+			  bem3d_element_build_t0, m0) ;    
+
+    n = bem3d_mesh_index_nodes(m0, sharp_edge_angle, n) ;
+
+    fprintf(stderr, "%s: last index: %d\n", progname, n) ;
+    
+    /*return now, there are no sharp edges on a zero-order mesh*/
+    bem3d_mesh_write(m0, stdout) ;
+
+    return 0 ;
+  }
+  
   n = bem3d_mesh_index_nodes(m, sharp_edge_angle, n) ;
 
   fprintf(stderr, "%s: last index: %d\n", progname, n) ;

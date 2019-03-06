@@ -1,0 +1,45 @@
+#!/bin/bash
+
+tools="bem3d-aero \
+ bem3d-assemble \
+ bem3d-dump \
+ bem3d-field \
+ bem3d-function \
+ bem3d-plane \
+ bem3d-skeleton \
+ bem3d-solve \
+ bem3d-sphere \
+ bem3d2pos \
+ msh2bem3d \
+ gts2bem3d"
+		 
+LIBDIR=/home/ensmjc/Codes/lib
+CFLAGS="${CFLAGS} `sisl-config --cflags`"
+CFLAGS="${CFLAGS} -I./src/"
+CFLAGS="${CFLAGS} -DHAVE_CONFIG_H -I."
+
+echo ${CFLAGS}
+
+LIBS=${LIBDIR}/libbem3d.a
+LIBS="${LIBS} /usr/lib64/libgts.a"
+LIBS="${LIBS} ${LIBDIR}/libgqr.a"
+LIBS="${LIBS} ${LIBDIR}/libsisl.a"
+LIBS="${LIBS} ${LIBDIR}/libwmpi_s.a"
+LIBS="${LIBS} /home/ensmjc/Codes/External/lib/libgsl.a"
+LIBS="${LIBS} /home/ensmjc/Codes/External/lib/libgslcblas.a"
+LIBS="${LIBS} /usr/lib64/liblapack.a"
+LIBS="${LIBS} /usr/lib64/libf77blas.a"
+LIBS="${LIBS} /usr/lib64/libatlas.a"
+LIBS="${LIBS} /usr/local/lib64/libmatheval.a"
+LIBS="${LIBS} -lglib-2.0"
+LIBS="${LIBS} /usr/lib64/libgfortran.a /usr/lib64/libquadmath.a"
+LIBS="${LIBS} -lm"
+
+rm -rf static/*
+mkdir static/bin
+
+for exec in ${tools} ; do
+    echo ${exec}
+    gcc ${CFLAGS} -mtune=generic -march=x86-64 tools/${exec}.c \
+	-lfl ${LIBS} -o static/bin/${exec}
+done

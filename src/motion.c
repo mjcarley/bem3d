@@ -1,6 +1,6 @@
 /* motion.c
  * 
- * Copyright (C) 2009 Michael Carley
+ * Copyright (C) 2009, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

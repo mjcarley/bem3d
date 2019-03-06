@@ -1,10 +1,15 @@
-head	1.1;
+head	1.2;
 access;
 symbols;
 locks
-	ensmjc:1.1; strict;
+	ensmjc:1.2; strict;
 comment	@ * @;
 
+
+1.2
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.1;
 
 1.1
 date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
@@ -16,14 +21,14 @@ desc
 @@
 
 
-1.1
+1.2
 log
-@Initial revision
+@*** empty log message ***
 @
 text
 @/* data.c
  * 
- * Copyright (C) 2006, 2010 Michael Carley
+ * Copyright (C) 2006, 2010, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -266,7 +271,7 @@ gint bem3d_mesh_data_add(BEM3DMeshData *f, gint i, GArray *g)
   for ( j = 0 ; j < g->len ; j ++ ) {
     x[j] += g_array_index(g,gdouble,j) ;
   }
-
+  
   return BEM3D_SUCCESS ;
 }
 
@@ -327,24 +332,30 @@ gint bem3d_mesh_data_write(BEM3DMeshData *f, FILE *fp)
  * necessary.
  * 
  * @@param f ::BEM3DMEshData block to allocate;
- * @@param fp input file stream.
+ * @@param fp input file stream;
+ * @@param width data is set to the maximum of \a width and the number of
+ * elements specified in the input file; set to 0 to use the number specified
+ * in the file.
  * 
  * @@return 0 on success.
  */
 
-gint bem3d_mesh_data_read(BEM3DMeshData **f, FILE *fp)
+gint bem3d_mesh_data_read(BEM3DMeshData **f, FILE *fp, gint width)
 
 {
-  gint w, np, i, j, k ;
+  gint w, ne, np, i, j, k ;
   gchar line[1024] ;
 
   g_return_val_if_fail (f != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail (fp != NULL, BEM3D_NULL_ARGUMENT) ;
 
-  fscanf(fp, "%d %d", &np, &w) ;
+  /*np: number of points in data block*/
+  /*ne: number of data elements per point*/
+  fscanf(fp, "%d %d", &np, &ne) ;
   fscanf(fp, "%[^\n]s", line) ;
   fscanf(fp, "%*c") ;
 
+  w = MAX(ne, width) ;
   *f = bem3d_mesh_data_sized_new(w, np) ;
   bem3d_mesh_data_element_number(*f) = w ;
 
@@ -354,7 +365,7 @@ gint bem3d_mesh_data_read(BEM3DMeshData **f, FILE *fp)
     g_hash_table_insert((*f)->t, 
 			GINT_TO_POINTER(j+1),
 			GINT_TO_POINTER(i+1)) ;
-    for ( k = 0 ; k < w ; k ++ ) 
+    for ( k = 0 ; k < ne ; k ++ ) 
       fscanf(fp, "%lg", &(g_array_index((*f)->d,gdouble,w*i+k))) ;
   }
 
@@ -478,4 +489,34 @@ gint bem3d_mesh_data_expand(BEM3DMeshData *d, gint ne)
  * 
  */
 
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2006, 2010 Michael Carley
+d246 1
+a246 1
+
+d307 4
+a310 1
+ * @@param fp input file stream.
+d315 1
+a315 1
+gint bem3d_mesh_data_read(BEM3DMeshData **f, FILE *fp)
+d318 1
+a318 1
+  gint w, np, i, j, k ;
+d324 3
+a326 1
+  fscanf(fp, "%d %d", &np, &w) ;
+d330 1
+d340 1
+a340 1
+    for ( k = 0 ; k < w ; k ++ ) 
 @

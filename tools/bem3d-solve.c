@@ -1,6 +1,6 @@
 /* bem3d-solve.c
  * 
- * Copyright (C) 2006, 2018 Michael Carley
+ * Copyright (C) 2006, 2018, 2019 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -281,7 +281,6 @@ static gint sisl_matrix_vector_mul_B(sisl_matrix_t *B, sisl_vector_t *v,
   gsl_complex vc, wc, *cc ;
   gint i, j, k, *idx ;
   gdouble *wt ;
-  gint chk = 0 ;
   
   g_assert(sisl_matrix_density(B) == SISL_MATRIX_USER_DEFINED) ;
 
@@ -338,8 +337,6 @@ static gint sisl_matrix_vector_mul_B(sisl_matrix_t *B, sisl_vector_t *v,
 #ifndef SLOW_VECTOR_ACCESS
     wp = sisl_vector_data(w) ;
     vp = sisl_vector_data(v) ;
-    /* wp = &(g_array_index(w->x,gdouble,0)) ; */
-    /* vp = &(g_array_index(v->x,gdouble,0)) ; */
 
     for ( i = 0 ; i < sisl_vector_length(v) ; i ++ ) {
       wc = *((gsl_complex *)(&(wp[2*i+0]))) ;
@@ -374,6 +371,130 @@ static gint sisl_matrix_vector_mul_B(sisl_matrix_t *B, sisl_vector_t *v,
   return 0 ;
 }
 
+static sisl_matrix_t *read_surface_diagonal(FILE *f, gdouble *Ad, gint nc,
+					    gint str, gint imin, gint imax,
+					    sisl_matrix_t *Ai)
+
+{
+  sisl_matrix_t *A ;
+  sisl_complex_t rc ;
+  gint i, j, lineno ;
+  gdouble x ;
+  gsl_complex xc ;
+  gchar line[1024] ;
+  
+  rc = (str == 1 ? SISL_REAL : SISL_COMPLEX) ;
+  if ( Ai == NULL ) {
+    A = sisl_matrix_new(rc, SISL_MATRIX_DIAGONAL) ;
+    sisl_matrix_set_block_size(A, nc, nc) ;
+    sisl_matrix_local_row_start(A) = imin ;
+    sisl_matrix_local_row_end(A) = imax ;
+    sisl_matrix_row_number(A) = sisl_matrix_column_number(A) = nc ;
+  } else {
+    A = Ai ;
+  }
+
+  lineno = 3 ;
+  if ( sisl_is_real(A) ) {
+    g_assert_not_reached() ; /*unchecked code*/
+    sisl_matrix_set_all(A, Ad[0]) ;
+    while ( (i = fscanf(f, "%[^\n]c", line)) != EOF && ( i != 0 ) ) {
+      i = sscanf(line, "%d %lg", &j, &x) ;
+      if ( i != 2 ) g_error("%s: cannot parse line %d\n  %s\n",
+			    __FUNCTION__, lineno, line) ;
+      sisl_matrix_set(A, j, j, x) ;
+      lineno ++ ;
+      if ( (i = fscanf(f, "%*c")) == EOF ) break ;
+    }    
+  } else {
+    GSL_SET_COMPLEX(&xc, Ad[0], Ad[1]) ;
+    sisl_matrix_set_all_complex(A, xc) ;
+    while ( (i = fscanf(f, "%[^\n]c", line)) != EOF && ( i != 0 ) ) {
+      i = sscanf(line, "%d %lg %lg", &j, &GSL_REAL(xc), &GSL_IMAG(xc)) ;
+      if ( i != 3 ) g_error("%s: cannot parse line %d\n  %s\n",
+			    __FUNCTION__, lineno, line) ;
+      sisl_matrix_set_complex(A, j, j, xc) ;
+      xc = sisl_matrix_get_complex(A, j, j) ;
+      lineno ++ ;
+      if ( (i = fscanf(f, "%*c")) == EOF ) break ;
+    }
+  }
+
+  return A ;  
+}
+
+static sisl_matrix_t *read_surface_matrix(FILE *f, gdouble *Ad,
+					  gint imin, gint imax,
+					  gint nnodes, sisl_matrix_t *Ai)
+
+/*
+  read surface property data and return the corresponding surface
+  matrix, with default diagonal entries Ad (real or complex, which is
+  why it's a pointer); currently only implemented for diagonal
+  matrices corresponding to locally-reacting boundary conditions;
+  returns NULL on error, which must be checked for.
+
+  Input syntax, header:
+
+  [size (number of nodes)] [stride=1, 2 for real or complex] BEM3DSurface 
+  [matrix format]
+
+  Currently implemented for diagonal matrix with second line (matrix format):
+
+  diagonal [number of entries]
+
+  For diagonal matrix not all entries need be specifed (Ad is used as
+  default), and each line contains:
+
+  [index] [entry]
+  
+*/
+  
+{
+  sisl_matrix_t *A = Ai ;
+  gchar line[1024], **tokens ;
+  gint nc, str ;
+    
+  fscanf(f, "%[^\n]s", line) ;
+  fscanf(f, "%*c") ;
+
+  /*check the header is correct*/
+  tokens = g_strsplit(line, " ",0) ;
+  if ( tokens[0] == NULL ) return NULL ;
+  if ( tokens[1] == NULL ) return NULL ;
+  if ( tokens[2] == NULL ) return NULL ;
+
+  if ( strcmp(tokens[2], "BEM3DSurface") != 0 )
+    g_error("%s: cannot read surface file (incorrect header %s)",
+	    __FUNCTION__, tokens[2]) ;
+
+  nc = atoi(tokens[0]) ;
+  if ( nc <= 0 )
+    g_error("%s: cannot read surface file (invalid size %s)",
+	    __FUNCTION__, tokens[0]) ;
+  if ( (nc > nnodes) && (nnodes != -1) )
+    g_error("%s: number of nodes in surface file (%d) is greater than "
+	    "problem size (%d)", __FUNCTION__, nc, nnodes) ;
+  nc = MAX(nc, nnodes) ;
+  
+  str = atoi(tokens[1]) ;
+  if ( str <= 0 || str > 2 )
+    g_error("%s: cannot read surface file (invalid stride %s)",
+	    __FUNCTION__, tokens[1]) ;
+
+  fscanf(f, "%[^\n]s", line) ;
+  fscanf(f, "%*c") ;
+
+  if ( strncmp(line, "diagonal", 8) == 0) {
+    return read_surface_diagonal(f, Ad, nc, str, imin, imax, A) ;
+  }
+
+  g_error("%s: unrecognized or unimplemented matrix type %s",
+	  __FUNCTION__, line) ;
+  
+  return A ;
+}
+
 gint main(gint argc, gchar **argv)
 
 {
@@ -382,20 +503,21 @@ gint main(gint argc, gchar **argv)
   BEM3DMeshData *data ;
   BEM3DParameters param ;
   GPtrArray *meshes ;
-  sisl_matrix_t *A, *B ;
-  sisl_vector_t *phi, *dphi, *rhs ;
+  sisl_matrix_t *A, *B, *surface_A, *surface_B ;
+  sisl_vector_t *phi, *dphi, *rhs, *v1, *v2 ;
   sisl_solver_workspace_t *w ;
   sisl_solver_performance_t perf ;
   sisl_complex_t rc ;
   gchar *ipfile, *opfile, *matfile, *datfile, solver_name[256] ;
   FILE *input, *output ;
   GtsFile *fp ;
-  gchar *progname, ch, p[32] ;
+  gchar *progname, ch, p[32], *surface_A_file, *surface_B_file ;
   gint np, i, j, mstride, solver ;
   guint imin, imax, itmp0, itmp1 ;
-  gsl_complex zc ;
+  gsl_complex zc, ac ;
   BEM3DConfiguration *config ;
   gdouble tol ;
+  gboolean invertB ;
   
   wmpi_initialize(&argc, &argv) ;
   progname = g_strdup(g_path_get_basename(argv[0])) ;
@@ -415,8 +537,12 @@ gint main(gint argc, gchar **argv)
   bem3d_configuration_init() ;
   config = bem3d_configuration_new() ;
   bem3d_parameters_wavenumber(&param) = G_MAXDOUBLE ;
+
+  surface_A_file = surface_B_file = NULL ;
+  surface_A = surface_B = NULL ;
+  invertB = FALSE ;
   
-  while ( (ch = getopt(argc, argv, "hC:d:i:k:m:t:o:")) != EOF ) {
+  while ( (ch = getopt(argc, argv, "hA:C:d:i:k:m:t:o:Z:")) != EOF ) {
     switch (ch) {
     default:
     case 'h':
@@ -428,19 +554,22 @@ gint main(gint argc, gchar **argv)
 	fprintf(stderr, 
 		"Options:\n"
 		"        -h (print this message and exit)\n"
+		"        -A <surface admittance data file name>\n"
 		"        -C <configuration file name>\n"
 		"        -d <data file name> (for boundary conditions)\n"
 		"        -i <bem3d input file> (for FMM calculations)\n"
 		"        -k # (wave number for FMM Helmholtz calculation)\n"
 		"        -m <matrix file name from bem3d-assemble>\n"
-		"        -t # (iterative solver convergence tolerance: %lg)\n"
-		"        -o <output file name> (for mesh block data)\n",
+		"        -o <output file name> (for mesh block data)\n"
+		"        -t # (iterative solver convergence tolerance: %lg)\n",
+		/* "        -Z <surface admittance data file name>\n", */
 		tol) ;
       }
       wmpi_pause() ;
       wmpi_shutdown() ;
       return 0 ;
       break ;
+    case 'A': surface_A_file = g_strdup(optarg) ; break ;
     case 'C': bem3d_configuration_read(config, optarg) ; break ;
     case 'd': datfile = g_strdup(optarg) ; break ;
     case 'i': 
@@ -465,6 +594,9 @@ gint main(gint argc, gchar **argv)
       break ;
     case 't': tol = atof(optarg) ; break ;
     case 'o': opfile = g_strdup(optarg) ; break ;
+    case 'Z':
+      g_assert_not_reached() ; /*unchecked code*/
+      surface_B_file = g_strdup(optarg) ; break ;
     }
   }
 
@@ -624,10 +756,74 @@ gint main(gint argc, gchar **argv)
 
   file_close(input) ;
 
-    if ( wmpi_rank() == 0 ) 
-      fprintf(stderr, "%s: reading boundary conditions: t=%f\n",
-	      progname, g_timer_elapsed(t, NULL)) ;
+  /*surface treatment (impedance) matrices*/
+  /*limited to diagonal (locally-reacting) case for now*/
+  if ( surface_B_file == NULL ) {
+    /*default setting for impedance term*/
+    surface_B = sisl_matrix_new(rc, SISL_MATRIX_DIAGONAL) ;    
+    sisl_matrix_set_block_size(surface_B, np, np) ;
+    sisl_matrix_row_number(surface_B) =
+    sisl_matrix_column_number(surface_B) = np ;
+    sisl_matrix_local_row_start(surface_B) = imin ;
+    sisl_matrix_local_row_end(surface_B) = imax ;
 
+    /*this is the default for a locally-reacting surface*/
+    sisl_matrix_set_all(surface_B, 1.0) ;
+  } else {
+    g_assert_not_reached() ;
+  }
+  
+  if ( surface_A_file == NULL ) {
+    surface_A = sisl_matrix_new(rc, SISL_MATRIX_DIAGONAL) ;
+    sisl_matrix_set_block_size(surface_A, np, np) ; 
+    sisl_matrix_row_number(surface_A) =
+      sisl_matrix_column_number(surface_A) = np ;
+    sisl_matrix_local_row_start(surface_A) = imin ;
+    sisl_matrix_local_row_end(surface_A) = imax ;
+
+    /*take the local admittance from the configuration (usually zero)*/
+    if ( rc == SISL_REAL ) {
+      sisl_matrix_set_all(surface_A, config->bc_default_admittance[0]) ;
+    } else {
+      GSL_SET_COMPLEX(&zc,
+		      config->bc_default_admittance[0],
+		      config->bc_default_admittance[1]) ;
+      sisl_matrix_set_all_complex(surface_A, zc) ;
+    }
+  } else {
+    /*we need to read surface admittance data*/
+    GSL_SET_COMPLEX(&zc,
+		    config->bc_default_admittance[0],
+		    config->bc_default_admittance[1]) ;
+    input = file_open(surface_A_file, "", "r", NULL) ;
+    surface_A = read_surface_matrix(input, &(GSL_REAL(zc)), imin, imax,
+				    np, surface_A) ;
+    if ( surface_A == NULL ) {
+      fprintf(stderr, "%s: could not read surface data matrix from %s",
+	      progname, surface_A_file) ;
+      exit(1) ;
+    }
+    
+    file_close(input) ;
+  }
+
+  /*if required, invert the surface admittance matrix*/
+  if ( invertB ) sisl_matrix_invert(surface_B) ;
+
+  /*apply the surface treatment to the A matrix: A-> A - B\beta^{-1}\alpha*/
+  if ( rc == SISL_REAL ) {
+    sisl_matrix_triple_mul_w(B, surface_B, surface_A, A, -1.0, 1.0) ;
+  } else {
+    /*in the complex case, the admittance is multiplied by jk*/
+    GSL_SET_COMPLEX(&zc, 1.0, 0.0) ;
+    GSL_SET_COMPLEX(&ac, 0.0, -bem3d_parameters_wavenumber(&param)) ;
+    sisl_matrix_triple_mul_w_complex(B, surface_B, surface_A, A, ac, zc) ;
+  }
+
+  if ( wmpi_rank() == 0 ) 
+    fprintf(stderr, "%s: reading boundary conditions: t=%f\n",
+	    progname, g_timer_elapsed(t, NULL)) ;
+  
   input = file_open(datfile, "-", "r", stdin) ;
 
   bem3d_mesh_data_read(&data, input, 0) ;
@@ -643,13 +839,10 @@ gint main(gint argc, gchar **argv)
   wmpi_pause() ;
   sisl_vector_set_length(phi, np) ; 
   sisl_vector_set_length(dphi, np) ;
-
-  if ( mstride == 1 ) set_real_vectors(phi, dphi, data) ;
-  if ( mstride == 2 ) set_complex_vectors(phi, dphi, data) ;
   
-  if ( sisl_is_real(phi) ) sisl_vector_set_all(phi, 0.0) ;
-  else sisl_vector_set_all_complex(phi, GSL_COMPLEX_ZERO) ;
-
+  if ( rc == SISL_REAL ) set_real_vectors(phi, dphi, data) ;
+  if ( rc == SISL_COMPLEX ) set_complex_vectors(phi, dphi, data) ;
+  
   if ( wmpi_process_number() > 1 )
     sisl_matrix_distribution(A) = sisl_matrix_distribution(B) = 
       SISL_DISTRIBUTED ;
@@ -658,11 +851,25 @@ gint main(gint argc, gchar **argv)
     fprintf(stderr, "%s: starting solution: t=%f\n",
 	    progname, g_timer_elapsed(t, NULL)) ;
 
+  v1 = sisl_vector_new(rc) ;
+  v2 = sisl_vector_new(rc) ;
+  sisl_vector_set_length(v1, np) ;
+  sisl_vector_set_length(v2, np) ;
 
+  /*initialize the right hand side*/
+  sisl_matrix_vector_mul(surface_A, phi, v1) ;
+  sisl_matrix_vector_mul(surface_B, v1, v2) ;
+  sisl_vector_sub(v2, dphi) ;
+  sisl_matrix_vector_mul(B, v2, rhs) ;
+
+  /*store the incident potential for later use*/
+  sisl_vector_copy(v1, phi) ;
+  
   w = sisl_solver_workspace_new() ;
 
-  sisl_matrix_vector_mul(B, dphi, rhs) ;
-
+  /* i = 319 ;  */
+  /* zc = sisl_vector_get_complex(rhs,i) ;       */
+  /* fprintf(stderr, "%1.16e %1.16e\n", GSL_REAL(zc), GSL_IMAG(zc)) ; */
 
 #ifdef FMM_MATRIX_CHECK
   sisl_matrix_vector_mul(A, rhs, dphi) ;
@@ -673,9 +880,18 @@ gint main(gint argc, gchar **argv)
 
 #endif /*FMM_MATRIX_CHECK*/
 
+  if ( sisl_is_real(phi) ) sisl_vector_set_all(phi, 0.0) ;
+  else sisl_vector_set_all_complex(phi, GSL_COMPLEX_ZERO) ;
 
   sisl_solve(SISL_SOLVER_BICGSTAB, A, phi, rhs, tol, 128, w, &perf) ;
 
+  /*phi now contains the scattered potential: generate the scattered
+    dphi to make the solution complete*/
+  sisl_vector_add(v1, phi) ;
+  sisl_matrix_vector_mul(surface_A, v1, v2) ;
+  sisl_matrix_vector_mul(surface_B, v2, v1) ;
+  sisl_vector_sub(v1, dphi) ;
+  
   wmpi_pause() ;
   if ( wmpi_rank() == 0 ) 
     fprintf(stderr, "%s: system solved: t=%f\n",
@@ -683,6 +899,7 @@ gint main(gint argc, gchar **argv)
 
   sisl_matrix_free(A) ; sisl_matrix_free(B) ;
 
+  /*output from here is the scattered potential (only)*/
   if ( wmpi_rank() == 0 ) {
     output = file_open(opfile, "-", "w", stdout) ;
     if ( !sisl_is_real(phi) ) {
@@ -690,7 +907,8 @@ gint main(gint argc, gchar **argv)
       for ( i = 0 ; i < sisl_vector_length(phi) ; i ++ ) {
 	zc = sisl_vector_get_complex(phi,i) ;      
 	fprintf(output, "%d %1.16e %1.16e", i, GSL_REAL(zc), GSL_IMAG(zc)) ;
-	zc = sisl_vector_get_complex(dphi,i) ;      
+	/* zc = sisl_vector_get_complex(dphi,i) ;       */
+	zc = sisl_vector_get_complex(v1,i) ;      
 	fprintf(output, " %1.16e %1.16e\n", GSL_REAL(zc), GSL_IMAG(zc)) ;
       }
     } else {
@@ -698,7 +916,8 @@ gint main(gint argc, gchar **argv)
       for ( i = 0 ; i < sisl_vector_length(phi) ; i ++ ) 
 	fprintf(output, "%d %1.16e %1.16e\n", i,
 		sisl_vector_get(phi,i),
-		sisl_vector_get(dphi,i)) ;
+		sisl_vector_get(v1,i)) ;
+		/* sisl_vector_get(dphi,i)) ; */
     }
     file_close(output) ;
   }

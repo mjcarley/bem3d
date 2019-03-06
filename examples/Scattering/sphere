@@ -1,0 +1,45 @@
+#!/bin/bash
+
+k=1.0
+geometry=sphere
+#peanut
+
+config=sphere.cfg
+## generate a spherical surface using the BEM3D sphere generator
+## increase the argument of the -r option to refine the geometry
+bem3d-sphere -e 0 -r 3 > sphere.bem
+
+## assemble the matrix for a Helmholtz problem
+bem3d-assemble -k ${k} -C ${config} -i ${geometry}.bem -o ${geometry}.mtx
+
+## generate a plane wave boundary condition using an
+## analytically-specified function
+bem3d-function -E 4 -i ${geometry}.bem -F plane.fn -s "k=${k}" -o bc-plane.dat
+##bem3d-function -E 4 -i ${geometry}.bem -F source.fn -s "k=${k}" -o bc-plane.dat
+
+#bem3d-function -E 2 -i ${geometry}.bem -F admittance.fn -D -o admittance.mtx
+
+## solve for the surface potential using the plane wave boundary condition
+bem3d-solve -C ${config} -d bc-plane.dat -m ${geometry}.mtx \
+	    -o solution.dat -t 1e-6 -k ${k}
+
+#-A admittance.mtx
+
+exit
+
+## generate a GMSH visualization to view the surface potential solution
+bem3d2pos -t "Surface" -i ${geometry}.bem -d solution.dat -o ${geometry}.pos
+
+## use a mesh from GMSH to show the gradient (velocity field)
+## generate a GMSH mesh for the field
+gmsh -2 field.geo
+
+## convert the GMSH mesh to BEM3D format
+msh2bem3d < field.msh > field.bem
+
+## compute the field, including the gradient, on the mesh
+bem3d-field -k ${k} -C ${config} -d solution.dat -i ${geometry}.bem \
+	    -s field.bem -o field.dat
+
+## generate a GMSH visualization for the three components of velocity
+bem3d2pos -t "Field" -i field.bem -d field.dat -o field.pos

@@ -1,6 +1,6 @@
 /* gts2bem3d.c
  * 
- * Copyright (C) 2006, 2009 Michael Carley
+ * Copyright (C) 2006, 2009, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -66,9 +66,10 @@ gint main(gint argc, gchar **argv)
 	      "Usage %s <options> < input.gts > output.bem3d\n", 
 	      progname) ;
       fprintf(stderr, "Options:\n") ;
-      fprintf(stderr, "        -a # (angle for determining sharp edges)\n") ;
-      fprintf(stderr, "        -e # (order of element)\n") ;
-      fprintf(stderr, "        -n # (index of first node)\n") ;
+      fprintf(stderr, "   -h print this message and exit\n") ;
+      fprintf(stderr, "   -a # (angle for determining sharp edges)\n") ;
+      fprintf(stderr, "   -e # (order of element)\n") ;
+      fprintf(stderr, "   -n # (index of first node)\n") ;
       return 0 ;
       break ;
     case 'n': sscanf(optarg, "%d", &n) ; break ;

@@ -1,10 +1,15 @@
-head	1.1;
+head	1.2;
 access;
 symbols;
 locks
-	ensmjc:1.1; strict;
+	ensmjc:1.2; strict;
 comment	@ * @;
 
+
+1.2
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.1;
 
 1.1
 date	2009.08.17.15.28.35;	author ensmjc;	state Exp;
@@ -16,14 +21,14 @@ desc
 @@
 
 
-1.1
+1.2
 log
-@Initial revision
+@*** empty log message ***
 @
 text
 @/* logging.c
  * 
- * Copyright (C) 2006 Michael Carley
+ * Copyright (C) 2006, 2018 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,4 +166,15 @@ gint bem3d_logging_init(FILE *f, gchar *p,
  * @@}
  * 
  */
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 1
+a3 1
+ * Copyright (C) 2006 Michael Carley
 @

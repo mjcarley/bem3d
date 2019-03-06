@@ -1,10 +1,15 @@
-head	1.4;
+head	1.5;
 access;
 symbols;
 locks
-	ensmjc:1.4; strict;
+	ensmjc:1.5; strict;
 comment	@ * @;
 
+
+1.5
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.4;
 
 1.4
 date	2017.07.03.10.47.49;	author ensmjc;	state Exp;
@@ -31,7 +36,7 @@ desc
 @@
 
 
-1.4
+1.5
 log
 @*** empty log message ***
 @
@@ -42,6 +47,24 @@ text
 #include <glib.h>
 #include <gts.h>
 #include "bem3d.h"
+
+#define _invert3x3(_Ai,_A)						\
+  do {                                                                  \
+    gdouble _det = 1.0/((_A)[0]*((_A)[8]*(_A)[4]-(_A)[7]*(_A)[5]) -     \
+                        (_A)[3]*((_A)[8]*(_A)[1]-(_A)[7]*(_A)[2]) +     \
+                        (_A)[6]*((_A)[5]*(_A)[1]-(_A)[4]*(_A)[2])) ;    \
+    (_Ai)[0] =  _det*((_A)[8]*(_A)[4] - (_A)[7]*(_A)[5]) ;              \
+    (_Ai)[1] = -_det*((_A)[8]*(_A)[1] - (_A)[7]*(_A)[2]) ;              \
+    (_Ai)[2] =  _det*((_A)[5]*(_A)[1] - (_A)[4]*(_A)[2]) ;              \
+                                                                        \
+    (_Ai)[3] = -_det*((_A)[8]*(_A)[3] - (_A)[6]*(_A)[5]) ;              \
+    (_Ai)[4] =  _det*((_A)[8]*(_A)[0] - (_A)[6]*(_A)[2]) ;              \
+    (_Ai)[5] = -_det*((_A)[5]*(_A)[0] - (_A)[3]*(_A)[2]) ;              \
+                                                                        \
+    (_Ai)[6] =  _det*((_A)[7]*(_A)[3] - (_A)[6]*(_A)[4]) ;              \
+    (_Ai)[7] = -_det*((_A)[7]*(_A)[0] - (_A)[6]*(_A)[1]) ;              \
+    (_Ai)[8] =  _det*((_A)[4]*(_A)[0] - (_A)[3]*(_A)[1]) ;              \
+  } while (0)
 
 #define BEM3D_STARTUP_MESSAGE \
 "This is free software; see the source code for copying conditions.\n\
@@ -125,7 +148,19 @@ FILE *file_open(gchar *fname, gchar *namedefault, gchar *mode,
 		FILE *fdefault) ;
 gint file_close(FILE *f) ;
 
+gint parse_complex(gchar *v, gdouble z[]) ;
+
 #endif /*_BEM_PRIVATE_H_INCLUDED_*/
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d8 18
+d107 2
 @
 
 

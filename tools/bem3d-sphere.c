@@ -1,6 +1,6 @@
 /* bem3d-sphere.c
  * 
- * Copyright (C) 2006, 2008 Michael Carley
+ * Copyright (C) 2006, 2008, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -81,9 +81,9 @@ gint main(gint argc, gchar **argv)
   order = 1 ; refine = 3 ; sx = sy = sz = 1.0 ; R = 1.0 ;
   u = v = w = 0.0 ; n = 0 ; write_last_node = FALSE ;
   opfile = NULL ; sharp_edge_angle = M_PI ;
+
   while ( (ch = getopt(argc, argv, "e:hln:o:R:r:u:v:w:x:y:z:")) != EOF ) {
     switch (ch) {
-    case 'e': sscanf(optarg, "%d", &order) ; break ;
     default: 
     case 'h':
       fprintf(stderr, 
@@ -91,9 +91,8 @@ gint main(gint argc, gchar **argv)
 	      "sphere or ellipsoid\n\n", progname) ;
       fprintf(stderr, "Usage: %s <options> > output.bem3d\n"
 	      "Options:\n"
-	      "        -e # (order of element)\n"
 	      "        -h (print this message and exit)\n"
-	      
+	      "        -e # (order of element, %d)\n"
 	      "        -l (write the index of last node plus one to stderr)\n"
 	      "        -n # (index of first node)\n"
 	      "        -o <string> (name of output file)\n"
@@ -104,9 +103,11 @@ gint main(gint argc, gchar **argv)
 	      "        -w # (sphere centre Z)\n"
 	      "        -x # (scaling factor in X)\n"
 	      "        -y # (scaling factor in Y)\n"
-	      "        -z # (scaling factor in Z)\n", progname) ;
+	      "        -z # (scaling factor in Z)\n",
+	      progname, order) ;
       return 0 ;
       break ;
+    case 'e': order = atoi(optarg) ; break ;
     case 'l': write_last_node = TRUE ; break ;
     case 'n': sscanf(optarg, "%d", &n) ; break ;
     case 'o': opfile = g_strdup(optarg) ; break ;
@@ -123,6 +124,12 @@ gint main(gint argc, gchar **argv)
 
   fprintf(stderr, "%s", BEM3D_STARTUP_MESSAGE) ;
 
+  if ( refine <= 0 ) {
+    fprintf(stderr, "%s: refinement order (%d) must be greater than zero\n",
+	    progname, refine) ;
+    exit (-1) ;
+  }
+  
   switch ( order ) {
   default: g_assert_not_reached() ; break ;
   case 0:  bfunc = bem3d_element_build_t0 ; nne = 1 ; break ;
@@ -139,10 +146,15 @@ gint main(gint argc, gchar **argv)
   m = bem3d_mesh_new(bem3d_mesh_class(), gts_face_class(),
 		     gts_edge_class(), gts_vertex_class()) ;
   s = gts_surface_generate_sphere(s, refine) ;  
-  bem3d_mesh_discretize(s, nne, bfunc, m) ;
   data[0] = &sx ; data[1] = &sy ; data[2] = &sz ; data[3] = &R ;
   data[4] = &u ; data[5] = &v ; data[6] = &w ;
-  gts_surface_foreach_vertex(GTS_SURFACE(m), (GtsFunc)shift_vertex, data) ;
+  if ( order != 0 ) {
+    bem3d_mesh_discretize(s, nne, bfunc, m) ;
+    gts_surface_foreach_vertex(GTS_SURFACE(m), (GtsFunc)shift_vertex, data) ;
+  } else {
+    gts_surface_foreach_vertex(s, (GtsFunc)shift_vertex, data) ;
+    bem3d_mesh_discretize(s, nne, bfunc, m) ;
+  }
 
   n = bem3d_mesh_index_nodes(m, sharp_edge_angle, 0) ;
 

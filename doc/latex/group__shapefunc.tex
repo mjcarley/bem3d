@@ -3,49 +3,52 @@
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-typedef gint($\ast$ {\bf B\+E\+M3\+D\+Shape\+Func}) (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
+typedef gint($\ast$ \textbf{ B\+E\+M3\+D\+Shape\+Func}) (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-gint {\bf bem3d\+\_\+shfunc\+\_\+t0} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
+gint \textbf{ bem3d\+\_\+shfunc\+\_\+t0} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
 \item 
-gint {\bf bem3d\+\_\+shfunc\+\_\+t1} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
+gint \textbf{ bem3d\+\_\+shfunc\+\_\+t1} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
 \item 
-gint {\bf bem3d\+\_\+shfunc\+\_\+t2} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
+gint \textbf{ bem3d\+\_\+shfunc\+\_\+t2} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
 \item 
-gint {\bf bem3d\+\_\+shfunc\+\_\+t3} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
+gint \textbf{ bem3d\+\_\+shfunc\+\_\+t3} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
 \item 
-gint {\bf bem3d\+\_\+shfunc\+\_\+q1} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
+gint \textbf{ bem3d\+\_\+shfunc\+\_\+q1} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
 \item 
-gint {\bf bem3d\+\_\+shfunc\+\_\+q2} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
+gint \textbf{ bem3d\+\_\+shfunc\+\_\+q2} (gdouble s, gdouble t, gdouble $\ast$L, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, gpointer data)
 \item 
-gint {\bf bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add} ({\bf B\+E\+M3\+D\+Shape\+Func} func, gchar $\ast$name)
+gint \textbf{ bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add} (\textbf{ B\+E\+M3\+D\+Shape\+Func} func, gchar $\ast$name)
 \item 
-gint {\bf bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init} ()
+gint \textbf{ bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init} ()
 \item 
-{\bf B\+E\+M3\+D\+Shape\+Func} {\bf bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func} (const gchar $\ast$name)
+\textbf{ B\+E\+M3\+D\+Shape\+Func} \textbf{ bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func} (const gchar $\ast$name)
 \item 
-const gchar $\ast$ {\bf bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name} ({\bf B\+E\+M3\+D\+Shape\+Func} func)
+const gchar $\ast$ \textbf{ bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name} (\textbf{ B\+E\+M3\+D\+Shape\+Func} func)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Shape functions for triangular and quadrilateral elements, mainly taken from the F\+E\+M\+P\+A\+C\+K library of John Burkardt\+:
+Shape functions for triangular and quadrilateral elements, mainly taken from the F\+E\+M\+P\+A\+CK library of John Burkardt\+:
 
 {\tt http\+://www.\+csit.\+fsu.\+edu/$\sim$burkardt/m\+\_\+src/fempack/fempack.\+html} {\tt http\+://orion.\+math.\+iastate.\+edu/burkardt/f\+\_\+src/fempack/fempack.\+htm}
 
 Shape functions are called with the arguments {\itshape s} and {\itshape t} and return the shape functions and derivatives in arrays which must be properly allocated by the user before the function call. User-\/defined shape functions can be used but must be of the B\+E\+M3\+D\+Shape\+Func type. They must also be added to the internal lookup table, using \doxyref{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add}{p.}{group__shapefunc_ga8b4f59255f7ef49fe2e0157605dabc97} before any elements using them can be read.
 
-For mathematical validity and in order for other functions in the library to work, the shape functions should meet the requirements of `\+Shape function magic\textquotesingle{}, {\tt http\+://caswww.\+colorado.\+edu/courses.\+d/\+I\+F\+E\+M.\+d/\+I\+F\+E\+M.\+Ch18.\+d/\+I\+F\+E\+M.\+Ch18.\+pdf}
+For mathematical validity and in order for other functions in the library to work, the shape functions should meet the requirements of `Shape function magic', {\tt http\+://caswww.\+colorado.\+edu/courses.\+d/\+I\+F\+E\+M.\+d/\+I\+F\+E\+M.\+Ch18.\+d/\+I\+F\+E\+M.\+Ch18.\+pdf}
 
-The definition of \doxyref{B\+E\+M3\+D\+Shape\+Func}{p.}{group__shapefunc_ga844301886db20f07aaa81991fadfc8c3} has provision for passing data to the shape function. Within bem3dlib, at present, all calls set the data field to N\+U\+L\+L. This behaviour will not change for the isoparametric elements which are currently implemented but may be modified in future to take data from the element. 
+The definition of \doxyref{B\+E\+M3\+D\+Shape\+Func}{p.}{group__shapefunc_ga844301886db20f07aaa81991fadfc8c3} has provision for passing data to the shape function. Within bem3dlib, at present, all calls set the data field to N\+U\+LL. This behaviour will not change for the isoparametric elements which are currently implemented but may be modified in future to take data from the element. 
 
 \subsection{Typedef Documentation}
+\mbox{\label{group__shapefunc_ga844301886db20f07aaa81991fadfc8c3}} 
 \index{Shape functions@{Shape functions}!B\+E\+M3\+D\+Shape\+Func@{B\+E\+M3\+D\+Shape\+Func}}
 \index{B\+E\+M3\+D\+Shape\+Func@{B\+E\+M3\+D\+Shape\+Func}!Shape functions@{Shape functions}}
-\subsubsection[{B\+E\+M3\+D\+Shape\+Func}]{\setlength{\rightskip}{0pt plus 5cm}B\+E\+M3\+D\+Shape\+Func}\label{group__shapefunc_ga844301886db20f07aaa81991fadfc8c3}
-B\+E\+M3\+D shape function definition
+\subsubsection{B\+E\+M3\+D\+Shape\+Func}
+{\footnotesize\ttfamily B\+E\+M3\+D\+Shape\+Func}
+
+B\+E\+M3D shape function definition
 
 
 \begin{DoxyParams}{Parameters}
@@ -68,14 +71,12 @@ B\+E\+M3\+D shape function definition
 
 
 \subsection{Function Documentation}
+\mbox{\label{group__shapefunc_ga8b4f59255f7ef49fe2e0157605dabc97}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add@{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add}}
 \index{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add@{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Shape\+Func}}]{func, }
-\item[{gchar $\ast$}]{name}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_ga8b4f59255f7ef49fe2e0157605dabc97}
+\subsubsection{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add()}
+{\footnotesize\ttfamily gint bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Shape\+Func}}]{func,  }\item[{gchar $\ast$}]{name }\end{DoxyParamCaption})}
+
 Add a \doxyref{B\+E\+M3\+D\+Shape\+Func}{p.}{group__shapefunc_ga844301886db20f07aaa81991fadfc8c3} to the lookup table used in mapping shape functions to names.
 
 
@@ -86,19 +87,14 @@ Add a \doxyref{B\+E\+M3\+D\+Shape\+Func}{p.}{group__shapefunc_ga844301886db20f07
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
-
-
-Referenced by bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init().
-
+\mbox{\label{group__shapefunc_ga47e62d35f65f53c1ea24cdd7ae8bd667}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func@{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func}}
 \index{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func@{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Shape\+Func} bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func (
-\begin{DoxyParamCaption}
-\item[{const gchar $\ast$}]{name}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_ga47e62d35f65f53c1ea24cdd7ae8bd667}
+\subsubsection{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func()}
+{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Shape\+Func} bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+func (\begin{DoxyParamCaption}\item[{const gchar $\ast$}]{name }\end{DoxyParamCaption})}
+
 Look up a shape function, given its name.
 
 
@@ -113,29 +109,23 @@ the \doxyref{B\+E\+M3\+D\+Shape\+Func}{p.}{group__shapefunc_ga844301886db20f07aa
 
 Referenced by bem3d\+\_\+mesh\+\_\+read().
 
+\mbox{\label{group__shapefunc_ga6ffc062a9e5f41e6f95459bc06b6a1a8}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init@{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init}}
 \index{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init@{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init (
-\begin{DoxyParamCaption}
-\item[{void}]{}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_ga6ffc062a9e5f41e6f95459bc06b6a1a8}
+\subsubsection{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init()}
+{\footnotesize\ttfamily gint bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
 Initialize the shape function lookup table. This function must be called before any shape functions are used or elements read. As well as allocating the lookup table, it also adds the basic isoparametric shape functions of order 0--3 for triangles and orders 1 and 2 for quadrilaterals.
 
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
-
-
-References bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+add(), bem3d\+\_\+shfunc\+\_\+q1(), bem3d\+\_\+shfunc\+\_\+q2(), bem3d\+\_\+shfunc\+\_\+t0(), bem3d\+\_\+shfunc\+\_\+t1(), bem3d\+\_\+shfunc\+\_\+t2(), and bem3d\+\_\+shfunc\+\_\+t3().
-
+\mbox{\label{group__shapefunc_ga3dafb8d5148b2406e09fb226079b8654}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name@{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name}}
 \index{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name@{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name}]{\setlength{\rightskip}{0pt plus 5cm}const gchar$\ast$ bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Shape\+Func}}]{func}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_ga3dafb8d5148b2406e09fb226079b8654}
+\subsubsection{bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name()}
+{\footnotesize\ttfamily const gchar$\ast$ bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Shape\+Func}}]{func }\end{DoxyParamCaption})}
+
 Find the name under which a \doxyref{B\+E\+M3\+D\+Shape\+Func}{p.}{group__shapefunc_ga844301886db20f07aaa81991fadfc8c3} has been registered.
 
 
@@ -144,24 +134,18 @@ Find the name under which a \doxyref{B\+E\+M3\+D\+Shape\+Func}{p.}{group__shapef
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-the name of {\itshape func} in the lookup table, or N\+U\+L\+L if not found. 
+the name of {\itshape func} in the lookup table, or N\+U\+LL if not found. 
 \end{DoxyReturn}
 
 
 Referenced by bem3d\+\_\+element\+\_\+write().
 
+\mbox{\label{group__shapefunc_gab5d91ecfd994dfcd593275cfe52050c8}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shfunc\+\_\+q1@{bem3d\+\_\+shfunc\+\_\+q1}}
 \index{bem3d\+\_\+shfunc\+\_\+q1@{bem3d\+\_\+shfunc\+\_\+q1}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shfunc\+\_\+q1}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+shfunc\+\_\+q1 (
-\begin{DoxyParamCaption}
-\item[{gdouble}]{s, }
-\item[{gdouble}]{t, }
-\item[{gdouble $\ast$}]{L, }
-\item[{gdouble $\ast$}]{d\+Lds, }
-\item[{gdouble $\ast$}]{d\+Ldt, }
-\item[{gpointer}]{data}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_gab5d91ecfd994dfcd593275cfe52050c8}
+\subsubsection{bem3d\+\_\+shfunc\+\_\+q1()}
+{\footnotesize\ttfamily gint bem3d\+\_\+shfunc\+\_\+q1 (\begin{DoxyParamCaption}\item[{gdouble}]{s,  }\item[{gdouble}]{t,  }\item[{gdouble $\ast$}]{L,  }\item[{gdouble $\ast$}]{d\+Lds,  }\item[{gdouble $\ast$}]{d\+Ldt,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
 Linear shape function for a quadrilateral $(0,0)$, $(1,0)$, $(1,1)$, $(0,1)$.
 
 
@@ -180,24 +164,18 @@ Linear shape function for a quadrilateral $(0,0)$, $(1,0)$, $(1,1)$, $(0,1)$.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q1(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), and bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init().
+Referenced by bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami().
 
+\mbox{\label{group__shapefunc_gaf4cecd331e0d4dfefb60c29f2278a45a}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shfunc\+\_\+q2@{bem3d\+\_\+shfunc\+\_\+q2}}
 \index{bem3d\+\_\+shfunc\+\_\+q2@{bem3d\+\_\+shfunc\+\_\+q2}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shfunc\+\_\+q2}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+shfunc\+\_\+q2 (
-\begin{DoxyParamCaption}
-\item[{gdouble}]{s, }
-\item[{gdouble}]{t, }
-\item[{gdouble $\ast$}]{L, }
-\item[{gdouble $\ast$}]{d\+Lds, }
-\item[{gdouble $\ast$}]{d\+Ldt, }
-\item[{gpointer}]{data}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_gaf4cecd331e0d4dfefb60c29f2278a45a}
+\subsubsection{bem3d\+\_\+shfunc\+\_\+q2()}
+{\footnotesize\ttfamily gint bem3d\+\_\+shfunc\+\_\+q2 (\begin{DoxyParamCaption}\item[{gdouble}]{s,  }\item[{gdouble}]{t,  }\item[{gdouble $\ast$}]{L,  }\item[{gdouble $\ast$}]{d\+Lds,  }\item[{gdouble $\ast$}]{d\+Ldt,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
 Second order shape function for a quadrilateral $(0,0)$, $(1,0)$, $(1,1)$, $(0,1)$.
 
 
@@ -216,24 +194,18 @@ Second order shape function for a quadrilateral $(0,0)$, $(1,0)$, $(1,1)$, $(0,1
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q2(), and bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q2().
 
+\mbox{\label{group__shapefunc_gaa7fef62285688d7553ded3298588255f}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shfunc\+\_\+t0@{bem3d\+\_\+shfunc\+\_\+t0}}
 \index{bem3d\+\_\+shfunc\+\_\+t0@{bem3d\+\_\+shfunc\+\_\+t0}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shfunc\+\_\+t0}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+shfunc\+\_\+t0 (
-\begin{DoxyParamCaption}
-\item[{gdouble}]{s, }
-\item[{gdouble}]{t, }
-\item[{gdouble $\ast$}]{L, }
-\item[{gdouble $\ast$}]{d\+Lds, }
-\item[{gdouble $\ast$}]{d\+Ldt, }
-\item[{gpointer}]{data}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_gaa7fef62285688d7553ded3298588255f}
+\subsubsection{bem3d\+\_\+shfunc\+\_\+t0()}
+{\footnotesize\ttfamily gint bem3d\+\_\+shfunc\+\_\+t0 (\begin{DoxyParamCaption}\item[{gdouble}]{s,  }\item[{gdouble}]{t,  }\item[{gdouble $\ast$}]{L,  }\item[{gdouble $\ast$}]{d\+Lds,  }\item[{gdouble $\ast$}]{d\+Ldt,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
 Zero order (constant) shape function for a triangle, $L=1$.
 
 
@@ -252,24 +224,18 @@ Zero order (constant) shape function for a triangle, $L=1$.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), and bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), and bem3d\+\_\+operator\+\_\+gradient().
 
+\mbox{\label{group__shapefunc_ga0921fb3aeadff37d40c9eb1bccbea7c0}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shfunc\+\_\+t1@{bem3d\+\_\+shfunc\+\_\+t1}}
 \index{bem3d\+\_\+shfunc\+\_\+t1@{bem3d\+\_\+shfunc\+\_\+t1}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shfunc\+\_\+t1}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+shfunc\+\_\+t1 (
-\begin{DoxyParamCaption}
-\item[{gdouble}]{s, }
-\item[{gdouble}]{t, }
-\item[{gdouble $\ast$}]{L, }
-\item[{gdouble $\ast$}]{d\+Lds, }
-\item[{gdouble $\ast$}]{d\+Ldt, }
-\item[{gpointer}]{data}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_ga0921fb3aeadff37d40c9eb1bccbea7c0}
+\subsubsection{bem3d\+\_\+shfunc\+\_\+t1()}
+{\footnotesize\ttfamily gint bem3d\+\_\+shfunc\+\_\+t1 (\begin{DoxyParamCaption}\item[{gdouble}]{s,  }\item[{gdouble}]{t,  }\item[{gdouble $\ast$}]{L,  }\item[{gdouble $\ast$}]{d\+Lds,  }\item[{gdouble $\ast$}]{d\+Ldt,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
 Linear shape function for a triangle $(0,0)$, $(1,0)$, $(0,1)$.
 
 
@@ -288,24 +254,18 @@ Linear shape function for a triangle $(0,0)$, $(1,0)$, $(0,1)$.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t1(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), and bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+operator\+\_\+gradient(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami().
 
+\mbox{\label{group__shapefunc_ga3e1b82c86c45c1c874c84d33dcddc89c}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shfunc\+\_\+t2@{bem3d\+\_\+shfunc\+\_\+t2}}
 \index{bem3d\+\_\+shfunc\+\_\+t2@{bem3d\+\_\+shfunc\+\_\+t2}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shfunc\+\_\+t2}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+shfunc\+\_\+t2 (
-\begin{DoxyParamCaption}
-\item[{gdouble}]{s, }
-\item[{gdouble}]{t, }
-\item[{gdouble $\ast$}]{L, }
-\item[{gdouble $\ast$}]{d\+Lds, }
-\item[{gdouble $\ast$}]{d\+Ldt, }
-\item[{gpointer}]{data}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_ga3e1b82c86c45c1c874c84d33dcddc89c}
+\subsubsection{bem3d\+\_\+shfunc\+\_\+t2()}
+{\footnotesize\ttfamily gint bem3d\+\_\+shfunc\+\_\+t2 (\begin{DoxyParamCaption}\item[{gdouble}]{s,  }\item[{gdouble}]{t,  }\item[{gdouble $\ast$}]{L,  }\item[{gdouble $\ast$}]{d\+Lds,  }\item[{gdouble $\ast$}]{d\+Ldt,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
 Second order shape function for a triangle $(0,0)$, $(1,0)$, $(0,1)$.
 
 
@@ -324,24 +284,18 @@ Second order shape function for a triangle $(0,0)$, $(1,0)$, $(0,1)$.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t2(), and bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t2().
 
+\mbox{\label{group__shapefunc_gafe1e4ebebf24aa46b2184f5af4c454e6}} 
 \index{Shape functions@{Shape functions}!bem3d\+\_\+shfunc\+\_\+t3@{bem3d\+\_\+shfunc\+\_\+t3}}
 \index{bem3d\+\_\+shfunc\+\_\+t3@{bem3d\+\_\+shfunc\+\_\+t3}!Shape functions@{Shape functions}}
-\subsubsection[{bem3d\+\_\+shfunc\+\_\+t3}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+shfunc\+\_\+t3 (
-\begin{DoxyParamCaption}
-\item[{gdouble}]{s, }
-\item[{gdouble}]{t, }
-\item[{gdouble $\ast$}]{L, }
-\item[{gdouble $\ast$}]{d\+Lds, }
-\item[{gdouble $\ast$}]{d\+Ldt, }
-\item[{gpointer}]{data}
-\end{DoxyParamCaption}
-)}\label{group__shapefunc_gafe1e4ebebf24aa46b2184f5af4c454e6}
+\subsubsection{bem3d\+\_\+shfunc\+\_\+t3()}
+{\footnotesize\ttfamily gint bem3d\+\_\+shfunc\+\_\+t3 (\begin{DoxyParamCaption}\item[{gdouble}]{s,  }\item[{gdouble}]{t,  }\item[{gdouble $\ast$}]{L,  }\item[{gdouble $\ast$}]{d\+Lds,  }\item[{gdouble $\ast$}]{d\+Ldt,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
 Third order shape function for a triangle $(0,0)$, $(1,0)$, $(0,1)$.
 
 
@@ -360,9 +314,9 @@ Third order shape function for a triangle $(0,0)$, $(1,0)$, $(0,1)$.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+init().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t3().
 

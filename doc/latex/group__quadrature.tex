@@ -1,0 +1,480 @@
+\section{Quadrature rules}
+\label{group__quadrature}\index{Quadrature rules@{Quadrature rules}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ B\+E\+M3\+D\+Quadrature\+Selector}
+\item 
+struct \textbf{ B\+E\+M3\+D\+Quadrature\+Rule}
+\item 
+struct \textbf{ B\+E\+M3\+D\+Quadrature\+Rule\+Func}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$ \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+new} (gint n, gint nc)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+realloc} (\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, gint n)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+add\+\_\+point} (\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, gdouble xi, gdouble eta, gdouble w)
+\item 
+gdouble \textbf{ bem3d\+\_\+quadrature\+\_\+parameter} (Gts\+Point $\ast$p, \textbf{ B\+E\+M3\+D\+Element} $\ast$e)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+default} (Gts\+Point $\ast$p, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw} (Gts\+Point $\ast$p, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar} (Gts\+Point $\ast$p, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs} (Gts\+Point $\ast$p, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx} (Gts\+Point $\ast$p, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+remap} (gdouble xi0, gdouble eta0, gdouble xi1, gdouble eta1, gdouble xi2, gdouble eta2, gdouble s, gdouble t, gdouble w, gdouble $\ast$sn, gdouble $\ast$tn, gdouble $\ast$wn)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+write} (\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, F\+I\+LE $\ast$f)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami} (Gts\+Point $\ast$xs, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman} (Gts\+Point $\ast$xs, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient} (Gts\+Point $\ast$xs, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss} (Gts\+Point $\ast$p, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\label{group__quadrature_gac1b9a709a01a464983bc80874e5aad8a}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+add\+\_\+point@{bem3d\+\_\+quadrature\+\_\+add\+\_\+point}}
+\index{bem3d\+\_\+quadrature\+\_\+add\+\_\+point@{bem3d\+\_\+quadrature\+\_\+add\+\_\+point}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+add\+\_\+point()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+add\+\_\+point (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{gdouble}]{xi,  }\item[{gdouble}]{eta,  }\item[{gdouble}]{w }\end{DoxyParamCaption})}
+
+Add a new quadrature point to a rule
+
+
+\begin{DoxyParams}{Parameters}
+{\em q} & quadrature rule \\
+\hline
+{\em xi} & area coordinate of quadrature point \\
+\hline
+{\em eta} & area coordinate of quadrature point \\
+\hline
+{\em w} & weight of quadrature point\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\end{DoxyReturn}
+\mbox{\label{group__quadrature_gaf922124a0d8cc4ae151a23974972f133}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+parameter@{bem3d\+\_\+quadrature\+\_\+parameter}}
+\index{bem3d\+\_\+quadrature\+\_\+parameter@{bem3d\+\_\+quadrature\+\_\+parameter}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+parameter()}
+{\footnotesize\ttfamily gdouble bem3d\+\_\+quadrature\+\_\+parameter (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{p,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e }\end{DoxyParamCaption})}
+
+Quadrature selection parameter used in choosing quadrature rules
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & field point \\
+\hline
+{\em e} & element over which to integrate\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+sigma parameter. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+vertex\+\_\+number.
+
+
+
+Referenced by bem3d\+\_\+quadrature\+\_\+rule\+\_\+default().
+
+\mbox{\label{group__quadrature_ga30e62360f6fdac3a7fb3a6689f2fa3a2}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+default@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+default}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+default@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+default}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+default()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+default (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{p,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Set quadrature rule to default
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & field point; \\
+\hline
+{\em e} & element to integrate over; \\
+\hline
+{\em q} & quadrature rule; \\
+\hline
+{\em gfunc} & ignored; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & ignored.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+quadrature\+\_\+parameter(), and bem3d\+\_\+quadrature\+\_\+select().
+
+
+
+Referenced by bem3d\+\_\+configuration\+\_\+new().
+
+\mbox{\label{group__quadrature_ga02d33ea424ac4f97c60bafe54854709d}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{p,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Standard Gaussian quadrature for triangular elements
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & field point (ignored) \\
+\hline
+{\em e} & element to integrate over \\
+\hline
+{\em q} & quadrature rule to fill \\
+\hline
+{\em gfunc} & ignored; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & pointer to gint containing the number of points in rule (1, 3, 4, or 7)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success, exit with error if number of points in rule is not 1, 3, 4, or 7. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+corner\+\_\+number, and bem3d\+\_\+quadrature\+\_\+rule\+\_\+realloc().
+
+\mbox{\label{group__quadrature_ga24eb86b995f91354922243f19d699d27}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{xs,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Quadrature rule for near-\/singular integrals, using the method of Hayami, Ken, `Variable transformations for nearly singular integrals in the boundary element method', Publ. R\+I\+MS, Kyoto Univ., 41\+:821--842, 2005 and Hayami, Ken \& Matsumoto, Hideki, `A numerical quadrature for nearly singular boundary element integrals', Engineering Analysis with Boundary Elements, 13\+:143--154, 1994. The integration point {\itshape xs} may not lie on the element.
+
+
+\begin{DoxyParams}{Parameters}
+{\em xs} & field point; \\
+\hline
+{\em e} & element to integrate over; \\
+\hline
+{\em q} & quadrature rule to fill; \\
+\hline
+{\em gfunc} & ignored; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & gint[2], first element number of quadrature points in radius; second element number of points in angle.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+corner\+\_\+number, bem3d\+\_\+shfunc\+\_\+q1(), and bem3d\+\_\+shfunc\+\_\+t1().
+
+\mbox{\label{group__quadrature_gafaaa32a6c6dfd1853e3fef7cfb9ef8b8}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{p,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Khayat-\/\+Wilton quadrature rule for singular and near-\/singular integrals on triangular elements (Khayat, Michael A. and Wilton, Donald R., `Numerical evaluation of singular and near-\/singular potential integrals', I\+E\+EE Transactions on Antennas and Propagation, 53(10)\+:3180--3190, 2005, doi\+: 10.\+1109/\+T\+AP.2005.\+856342
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & field point \\
+\hline
+{\em e} & element to integrate over \\
+\hline
+{\em q} & quadrature rule to fill \\
+\hline
+{\em gfunc} & ignored; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & gint[2], first element number of quadrature points in radius; second element number of points in angle\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+corner\+\_\+number.
+
+\mbox{\label{group__quadrature_gae91ddcbe39ef458d388356846902633a}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+new@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+new}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+new@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+new}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+new()}
+{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Quadrature\+Rule}$\ast$ bem3d\+\_\+quadrature\+\_\+rule\+\_\+new (\begin{DoxyParamCaption}\item[{gint}]{n,  }\item[{gint}]{nc }\end{DoxyParamCaption})}
+
+Allocate a new quadrature rule
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & maximum number of points in quadrature rule; \\
+\hline
+{\em nc} & number of components in integral.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to new quadrature rule 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+element\+\_\+area(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), and bem3d\+\_\+reduction\+\_\+func\+\_\+int().
+
+\mbox{\label{group__quadrature_ga9461a4817b5fd649b3550f904ba7f85c}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{xs,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Generate a quadrature rule for linear elements (triangular for now) using the method of Newman, J. N., `Distributions of sources and normal dipoles over a quadrilateral panel', Journal of Engineering Mathematics, 20\+:113--126, 1986. The quadrature gives the weights for integration of the Laplace Green\textquotesingle{}s function in the \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} free terms so that, for example, $\int L_{i}/4\pi R\mathrm{d}S = f_{i}$, with $f_{i}$ the $i$th quadrature free term.
+
+
+\begin{DoxyParams}{Parameters}
+{\em xs} & field point for the integration; \\
+\hline
+{\em e} & element for integration; \\
+\hline
+{\em q} & quadrature rule; \\
+\hline
+{\em gfunc} & this should contain \doxyref{bem3d\+\_\+greens\+\_\+func\+\_\+laplace}{p.}{group__gfunc_ga7be3ccc1b8aa94be24b6029f34f009ea} or N\+U\+LL; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & ignored.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+node, bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+greens\+\_\+func\+\_\+laplace(), bem3d\+\_\+greens\+\_\+function\+\_\+func, and bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real.
+
+\mbox{\label{group__quadrature_gaa158e2737e7359731303ae9b8d4cdce3}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{xs,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Generate a quadrature rule for gradient of potential field using linear elements (triangular for now) using the method of Newman, J. N., `Distributions of sources and normal dipoles over a quadrilateral panel', Journal of Engineering Mathematics, 20\+:113--126, 1986. The quadrature gives the weights for integration of the Laplace Green\textquotesingle{}s function in the \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} free terms so that, for example, $\nabla\int L_{i}/4\pi R\mathrm{d}S = f_{i}$, with $f_{i}$ the $i$th quadrature free term. The ordering of the free terms $g_{i}$ is such that $\int G \phi\mathrm{d}S=\sum_{i=0}^{2}g_{i}\phi_{i}$, $\frac{\partial}{\partial x}\int G \phi\mathrm{d}S=\sum_{i=3}^{5}g_{i}\phi_{i}$, $\frac{\partial}{\partial y}\int G \phi\mathrm{d}S=\sum_{i=6}^{8}g_{i}\phi_{i}$, and $\frac{\partial}{\partial z}\int G \phi\mathrm{d}S=\sum_{i=9}^{11}g_{i}\phi_{i}$, and likewise for the double layer term.
+
+
+\begin{DoxyParams}{Parameters}
+{\em xs} & field point for the integration; \\
+\hline
+{\em e} & element for integration; \\
+\hline
+{\em q} & quadrature rule; \\
+\hline
+{\em gfunc} & this should contain \doxyref{bem3d\+\_\+greens\+\_\+func\+\_\+laplace}{p.}{group__gfunc_ga7be3ccc1b8aa94be24b6029f34f009ea} or N\+U\+LL; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & ignored.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+node, bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+greens\+\_\+func\+\_\+laplace(), bem3d\+\_\+greens\+\_\+function\+\_\+func, and bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real.
+
+\mbox{\label{group__quadrature_ga1ce83622d98496883d0be877aa88ecc2}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{p,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Polar transformation quadrature rule for singular and near-\/singular integrals on triangular elements.
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & field point; \\
+\hline
+{\em e} & element to integrate over; \\
+\hline
+{\em q} & quadrature rule to fill; \\
+\hline
+{\em gfunc} & ignored; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & gint[2], first element number of quadrature points in radius; second element number of points in angle.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+corner\+\_\+number.
+
+
+
+Referenced by bem3d\+\_\+quadrature\+\_\+selector\+\_\+default().
+
+\mbox{\label{group__quadrature_gab8c62f1d7010abb68f92d137dec6bdd7}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{p,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Polar transformation quadrature rule for hypersingular.
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & field point; \\
+\hline
+{\em e} & element to integrate over; \\
+\hline
+{\em q} & quadrature rule to fill; \\
+\hline
+{\em gfunc} & ignored; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & gint[2], first element number of quadrature points in radius; second element number of points in angle.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+corner\+\_\+number.
+
+\mbox{\label{group__quadrature_gabf5dd37ac1bdde00780c97eb026a43b3}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+realloc@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+realloc}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+realloc@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+realloc}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+realloc()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+realloc (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{gint}]{n }\end{DoxyParamCaption})}
+
+Reallocate a quadrature rule to hold a new number of quadrature points. Note that the previous data in the rule are lost.
+
+
+\begin{DoxyParams}{Parameters}
+{\em q} & quadrature rule to reallocate \\
+\hline
+{\em n} & number of points in reallocated rule\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss().
+
+\mbox{\label{group__quadrature_ga254a566c33a5701d80dc5e3e760cb0af}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+remap@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+remap}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+remap@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+remap}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+remap()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+remap (\begin{DoxyParamCaption}\item[{gdouble}]{xi0,  }\item[{gdouble}]{eta0,  }\item[{gdouble}]{xi1,  }\item[{gdouble}]{eta1,  }\item[{gdouble}]{xi2,  }\item[{gdouble}]{eta2,  }\item[{gdouble}]{s,  }\item[{gdouble}]{t,  }\item[{gdouble}]{w,  }\item[{gdouble $\ast$}]{sn,  }\item[{gdouble $\ast$}]{tn,  }\item[{gdouble $\ast$}]{wn }\end{DoxyParamCaption})}
+
+Remap a node and weight of a quadrature rule to a new base triangle. The main use for the function is in the decomposition of elements into triangles and the remapping of those triangles to the original element.
+
+
+\begin{DoxyParams}{Parameters}
+{\em xi0} & coordinate of first corner of triangle; \\
+\hline
+{\em eta0} & coordinate of first corner of triangle; \\
+\hline
+{\em xi1} & coordinate of second corner of triangle; \\
+\hline
+{\em eta1} & coordinate of second corner of triangle; \\
+\hline
+{\em xi2} & coordinate of third corner of triangle; \\
+\hline
+{\em eta2} & coordinate of third corner of triangle; \\
+\hline
+{\em s} & coordinate to remap; \\
+\hline
+{\em t} & coordinate to remap; \\
+\hline
+{\em w} & weight of node; \\
+\hline
+{\em sn} & on exit, remapped coordinate; \\
+\hline
+{\em tn} & on exit, remapped coordinate; \\
+\hline
+{\em wn} & on exit, new weight of node.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+\mbox{\label{group__quadrature_ga56b24893173c2ea5856186fc42592a8a}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+write@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+write}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+write@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+write}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+write()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+write (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{F\+I\+LE $\ast$}]{f }\end{DoxyParamCaption})}
+
+Write the nodes and weights of a \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} to a file, mainly of use in debugging.
+
+
+\begin{DoxyParams}{Parameters}
+{\em q} & \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} to write; \\
+\hline
+{\em f} & file pointer.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+\mbox{\label{group__quadrature_ga5ce07d60fee820f21ba02713dca90bfc}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{p,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Symmetric Gaussian quadrature rules for triangles, taken from Wandzura, S. and Xiao, H., `Symmetric quadrature rules on a triangle', Computers and Mathematics with Applications, 45\+:1829--1840. If the element {\itshape e} is triangular, the rules are passed unmodified; if the element has more than three corners, the rules are mapped on to subtriangles formed by the element corners and the centroid of the element in intrinsic coordinates.
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & field point (ignored); \\
+\hline
+{\em e} & element to integrate over; \\
+\hline
+{\em q} & quadrature rule to fill; \\
+\hline
+{\em gfunc} & ignored; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & gint $\ast$, number of points in rule (7, 25, 54, 85, 126, 175).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+corner\+\_\+number.
+
+
+
+Referenced by bem3d\+\_\+element\+\_\+area(), and bem3d\+\_\+quadrature\+\_\+selector\+\_\+default().
+

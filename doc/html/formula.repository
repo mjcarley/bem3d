@@ -90,3 +90,8 @@
 \form#89:$R_{p}\geq R_{s}$
 \form#90:$\sigma=R_{p}/R_{s}$
 \form#91:$\sqrt{2}|\mathbf{c}-\mathbf{x}_{i}|$
+\form#92:$\lambda$
+\form#93:$\partial x_{i}/\partial \xi_{j}$
+\form#94:$\partial \xi_{i}/\partial x_{j}$
+\form#95:$\phi$
+\form#96:$\partial\phi/\partial n$

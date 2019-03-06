@@ -57,7 +57,9 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 
 if test x$GCC = xyes ; then
-  CFLAGS="$CFLAGS -Wall -Werror-implicit-function-declaration -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations"
+  CFLAGS="$CFLAGS -Wall -Werror-implicit-function-declaration \
+  		  -Wstrict-prototypes -Wmissing-prototypes \
+		  -Wmissing-declarations"
 fi
 
 AC_PROG_F77
@@ -86,20 +88,22 @@ else
 fi
 ])
 
-AC_CHECK_PROG(GSL, gsl-config, yes, no)
-if test x$GSL = xyes ; then
-   gsl_cflags=`gsl-config --cflags`
-   gsl_libs=`gsl-config --libs`
-else
-  echo \#################################################################
-  echo \#
-  echo \# GNU Scientific Library not available or not properly installed.
-  echo \# You can get the most recent version from 
-  echo \#      http://www.gnu.org/software/gsl/
-  echo \#
-  echo \#################################################################
-  exit
-fi
+PKG_CHECK_MODULES([GSL], [gsl]) 
+
+#AC_CHECK_PROG(GSL, gsl-config, yes, no)
+#if test x$GSL = xyes ; then
+#   gsl_cflags=`gsl-config --cflags`
+#   gsl_libs=`gsl-config --libs`
+#else
+#  echo \#################################################################
+#  echo \#
+#  echo \# GNU Scientific Library not available or not properly installed.
+#  echo \# You can get the most recent version from 
+#  echo \#      http://www.gnu.org/software/gsl/
+#  echo \#
+#  echo \#################################################################
+#  exit
+#fi
 
 AC_CHECK_PROG(GQR, gqr-config, yes, no)
 if test x$GQR = xyes ; then
@@ -167,8 +171,7 @@ AM_CONDITIONAL([USE_FMMLIB3D_1_2], [test x"$ac_cv_file_fmmlib3d_1_2" = xyes])
 ##AM_CONDITIONAL([USE_FMMLIB3D_1_2], [test -d fmmlib3d-1.2])
 
 PKG_CHECK_MODULES(libmatheval,libmatheval,
-	[AC_DEFINE(HAVE_LIBMATHEVAL, 1, [libmatheval available])
-#	matheval_defines="#define BEM3D_HAVE_MATHEVAL"],
+	[AC_DEFINE(HAVE_LIBMATHEVAL, 1, [libmatheval available])]
 	echo libmatheval not available
 	)
 
@@ -185,10 +188,10 @@ AC_SUBST(sisl_libs)
 AC_SUBST(wmpi_cflags)
 AC_SUBST(wmpi_libs)
 AC_SUBST(mpi_tools)
-AC_SUBST(amm_tools)
 
-CFLAGS="$CFLAGS $libmatheval_CFLAGS $gts_cflags $gqr_cflags $gsl_cflags"
-LDFLAGS="$LDFLAGS $gts_libs $gqr_libs $gsl_libs"
+CFLAGS="$CFLAGS $libmatheval_CFLAGS $gts_cflags $gqr_cflags $GSL_CFLAGS \
+		$wmpi_cflags"
+LDFLAGS="$LDFLAGS $gts_libs $gqr_libs $GSL_LIBS $wmpi_libs"
 
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
@@ -197,7 +200,7 @@ AC_SUBST(LDFLAGS)
 AC_CHECK_LIB(m, sqrt)
 #AC_CHECK_LIB(matheval, evaluator_evaluate)
 
-LIBS="$gqr_libs $gsl_libs $libmatheval_LIBS $gts_libs $LIBS"
+LIBS="$gqr_libs $GSL_LIBS $libmatheval_LIBS $gts_libs $LIBS"
 
 dnl generate `src/bem3dconfig.h'
 AC_CONFIG_COMMANDS([default-1],[[
@@ -278,6 +281,7 @@ tools/Makefile
 doc/Makefile
 doc/html/Makefile
 mpitools/Makefile
-mpitools/bem3d-pbs-run])
+mpitools/bem3d-pbs-run
+mpitools/bem3d-pbs-launch])
 
 AC_OUTPUT

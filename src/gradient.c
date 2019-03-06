@@ -1,6 +1,6 @@
 /* gradient.c
  * 
- * Copyright (C) 2012, 2013 by Michael Carley
+ * Copyright (C) 2012, 2013, 2018 by Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

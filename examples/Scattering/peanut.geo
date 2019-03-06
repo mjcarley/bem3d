@@ -1,0 +1,95 @@
+// peanut geometry from Langrenne, Garcia, Bonnet, J. Acoust. Soc. Am,
+// 138(5):3332--3340, doi:10.1121/1.4935134
+
+lc = 0.5 ;
+
+nspl = 5 ;
+pps = 4 ;
+nth = nspl*(pps-1)+1 ;
+points[] = {} ;
+
+For i In {0:(nth-1)}
+  th = Pi*i/(nth-1) ;
+  r = Sqrt(Cos(2*th) + Sqrt(1.5 - Sin(2*th)^2)) ;
+
+  p = newp ; Point(p) = {r*Sin(th), 0, r*Cos(th), lc} ;
+  points[0*nth+i] = p ;
+
+  p = newp ; Point(p) = {0, r*Sin(th), r*Cos(th), lc} ;
+  points[1*nth+i] = p ;
+
+  p = newp ; Point(p) = {-r*Sin(th), 0, r*Cos(th), lc} ;
+  points[2*nth+i] = p ;
+
+  p = newp ; Point(p) = {0, -r*Sin(th), r*Cos(th), lc} ;
+  points[3*nth+i] = p ;
+
+  // For use as centres in drawing circular arcs
+  p = newp ; Point(p) = {0, 0, r*Cos(th), lc} ;
+  points[4*nth+i] = p ;
+
+EndFor
+
+points[1*nth+0] = points[0*nth+0] ; points[1*nth+nth-1] = points[0*nth+nth-1] ;
+points[2*nth+0] = points[0*nth+0] ; points[2*nth+nth-1] = points[0*nth+nth-1] ;
+points[3*nth+0] = points[0*nth+0] ; points[3*nth+nth-1] = points[0*nth+nth-1] ;
+
+splines[] = {} ;
+
+For i In {0:(nspl-1)}
+  For j In {0:3}
+    s = newc ; Spline(s) = {points[{j*nth+i*(pps-1):j*nth+(i+1)*(pps-1)}]} ;
+    splines[j*nspl+i] = s ;
+  EndFor
+EndFor
+
+arcs[] = {} ;
+
+For s In {1:(nspl-1)}
+  i = s*(pps-1) ;
+  For j In {0:2}
+    c = newc ;
+    Circle(c) = {points[j*nth+i],points[4*nth+i],points[(j+1)*nth+i]} ;
+    arcs[j*nspl+s] = c ;
+  EndFor
+  c = newc ;
+  Circle(c) = {points[3*nth+i],points[4*nth+i],points[0*nth+i]} ;
+    arcs[3*nspl+s] = c ;
+EndFor
+
+c = 0 ;
+For j In {0:2}
+  l = newl ;
+  Line Loop(l) = {splines[j*nspl+c], arcs[j*nspl+c+1], -splines[(j+1)*nspl+c]} ;
+  s = news ; Surface(s) = {l} ;
+EndFor
+l = newl ;
+Line Loop(l) = {splines[3*nspl+c], arcs[3*nspl+c+1], -splines[0*nspl+c]} ;
+s = news ; Surface(s) = {l} ;
+
+For c In {1:(nspl-2)}
+  For j In {0:2}
+    l = newl ;
+    Line Loop(l) = {splines[j*nspl+c], arcs[j*nspl+c+1],
+      	 	   -splines[(j+1)*nspl+c], -arcs[j*nspl+c]} ;
+    s = news ;
+    Surface(s) = {l} ;
+  EndFor
+
+  l = newl ;
+  Line Loop(l) = {splines[3*nspl+c], arcs[3*nspl+c+1],
+   	   -splines[0*nspl+c], -arcs[3*nspl+c]} ;
+  s = news ;
+  Surface(s) = {l} ;
+
+EndFor
+
+c = nspl-1 ;
+For j In {0:2}
+  l = newl ;
+  Line Loop(l) = {splines[j*nspl+c], -arcs[j*nspl+c], -splines[(j+1)*nspl+c]} ;
+  s = news ; Surface(s) = {l} ;
+EndFor
+l = newl ;
+Line Loop(l) = {splines[3*nspl+c], -arcs[3*nspl+c], -splines[0*nspl+c]} ;
+s = news ; Surface(s) = {l} ;

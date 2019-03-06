@@ -1,42 +1,152 @@
-\section{Configuring B\+E\+M3\+D}
-\label{group__config}\index{Configuring B\+E\+M3\+D@{Configuring B\+E\+M3\+D}}
+\section{Configuring B\+E\+M3D}
+\label{group__config}\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ B\+E\+M3\+D\+Solver} 
+\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-{\bf B\+E\+M3\+D\+Configuration} $\ast$ {\bf bem3d\+\_\+configuration\+\_\+new} ()
+\textbf{ B\+E\+M3\+D\+Configuration} $\ast$ \textbf{ bem3d\+\_\+configuration\+\_\+new} ()
 \item 
-gint {\bf bem3d\+\_\+configuration\+\_\+set} ({\bf B\+E\+M3\+D\+Configuration} $\ast$c, gpointer k)
+gint \textbf{ bem3d\+\_\+configuration\+\_\+set} (\textbf{ B\+E\+M3\+D\+Configuration} $\ast$c, gpointer k)
+\item 
+gint \textbf{ bem3d\+\_\+configuration\+\_\+read} (\textbf{ B\+E\+M3\+D\+Configuration} $\ast$c, gchar $\ast$file)
+\item 
+gint \textbf{ bem3d\+\_\+configuration\+\_\+init} (void)
+\item 
+gint \textbf{ bem3d\+\_\+configuration\+\_\+add\+\_\+identifier} (const gchar $\ast$id, gpointer v)
+\item 
+gchar $\ast$ \textbf{ bem3d\+\_\+configuration\+\_\+identifier\+\_\+from\+\_\+pointer} (gpointer v)
+\item 
+gpointer \textbf{ bem3d\+\_\+configuration\+\_\+pointer\+\_\+from\+\_\+identifier} (const gchar $\ast$id)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-B\+E\+M3\+D codes can be configured at run-\/time using glib key files and the following functions. 
+B\+E\+M3D codes can be configured at run-\/time using glib key files and the following functions. 
+
+\subsection{Enumeration Type Documentation}
+\mbox{\label{group__config_ga795c07626d3e4c4e2fe832a3fa32a161}} 
+\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}!B\+E\+M3\+D\+Solver@{B\+E\+M3\+D\+Solver}}
+\index{B\+E\+M3\+D\+Solver@{B\+E\+M3\+D\+Solver}!Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsubsection{B\+E\+M3\+D\+Solver}
+{\footnotesize\ttfamily enum \textbf{ B\+E\+M3\+D\+Solver}}
+
+Solver selection to choose between, for example, direct and Fast Multipole Method in configuration files. 
 
 \subsection{Function Documentation}
-\index{Configuring B\+E\+M3\+D@{Configuring B\+E\+M3\+D}!bem3d\+\_\+configuration\+\_\+new@{bem3d\+\_\+configuration\+\_\+new}}
-\index{bem3d\+\_\+configuration\+\_\+new@{bem3d\+\_\+configuration\+\_\+new}!Configuring B\+E\+M3\+D@{Configuring B\+E\+M3\+D}}
-\subsubsection[{bem3d\+\_\+configuration\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Configuration}$\ast$ bem3d\+\_\+configuration\+\_\+new (
-\begin{DoxyParamCaption}
-\item[{void}]{}
-\end{DoxyParamCaption}
-)}\label{group__config_ga6bc11f1aca119cc2d04c474a69a2b13d}
-Allocate a new \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration}, filled with default settings (Laplace, \doxyref{bem3d\+\_\+quadrature\+\_\+rule\+\_\+default}{p.}{group__Quadrature_ga30e62360f6fdac3a7fb3a6689f2fa3a2}, direct solver).
+\mbox{\label{group__config_ga4c084220d58351341184412559cdd7c9}} 
+\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}!bem3d\+\_\+configuration\+\_\+add\+\_\+identifier@{bem3d\+\_\+configuration\+\_\+add\+\_\+identifier}}
+\index{bem3d\+\_\+configuration\+\_\+add\+\_\+identifier@{bem3d\+\_\+configuration\+\_\+add\+\_\+identifier}!Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsubsection{bem3d\+\_\+configuration\+\_\+add\+\_\+identifier()}
+{\footnotesize\ttfamily gint bem3d\+\_\+configuration\+\_\+add\+\_\+identifier (\begin{DoxyParamCaption}\item[{const gchar $\ast$}]{id,  }\item[{gpointer}]{v }\end{DoxyParamCaption})}
+
+Add an identifier to the configuration data. This allows the identifier to be recognized by the bem3d\+\_\+configuration\+\_\+ functions. For example,
+
+bem3d\+\_\+configuration\+\_\+add\+\_\+identifier(\char`\"{}bem3d\+\_\+quadrature\+\_\+polar\char`\"{}, bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar) ;
+
+adds the identifier \char`\"{}bem3d\+\_\+quadrature\+\_\+polar\char`\"{} which refers to the quadrature function of the same name, allowing a key file to contain a configuration line of the form
+
+quadrature[1] = bem3d\+\_\+quadrature\+\_\+polar(0.\+0,16,16)
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & name of identifier; \\
+\hline
+{\em v} & a pointer to the identified object\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\end{DoxyReturn}
+\mbox{\label{group__config_ga66d3bafafdc605e110d13bf177f49083}} 
+\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}!bem3d\+\_\+configuration\+\_\+identifier\+\_\+from\+\_\+pointer@{bem3d\+\_\+configuration\+\_\+identifier\+\_\+from\+\_\+pointer}}
+\index{bem3d\+\_\+configuration\+\_\+identifier\+\_\+from\+\_\+pointer@{bem3d\+\_\+configuration\+\_\+identifier\+\_\+from\+\_\+pointer}!Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsubsection{bem3d\+\_\+configuration\+\_\+identifier\+\_\+from\+\_\+pointer()}
+{\footnotesize\ttfamily gchar$\ast$ bem3d\+\_\+configuration\+\_\+identifier\+\_\+from\+\_\+pointer (\begin{DoxyParamCaption}\item[{gpointer}]{v }\end{DoxyParamCaption})}
+
+Find the identifier associated with a given object, set using \doxyref{bem3d\+\_\+configuration\+\_\+add\+\_\+identifier}{p.}{group__config_ga4c084220d58351341184412559cdd7c9}
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & pointer to an object\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the identifier associated with {\itshape v} 
+\end{DoxyReturn}
+\mbox{\label{group__config_gae54339c12905196ade40a5a32e3748b1}} 
+\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}!bem3d\+\_\+configuration\+\_\+init@{bem3d\+\_\+configuration\+\_\+init}}
+\index{bem3d\+\_\+configuration\+\_\+init@{bem3d\+\_\+configuration\+\_\+init}!Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsubsection{bem3d\+\_\+configuration\+\_\+init()}
+{\footnotesize\ttfamily gint bem3d\+\_\+configuration\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Initialize internal data for \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration}. This function should be called before any configurations are set or used, i.\+e. at the start of any program.
+
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\end{DoxyReturn}
+\mbox{\label{group__config_ga6bc11f1aca119cc2d04c474a69a2b13d}} 
+\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}!bem3d\+\_\+configuration\+\_\+new@{bem3d\+\_\+configuration\+\_\+new}}
+\index{bem3d\+\_\+configuration\+\_\+new@{bem3d\+\_\+configuration\+\_\+new}!Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsubsection{bem3d\+\_\+configuration\+\_\+new()}
+{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Configuration}$\ast$ bem3d\+\_\+configuration\+\_\+new (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Allocate a new \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration}, filled with default settings (Laplace, \doxyref{bem3d\+\_\+quadrature\+\_\+rule\+\_\+default}{p.}{group__quadrature_ga30e62360f6fdac3a7fb3a6689f2fa3a2}, direct solver).
 
 \begin{DoxyReturn}{Returns}
 newly allocated \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration} 
 \end{DoxyReturn}
 
 
-References B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2, bem3d\+\_\+greens\+\_\+func\+\_\+laplace(), bem3d\+\_\+greens\+\_\+function\+\_\+func, bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real, bem3d\+\_\+quadrature\+\_\+rule\+\_\+default(), and bem3d\+\_\+quadrature\+\_\+selector\+\_\+default().
+References bem3d\+\_\+greens\+\_\+func\+\_\+laplace(), bem3d\+\_\+greens\+\_\+function\+\_\+func, bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real, bem3d\+\_\+quadrature\+\_\+rule\+\_\+default(), and bem3d\+\_\+quadrature\+\_\+selector\+\_\+default().
 
-\index{Configuring B\+E\+M3\+D@{Configuring B\+E\+M3\+D}!bem3d\+\_\+configuration\+\_\+set@{bem3d\+\_\+configuration\+\_\+set}}
-\index{bem3d\+\_\+configuration\+\_\+set@{bem3d\+\_\+configuration\+\_\+set}!Configuring B\+E\+M3\+D@{Configuring B\+E\+M3\+D}}
-\subsubsection[{bem3d\+\_\+configuration\+\_\+set}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+configuration\+\_\+set (
-\begin{DoxyParamCaption}
-\item[{{\bf B\+E\+M3\+D\+Configuration} $\ast$}]{c, }
-\item[{gpointer}]{k}
-\end{DoxyParamCaption}
-)}\label{group__config_ga7db3098bf695c587408dd34f9c67a6d5}
+\mbox{\label{group__config_ga6c1314fcc076baa5969f70d66bdc4134}} 
+\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}!bem3d\+\_\+configuration\+\_\+pointer\+\_\+from\+\_\+identifier@{bem3d\+\_\+configuration\+\_\+pointer\+\_\+from\+\_\+identifier}}
+\index{bem3d\+\_\+configuration\+\_\+pointer\+\_\+from\+\_\+identifier@{bem3d\+\_\+configuration\+\_\+pointer\+\_\+from\+\_\+identifier}!Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsubsection{bem3d\+\_\+configuration\+\_\+pointer\+\_\+from\+\_\+identifier()}
+{\footnotesize\ttfamily gpointer bem3d\+\_\+configuration\+\_\+pointer\+\_\+from\+\_\+identifier (\begin{DoxyParamCaption}\item[{const gchar $\ast$}]{id }\end{DoxyParamCaption})}
+
+Look up the object associated with a given configuration identifier, set using \doxyref{bem3d\+\_\+configuration\+\_\+add\+\_\+identifier}{p.}{group__config_ga4c084220d58351341184412559cdd7c9}
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & identifier used in configuration settings;\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the object associated with {\itshape id} 
+\end{DoxyReturn}
+\mbox{\label{group__config_ga8dcf6567b538683506475e59e74ad89d}} 
+\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}!bem3d\+\_\+configuration\+\_\+read@{bem3d\+\_\+configuration\+\_\+read}}
+\index{bem3d\+\_\+configuration\+\_\+read@{bem3d\+\_\+configuration\+\_\+read}!Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsubsection{bem3d\+\_\+configuration\+\_\+read()}
+{\footnotesize\ttfamily gint bem3d\+\_\+configuration\+\_\+read (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Configuration} $\ast$}]{c,  }\item[{gchar $\ast$}]{file }\end{DoxyParamCaption})}
+
+Read B\+E\+M3D configuration data from a key file.
+
+
+\begin{DoxyParams}{Parameters}
+{\em c} & a \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration} \\
+\hline
+{\em file} & a G\+L\+IB format key file containing configuration data\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+configuration\+\_\+set().
+
+\mbox{\label{group__config_ga7db3098bf695c587408dd34f9c67a6d5}} 
+\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}!bem3d\+\_\+configuration\+\_\+set@{bem3d\+\_\+configuration\+\_\+set}}
+\index{bem3d\+\_\+configuration\+\_\+set@{bem3d\+\_\+configuration\+\_\+set}!Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsubsection{bem3d\+\_\+configuration\+\_\+set()}
+{\footnotesize\ttfamily gint bem3d\+\_\+configuration\+\_\+set (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Configuration} $\ast$}]{c,  }\item[{gpointer}]{k }\end{DoxyParamCaption})}
+
 Set fields of a \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration} from a key file, overwriting previous settings. Settings are read from the \char`\"{}\+B\+E\+M3\+D\char`\"{} group of the file, to allow codes to keep all their settings in one place. Values not in the \char`\"{}\+B\+E\+M3\+D\char`\"{} group are ignored.
 
 
@@ -47,5 +157,9 @@ Set fields of a \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguratio
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+configuration\+\_\+read().
+

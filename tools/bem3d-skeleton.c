@@ -1,6 +1,6 @@
-/* bem3d-skeleton.c
+/* bem3d-configuration.c
  * 
- * Copyright (C) 2017 Michael Carley
+ * Copyright (C) 2017, 2018 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -56,7 +56,7 @@ gint main(gint argc, gchar **argv)
     default: 
     case 'h':
       fprintf(stderr, 
-	      "%s: write the skeleton points and normals of a BEM3D "
+	      "%s: write the skeleton points and normals of a BEM3D\n"
 	      "geometry file to stdout\n\n",
 	      progname) ;
       fprintf(stderr, "Usage: %s [options] < file.bem > file.skel\n", 
@@ -65,6 +65,7 @@ gint main(gint argc, gchar **argv)
       fprintf(stderr, "  <index> <x y z> <nx ny nz>\n\n") ;
       fprintf(stderr, 
 	      "Options:\n\n"
+	      "  -h print this message and exit\n"
 	      "  -q # order of quadrature rule for source points (%d)\n",
 	      order) ;
       return 0 ;

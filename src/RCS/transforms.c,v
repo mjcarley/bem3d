@@ -1,10 +1,15 @@
-head	1.1;
+head	1.2;
 access;
 symbols;
 locks
-	ensmjc:1.1; strict;
+	ensmjc:1.2; strict;
 comment	@ * @;
 
+
+1.2
+date	2018.08.15.15.51.30;	author ensmjc;	state Exp;
+branches;
+next	1.1;
 
 1.1
 date	2017.07.03.10.47.18;	author ensmjc;	state Exp;
@@ -16,9 +21,9 @@ desc
 @@
 
 
-1.1
+1.2
 log
-@Initial revision
+@*** empty log message ***
 @
 text
 @/* transforms.c
@@ -91,7 +96,6 @@ gint triangle_rotation_matrix(gdouble *x1, gdouble *x2, gdouble *x3,
   Output: 
           transformation matrix A such that a point p in the original system 
 	  transforms to [A](p-x1)
-
 	  in the transformed system, x1 is transformed to the origin
  */
 
@@ -152,4 +156,14 @@ gint triangle_angles(gdouble a, gdouble b, gdouble c,
 
   return 0 ;
 }
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a70 1
+
 @

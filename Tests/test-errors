@@ -1,0 +1,27 @@
+#!/bin/bash
+
+opfile=errors.dat
+
+optjob=catseye
+optdcty=CatsEye
+optk=1.0
+
+optscale=0.8409
+optlenmax=0.281
+optnsteps=12
+
+len=${optlenmax}
+
+rm -f errors.dat
+touch errors.dat
+
+for (( i=1; i<=${optnsteps}; i++ )) do
+    echo ${len}
+    ./test-init -k ${optk} -x -0.289 -y -0.289 -z -0.289 \
+		-d ${optdcty} -j ${optjob} -l ${len}
+    lmean=`gtscheck -v < ${optdcty}/${optjob}.bem 2>&1 >/dev/null | \
+	grep length | cut -d" " -f 10`
+    echo -n "${len} ${lmean} " >> errors.dat
+    ./test-eval -k ${optk} -d ${optdcty} -j ${optjob} >> errors.dat
+    len=`echo ${len}*${optscale} | bc -l`
+done

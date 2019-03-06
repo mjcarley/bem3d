@@ -1,6 +1,6 @@
 /* configure.c
  * 
- * Copyright (C) 2010, 2017 by Michael Carley
+ * Copyright (C) 2010, 2017, 2018 by Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,15 +47,145 @@ GHashTable *idmap = NULL, *varmap = NULL ;
 
 /*pre-defined structs for Green's functions*/
 BEM3DGreensFunction greens_func_laplace = 
-  {bem3d_greens_func_laplace, TRUE, 1} ;
+  {bem3d_greens_func_laplace, TRUE, 0, 1, 1} ;
 BEM3DGreensFunction greens_func_gradient_laplace = 
-  {bem3d_greens_func_gradient_laplace, TRUE, 4} ;
+  {bem3d_greens_func_gradient_laplace, TRUE, 0, 4, 4} ;
 BEM3DGreensFunction greens_func_helmholtz = 
-  {bem3d_greens_func_helmholtz, FALSE, 1} ;
+  {bem3d_greens_func_helmholtz, FALSE, 0, 1, 2} ;
 BEM3DGreensFunction greens_func_helmholtz_hs = 
-  {bem3d_greens_func_helmholtz_hs, FALSE, 1} ;
+  {bem3d_greens_func_helmholtz_hs, FALSE,
+   BEM3D_GREENS_FUNC_PRECOMPUTE_NORMAL |
+   BEM3D_GREENS_FUNC_PRECOMPUTE_LAMBDA,
+   1, 2} ;
+BEM3DGreensFunction greens_func_helmholtz_ch = 
+  {bem3d_greens_func_helmholtz_ch, FALSE,
+   BEM3D_GREENS_FUNC_PRECOMPUTE_NORMAL |
+   BEM3D_GREENS_FUNC_PRECOMPUTE_LAMBDA,
+   3, 6} ;
 BEM3DGreensFunction greens_func_gradient_helmholtz = 
-  {bem3d_greens_func_gradient_helmholtz, FALSE, 4} ;
+  {bem3d_greens_func_gradient_helmholtz, FALSE, 0, 4, 8} ;
+
+#define _CONFIG_STRIDE  4
+#define _CONFIG_NAME    0
+#define _CONFIG_SETTING 1
+#define _CONFIG_DESC    2
+#define _CONFIG_POINTER 3
+
+/*
+  configuration settings and descriptions, four entries per setting:
+
+  [variable name] [setting to which variable can be assigned] 
+  [setting description] [pointer to setting data]
+
+  if pointer to setting data is NULL, the setting is handled within a
+  function rather than in the hash tables
+*/
+
+static gpointer _config_quadratures[] =
+  {"bem3d_quadrature_newman",
+   "quadrature[]",
+   "analytical quadrature method for linear shape functions on "
+   "planar elements (for Laplace equation)",
+   bem3d_quadrature_rule_newman,
+   "bem3d_quadrature_newman_gradient",
+   "quadrature[]",
+   "analytical quadrature method for linear shape functions on "
+   "planar elements (for evaluation of gradient of Laplace potential)",   
+   bem3d_quadrature_rule_newman_gradient,
+   "bem3d_quadrature_gauss",
+   "quadrature[]",
+   "Gaussian quadrature",
+   bem3d_quadrature_rule_gauss,
+   "bem3d_quadrature_khayat_wilton",
+   "quadrature[]",
+   "Khayat and Wilton's method for integration of 1/R potentials",
+   bem3d_quadrature_rule_kw,
+   "bem3d_quadrature_polar",
+   "quadrature[]",
+   "polar transformation on planar elements",
+   bem3d_quadrature_rule_polar,
+   "bem3d_quadrature_polar_hypersingular",
+   "quadrature[]",
+   "polar transformation on planar elements for hypersingular integrand "
+   "(do not use)",
+   bem3d_quadrature_rule_polar_hs,
+   "bem3d_quadrature_wandzura_xiao",
+   "quadrature[]",
+   "Wandzura and Xiao's high-order symmetric rules for triangles",
+   bem3d_quadrature_rule_wx,
+   "bem3d_quadrature_hayami",
+   "quadrature[]",
+   "Hayami's method for near-singularities",
+   bem3d_quadrature_rule_hayami,
+   "bem3d_quadrature_series",
+   "quadrature[]",
+   "Carley's method for semi-analytical evaluation of Helmholtz potentials",
+   bem3d_quadrature_rule_series,
+   "bem3d_quadrature_mzht",
+   "quadrature[]",
+   "experimental method for hypersingular integrands",
+   bem3d_quadrature_rule_mzht,
+   NULL, NULL, NULL, NULL} ;
+
+static gpointer _config_physics[] =
+  {"bem3d_greens_function_laplace",
+   "greens_function", "",
+   &greens_func_laplace,
+
+   "bem3d_greens_function_gradient_laplace", 
+   "greens_function", "",
+   &greens_func_gradient_laplace,
+
+   "bem3d_greens_function_helmholtz", 
+   "greens_function", "",
+   &greens_func_helmholtz,
+
+   "bem3d_greens_function_gradient_helmholtz", 
+   "greens_function", "",
+   &greens_func_gradient_helmholtz,
+
+   "bem3d_greens_function_helmholtz_hyper", 
+   "greens_function", "",
+   &greens_func_helmholtz_hs,
+
+   "bem3d_greens_function_helmholtz_chen_harris", 
+   "greens_function", "",
+   &greens_func_helmholtz_ch,
+   
+   "[real or complex admittance]",
+   "surface_admittance",
+   "default surface admittance, multiplied by wavenumber in Helmholtz problems",
+   NULL,
+
+   NULL, NULL, NULL, NULL} ;
+
+static gpointer _config_solver[] =
+  {"bem3d_fmm_fmmlib3d1.2",
+   "fmm", "fast multipole solver of Greengard et al.",
+   GINT_TO_POINTER(BEM3D_FMM_FMMLIB3D_1_2),
+
+   "bem3d_solver_direct",
+   "solver", "direct solution using full matrices",
+   GINT_TO_POINTER(BEM3D_SOLVER_DIRECT),
+
+   "bem3d_solver_fmm",
+   "solver", "solution using fast multipole method (selected using fmm = )",
+   GINT_TO_POINTER(BEM3D_SOLVER_FMM),
+
+   "[exclusion distance for point sources in FMM]",
+   "radius_fmm", "",
+   NULL,
+
+   "[tolerance for FMM approximations]",
+   "tolerance_fmm", "",
+   NULL,
+
+   "[number of point sources per element in FMM]",   
+   "skeleton_order", "",
+   NULL,
+
+   NULL, NULL, NULL, NULL} ;
+
 
 /** 
  * Allocate a new ::BEM3DConfiguration, filled with default settings
@@ -335,6 +465,22 @@ gint bem3d_configuration_read(BEM3DConfiguration *c, gchar *file)
   return BEM3D_SUCCESS ;
 }
 
+static gint add_configuration_options(gpointer options[])
+
+{
+  gint i ;
+  
+  for ( i = 0 ; options[_CONFIG_STRIDE*i] != NULL ; i ++ ) {
+    if ( options[_CONFIG_STRIDE*i + _CONFIG_POINTER] != NULL ) 
+      bem3d_configuration_add_identifier(options[_CONFIG_STRIDE*i +
+						 _CONFIG_NAME],
+					 options[_CONFIG_STRIDE*i +
+						 _CONFIG_POINTER]) ;
+  }
+
+  return 0 ;
+}
+
 /** 
  * Initialize internal data for ::BEM3DConfiguration. This function
  * should be called before any configurations are set or used, i.e. at
@@ -347,47 +493,19 @@ gint bem3d_configuration_read(BEM3DConfiguration *c, gchar *file)
 gint bem3d_configuration_init(void)
 
 {
+  
   idmap = g_hash_table_new(g_str_hash, g_str_equal) ;
   varmap = g_hash_table_new(NULL, NULL) ;
 
   /*add the built-in functions*/
   /*quadrature*/
-  bem3d_configuration_add_identifier("bem3d_quadrature_newman", 
-				     bem3d_quadrature_rule_newman) ;
-  bem3d_configuration_add_identifier("bem3d_quadrature_newman_gradient", 
-				     bem3d_quadrature_rule_newman_gradient) ;
-  bem3d_configuration_add_identifier("bem3d_quadrature_gauss",
-  				     bem3d_quadrature_rule_gauss) ;
-  bem3d_configuration_add_identifier("bem3d_quadrature_khayat_wilton", 
-				     bem3d_quadrature_rule_kw) ;
-  bem3d_configuration_add_identifier("bem3d_quadrature_polar", 
-				     bem3d_quadrature_rule_polar) ;
-  bem3d_configuration_add_identifier("bem3d_quadrature_polar_hypersingular", 
-				     bem3d_quadrature_rule_polar_hs) ;
-  bem3d_configuration_add_identifier("bem3d_quadrature_wandzura_xiao", 
-				     bem3d_quadrature_rule_wx) ;
-  bem3d_configuration_add_identifier("bem3d_quadrature_hayami", 
-				     bem3d_quadrature_rule_hayami) ;
+  add_configuration_options(_config_quadratures) ;
 
-  /*Green's functions*/
-  bem3d_configuration_add_identifier("bem3d_greens_function_laplace", 
-				     &greens_func_laplace) ;
-  bem3d_configuration_add_identifier("bem3d_greens_function_gradient_laplace", 
-				     &greens_func_gradient_laplace) ;
-  bem3d_configuration_add_identifier("bem3d_greens_function_helmholtz", 
-				     &greens_func_helmholtz) ;
-  bem3d_configuration_add_identifier("bem3d_greens_function_gradient_helmholtz", 
-				     &greens_func_gradient_helmholtz) ;
-  bem3d_configuration_add_identifier("bem3d_greens_function_helmholtz_hypersingular", 
-				     &greens_func_helmholtz_hs) ;
+  /*physics*/
+  add_configuration_options(_config_physics) ;
   
   /*solver settings*/
-  bem3d_configuration_add_identifier("bem3d_fmm_fmmlib3d1.2",
-				     GINT_TO_POINTER(BEM3D_FMM_FMMLIB3D_1_2)) ;
-  bem3d_configuration_add_identifier("bem3d_solver_direct",
-				     GINT_TO_POINTER(BEM3D_SOLVER_DIRECT)) ;
-  bem3d_configuration_add_identifier("bem3d_solver_fmm",
-				     GINT_TO_POINTER(BEM3D_SOLVER_FMM)) ;
+  add_configuration_options(_config_solver) ;
 
   return BEM3D_SUCCESS ;
 }
@@ -407,12 +525,15 @@ gint bem3d_configuration_init(void)
  * quadrature[1] = bem3d_quadrature_polar(0.0,16,16)
  *
  * @param id name of identifier;
+ * @param description text string describing the variable (e.g. to be
+ * used as a comment in a configuration file)
  * @param v a pointer to the identified object
  * 
  * @return ::BEM3D_SUCCESS on success
  */
 
-gint bem3d_configuration_add_identifier(const gchar *id, gpointer v)
+gint bem3d_configuration_add_identifier(const gchar *id,
+					gpointer v)
 
 {
   gboolean rt ;
@@ -420,9 +541,9 @@ gint bem3d_configuration_add_identifier(const gchar *id, gpointer v)
   g_assert(idmap != NULL && varmap != NULL) ;
 
   rt = (g_hash_table_lookup(idmap, id) != NULL) ;
-  if ( rt ) g_error("%s: value %s already in idmap", __FUNCTION__, id) ; 
+  if ( rt ) g_error("%s: value %s already in idmap", __FUNCTION__, id) ;
   g_hash_table_insert(idmap, (gpointer)id, v) ;
-
+  
   rt = (g_hash_table_lookup(varmap, id) != NULL) ;
   if ( rt ) g_error("%s: value %s already in varmap", __FUNCTION__, id) ;
   g_hash_table_insert(varmap, v, (gpointer)id) ;
@@ -442,7 +563,7 @@ gint bem3d_configuration_add_identifier(const gchar *id, gpointer v)
 gchar *bem3d_configuration_identifier_from_pointer(gpointer v)
 
 {
-  if ( idmap == NULL ) return NULL ;
+  if ( varmap == NULL ) return NULL ;
 
   return g_hash_table_lookup(varmap, v) ;
 }
@@ -466,6 +587,91 @@ gpointer bem3d_configuration_pointer_from_identifier(const gchar *id)
   p = g_hash_table_lookup(idmap, id) ;
 
   return p ;
+}
+
+gint bem3d_configuration_write(BEM3DConfiguration *config,
+			       gboolean write_descriptions,
+			       gint line_width, FILE *f)
+
+{
+  
+  return 0 ;
+}
+
+static gint write_configuration_options(gpointer options[],
+					gboolean write_descriptions,
+					gint line_width,
+					gchar *prefix,
+					gchar *comment,
+					FILE *f)
+{
+  gint i ;
+
+  if ( !write_descriptions ) {
+    for ( i = 0 ; options[_CONFIG_STRIDE*i] != NULL ; i ++ ) {
+      fprintf(f, "%s%s = %s\n",
+	      comment,
+	      (gchar *)(options[_CONFIG_STRIDE*i+_CONFIG_SETTING]),
+	      (gchar *)(options[_CONFIG_STRIDE*i+_CONFIG_NAME])) ;
+    }
+
+    return 0 ;
+  }
+
+    for ( i = 0 ; options[_CONFIG_STRIDE*i] != NULL ; i ++ ) {
+      printf_fixed_width((gchar *)(options[_CONFIG_STRIDE*i+_CONFIG_DESC]),
+			 line_width, comment, f) ;
+      fprintf(f, "%s%s = %s\n",
+	      prefix,
+	      (gchar *)(options[_CONFIG_STRIDE*i+_CONFIG_SETTING]),
+	      (gchar *)(options[_CONFIG_STRIDE*i+_CONFIG_NAME])) ;
+    }
+
+  return 0 ;
+}
+
+/** 
+ * Write generic configuration data containing all possible settings,
+ * which can be used as a template for a configuration file. Output is
+ * written in the form:
+ *
+ * [Group name]
+ * \a prefix [setting] = [variable name]
+ * \a prefix [setting] = [variable name]
+ * \a prefix [setting] = [variable name]
+ * 
+ * @param write_descriptions insert comment with description of
+ * variable before each line
+ * @param line_width total number of characters per line in output, applied
+ * to lines of description only
+ * @param prefix string to insert at start of each variable line, such as `#'
+ * to comment out entries
+ * @param comment string to insert at start of descriptions, to comment out
+ * text
+ * @param f output file stream
+ * 
+ * @return 0 on success
+ */
+
+gint bem3d_configuration_write_generic(gboolean write_descriptions,
+				       gint line_width, gchar *prefix,
+				       gchar *comment,
+				       FILE *f)
+
+{
+  fprintf(f, "\n[BEM3D::Quadrature]\n") ;
+  write_configuration_options(_config_quadratures, write_descriptions,
+			      line_width, prefix, comment, f) ;
+
+  fprintf(f, "\n[BEM3D::Physics]\n") ;
+  write_configuration_options(_config_physics, write_descriptions,
+			      line_width, prefix, comment, f) ;
+
+  fprintf(f, "\n[BEM3D::Solver]\n") ;
+  write_configuration_options(_config_solver, write_descriptions,
+			      line_width, prefix, comment, f) ;
+
+  return 0 ;
 }
 
 /**
