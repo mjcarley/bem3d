@@ -1,0 +1,10 @@
+BEM3DFunction
+## plane wave of wavenumber k
+k = 0.0
+C = cos(k*x)
+S = sin(k*x)
+f[0] = C
+f[1] = S
+f[2] = -k*S*nx
+f[3] =  k*C*nx
+f[4] = k

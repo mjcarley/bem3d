@@ -1,6 +1,6 @@
 /* functions.c
  * 
- * Copyright (C) 2006, 2010, 2018 Michael Carley
+ * Copyright (C) 2006, 2010, 2018, 2019 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,17 @@
  * conform to that syntax, including the built-in functions. Reserved
  * variable names are \a x, \a y, \a z for node coordinates, \a u, \a
  * v, \a w for components of node velocity, \a nx, \a ny, \a nz for
- * node normal, and \a i for node index. Functions are applied to data
- * at each node of a mesh with input and output data in
- * ::BEM3DMeshData structs. Input and output data are specified in
- * functions as \a f and \a g, with components given as \a f[0],
- * etc. Output data are given in \a f.
+ * node normal, \a i for node index, and \a mesh for mesh index (when
+ * multiple meshes are passed to the function evaluation). In integral
+ * evaluations, \f$(x,y,z)\f$ refers to the node coordinates in an
+ * integrand, \a X, \a Y, and \a Z are reserved for node coordinates
+ * at an evaluation point, \a NX, \a NY, and \a NZ for the
+ * corresponding normal, and \a I for the node index.
+ *
+ * Functions are applied to data at each node of a mesh
+ * with input and output data in ::BEM3DMeshData structs. Input and
+ * output data are specified in functions as \a f and \a g, with
+ * components given as \a f[0], etc. Output data are given in \a f.
  *
  * @{
  * 
@@ -62,20 +68,47 @@
 #define BEM3D_EFDATA_FUNC   1
 #define BEM3D_EFDATA_MDATA  2
 
-#define BEM3D_FUNCTION_NRESERVED 10
-#define BEM3D_FUNCTION_X         0
-#define BEM3D_FUNCTION_Y         1
-#define BEM3D_FUNCTION_Z         2
-#define BEM3D_FUNCTION_U         3
-#define BEM3D_FUNCTION_V         4
-#define BEM3D_FUNCTION_W         5
-#define BEM3D_FUNCTION_NX        6
-#define BEM3D_FUNCTION_NY        7
-#define BEM3D_FUNCTION_NZ        8
-#define BEM3D_FUNCTION_INDEX     9
+#define BEM3D_FUNCTION_DATA_WIDTH       16
+#define BEM3D_FUNCTION_DATA_FUNC         0
+#define BEM3D_FUNCTION_DATA_DATA_F       1
+#define BEM3D_FUNCTION_DATA_VARS         2
+#define BEM3D_FUNCTION_DATA_MOTION       3
+#define BEM3D_FUNCTION_DATA_TIME         4
+#define BEM3D_FUNCTION_DATA_OP           5
+#define BEM3D_FUNCTION_DATA_DATA_G       6
+#define BEM3D_FUNCTION_DATA_MESH_INDEX   7
+#define BEM3D_FUNCTION_DATA_MESH         8
+#define BEM3D_FUNCTION_DATA_VERTEX       9
+#define BEM3D_FUNCTION_DATA_NORMAL      10
+#define BEM3D_FUNCTION_DATA_INDEX       11
+#define BEM3D_FUNCTION_DATA_VALUES      12
+#define BEM3D_FUNCTION_DATA_QUADRATURE  13
+#define BEM3D_FUNCTION_DATA_NVALS       14
+
+#define BEM3D_FUNCTION_NRESERVED  18
+#define BEM3D_FUNCTION_X           0
+#define BEM3D_FUNCTION_Y           1
+#define BEM3D_FUNCTION_Z           2
+#define BEM3D_FUNCTION_U           3
+#define BEM3D_FUNCTION_V           4
+#define BEM3D_FUNCTION_W           5
+#define BEM3D_FUNCTION_NX          6
+#define BEM3D_FUNCTION_NY          7
+#define BEM3D_FUNCTION_NZ          8
+#define BEM3D_FUNCTION_INDEX       9
+#define BEM3D_FUNCTION_MESH_INDEX 10
+#define BEM3D_FUNCTION_X_EVAL     11
+#define BEM3D_FUNCTION_Y_EVAL     12
+#define BEM3D_FUNCTION_Z_EVAL     13
+#define BEM3D_FUNCTION_NX_EVAL    14
+#define BEM3D_FUNCTION_NY_EVAL    15
+#define BEM3D_FUNCTION_NZ_EVAL    16
+#define BEM3D_FUNCTION_INDEX_EVAL 17
 
 gchar *BEM3D_FUNCTION_RESERVED[] = {"x", "y", "z", "u", "v", "w",
-				    "nx", "ny", "nz", "i"} ;
+				    "nx", "ny", "nz", "i", "mesh",
+				    "X", "Y", "Z", "NX", "NY", "NZ",
+				    "I"} ;
 
 static void bem3d_function_class_init (BEM3DFunctionClass * klass)
 {
@@ -135,8 +168,6 @@ static void expand_variable_name(GString *s, gint i)
   g_debug("%s: %s\n", __FUNCTION__, s->str) ;
   substr[0] = '_' ; len = 1 ;
 
-  /* fprintf(stderr, "s: %s -> ", s->str) ; */
-  
   /*find the start of the variable name*/
   for ( i0 = i-1 ; i0 >= 0 && g_ascii_isalpha(s->str[i0]) ; i0 -- ) ;
   i0 ++ ;
@@ -175,8 +206,6 @@ static void expand_variable_name(GString *s, gint i)
 
   g_debug("%s: %s\n", __FUNCTION__, s->str) ;
 
-  /* fprintf(stderr, "%s\n", s->str) ; */
-
   return ;
 }
 
@@ -202,12 +231,8 @@ gint bem3d_function_add_function(BEM3DFunction *f, gint i, gchar *def)
   g_return_val_if_fail(i >= 0, BEM3D_ARGUMENT_OUT_OF_RANGE) ;
   g_return_val_if_fail(def != NULL, BEM3D_NULL_ARGUMENT) ;
 
-  /* fprintf(stderr, "add %s -> ", def) ; */
-  
   expanded = g_string_new(def) ;
   function_variables(expanded) ;
-
-  /* fprintf(stderr, " %s\n", expanded->str) ; */
 
   g_ptr_array_add(f->definitions, g_strdup(def)) ;
   g_ptr_array_add(f->functions, expanded) ;
@@ -292,7 +317,7 @@ static void copy_and_expand_function(BEM3DFunction *f, GString *e, GString *s,
 
 {
   gchar *def ;
-  gint i, nc, nex, npass = 0 ;
+  gint i, nc, nex, npass = 0, npass_max = 64 ;
 
   g_string_assign(e, s->str) ;
 
@@ -309,9 +334,9 @@ static void copy_and_expand_function(BEM3DFunction *f, GString *e, GString *s,
       } else i += nc ;
     }
     npass ++ ;
-  } while ( nex != 0 && npass < 64 ) ;
+  } while ( nex != 0 && npass < npass_max ) ;
 
-  if ( npass > 63 ) 
+  if ( npass >= npass_max ) 
     g_error("%s: variables seem to have a circular definition",
 	    __FUNCTION__) ;
 
@@ -343,222 +368,6 @@ gint bem3d_function_expand_functions(BEM3DFunction *f)
   return BEM3D_SUCCESS ;
 }
 
-#ifdef HAVE_LIBMATHEVAL
-static void function_apply(gpointer key, gpointer val, gpointer data[])
-
-{
-  BEM3DFunction *func = data[0] ;
-  BEM3DMeshData *f = data[1] ;
-  gchar **vars = data[2] ;
-  BEM3DMotion *m = data[3] ;
-  gdouble t = *((gdouble *)data[4]) ;
-  BEM3DOperator *op = data[5] ;
-  BEM3DMeshData *g = data[6] ;
-  gint i, k, p, off, nvals ;
-  gdouble values[128], result[128], *opi, *fi, *fp, *gi ;
-  GtsVertex *v ;
-  GtsVector u, n ;
-
-  nvals = BEM3D_FUNCTION_NRESERVED + 4*bem3d_mesh_data_element_number(f)
-    + ( g == NULL ? 0: 4*bem3d_mesh_data_element_number(g) ) ;
-
-  g_assert(nvals < 128) ;
-  
-  i = GPOINTER_TO_INT(key)-1 ;
-  fi = bem3d_mesh_data_get(f, i) ;
-  memcpy(result, fi, bem3d_mesh_data_element_number(f)*sizeof(gdouble)) ;
-	 
-  v = bem3d_mesh_node_from_index(bem3d_motion_mesh(m), i) ;
-  bem3d_node_normal(bem3d_motion_mesh(m), i, n, BEM3D_AVERAGE_MWE) ;
-  bem3d_motion_node_velocity(m, i, t, u) ;
-
-  off = 0 ; 
-  values[off + BEM3D_FUNCTION_X] = GTS_POINT(v)->x ;
-  values[off + BEM3D_FUNCTION_Y] = GTS_POINT(v)->y ;
-  values[off + BEM3D_FUNCTION_Z] = GTS_POINT(v)->z ;
-  values[off + BEM3D_FUNCTION_U] = u[0] ;
-  values[off + BEM3D_FUNCTION_V] = u[1] ;
-  values[off + BEM3D_FUNCTION_W] = u[2] ;
-  values[off + BEM3D_FUNCTION_NX] = n[0] ;
-  values[off + BEM3D_FUNCTION_NY] = n[1] ;
-  values[off + BEM3D_FUNCTION_NZ] = n[2] ;
-  values[off + BEM3D_FUNCTION_INDEX] = (gdouble)i ;
-
-  bem3d_operator_gradient(bem3d_motion_mesh(m), i, op, BEM3D_AVERAGE_MWA) ;
-
-  off = BEM3D_FUNCTION_NRESERVED ;
-
-  for ( k = 0 ; k < 4*bem3d_mesh_data_element_number(f) ; k ++ )
-    values[off+k] = 0.0 ;
-
-  for ( k = 0 ; k < bem3d_mesh_data_element_number(f) ; k ++ ) 
-    values[off + 4*k+0] = fi[k] ;
-
-  for ( p = 0 ; p < bem3d_operator_length(op) ; p ++ ) {
-    opi = bem3d_operator_weight(op,p) ;
-    g_assert(!isnan(opi[0])) ;
-    fp = bem3d_mesh_data_get(f, bem3d_operator_index(op,p)) ;
-    for ( k = 0 ; k < bem3d_mesh_data_element_number(f) ; k ++ ) {
-      values[off + 4*k+1] += fp[k]*opi[0] ;
-      values[off + 4*k+2] += fp[k]*opi[1] ;
-      values[off + 4*k+3] += fp[k]*opi[2] ;
-    }
-  }
-
-  if ( g != NULL ) {
-    off = 4*bem3d_mesh_data_element_number(f) + BEM3D_FUNCTION_NRESERVED ;  
-
-    gi = bem3d_mesh_data_get(g, i) ;
-    
-    for ( k = 0 ; k < 4*bem3d_mesh_data_element_number(g) ; k ++ )
-      values[off+k] = 0.0 ;
-
-    for ( k = 0 ; k < bem3d_mesh_data_element_number(g) ; k ++ ) 
-      values[off + 4*k+0] = gi[k] ;
-
-    for ( p = 0 ; p < bem3d_operator_length(op) ; p ++ ) {
-      opi = bem3d_operator_weight(op,p) ;
-      g_assert(!isnan(opi[0])) ;
-      fp = bem3d_mesh_data_get(g, bem3d_operator_index(op,p)) ;
-      for ( k = 0 ; k < bem3d_mesh_data_element_number(g) ; k ++ ) {
-	values[off + 4*k+1] += fp[k]*opi[0] ;
-	values[off + 4*k+2] += fp[k]*opi[1] ;
-	values[off + 4*k+3] += fp[k]*opi[2] ;
-      }
-    }
-  }
-
-  /* for ( i = 0 ; i < nvals ; i ++ ) { */
-  /*   fprintf(stderr, "%s %lg\n", vars[i], values[i]) ; */
-  /* } */
-
-  /* exit(0) ; */
-  
-  off = BEM3D_FUNCTION_NRESERVED ;
-  for ( k = 0 ; k < bem3d_function_function_number(func) ; k ++ ) {
-    result[g_array_index(func->idx,gint,k)] = 
-      evaluator_evaluate(g_ptr_array_index(func->evaluators,k),
-			 nvals, vars, values) ;
-  }
-
-  memcpy(fi, result, bem3d_mesh_data_element_number(f)*sizeof(gdouble)) ;
-
-  return ;
-}
-#endif /*HAVE_LIBMATHEVAL*/
-
-/**
- * Apply a function to surface data. The function may use any of the
- * reserved words which apply to a ::BEM3DFunction and entries for the
- * supplied data blocks \a f and \a g (if not NULL) with reference to
- * `f[0]', `f[1]', etc. for elements of data and `dfdx[0]' etc. for
- * gradient terms, which are computed as required at each node. If a
- * second data block is given, it may be included in the function as
- * `g[0]' etc. On output, \a f will contain the results of the applied
- * function.
- *
- * @param func ::BEM3DFunction to apply;
- * @param m ::BEM3DMotion for surface;
- * @param t time for evaluation of surface position using \a m;
- * @param f a ::BEM3DMeshData block containing data for mesh (must 
- * not be NULL);
- * @param g a ::BEM3DMeshData block containing supplementary data 
- * (may be NULL);
- *
- * @return 0 on success.
- */
-
-gint bem3d_function_apply(BEM3DFunction *func, 
-			  BEM3DMotion *m,
-			  gdouble t,
-			  BEM3DMeshData *f,
-			  BEM3DMeshData *g)
-
-{
-  gpointer data[8] ;
-  gchar **vars ;
-  gint i, off ;
-  BEM3DOperator *op ;
-
-  g_return_val_if_fail(func != NULL, BEM3D_NULL_ARGUMENT) ;
-  g_return_val_if_fail(BEM3D_IS_FUNCTION(func), BEM3D_ARGUMENT_WRONG_TYPE) ;
-  g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ;
-
-#ifdef HAVE_LIBMATHEVAL
-  if ( g == NULL ) 
-    vars = (gchar **)g_malloc((4*bem3d_mesh_data_element_number(f)+
-			       BEM3D_FUNCTION_NRESERVED)*
-			      sizeof(gchar *)) ;
-  else
-    vars = (gchar **)g_malloc((4*bem3d_mesh_data_element_number(f)+
-			       4*bem3d_mesh_data_element_number(g)+
-			       BEM3D_FUNCTION_NRESERVED)*
-			      sizeof(gchar *)) ;
-   
-  for ( i = 0 ; i < bem3d_function_function_number(func) ; i ++ ) {
-    if ( g_array_index(func->idx,gint,i) >= 
-	 bem3d_mesh_data_element_number(f) )
-      g_error("%s: there is no f[%d] in %d element mesh data block",
-	      __FUNCTION__, g_array_index(func->idx,gint,i),
-	      bem3d_mesh_data_element_number(f)) ;
-  }
-
-  /*reserved names (x, y, z, etc)*/
-  off = 0 ;
-  for ( i = 0 ; i < BEM3D_FUNCTION_NRESERVED ; i ++ )     
-    vars[off+i] = BEM3D_FUNCTION_RESERVED[i] ;
-
-  /*variable names packed into vars as f[0], f[1], ... 
-    dfdx[0], dfdy[0], dfdz[0], dfdx[1], ...*/
-  off = BEM3D_FUNCTION_NRESERVED ;
-  for ( i = 0 ; i < bem3d_mesh_data_element_number(f) ; i ++ ) {
-    vars[off + 4*i+0] = g_strdup_printf("_F%d", i) ;
-    vars[off + 4*i+1] = g_strdup_printf("_DFDX%d", i) ;
-    vars[off + 4*i+2] = g_strdup_printf("_DFDY%d", i) ;
-    vars[off + 4*i+3] = g_strdup_printf("_DFDZ%d", i) ;
-  }
-
-  /*if a second set of data is supplied, include it in the vars*/
-  if ( g != NULL ) {
-    off = 4*bem3d_mesh_data_element_number(f) + BEM3D_FUNCTION_NRESERVED ;  
-    for ( i = 0 ; i < bem3d_mesh_data_element_number(g) ; i ++ ) {
-      vars[off + 4*i+0] = g_strdup_printf("_G%d", i) ;
-      vars[off + 4*i+1] = g_strdup_printf("_DGDX%d", i) ;
-      vars[off + 4*i+2] = g_strdup_printf("_DGDY%d", i) ;
-      vars[off + 4*i+3] = g_strdup_printf("_DGDZ%d", i) ;
-    }
-  }
-
-  if ( func->expansions->len != func->evaluators->len ) 
-    g_error("%s: mismatch between number of evaluators (%d) and "
-	    "expansions (%d)",
-	    __FUNCTION__, func->evaluators->len, func->expansions->len) ;
-
-  for ( i = 0 ; i < bem3d_function_function_number(func) ; i ++ ) {
-    /* fprintf(stderr, "%s\n", */
-    /* 	    ((GString *)(g_ptr_array_index(func->expansions,i)))->str) ; */
-    if ( g_ptr_array_index(func->evaluators, i) != NULL ) 
-      evaluator_destroy(g_ptr_array_index(func->evaluators, i)) ;
-    if ( (g_ptr_array_index(func->evaluators, i)  = 
-	  evaluator_create(((GString *)
-			    (g_ptr_array_index(func->expansions,i)))->str))
-	 == NULL ) 
-      g_error("%s: evaluator_create failed for function (%s)",
-	      __FUNCTION__, 
-	      ((GString *)(g_ptr_array_index(func->expansions,i)))->str) ;
-  }
-
-  data[0] = func ; data[1] = f ; data[2] = vars ; data[3] = m ;
-  data[4] = &t ;
-  data[5] = op = bem3d_operator_new() ;
-  data[6] = g ;
-
-  g_hash_table_foreach(f->t, (GHFunc)function_apply, data) ;
-#else /*HAVE_LIBMATHEVAL*/
-  g_warning("%s: function evaluation not implemented (requires libmatheval)") ;
-#endif /*HAVE_LIBMATHEVAL*/
-  return BEM3D_SUCCESS ;
-}
 
 static void write_function_defs(gchar *var, gchar *def, FILE *f)
 
@@ -672,6 +481,17 @@ gint bem3d_function_read(BEM3DFunction *fn, GtsFile *f)
   return BEM3D_SUCCESS ;
 }
 
+/** 
+ * Insert a string, such as a variable definition, into a function
+ * definition, overwriting any previous definition of the same
+ * variable.
+ * 
+ * @param fn a ::BEM3DFunction to modify
+ * @param str string containing definition to insert
+ * 
+ * @return 0 on success.
+ */
+
 gint bem3d_function_insert_string(BEM3DFunction *fn, gchar *str)
 
 {
@@ -699,6 +519,626 @@ gint bem3d_function_insert_string(BEM3DFunction *fn, gchar *str)
     g_error("%s: syntax error, cannot parse \"%s\"", __FUNCTION__, str) ;
 
   return BEM3D_SUCCESS ;
+}
+
+#ifdef HAVE_LIBMATHEVAL
+static void function_apply(gpointer key, gpointer val, gpointer data[])
+
+{
+  BEM3DFunction *func = data[BEM3D_FUNCTION_DATA_FUNC] ;
+  BEM3DMeshData *f = data[BEM3D_FUNCTION_DATA_DATA_F] ;
+  gchar **vars = data[BEM3D_FUNCTION_DATA_VARS] ;
+  BEM3DMesh *mesh = data[BEM3D_FUNCTION_DATA_MESH] ;
+  BEM3DMotion *motion = data[BEM3D_FUNCTION_DATA_MOTION] ;
+  BEM3DOperator *op = data[BEM3D_FUNCTION_DATA_OP] ;
+  BEM3DMeshData *g = data[BEM3D_FUNCTION_DATA_DATA_G] ;
+  gint imesh = *(gint *)data[BEM3D_FUNCTION_DATA_MESH_INDEX] ;
+  gint i, k, p, off, nvals ;
+  gdouble values[128], result[128], *opi, *fi, *fp, *gi, t ;
+  GtsVertex *v ;
+  GtsVector u = {0.0}, n ;
+
+  if ( mesh != NULL && motion != NULL ) {
+    g_error("%s: mesh and motion should not both be non-NULL",
+	    __FUNCTION__) ;
+  }
+  
+  nvals = BEM3D_FUNCTION_NRESERVED + 4*bem3d_mesh_data_element_number(f)
+    + ( g == NULL ? 0: 4*bem3d_mesh_data_element_number(g) ) ;
+
+  g_assert(nvals < 128) ;
+  i = GPOINTER_TO_INT(key)-1 ;
+  fi = bem3d_mesh_data_get(f, i) ;
+  memcpy(result, fi, bem3d_mesh_data_element_number(f)*sizeof(gdouble)) ;
+
+  if ( mesh != NULL ) {
+    if ( (v = bem3d_mesh_node_from_index(mesh, i)) == NULL )
+      return ; /*this node is not in the mesh currently under consideration*/
+    
+  } else {
+    g_assert_not_reached() ; /*untested code*/
+    mesh = bem3d_motion_mesh(motion) ;
+    if ( (v = bem3d_mesh_node_from_index(mesh, i)) == NULL ) return ;
+    t = *((gdouble *)data[BEM3D_FUNCTION_DATA_TIME]) ;
+    bem3d_motion_node_velocity(motion, i, t, u) ;    
+  }
+
+  bem3d_node_normal(mesh, i, n, BEM3D_AVERAGE_MWE) ;
+
+  off = 0 ; 
+  values[off + BEM3D_FUNCTION_X] = GTS_POINT(v)->x ;
+  values[off + BEM3D_FUNCTION_Y] = GTS_POINT(v)->y ;
+  values[off + BEM3D_FUNCTION_Z] = GTS_POINT(v)->z ;
+  values[off + BEM3D_FUNCTION_U] = u[0] ;
+  values[off + BEM3D_FUNCTION_V] = u[1] ;
+  values[off + BEM3D_FUNCTION_W] = u[2] ;
+  values[off + BEM3D_FUNCTION_NX] = n[0] ;
+  values[off + BEM3D_FUNCTION_NY] = n[1] ;
+  values[off + BEM3D_FUNCTION_NZ] = n[2] ;
+  values[off + BEM3D_FUNCTION_INDEX] = (gdouble)i ;
+  values[off + BEM3D_FUNCTION_MESH_INDEX] = (gdouble)imesh ;
+
+  bem3d_operator_gradient(mesh, i, op, BEM3D_AVERAGE_MWA) ;
+
+  off = BEM3D_FUNCTION_NRESERVED ;
+
+  for ( k = 0 ; k < 4*bem3d_mesh_data_element_number(f) ; k ++ )
+    values[off+k] = 0.0 ;
+
+  for ( k = 0 ; k < bem3d_mesh_data_element_number(f) ; k ++ ) 
+    values[off + 4*k+0] = fi[k] ;
+
+  for ( p = 0 ; p < bem3d_operator_length(op) ; p ++ ) {
+    opi = bem3d_operator_weight(op,p) ;
+    g_assert(!isnan(opi[0])) ;
+    fp = bem3d_mesh_data_get(f, bem3d_operator_index(op,p)) ;
+    for ( k = 0 ; k < bem3d_mesh_data_element_number(f) ; k ++ ) {
+      values[off + 4*k+1] += fp[k]*opi[0] ;
+      values[off + 4*k+2] += fp[k]*opi[1] ;
+      values[off + 4*k+3] += fp[k]*opi[2] ;
+    }
+  }
+
+  if ( g != NULL ) {
+    off = 4*bem3d_mesh_data_element_number(f) + BEM3D_FUNCTION_NRESERVED ;  
+
+    gi = bem3d_mesh_data_get(g, i) ;
+    
+    for ( k = 0 ; k < 4*bem3d_mesh_data_element_number(g) ; k ++ )
+      values[off+k] = 0.0 ;
+
+    for ( k = 0 ; k < bem3d_mesh_data_element_number(g) ; k ++ ) 
+      values[off + 4*k+0] = gi[k] ;
+
+    for ( p = 0 ; p < bem3d_operator_length(op) ; p ++ ) {
+      opi = bem3d_operator_weight(op,p) ;
+      g_assert(!isnan(opi[0])) ;
+      fp = bem3d_mesh_data_get(g, bem3d_operator_index(op,p)) ;
+      for ( k = 0 ; k < bem3d_mesh_data_element_number(g) ; k ++ ) {
+	values[off + 4*k+1] += fp[k]*opi[0] ;
+	values[off + 4*k+2] += fp[k]*opi[1] ;
+	values[off + 4*k+3] += fp[k]*opi[2] ;
+      }
+    }
+  }
+  
+  off = BEM3D_FUNCTION_NRESERVED ;
+  for ( k = 0 ; k < bem3d_function_function_number(func) ; k ++ ) {
+    result[g_array_index(func->idx,gint,k)] = 
+      evaluator_evaluate(g_ptr_array_index(func->evaluators,k),
+			 nvals, vars, values) ;
+  }
+
+  memcpy(fi, result, bem3d_mesh_data_element_number(f)*sizeof(gdouble)) ;
+
+  return ;
+}
+
+static gint bem3d_function_apply_index(BEM3DFunction *func, 
+				       gpointer m0,
+				       gdouble t,
+				       BEM3DMeshData *f,
+				       BEM3DMeshData *g,
+				       gint imesh)
+  
+{
+  gpointer data[BEM3D_FUNCTION_DATA_WIDTH] ;
+  gchar **vars ;
+  gint i, off ;
+  BEM3DOperator *op ;
+
+  if ( BEM3D_IS_MESH(m0) ) {
+    data[BEM3D_FUNCTION_DATA_MESH] = m0 ;
+    data[BEM3D_FUNCTION_DATA_MOTION] = NULL ;
+    data[BEM3D_FUNCTION_DATA_TIME] = NULL ;
+  } else {
+    data[BEM3D_FUNCTION_DATA_MESH] = NULL ;
+    data[BEM3D_FUNCTION_DATA_MOTION] = m0 ;
+    data[BEM3D_FUNCTION_DATA_TIME] = &t ;
+  }
+  
+  if ( g == NULL ) 
+    vars = (gchar **)g_malloc((4*bem3d_mesh_data_element_number(f)+
+			       BEM3D_FUNCTION_NRESERVED)*
+			      sizeof(gchar *)) ;
+  else
+    vars = (gchar **)g_malloc((4*bem3d_mesh_data_element_number(f)+
+			       4*bem3d_mesh_data_element_number(g)+
+			       BEM3D_FUNCTION_NRESERVED)*
+			      sizeof(gchar *)) ;
+   
+  for ( i = 0 ; i < bem3d_function_function_number(func) ; i ++ ) {
+    if ( g_array_index(func->idx,gint,i) >= 
+	 bem3d_mesh_data_element_number(f) )
+      g_error("%s: there is no f[%d] in %d element mesh data block",
+	      __FUNCTION__, g_array_index(func->idx,gint,i),
+	      bem3d_mesh_data_element_number(f)) ;
+  }
+
+  /*reserved names (x, y, z, etc)*/
+  off = 0 ;
+  for ( i = 0 ; i < BEM3D_FUNCTION_NRESERVED ; i ++ )     
+    vars[off+i] = BEM3D_FUNCTION_RESERVED[i] ;
+
+  /*variable names packed into vars as f[0], f[1], ... 
+    dfdx[0], dfdy[0], dfdz[0], dfdx[1], ...*/
+  off = BEM3D_FUNCTION_NRESERVED ;
+  for ( i = 0 ; i < bem3d_mesh_data_element_number(f) ; i ++ ) {
+    vars[off + 4*i+0] = g_strdup_printf("_F%d", i) ;
+    vars[off + 4*i+1] = g_strdup_printf("_DFDX%d", i) ;
+    vars[off + 4*i+2] = g_strdup_printf("_DFDY%d", i) ;
+    vars[off + 4*i+3] = g_strdup_printf("_DFDZ%d", i) ;
+  }
+
+  /*if a second set of data is supplied, include it in the vars*/
+  if ( g != NULL ) {
+    off = 4*bem3d_mesh_data_element_number(f) + BEM3D_FUNCTION_NRESERVED ;  
+    for ( i = 0 ; i < bem3d_mesh_data_element_number(g) ; i ++ ) {
+      vars[off + 4*i+0] = g_strdup_printf("_G%d", i) ;
+      vars[off + 4*i+1] = g_strdup_printf("_DGDX%d", i) ;
+      vars[off + 4*i+2] = g_strdup_printf("_DGDY%d", i) ;
+      vars[off + 4*i+3] = g_strdup_printf("_DGDZ%d", i) ;
+    }
+  }
+
+  if ( func->expansions->len != func->evaluators->len ) 
+    g_error("%s: mismatch between number of evaluators (%d) and "
+	    "expansions (%d)",
+	    __FUNCTION__, func->evaluators->len, func->expansions->len) ;
+
+  for ( i = 0 ; i < bem3d_function_function_number(func) ; i ++ ) {
+    if ( g_ptr_array_index(func->evaluators, i) != NULL ) 
+      evaluator_destroy(g_ptr_array_index(func->evaluators, i)) ;
+    if ( (g_ptr_array_index(func->evaluators, i)  = 
+	  evaluator_create(((GString *)
+			    (g_ptr_array_index(func->expansions,i)))->str))
+	 == NULL ) 
+      g_error("%s: evaluator_create failed for function (%s)",
+	      __FUNCTION__, 
+	      ((GString *)(g_ptr_array_index(func->expansions,i)))->str) ;
+  }
+  
+  data[BEM3D_FUNCTION_DATA_FUNC] = func ;
+  data[BEM3D_FUNCTION_DATA_DATA_F] = f ;
+  data[BEM3D_FUNCTION_DATA_VARS] = vars ;
+  data[BEM3D_FUNCTION_DATA_OP] = op = bem3d_operator_new() ;
+  data[BEM3D_FUNCTION_DATA_DATA_G] = g ;
+  data[BEM3D_FUNCTION_DATA_MESH_INDEX] = &imesh ;
+  
+  g_hash_table_foreach(f->t, (GHFunc)function_apply, data) ;
+
+  return 0 ;
+}
+#endif /*HAVE_LIBMATHEVAL*/
+
+/**
+ * Apply a function to surface data specified as ::BEM3DMesh. The
+ * function may use any of the reserved words which apply to a
+ * ::BEM3DFunction and entries for the supplied data blocks \a f and
+ * \a g (if not NULL) with reference to `f[0]', `f[1]', etc. for
+ * elements of data and `dfdx[0]' etc. for gradient terms, which are
+ * computed as required at each node. If a second data block is given,
+ * it may be included in the function as `g[0]' etc. On output, \a f
+ * will contain the results of the applied function.
+ *
+ * @param func ::BEM3DFunction to apply;
+ * @param m ::BEM3DMesh for surface;
+ * @param f a ::BEM3DMeshData block containing data for mesh (must 
+ * not be NULL);
+ * @param g a ::BEM3DMeshData block containing supplementary data 
+ * (may be NULL);
+ *
+ * @return 0 on success.
+ */
+
+gint bem3d_function_apply_mesh(BEM3DFunction *func, 
+			       BEM3DMesh *m,
+			       BEM3DMeshData *f,
+			       BEM3DMeshData *g)
+
+{
+
+  g_return_val_if_fail(func != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_FUNCTION(func), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ;
+
+#ifdef HAVE_LIBMATHEVAL
+  bem3d_function_apply_index(func, m, 0, f, g, 0) ;
+#else /*HAVE_LIBMATHEVAL*/
+  g_warning("%s: function evaluation not implemented (requires libmatheval)") ;
+#endif /*HAVE_LIBMATHEVAL*/
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Apply a function to a list of surface data, in the same way as
+ * ::bem3d_function_apply_mesh. The list of surfaces is in the form
+ * of an array of ::BEM3DMesh pointers, which are visited in turn in
+ * the same manner as in ::bem3d_function_apply_mesh, with the
+ * reserved variable \a mesh set to the index of the surface in the
+ * list (so the ordering of the data in the list matters).
+ * 
+ * @param func ::BEM3DFunction to apply;
+ * @param motions array of pointers to ::BEM3DMesh for surfaces;
+ * @param f a ::BEM3DMeshData block containing data for mesh (must 
+ * not be NULL);
+ * @param g a ::BEM3DMeshData block containing supplementary data 
+ * (may be NULL);
+ *
+ * @return 0 on success.
+ */
+
+gint bem3d_function_apply_mesh_list(BEM3DFunction *func, 
+				    GPtrArray *meshes,
+				    BEM3DMeshData *f,
+				    BEM3DMeshData *g)
+
+{
+  gint i ;
+  BEM3DMesh *m ;
+  
+  g_return_val_if_fail(func != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_FUNCTION(func), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ;
+
+#ifdef HAVE_LIBMATHEVAL
+  for ( i = 0 ; i < meshes->len ; i ++ ) {
+    m = g_ptr_array_index(meshes, i) ;
+    bem3d_function_apply_index(func, m, 0, f, g, i) ;
+  }
+
+#else /*HAVE_LIBMATHEVAL*/
+  g_warning("%s: function evaluation not implemented (requires libmatheval)") ;
+#endif /*HAVE_LIBMATHEVAL*/
+  return BEM3D_SUCCESS ;
+}
+
+/**
+ * Apply a function to surface data specified as ::BEM3DMotion,
+ * computing surface velocity for passing to the function. The
+ * function may use any of the reserved words which apply to a
+ * ::BEM3DFunction and entries for the supplied data blocks \a f and
+ * \a g (if not NULL) with reference to `f[0]', `f[1]', etc. for
+ * elements of data and `dfdx[0]' etc. for gradient terms, which are
+ * computed as required at each node. If a second data block is given,
+ * it may be included in the function as `g[0]' etc. On output, \a f
+ * will contain the results of the applied function.
+ *
+ * @param func ::BEM3DFunction to apply;
+ * @param m ::BEM3DMotion for surface;
+ * @param t time for evaluation of surface position and velocity using \a m;
+ * @param f a ::BEM3DMeshData block containing data for mesh (must 
+ * not be NULL);
+ * @param g a ::BEM3DMeshData block containing supplementary data 
+ * (may be NULL);
+ *
+ * @return 0 on success.
+ */
+
+gint bem3d_function_apply_motion(BEM3DFunction *func, 
+				 BEM3DMotion *m,
+				 gdouble t,
+				 BEM3DMeshData *f,
+				 BEM3DMeshData *g)
+
+{
+  g_return_val_if_fail(func != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_FUNCTION(func), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ;
+
+#ifdef HAVE_LIBMATHEVAL
+  bem3d_function_apply_index(func, m, t, f, g, 0) ;
+#else /*HAVE_LIBMATHEVAL*/
+  g_warning("%s: function evaluation not implemented (requires libmatheval)") ;
+#endif /*HAVE_LIBMATHEVAL*/
+  return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Apply a function to a list of surface data, in the same way as
+ * ::bem3d_function_apply_motion. The list of surfaces is in the form
+ * of an array of ::BEM3DMotion pointers, which are visited in turn in
+ * the same manner as in ::bem3d_function_apply_motion, with the
+ * reserved variable \a mesh set to the index of the surface in the
+ * list (so the ordering of the data in the list matters).
+ * 
+ * @param func ::BEM3DFunction to apply;
+ * @param motions array of pointers to ::BEM3DMotion for surfaces;
+ * @param t time for evaluation of surface position and velocity using \a m;
+ * @param f a ::BEM3DMeshData block containing data for mesh (must 
+ * not be NULL);
+ * @param g a ::BEM3DMeshData block containing supplementary data 
+ * (may be NULL);
+ *
+ * @return 0 on success.
+ */
+
+gint bem3d_function_apply_motion_list(BEM3DFunction *func, 
+				      GPtrArray *motions,
+				      gdouble t,
+				      BEM3DMeshData *f,
+				      BEM3DMeshData *g)
+  
+{
+  gint i ;
+  BEM3DMotion *m ;
+
+  g_return_val_if_fail(func != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(motions != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_FUNCTION(func), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  for ( i = 0 ; i < motions->len ; i ++ ) {
+    m = g_ptr_array_index(motions, i) ;
+    bem3d_function_apply_index(func, m, t, f, g, i) ;
+  }
+  
+  return 0 ;
+}
+
+static void integrate_func(BEM3DElement *e, gpointer *data)
+
+{
+  BEM3DFunction *func = data[BEM3D_FUNCTION_DATA_FUNC] ;
+  /* BEM3DMesh *m = data[BEM3D_FUNCTION_DATA_MESH] ; */
+  /* GtsVertex *x = data[BEM3D_FUNCTION_DATA_VERTEX] ; */
+  /* gdouble *N = data[BEM3D_FUNCTION_DATA_NORMAL] ; */
+  /* gint I = *((gint *)data[BEM3D_FUNCTION_DATA_INDEX]) ; */
+  BEM3DMeshData *f = data[BEM3D_FUNCTION_DATA_DATA_F] ;
+  /* gint imesh = *((gint *)data[BEM3D_FUNCTION_DATA_MESH_INDEX]) ; */
+  gdouble *values = data[BEM3D_FUNCTION_DATA_VALUES] ;
+  BEM3DQuadratureRule *q = data[BEM3D_FUNCTION_DATA_QUADRATURE] ;
+  gchar **vars = data[BEM3D_FUNCTION_DATA_VARS] ;
+  gint nvals = *((gint *)data[BEM3D_FUNCTION_DATA_NVALS]) ;
+  
+  gdouble L[32], dLds[32], dLdt[32], s, t, wt, n[3], J, result[128], *fj ;
+  BEM3DShapeFunc shfunc = bem3d_element_shape_func(e) ;
+  BEM3DShapeFunc cpfunc = bem3d_element_node_func(e) ;
+  GtsPoint y ;
+  gint i, j, k, off, ngp = 7 ;
+
+  /*note no gradient operator included (all zeroed)*/
+  
+  bem3d_quadrature_rule_wx(NULL, e, q, NULL, NULL, &ngp) ;
+
+  for ( i = 0 ; i < bem3d_quadrature_vertex_number(q) ; i ++ ) {
+    s = bem3d_quadrature_xi(q,i) ;
+    t = bem3d_quadrature_eta(q,i) ;
+    wt = bem3d_quadrature_weight(q,i) ;
+    shfunc(s, t, L, dLds, dLdt, NULL) ;
+    bem3d_element_position(e, L, &y) ;
+    bem3d_element_normal(e, dLds, dLdt, n, &J) ;
+
+    cpfunc(s, t, L, NULL, NULL, NULL) ;
+
+    off = 0 ;
+    values[off + BEM3D_FUNCTION_X] = GTS_POINT(&y)->x ;
+    values[off + BEM3D_FUNCTION_Y] = GTS_POINT(&y)->y ;
+    values[off + BEM3D_FUNCTION_Z] = GTS_POINT(&y)->z ;
+    values[off + BEM3D_FUNCTION_NX] = n[0] ;
+    values[off + BEM3D_FUNCTION_NY] = n[1] ;
+    values[off + BEM3D_FUNCTION_NZ] = n[2] ;
+    
+    /* off = BEM3D_FUNCTION_NRESERVED ; */
+
+    /* for ( k = 0 ; k < 4*bem3d_mesh_data_element_number(f) ; k ++ ) */
+    /*   values[off+k] = 0.0 ; */
+
+    /* for ( k = 0 ; k < bem3d_mesh_data_element_number(f) ; k ++ )  */
+    /*   values[off + 4*k+0] = fi[k] ; */
+
+    /* off = BEM3D_FUNCTION_NRESERVED ; */
+
+    /*evaluation of integrand at quadrature point*/
+    for ( k = 0 ; k < bem3d_function_function_number(func) ; k ++ ) {
+      result[g_array_index(func->idx,gint,k)] = 
+	evaluator_evaluate(g_ptr_array_index(func->evaluators,k),
+			 nvals, vars, values) ;
+    }
+
+    J *= wt ;
+    for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
+      k = bem3d_element_global_index(e, j) ;
+      fj = bem3d_mesh_data_get(f, k) ;
+      for ( k = 0 ; k < bem3d_function_function_number(func) ; k ++ ) {
+	fj[k] += result[k]*L[j]*J ;
+      }
+    }
+  }
+  
+  return ;
+}
+
+/** 
+ * Fill a ::BEM3DMeshData with the integral of a function such that
+ * the entries form the weights of a quadrature,
+ * i.e. \f$\int_{S}w(\mathbf{x})\phi(\mathbf{x})\approx\sum_{i}\phi_{i}f_{i}\f$
+ * where \f$\phi_{i}\f$ are the values of a function at the mesh nodes
+ * and \f$f_{i}\f$ are the entries in the ::BEM3DMeshData
+ * 
+ * @param func weighting function to integrate (may have multiple terms);
+ * @param m mesh to integrate on;
+ * @param imesh index of \a m, used to set reserved word \a mesh in function
+ * evaluation;
+ * @param x used to set coordinates of evaluation point in position-dependent
+ * integrands;
+ * @param n normal at evaluation point;
+ * @param i index of evaluation point;
+ * @param q ::BEM3DQuadratureRule used for integration on elements;
+ * @param f output data containing integral weights.
+ * 
+ * @return BEM3D_SUCCESS on success.
+ */
+
+gint bem3d_function_integral_weights(BEM3DFunction *func,
+				     BEM3DMesh *m, gint imesh,
+				     GtsVertex *x, GtsVector n, gint i,
+				     BEM3DQuadratureRule *q,
+				     BEM3DMeshData *f)
+
+{
+  gpointer data[BEM3D_FUNCTION_DATA_WIDTH] ;
+  gint nvals, off ;
+  gdouble values[128] = {0.0} ;
+  gchar **vars ;
+
+  nvals = BEM3D_FUNCTION_NRESERVED + 4*bem3d_mesh_data_element_number(f) ;
+  g_assert(nvals < 128) ;
+
+  vars = (gchar **)g_malloc(nvals*sizeof(gchar *)) ;
+  /*reserved names (x, y, z, etc)*/
+  off = 0 ;
+  for ( i = 0 ; i < BEM3D_FUNCTION_NRESERVED ; i ++ )     
+    vars[off+i] = BEM3D_FUNCTION_RESERVED[i] ;
+
+  /*variable names packed into vars as f[0], f[1], ... 
+    dfdx[0], dfdy[0], dfdz[0], dfdx[1], ...*/
+  off = BEM3D_FUNCTION_NRESERVED ;
+  for ( i = 0 ; i < bem3d_mesh_data_element_number(f) ; i ++ ) {
+    vars[off + 4*i+0] = g_strdup_printf("_F%d", i) ;
+    vars[off + 4*i+1] = g_strdup_printf("_DFDX%d", i) ;
+    vars[off + 4*i+2] = g_strdup_printf("_DFDY%d", i) ;
+    vars[off + 4*i+3] = g_strdup_printf("_DFDZ%d", i) ;
+  }
+
+  data[BEM3D_FUNCTION_DATA_FUNC] = func ;
+  data[BEM3D_FUNCTION_DATA_MESH] = m ;
+  data[BEM3D_FUNCTION_DATA_VERTEX] = x ;
+  data[BEM3D_FUNCTION_DATA_NORMAL] = n ;
+  data[BEM3D_FUNCTION_DATA_INDEX] = &i ;
+  data[BEM3D_FUNCTION_DATA_DATA_F] = f ;
+  data[BEM3D_FUNCTION_DATA_MESH_INDEX] = &imesh ;
+  data[BEM3D_FUNCTION_DATA_VALUES] = values ;
+  data[BEM3D_FUNCTION_DATA_QUADRATURE] = q ;
+  data[BEM3D_FUNCTION_DATA_NVALS] = &nvals ;
+  data[BEM3D_FUNCTION_DATA_VARS] = vars ;
+
+
+  off = 0 ;
+  for ( i = 0 ; i < BEM3D_FUNCTION_NRESERVED ; i ++ )     
+    vars[off+i] = BEM3D_FUNCTION_RESERVED[i] ;
+
+  
+  off = 0 ;
+  if ( x != NULL ) {
+    values[off + BEM3D_FUNCTION_X_EVAL] = GTS_POINT(x)->x ;
+    values[off + BEM3D_FUNCTION_Y_EVAL] = GTS_POINT(x)->y ;
+    values[off + BEM3D_FUNCTION_Z_EVAL] = GTS_POINT(x)->z ;
+  }
+  if ( n != NULL ) {
+    values[off + BEM3D_FUNCTION_NX_EVAL] = n[0] ;
+    values[off + BEM3D_FUNCTION_NY_EVAL] = n[1] ;
+    values[off + BEM3D_FUNCTION_NZ_EVAL] = n[2] ;
+  }
+  values[off + BEM3D_FUNCTION_INDEX_EVAL] = (gdouble)i ;
+  values[off + BEM3D_FUNCTION_MESH_INDEX] = (gdouble)imesh ;
+
+  for ( i = 0 ; i < bem3d_function_function_number(func) ; i ++ ) {
+    if ( g_ptr_array_index(func->evaluators, i) != NULL ) 
+      evaluator_destroy(g_ptr_array_index(func->evaluators, i)) ;
+    if ( (g_ptr_array_index(func->evaluators, i)  = 
+	  evaluator_create(((GString *)
+			    (g_ptr_array_index(func->expansions,i)))->str))
+	 == NULL ) 
+      g_error("%s: evaluator_create failed for function (%s)",
+	      __FUNCTION__, 
+	      ((GString *)(g_ptr_array_index(func->expansions,i)))->str) ;
+  }
+  
+  bem3d_mesh_foreach_element(m, (BEM3DElementFunc)integrate_func, data) ;
+  
+  return 0 ;
+}
+
+gint bem3d_function_eval_point(BEM3DFunction *func,
+			       GtsPoint *x, GtsVector n, gint idx,
+			       gdouble *result, gint nres)
+
+{
+  gint nvals, off, i, k ;
+  gdouble values[128] = {0.0} ;
+  gchar **vars ;
+
+  nvals = BEM3D_FUNCTION_NRESERVED + 4*nres ;
+  g_assert(nvals < 128) ;
+
+  vars = (gchar **)g_malloc(nvals*sizeof(gchar *)) ;
+  /*reserved names (x, y, z, etc)*/
+  off = 0 ;
+  for ( i = 0 ; i < BEM3D_FUNCTION_NRESERVED ; i ++ )     
+    vars[off+i] = BEM3D_FUNCTION_RESERVED[i] ;
+
+  /*variable names packed into vars as f[0], f[1], ... 
+    dfdx[0], dfdy[0], dfdz[0], dfdx[1], ...*/
+  off = BEM3D_FUNCTION_NRESERVED ;
+  for ( i = 0 ; i < nres ; i ++ ) {
+    vars[off + 4*i+0] = g_strdup_printf("_F%d", i) ;
+    vars[off + 4*i+1] = g_strdup_printf("_DFDX%d", i) ;
+    vars[off + 4*i+2] = g_strdup_printf("_DFDY%d", i) ;
+    vars[off + 4*i+3] = g_strdup_printf("_DFDZ%d", i) ;
+  }
+
+  off = 0 ;
+  for ( i = 0 ; i < BEM3D_FUNCTION_NRESERVED ; i ++ )     
+    vars[off+i] = BEM3D_FUNCTION_RESERVED[i] ;
+
+  
+  off = 0 ;
+  if ( x != NULL ) {
+    values[off + BEM3D_FUNCTION_X] = GTS_POINT(x)->x ;
+    values[off + BEM3D_FUNCTION_Y] = GTS_POINT(x)->y ;
+    values[off + BEM3D_FUNCTION_Z] = GTS_POINT(x)->z ;
+  }
+  if ( n != NULL ) {
+    values[off + BEM3D_FUNCTION_NX] = n[0] ;
+    values[off + BEM3D_FUNCTION_NY] = n[1] ;
+    values[off + BEM3D_FUNCTION_NZ] = n[2] ;
+  }
+  values[off + BEM3D_FUNCTION_INDEX] = (gdouble)idx ;
+
+  for ( i = 0 ; i < bem3d_function_function_number(func) ; i ++ ) {
+    if ( g_ptr_array_index(func->evaluators, i) != NULL ) 
+      evaluator_destroy(g_ptr_array_index(func->evaluators, i)) ;
+    if ( (g_ptr_array_index(func->evaluators, i)  = 
+	  evaluator_create(((GString *)
+			    (g_ptr_array_index(func->expansions,i)))->str))
+	 == NULL ) 
+      g_error("%s: evaluator_create failed for function (%s)",
+	      __FUNCTION__, 
+	      ((GString *)(g_ptr_array_index(func->expansions,i)))->str) ;
+  }
+
+  i = -1 ;
+  for ( k = 0 ; k < bem3d_function_function_number(func) ; k ++ ) {
+    result[g_array_index(func->idx,gint,k)] = 
+      evaluator_evaluate(g_ptr_array_index(func->evaluators,k),
+			 nvals, vars, values) ;
+    i = MAX(i, g_array_index(func->idx,gint,k)) ;
+  }
+  
+  return i ;
 }
 
 /**

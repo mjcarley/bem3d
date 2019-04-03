@@ -95,3 +95,5 @@
 \form#94:$\partial \xi_{i}/\partial x_{j}$
 \form#95:$\phi$
 \form#96:$\partial\phi/\partial n$
+\form#97:$\int_{S}w(\mathbf{x})\phi(\mathbf{x})\approx\sum_{i}\phi_{i}f_{i}$
+\form#98:$\phi_{i}$

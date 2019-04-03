@@ -286,18 +286,15 @@ gint main(gint argc, gchar **argv)
   BEM3DFMMWorkspace *work ;
   GPtrArray *meshes ;
   gboolean meshes_closed ;
-  GtsFile *fp ;
   GTimer *t ;
-  gint i, j, np, nc, w, order ;
-  gchar ch, *ipfile, *opfile, p[32], *progname ;
+  gint i, j, np, nc, w, order, imin, imax ;
+  gchar ch, *opfile, p[32], *progname ;
   BEM3DLookupFunc dgfunc ;
   BEM3DParameters gdata ;
   gpointer adata[ADATA_SIZE] ;
-  gdouble k ;
-  gdouble *a, *b, *C, *unit, r_correct ;
-  gint imin, imax ;
+  gdouble *a, *b, *C, *unit, r_correct, k ;
   GLogLevelFlags loglevel ;
-  FILE *input, *output ;
+  FILE *output ;
   BEM3DConfiguration *config ;
   BEM3DGreensFunction gfunc ;
 
@@ -324,7 +321,7 @@ gint main(gint argc, gchar **argv)
   bem3d_parameters_coupling_real(&gdata) = 1.0 ;
   bem3d_parameters_coupling_imag(&gdata) = 0.0 ;
   w = 1 ;
-  ipfile = opfile = NULL ;
+  opfile = NULL ;
   output = stdout ;
   loglevel = G_LOG_LEVEL_MESSAGE ;
   bem3d_shapefunc_lookup_init() ;
@@ -359,17 +356,7 @@ gint main(gint argc, gchar **argv)
       break ;
     case 'l': loglevel = 1 << atoi(optarg) ; break ;
     case 'C': bem3d_configuration_read(config, optarg) ; break ;
-    case 'i': 
-      ipfile = g_strdup(optarg) ;
-      m = bem3d_mesh_new(bem3d_mesh_class(), gts_face_class(),
-			 gts_edge_class(), gts_vertex_class()) ;
-      input = file_open(ipfile, "-", "r", stdin) ;
-      fp = gts_file_new(input) ;
-      bem3d_mesh_read(m, fp) ;
-      file_close(input) ;
-      g_free(ipfile) ;
-      g_ptr_array_add(meshes, m) ;
-      break ;
+    case 'i': append_mesh_from_file(meshes, optarg) ; break ;
     case 'k': bem3d_parameters_wavenumber(&gdata) = atof(optarg) ;
       break ;
     /* case 'M':  */

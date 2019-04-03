@@ -30,27 +30,84 @@
 #include "bem3d.h"
 #include "bem3d-private.h"
 
+#define DATA_REDUCTION_WIDTH 4
+#define DATA_REDUCTION_DATA  0
+#define DATA_REDUCTION_DDATA 1
+#define DATA_REDUCTION_IDATA 2
+#define DATA_REDUCTION_MESH  3
+
+
 static gchar *_operations[] = {"max",
-			      "min",
-			      "sum",
-			      "int",
+			       "min",
+			       "lim",
+			       "sum",
+			       "int",
 			      ""} ;
 static gchar *_descriptions[] = {"maximum value in each column",
 				 "minimum value in each column",
+				 "maximum and minimum value in each column",
 				 "sum of values in each column",
 				 "integral of data over BEM3D surface",
 				 ""} ;
 static BEM3DReductionFunc _funcs[] = {bem3d_reduction_func_max,
 				      bem3d_reduction_func_min,
+				      bem3d_reduction_func_limits,
 				      bem3d_reduction_func_sum,
 				      bem3d_reduction_func_int,
 				      NULL} ;
+
+static void fill_data(gpointer data[],
+		      BEM3DMeshData *f, gdouble *ddata, gint *idata,
+		      BEM3DMesh *m)
+
+{
+  data[DATA_REDUCTION_DATA] = f ;
+  data[DATA_REDUCTION_DDATA] = ddata ;
+  data[DATA_REDUCTION_IDATA] = idata ;
+  data[DATA_REDUCTION_MESH] = m ;
+  
+  return ;
+}
+
+static void unpack_data(gpointer data[],
+			BEM3DMeshData **f, gdouble **ddata, gint **idata,
+			BEM3DMesh **m)
+
+{
+  *f = data[DATA_REDUCTION_DATA] ;
+  *ddata = data[DATA_REDUCTION_DDATA] ;
+  *idata = data[DATA_REDUCTION_IDATA] ;
+  *m = data[DATA_REDUCTION_MESH] ;
+  
+  return ;
+}
+
 
 /**
  * @defgroup reduction Functions for data reduction
  *
  * @{
  */
+
+static void reduction_max(gint i, gdouble *d, gint nf, gpointer *data) 
+
+{
+  BEM3DMeshData *f ;
+  gdouble *ddata ;
+  gint *idata  ;
+  BEM3DMesh *m ;
+  gint j ;
+
+  unpack_data(data, &f, &ddata, &idata, &m) ;
+  
+  for ( j = 0 ; j < nf ; j ++ ) {
+    if ( d[j] > ddata[j] ) {
+      ddata[j] = d[j] ; idata[j] = i ;
+    }
+  }
+  
+  return ;
+}
 
 /**
  * Maximum value of entries in each column of data
@@ -72,27 +129,40 @@ gint bem3d_reduction_func_max(BEM3DMesh *m, BEM3DMeshData *f,
 			      gpointer data)
 
 {
-  gint i, j, nf ;
-  gdouble *d ;
+  gint j ;
+  gpointer rdata[DATA_REDUCTION_WIDTH] ;
 
-  nf = bem3d_mesh_data_element_number(f) ;
-
-  for ( j = 0 ; j < nf ; j ++ ) {
-    idata[j] = 0.0 ; ddata[j] = -G_MAXDOUBLE ;
+  for ( j = 0 ; j < bem3d_mesh_data_element_number(f) ; j ++ ) {
+    idata[j] = 0 ; ddata[j] = -G_MAXDOUBLE ;
   }
 
   *ni = *nd = 1 ;
+
+  fill_data(rdata, f, ddata, idata, m) ;  
+  bem3d_mesh_data_foreach(f, (BEM3DMeshDataEntryFunc)reduction_max,
+			  rdata) ;
+
+  return 0 ;
+}
+
+static void reduction_min(gint i, gdouble *d, gint nf, gpointer *data) 
+
+{
+  BEM3DMeshData *f ;
+  gdouble *ddata ;
+  gint *idata  ;
+  BEM3DMesh *m ;
+  gint j ;
+
+  unpack_data(data, &f, &ddata, &idata, &m) ;
   
-  for ( i = 0 ; i < bem3d_mesh_node_number(m) ; i ++ ) {
-    d = bem3d_mesh_data_get(f, i) ;
-    for ( j = 0 ; j < nf ; j ++ ) {
-      if ( d[j] > ddata[j] ) {
-	ddata[j] = d[j] ; idata[j] = i ;
-      }
+  for ( j = 0 ; j < nf ; j ++ ) {
+    if ( d[j] < ddata[j] ) {
+      ddata[j] = d[j] ; idata[j] = i ;
     }
   }
   
-  return 0 ;
+  return ;
 }
 
 /**
@@ -115,25 +185,80 @@ gint bem3d_reduction_func_min(BEM3DMesh *m, BEM3DMeshData *f,
 			      gpointer data)
 
 {
-  gint i, j, nf ;
-  gdouble *d ;
+  gint j ;
+  gpointer rdata[DATA_REDUCTION_WIDTH] ;
 
-  nf = bem3d_mesh_data_element_number(f) ;
-
-  for ( j = 0 ; j < nf ; j ++ ) {
-    idata[j] = 0.0 ; ddata[j] = G_MAXDOUBLE ;
+  for ( j = 0 ; j < bem3d_mesh_data_element_number(f) ; j ++ ) {
+    idata[j] = 0 ; ddata[j] = G_MAXDOUBLE ;
   }
 
   *ni = *nd = 1 ;
   
-  for ( i = 0 ; i < bem3d_mesh_node_number(m) ; i ++ ) {
-    d = bem3d_mesh_data_get(f, i) ;
-    for ( j = 0 ; j < nf ; j ++ ) {
-      if ( d[j] < ddata[j] ) {
-	ddata[j] = d[j] ; idata[j] = i ;
-      }
+  fill_data(rdata, f, ddata, idata, m) ;  
+  bem3d_mesh_data_foreach(f, (BEM3DMeshDataEntryFunc)reduction_min,
+			  rdata) ;
+
+  return 0 ;
+}
+
+static void reduction_limits(gint i, gdouble *d, gint nf, gpointer *data) 
+
+{
+  BEM3DMeshData *f ;
+  gdouble *ddata ;
+  gint *idata  ;
+  BEM3DMesh *m ;
+  gint j ;
+
+  unpack_data(data, &f, &ddata, &idata, &m) ;
+  
+  for ( j = 0 ; j < nf ; j ++ ) {
+    if ( d[j] < ddata[2*j+0] ) {
+      ddata[2*j+0] = d[j] ; idata[2*j+0] = i ;
+    }
+    if ( d[j] > ddata[2*j+1] ) {
+      ddata[2*j+1] = d[j] ; idata[2*j+1] = i ;
     }
   }
+  
+  return ;
+}
+
+/**
+ * Minimum and maximum values of entries in each column of data
+ *
+ * @param m a ::BEM3DMesh
+ * @param f a ::BEM3DMeshData containing data for \a m
+ * @param idata on exit, index of minimum and maximum value in each column
+ * @param ni on exit 2
+ * @param ddata minimum and maximum value in each column of \a f
+ * @param nd on exit 2
+ * @param data ignored
+ *
+ * @return 0 on success
+ */
+
+gint bem3d_reduction_func_limits(BEM3DMesh *m, BEM3DMeshData *f,
+				 gint *idata, gint *ni,
+				 gdouble *ddata, gint *nd,
+				 gpointer data)
+
+{
+  gint j ;
+  gpointer rdata[DATA_REDUCTION_WIDTH] ;
+  
+  for ( j = 0 ; j < bem3d_mesh_data_element_number(f) ; j ++ ) {
+    idata[2*j+0] = idata[2*j+1] = 0 ;
+    ddata[2*j+0] =  G_MAXDOUBLE ;
+    ddata[2*j+1] = -G_MAXDOUBLE ;
+  }
+
+  *ni = *nd = 2 ;
+
+  fill_data(rdata, f, ddata, idata, m) ;
+  
+  bem3d_mesh_data_foreach(f, (BEM3DMeshDataEntryFunc)reduction_limits,
+			  rdata) ;
   
   return 0 ;
 }
@@ -169,7 +294,7 @@ gint bem3d_reduction_func_sum(BEM3DMesh *m, BEM3DMeshData *f,
 
   *ni = 0 ; *nd = 1 ;
   
-  for ( i = 0 ; i < bem3d_mesh_node_number(m) ; i ++ ) {
+  for ( i = 0 ; i < bem3d_mesh_data_node_number(f) ; i ++ ) {
     d = bem3d_mesh_data_get(f, i) ;
     for ( j = 0 ; j < nf ; j ++ ) {
       ddata[j] += d[j] ;

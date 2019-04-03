@@ -7,6 +7,8 @@ gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+max} (\textbf{ B\+E\+M3\+D\+Me
 \item 
 gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+min} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint $\ast$idata, gint $\ast$ni, gdouble $\ast$ddata, gint $\ast$nd, gpointer data)
 \item 
+gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+limits} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint $\ast$idata, gint $\ast$ni, gdouble $\ast$ddata, gint $\ast$nd, gpointer data)
+\item 
 gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+sum} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint $\ast$idata, gint $\ast$ni, gdouble $\ast$ddata, gint $\ast$nd, gpointer data)
 \item 
 gint \textbf{ bem3d\+\_\+reduction\+\_\+func\+\_\+int} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint $\ast$idata, gint $\ast$ni, gdouble $\ast$ddata, gint $\ast$nd, gpointer data)
@@ -101,6 +103,34 @@ Surface integral of data
 
 References bem3d\+\_\+mesh\+\_\+foreach\+\_\+element(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+new().
 
+\mbox{\label{group__reduction_ga39be199a381ed38c9f4a698490ab90e3}} 
+\index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+limits@{bem3d\+\_\+reduction\+\_\+func\+\_\+limits}}
+\index{bem3d\+\_\+reduction\+\_\+func\+\_\+limits@{bem3d\+\_\+reduction\+\_\+func\+\_\+limits}!Functions for data reduction@{Functions for data reduction}}
+\subsubsection{bem3d\+\_\+reduction\+\_\+func\+\_\+limits()}
+{\footnotesize\ttfamily gint bem3d\+\_\+reduction\+\_\+func\+\_\+limits (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{gint $\ast$}]{idata,  }\item[{gint $\ast$}]{ni,  }\item[{gdouble $\ast$}]{ddata,  }\item[{gint $\ast$}]{nd,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Minimum and maximum values of entries in each column of data
+
+
+\begin{DoxyParams}{Parameters}
+{\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
+\hline
+{\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} containing data for {\itshape m} \\
+\hline
+{\em idata} & on exit, index of minimum and maximum value in each column \\
+\hline
+{\em ni} & on exit 2 \\
+\hline
+{\em ddata} & minimum and maximum value in each column of {\itshape f} \\
+\hline
+{\em nd} & on exit 2 \\
+\hline
+{\em data} & ignored\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
 \mbox{\label{group__reduction_ga9859de54a3d7d9a82f66e151ec5cf36e}} 
 \index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+list@{bem3d\+\_\+reduction\+\_\+func\+\_\+list}}
 \index{bem3d\+\_\+reduction\+\_\+func\+\_\+list@{bem3d\+\_\+reduction\+\_\+func\+\_\+list}!Functions for data reduction@{Functions for data reduction}}
@@ -118,7 +148,7 @@ Write a list of available reduction operations.
 {\em describe} & if T\+R\+UE, also write the short description of the reduction operation\\
 \hline
 \end{DoxyParams}
-The format string should be appropriate to the setting of {\itshape describe}. If {\itshape describe} is F\+A\+L\+SE, {\itshape format} should contain one entry of `s' (for the name of the operation); if T\+R\+UE, {\itshape format} should contain `s' twice (one for the name of the operation and one for its description).
+The format string should be appropriate to the setting of {\itshape describe}. If {\itshape describe} is F\+A\+L\+SE, {\itshape format} should contain one entry of `s' (for the name of the operation); if T\+R\+UE, {\itshape format} should contain `s' twice (once for the name of the operation and once for its description).
 
 \begin{DoxyReturn}{Returns}
 0 on success 
@@ -151,10 +181,6 @@ Maximum value of entries in each column of data
 \begin{DoxyReturn}{Returns}
 0 on success 
 \end{DoxyReturn}
-
-
-References bem3d\+\_\+mesh\+\_\+data\+\_\+get(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
-
 \mbox{\label{group__reduction_ga75ddf4c8ceb054511d24f4ea7bf139b9}} 
 \index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+min@{bem3d\+\_\+reduction\+\_\+func\+\_\+min}}
 \index{bem3d\+\_\+reduction\+\_\+func\+\_\+min@{bem3d\+\_\+reduction\+\_\+func\+\_\+min}!Functions for data reduction@{Functions for data reduction}}
@@ -183,10 +209,6 @@ Minimum value of entries in each column of data
 \begin{DoxyReturn}{Returns}
 0 on success 
 \end{DoxyReturn}
-
-
-References bem3d\+\_\+mesh\+\_\+data\+\_\+get(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
-
 \mbox{\label{group__reduction_ga2d32523f739945b6cb9c5e08f35c729e}} 
 \index{Functions for data reduction@{Functions for data reduction}!bem3d\+\_\+reduction\+\_\+func\+\_\+sum@{bem3d\+\_\+reduction\+\_\+func\+\_\+sum}}
 \index{bem3d\+\_\+reduction\+\_\+func\+\_\+sum@{bem3d\+\_\+reduction\+\_\+func\+\_\+sum}!Functions for data reduction@{Functions for data reduction}}
@@ -217,5 +239,5 @@ Sum of entries in each column
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+mesh\+\_\+data\+\_\+get(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
+References bem3d\+\_\+mesh\+\_\+data\+\_\+get(), and bem3d\+\_\+mesh\+\_\+data\+\_\+node\+\_\+number().
 

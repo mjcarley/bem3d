@@ -67,6 +67,8 @@ Functions</h2></td></tr>
 <tr class="separator:ga66d3bafafdc605e110d13bf177f49083"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6c1314fcc076baa5969f70d66bdc4134"><td class="memItemLeft" align="right" valign="top">gpointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__config.html#ga6c1314fcc076baa5969f70d66bdc4134">bem3d_configuration_pointer_from_identifier</a> (const gchar *id)</td></tr>
 <tr class="separator:ga6c1314fcc076baa5969f70d66bdc4134"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga91fa14900c6df070f11bb26bd186e634"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__config.html#ga91fa14900c6df070f11bb26bd186e634">bem3d_configuration_write_generic</a> (gboolean write_descriptions, gint line_width, gchar *prefix, gchar *comment, FILE *f)</td></tr>
+<tr class="separator:ga91fa14900c6df070f11bb26bd186e634"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>BEM3D codes can be configured at run-time using glib key files and the following functions. </p>
@@ -119,6 +121,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">id</td><td>name of identifier; </td></tr>
+    <tr><td class="paramname">description</td><td>text string describing the variable (e.g. to be used as a comment in a configuration file) </td></tr>
     <tr><td class="paramname">v</td><td>a pointer to the identified object</td></tr>
   </table>
   </dd>
@@ -299,10 +302,69 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ga91fa14900c6df070f11bb26bd186e634"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga91fa14900c6df070f11bb26bd186e634">&#9670;&nbsp;</a></span>bem3d_configuration_write_generic()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">gint bem3d_configuration_write_generic </td>
+          <td>(</td>
+          <td class="paramtype">gboolean&#160;</td>
+          <td class="paramname"><em>write_descriptions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gint&#160;</td>
+          <td class="paramname"><em>line_width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gchar *&#160;</td>
+          <td class="paramname"><em>prefix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gchar *&#160;</td>
+          <td class="paramname"><em>comment</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>f</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Write generic configuration data containing all possible settings, which can be used as a template for a configuration file. Output is written in the form:</p>
+<p>[Group name] <em>prefix</em> [setting] = [variable name] <em>prefix</em> [setting] = [variable name] <em>prefix</em> [setting] = [variable name]</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">write_descriptions</td><td>insert comment with description of variable before each line </td></tr>
+    <tr><td class="paramname">line_width</td><td>total number of characters per line in output, applied to lines of description only </td></tr>
+    <tr><td class="paramname">prefix</td><td>string to insert at start of each variable line, such as &lsquo;#&rsquo; to comment out entries </td></tr>
+    <tr><td class="paramname">comment</td><td>string to insert at start of descriptions, to comment out text </td></tr>
+    <tr><td class="paramname">f</td><td>output file stream</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 4 2018 12:03:00 for BEM3D by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 28 2019 10:12:58 for BEM3D by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.14
 </small></address>

@@ -213,7 +213,7 @@ Referenced by bem3d\+\_\+element\+\_\+neighbours(), and bem3d\+\_\+elements\+\_\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-the number of Gts\+Face\textquotesingle{}s on the element {\itshape e} 
+the number of Gts\+Faces on the element {\itshape e} 
 \end{DoxyReturn}
 
 
@@ -365,7 +365,7 @@ the number of nodes (collocation points) on the element {\itshape e}
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+add\+\_\+node(), bem3d\+\_\+element\+\_\+area(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+common\+\_\+nodes(), bem3d\+\_\+element\+\_\+find\+\_\+index(), bem3d\+\_\+element\+\_\+gradient\+\_\+weights(), bem3d\+\_\+element\+\_\+has\+\_\+node(), bem3d\+\_\+element\+\_\+index\+\_\+nodes(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+element\+\_\+set\+\_\+index(), bem3d\+\_\+mesh\+\_\+add\+\_\+element(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient().
+Referenced by bem3d\+\_\+element\+\_\+add\+\_\+node(), bem3d\+\_\+element\+\_\+area(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+common\+\_\+nodes(), bem3d\+\_\+element\+\_\+find\+\_\+index(), bem3d\+\_\+element\+\_\+gradient\+\_\+weights(), bem3d\+\_\+element\+\_\+has\+\_\+node(), bem3d\+\_\+element\+\_\+index\+\_\+nodes(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+element\+\_\+set\+\_\+index(), bem3d\+\_\+mesh\+\_\+add\+\_\+element(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
 \mbox{\label{group__belement_ga79caec2621263d2c4d33f69d6652981e}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+node\+\_\+xi@{bem3d\+\_\+element\+\_\+node\+\_\+xi}}
@@ -423,7 +423,7 @@ the Gts\+Vertex of the {\itshape i} th geometric point of {\itshape e}.
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+bounding\+\_\+box(), and bem3d\+\_\+element\+\_\+local\+\_\+vectors().
+Referenced by bem3d\+\_\+element\+\_\+bounding\+\_\+box(), bem3d\+\_\+element\+\_\+local\+\_\+vectors(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
 \mbox{\label{group__belement_gab4c90c31a93ada6c4e655ea741daca22}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+vertex\+\_\+eta@{bem3d\+\_\+element\+\_\+vertex\+\_\+eta}}
@@ -461,7 +461,7 @@ the number of geometrical vertices on the element {\itshape e}
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+bounding\+\_\+box(), bem3d\+\_\+element\+\_\+has\+\_\+vertex(), bem3d\+\_\+element\+\_\+jacobian(), bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal(), bem3d\+\_\+element\+\_\+local\+\_\+vectors(), bem3d\+\_\+element\+\_\+nearest\+\_\+vertex(), bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+position(), and bem3d\+\_\+quadrature\+\_\+parameter().
+Referenced by bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+bounding\+\_\+box(), bem3d\+\_\+element\+\_\+has\+\_\+vertex(), bem3d\+\_\+element\+\_\+jacobian(), bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal(), bem3d\+\_\+element\+\_\+local\+\_\+vectors(), bem3d\+\_\+element\+\_\+nearest\+\_\+vertex(), bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+position(), bem3d\+\_\+quadrature\+\_\+parameter(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
 \mbox{\label{group__belement_ga0ae427ca819ebd0087b83cfd2278b452}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+vertex\+\_\+xi@{bem3d\+\_\+element\+\_\+vertex\+\_\+xi}}
@@ -830,7 +830,7 @@ local index of collocation point if on element, -\/1 otherwise.
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+common\+\_\+nodes(), bem3d\+\_\+element\+\_\+from\+\_\+node(), and bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node().
+Referenced by bem3d\+\_\+element\+\_\+common\+\_\+nodes(), bem3d\+\_\+element\+\_\+from\+\_\+node(), bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
 \mbox{\label{group__belement_gaee4bb23e83a8dddb1a42a7d4a3acdf76}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+find\+\_\+vertex@{bem3d\+\_\+element\+\_\+find\+\_\+vertex}}

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+geometry=square
+
+DELTA_X=0.3
+DELTA_Y=0.7
+
+sed -e s/DELTA_X/${DELTA_X}/ -e s/DELTA_Y/${DELTA_Y}/ \
+    ${geometry}.geo.in > ${geometry}.geo
+
+gmsh -2 ${geometry}.geo > ${geometry}.gmsh.log
+msh2bem3d < ${geometry}.msh > ${geometry}.bem
+
+varx=-s"dx=${DELTA_X}"
+vary=-s"dy=${DELTA_Y}"
+
+bem3d-function ${varx} ${vary} -E 8 -i ${geometry}.bem -F modes.fn \
+	       -w -o weights.dat
+bem3d-function ${varx} ${vary} -E 1 -i ${geometry}.bem -F mixed.fn \
+	       -o mixed.dat
+
+bem3d-function ${varx} ${vary} -E 8 -i ${geometry}.bem -F extract.fn \
+	       -r sum -d mixed.dat -e weights.dat -o scratch.dat
+
+

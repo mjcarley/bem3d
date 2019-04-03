@@ -1,6 +1,6 @@
 BEM3DFunction
 ## point source of wavenumber k positioned at (x0,y0,z0)
-k = 0.0
+k = 0.6
 x0 = 0.0
 y0 = 0.0
 z0 = 0.0

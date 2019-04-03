@@ -10,12 +10,24 @@ typedef struct \+\_\+\+B\+E\+M3\+D\+Function \textbf{ B\+E\+M3\+D\+Function}
 \item 
 gint \textbf{ bem3d\+\_\+function\+\_\+variable\+\_\+add} (\textbf{ B\+E\+M3\+D\+Function} $\ast$f, gchar $\ast$var, gchar $\ast$def)
 \item 
-gint \textbf{ bem3d\+\_\+function\+\_\+apply} (\textbf{ B\+E\+M3\+D\+Function} $\ast$func, \textbf{ B\+E\+M3\+D\+Motion} $\ast$m, gdouble t, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$g)
+gint \textbf{ bem3d\+\_\+function\+\_\+insert\+\_\+string} (\textbf{ B\+E\+M3\+D\+Function} $\ast$fn, gchar $\ast$str)
+\item 
+gint \textbf{ bem3d\+\_\+function\+\_\+apply\+\_\+mesh} (\textbf{ B\+E\+M3\+D\+Function} $\ast$func, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$g)
+\item 
+gint \textbf{ bem3d\+\_\+function\+\_\+apply\+\_\+mesh\+\_\+list} (\textbf{ B\+E\+M3\+D\+Function} $\ast$func, G\+Ptr\+Array $\ast$meshes, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$g)
+\item 
+gint \textbf{ bem3d\+\_\+function\+\_\+apply\+\_\+motion} (\textbf{ B\+E\+M3\+D\+Function} $\ast$func, \textbf{ B\+E\+M3\+D\+Motion} $\ast$m, gdouble t, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$g)
+\item 
+gint \textbf{ bem3d\+\_\+function\+\_\+apply\+\_\+motion\+\_\+list} (\textbf{ B\+E\+M3\+D\+Function} $\ast$func, G\+Ptr\+Array $\ast$motions, gdouble t, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$g)
+\item 
+gint \textbf{ bem3d\+\_\+function\+\_\+integral\+\_\+weights} (\textbf{ B\+E\+M3\+D\+Function} $\ast$func, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, gint imesh, Gts\+Vertex $\ast$x, Gts\+Vector n, gint i, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Application of analytical functions to data on meshes. The underlying function handler is G\+NU libmatheval and functions should conform to that syntax, including the built-\/in functions. Reserved variable names are {\itshape x}, {\itshape y}, {\itshape z} for node coordinates, {\itshape u}, {\itshape v}, {\itshape w} for components of node velocity, {\itshape nx}, {\itshape ny}, {\itshape nz} for node normal, and {\itshape i} for node index. Functions are applied to data at each node of a mesh with input and output data in \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} structs. Input and output data are specified in functions as {\itshape f} and {\itshape g}, with components given as {\itshape f}[0], etc. Output data are given in {\itshape f}. 
+Application of analytical functions to data on meshes. The underlying function handler is G\+NU libmatheval and functions should conform to that syntax, including the built-\/in functions. Reserved variable names are {\itshape x}, {\itshape y}, {\itshape z} for node coordinates, {\itshape u}, {\itshape v}, {\itshape w} for components of node velocity, {\itshape nx}, {\itshape ny}, {\itshape nz} for node normal, {\itshape i} for node index, and {\itshape mesh} for mesh index (when multiple meshes are passed to the function evaluation). In integral evaluations, $(x,y,z)$ refers to the node coordinates in an integrand, {\itshape X}, {\itshape Y}, and {\itshape Z} are reserved for node coordinates at an evaluation point, {\itshape NX}, {\itshape NY}, and {\itshape NZ} for the corresponding normal, and {\itshape I} for the node index.
+
+Functions are applied to data at each node of a mesh with input and output data in \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} structs. Input and output data are specified in functions as {\itshape f} and {\itshape g}, with components given as {\itshape f}[0], etc. Output data are given in {\itshape f}. 
 
 \subsection{Typedef Documentation}
 \mbox{\label{group__functions_ga2daa612ab588925bd1784c135ddf821c}} 
@@ -27,21 +39,19 @@ Application of analytical functions to data on meshes. The underlying function h
 Basic function class which allows the evaluation of analytical functions of mesh data, including differentiation. 
 
 \subsection{Function Documentation}
-\mbox{\label{group__functions_ga267c018ee043576acce92d714bac0c6a}} 
-\index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+apply@{bem3d\+\_\+function\+\_\+apply}}
-\index{bem3d\+\_\+function\+\_\+apply@{bem3d\+\_\+function\+\_\+apply}!Functions of surface data@{Functions of surface data}}
-\subsubsection{bem3d\+\_\+function\+\_\+apply()}
-{\footnotesize\ttfamily gint bem3d\+\_\+function\+\_\+apply (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Function} $\ast$}]{func,  }\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{gdouble}]{t,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{g }\end{DoxyParamCaption})}
+\mbox{\label{group__functions_ga8ccf032a544f36cc9e4392960088c49b}} 
+\index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+apply\+\_\+mesh@{bem3d\+\_\+function\+\_\+apply\+\_\+mesh}}
+\index{bem3d\+\_\+function\+\_\+apply\+\_\+mesh@{bem3d\+\_\+function\+\_\+apply\+\_\+mesh}!Functions of surface data@{Functions of surface data}}
+\subsubsection{bem3d\+\_\+function\+\_\+apply\+\_\+mesh()}
+{\footnotesize\ttfamily gint bem3d\+\_\+function\+\_\+apply\+\_\+mesh (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Function} $\ast$}]{func,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{g }\end{DoxyParamCaption})}
 
-Apply a function to surface data. The function may use any of the reserved words which apply to a \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c} and entries for the supplied data blocks {\itshape f} and {\itshape g} (if not N\+U\+LL) with reference to `f[0]', `f[1]', etc. for elements of data and `dfdx[0]' etc. for gradient terms, which are computed as required at each node. If a second data block is given, it may be included in the function as `g[0]' etc. On output, {\itshape f} will contain the results of the applied function.
+Apply a function to surface data specified as \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}. The function may use any of the reserved words which apply to a \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c} and entries for the supplied data blocks {\itshape f} and {\itshape g} (if not N\+U\+LL) with reference to `f[0]', `f[1]', etc. for elements of data and `dfdx[0]' etc. for gradient terms, which are computed as required at each node. If a second data block is given, it may be included in the function as `g[0]' etc. On output, {\itshape f} will contain the results of the applied function.
 
 
 \begin{DoxyParams}{Parameters}
 {\em func} & \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c} to apply; \\
 \hline
-{\em m} & \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} for surface; \\
-\hline
-{\em t} & time for evaluation of surface position using {\itshape m}; \\
+{\em m} & \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} for surface; \\
 \hline
 {\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block containing data for mesh (must not be N\+U\+LL); \\
 \hline
@@ -50,6 +60,124 @@ Apply a function to surface data. The function may use any of the reserved words
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 0 on success. 
+\end{DoxyReturn}
+\mbox{\label{group__functions_ga7e478b40f4e46818fd5e41b13f22870f}} 
+\index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+apply\+\_\+mesh\+\_\+list@{bem3d\+\_\+function\+\_\+apply\+\_\+mesh\+\_\+list}}
+\index{bem3d\+\_\+function\+\_\+apply\+\_\+mesh\+\_\+list@{bem3d\+\_\+function\+\_\+apply\+\_\+mesh\+\_\+list}!Functions of surface data@{Functions of surface data}}
+\subsubsection{bem3d\+\_\+function\+\_\+apply\+\_\+mesh\+\_\+list()}
+{\footnotesize\ttfamily gint bem3d\+\_\+function\+\_\+apply\+\_\+mesh\+\_\+list (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Function} $\ast$}]{func,  }\item[{G\+Ptr\+Array $\ast$}]{meshes,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{g }\end{DoxyParamCaption})}
+
+Apply a function to a list of surface data, in the same way as \doxyref{bem3d\+\_\+function\+\_\+apply\+\_\+mesh}{p.}{group__functions_ga8ccf032a544f36cc9e4392960088c49b}. The list of surfaces is in the form of an array of \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} pointers, which are visited in turn in the same manner as in \doxyref{bem3d\+\_\+function\+\_\+apply\+\_\+mesh}{p.}{group__functions_ga8ccf032a544f36cc9e4392960088c49b}, with the reserved variable {\itshape mesh} set to the index of the surface in the list (so the ordering of the data in the list matters).
+
+
+\begin{DoxyParams}{Parameters}
+{\em func} & \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c} to apply; \\
+\hline
+{\em motions} & array of pointers to \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} for surfaces; \\
+\hline
+{\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block containing data for mesh (must not be N\+U\+LL); \\
+\hline
+{\em g} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block containing supplementary data (may be N\+U\+LL);\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success. 
+\end{DoxyReturn}
+\mbox{\label{group__functions_ga49ce29b38f93093acd3e00eabfb3938a}} 
+\index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+apply\+\_\+motion@{bem3d\+\_\+function\+\_\+apply\+\_\+motion}}
+\index{bem3d\+\_\+function\+\_\+apply\+\_\+motion@{bem3d\+\_\+function\+\_\+apply\+\_\+motion}!Functions of surface data@{Functions of surface data}}
+\subsubsection{bem3d\+\_\+function\+\_\+apply\+\_\+motion()}
+{\footnotesize\ttfamily gint bem3d\+\_\+function\+\_\+apply\+\_\+motion (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Function} $\ast$}]{func,  }\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{gdouble}]{t,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{g }\end{DoxyParamCaption})}
+
+Apply a function to surface data specified as \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}, computing surface velocity for passing to the function. The function may use any of the reserved words which apply to a \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c} and entries for the supplied data blocks {\itshape f} and {\itshape g} (if not N\+U\+LL) with reference to `f[0]', `f[1]', etc. for elements of data and `dfdx[0]' etc. for gradient terms, which are computed as required at each node. If a second data block is given, it may be included in the function as `g[0]' etc. On output, {\itshape f} will contain the results of the applied function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em func} & \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c} to apply; \\
+\hline
+{\em m} & \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} for surface; \\
+\hline
+{\em t} & time for evaluation of surface position and velocity using {\itshape m}; \\
+\hline
+{\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block containing data for mesh (must not be N\+U\+LL); \\
+\hline
+{\em g} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block containing supplementary data (may be N\+U\+LL);\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success. 
+\end{DoxyReturn}
+\mbox{\label{group__functions_gae16d437f761827083d346e6f1c11de9b}} 
+\index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+apply\+\_\+motion\+\_\+list@{bem3d\+\_\+function\+\_\+apply\+\_\+motion\+\_\+list}}
+\index{bem3d\+\_\+function\+\_\+apply\+\_\+motion\+\_\+list@{bem3d\+\_\+function\+\_\+apply\+\_\+motion\+\_\+list}!Functions of surface data@{Functions of surface data}}
+\subsubsection{bem3d\+\_\+function\+\_\+apply\+\_\+motion\+\_\+list()}
+{\footnotesize\ttfamily gint bem3d\+\_\+function\+\_\+apply\+\_\+motion\+\_\+list (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Function} $\ast$}]{func,  }\item[{G\+Ptr\+Array $\ast$}]{motions,  }\item[{gdouble}]{t,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{g }\end{DoxyParamCaption})}
+
+Apply a function to a list of surface data, in the same way as \doxyref{bem3d\+\_\+function\+\_\+apply\+\_\+motion}{p.}{group__functions_ga49ce29b38f93093acd3e00eabfb3938a}. The list of surfaces is in the form of an array of \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} pointers, which are visited in turn in the same manner as in \doxyref{bem3d\+\_\+function\+\_\+apply\+\_\+motion}{p.}{group__functions_ga49ce29b38f93093acd3e00eabfb3938a}, with the reserved variable {\itshape mesh} set to the index of the surface in the list (so the ordering of the data in the list matters).
+
+
+\begin{DoxyParams}{Parameters}
+{\em func} & \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c} to apply; \\
+\hline
+{\em motions} & array of pointers to \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} for surfaces; \\
+\hline
+{\em t} & time for evaluation of surface position and velocity using {\itshape m}; \\
+\hline
+{\em f} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block containing data for mesh (must not be N\+U\+LL); \\
+\hline
+{\em g} & a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block containing supplementary data (may be N\+U\+LL);\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success. 
+\end{DoxyReturn}
+\mbox{\label{group__functions_ga32ad6778a1f2c62e2b776d9bcd5cd7a0}} 
+\index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+insert\+\_\+string@{bem3d\+\_\+function\+\_\+insert\+\_\+string}}
+\index{bem3d\+\_\+function\+\_\+insert\+\_\+string@{bem3d\+\_\+function\+\_\+insert\+\_\+string}!Functions of surface data@{Functions of surface data}}
+\subsubsection{bem3d\+\_\+function\+\_\+insert\+\_\+string()}
+{\footnotesize\ttfamily gint bem3d\+\_\+function\+\_\+insert\+\_\+string (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Function} $\ast$}]{fn,  }\item[{gchar $\ast$}]{str }\end{DoxyParamCaption})}
+
+Insert a string, such as a variable definition, into a function definition, overwriting any previous definition of the same variable.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fn} & a \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c} to modify \\
+\hline
+{\em str} & string containing definition to insert\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success. 
+\end{DoxyReturn}
+\mbox{\label{group__functions_ga042d41960a69e5549aed4d2c24161005}} 
+\index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+integral\+\_\+weights@{bem3d\+\_\+function\+\_\+integral\+\_\+weights}}
+\index{bem3d\+\_\+function\+\_\+integral\+\_\+weights@{bem3d\+\_\+function\+\_\+integral\+\_\+weights}!Functions of surface data@{Functions of surface data}}
+\subsubsection{bem3d\+\_\+function\+\_\+integral\+\_\+weights()}
+{\footnotesize\ttfamily gint bem3d\+\_\+function\+\_\+integral\+\_\+weights (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Function} $\ast$}]{func,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{gint}]{imesh,  }\item[{Gts\+Vertex $\ast$}]{x,  }\item[{Gts\+Vector}]{n,  }\item[{gint}]{i,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f }\end{DoxyParamCaption})}
+
+Fill a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} with the integral of a function such that the entries form the weights of a quadrature, i.\+e. $\int_{S}w(\mathbf{x})\phi(\mathbf{x})\approx\sum_{i}\phi_{i}f_{i}$ where $\phi_{i}$ are the values of a function at the mesh nodes and $f_{i}$ are the entries in the \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData}
+
+
+\begin{DoxyParams}{Parameters}
+{\em func} & weighting function to integrate (may have multiple terms); \\
+\hline
+{\em m} & mesh to integrate on; \\
+\hline
+{\em imesh} & index of {\itshape m}, used to set reserved word {\itshape mesh} in function evaluation; \\
+\hline
+{\em x} & used to set coordinates of evaluation point in position-\/dependent integrands; \\
+\hline
+{\em n} & normal at evaluation point; \\
+\hline
+{\em i} & index of evaluation point; \\
+\hline
+{\em q} & \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} used for integration on elements; \\
+\hline
+{\em f} & output data containing integral weights.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
 \mbox{\label{group__functions_ga425bb1a01ab14c20e4c8ecfe27cccb47}} 
 \index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+variable\+\_\+add@{bem3d\+\_\+function\+\_\+variable\+\_\+add}}

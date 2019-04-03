@@ -29,9 +29,6 @@
 
 #include "bem3d-private.h"
 
-gint range_double(gchar *arg, GArray *range) ;
-gint range_int(gchar *arg, GArray *range) ;
-
 static gchar *file_mode_string(gchar *mode)
 
 {
@@ -272,5 +269,23 @@ gint printf_fixed_width(gchar *str, gint width, gchar *prefix, FILE *f)
     line = &(line[i+1]) ;
   } while (1) ;
   
+  return 0 ;
+}
+
+gint append_mesh_from_file(GPtrArray *meshes, gchar *ipfile)
+
+{
+  BEM3DMesh *m ;
+  GtsFile *fp ;
+  FILE *input ;
+  
+  m = bem3d_mesh_new(bem3d_mesh_class(), gts_face_class(),
+		     gts_edge_class(), gts_vertex_class()) ;
+  input = file_open(ipfile, "-", "r", stdin) ;
+  fp = gts_file_new(input) ;
+  bem3d_mesh_read(m, fp) ;
+  file_close(input) ;
+  g_ptr_array_add(meshes, m) ;
+
   return 0 ;
 }

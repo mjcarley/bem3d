@@ -111,7 +111,6 @@ cd ${optdcty}
 
 if [ $use_gmsh ]; then
     ##echo Use gmsh
-    ##echo ${GMSH} -2 -order ${optorder} ${optrefine} ${optjob}.geo
     sed -e s/LENSCALE/${optlen}/ ${optjob}.geo.in > ${optjob}.geo
     ${GMSH} -2 -order ${optorder} ${optrefine} ${optjob}.geo
     msh2bem3d -a 80 < ${optjob}.msh > ${optjob}.bem

@@ -13,11 +13,9 @@ gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+clear} (\textbf{ B\+E\+M3\+D\+Mesh\
 \item 
 gdouble $\ast$ \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+get} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$m, gint i)
 \item 
-gint \textbf{ bem3d\+\_\+mesh\+\_\+function\+\_\+limits} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint i, gdouble $\ast$xmin, gdouble $\ast$xmax)
-\item 
 gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+add} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint i, G\+Array $\ast$g)
 \item 
-gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+write} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, F\+I\+LE $\ast$fp)
+gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+write} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, F\+I\+LE $\ast$fp, gchar $\ast$header)
 \item 
 gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+read} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$$\ast$f, F\+I\+LE $\ast$fp, gint width)
 \item 
@@ -26,6 +24,12 @@ gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+node} (\textbf{ B\+E\+M3\+
 gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+multiproc\+\_\+sum} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$m)
 \item 
 gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+node\+\_\+number} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$d)
+\item 
+\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$ \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+merge} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f1, \textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f2, gboolean strict)
+\item 
+gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+mesh} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$d, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m)
+\item 
+gint \textbf{ bem3d\+\_\+mesh\+\_\+data\+\_\+write\+\_\+weights} (\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$f, F\+I\+LE $\ast$fp, gint $\ast$fields, gint nfields)
 \end{DoxyCompactItemize}
 
 
@@ -56,6 +60,28 @@ Add an array of data to a mesh data entry.
 
 
 References bem3d\+\_\+mesh\+\_\+data\+\_\+get().
+
+\mbox{\label{group__data_gab001ecc763ca8a763537695cc835d74f}} 
+\index{Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}!bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+mesh@{bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+mesh}}
+\index{bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+mesh@{bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+mesh}!Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}}
+\subsubsection{bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+mesh()}
+{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+mesh (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{d,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m }\end{DoxyParamCaption})}
+
+Expand a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} to include entries for another mesh, so that the data block contains data for more than one mesh.
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & an existing \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} \\
+\hline
+{\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} whose nodes are to be added to {\itshape d} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+mesh\+\_\+foreach\+\_\+node().
 
 \mbox{\label{group__data_ga6fa5766a482e9f8b2be3fbb8084b97e4}} 
 \index{Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}!bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+node@{bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+node}}
@@ -131,7 +157,31 @@ a pointer to the data for node i, N\+U\+LL if the index is not in the block.
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+gmsh\+\_\+write\+\_\+element(), bem3d\+\_\+mesh\+\_\+data\+\_\+add(), bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+node(), bem3d\+\_\+reduction\+\_\+func\+\_\+max(), bem3d\+\_\+reduction\+\_\+func\+\_\+min(), and bem3d\+\_\+reduction\+\_\+func\+\_\+sum().
+Referenced by bem3d\+\_\+gmsh\+\_\+write\+\_\+element(), bem3d\+\_\+mesh\+\_\+data\+\_\+add(), bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+node(), and bem3d\+\_\+reduction\+\_\+func\+\_\+sum().
+
+\mbox{\label{group__data_ga95a42216156f5bfa64769cb1beeec05a}} 
+\index{Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}!bem3d\+\_\+mesh\+\_\+data\+\_\+merge@{bem3d\+\_\+mesh\+\_\+data\+\_\+merge}}
+\index{bem3d\+\_\+mesh\+\_\+data\+\_\+merge@{bem3d\+\_\+mesh\+\_\+data\+\_\+merge}!Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}}
+\subsubsection{bem3d\+\_\+mesh\+\_\+data\+\_\+merge()}
+{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Mesh\+Data}$\ast$ bem3d\+\_\+mesh\+\_\+data\+\_\+merge (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f1,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f2,  }\item[{gboolean}]{strict }\end{DoxyParamCaption})}
+
+Merge two data blocks into a single block. This is intended for merging data generated for two disjoint meshes, with different indices. If an index appears in both blocks the behaviour is undefined. The output block will be sized to accomodate all data from both inputs, with zero padding where required.
+
+
+\begin{DoxyParams}{Parameters}
+{\em f1} & an input \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData}; \\
+\hline
+{\em f2} & another input \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData}; \\
+\hline
+{\em strict} & (not currently used).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a new \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} containing the data from {\itshape f1} and {\itshape f2}. 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+mesh\+\_\+data\+\_\+node\+\_\+number(), and bem3d\+\_\+mesh\+\_\+data\+\_\+sized\+\_\+new().
 
 \mbox{\label{group__data_ga1f2747030cf84458a2e5b3b4291ce23d}} 
 \index{Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}!bem3d\+\_\+mesh\+\_\+data\+\_\+multiproc\+\_\+sum@{bem3d\+\_\+mesh\+\_\+data\+\_\+multiproc\+\_\+sum}}
@@ -187,6 +237,10 @@ Find the number of nodes in a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DM
 \begin{DoxyReturn}{Returns}
 the number of nodes in {\itshape d}, or zero if d is N\+U\+LL. 
 \end{DoxyReturn}
+
+
+Referenced by bem3d\+\_\+mesh\+\_\+data\+\_\+merge(), and bem3d\+\_\+reduction\+\_\+func\+\_\+sum().
+
 \mbox{\label{group__data_gaa19a6d2cd10140b35d7e7673a7f3dd2b}} 
 \index{Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}!bem3d\+\_\+mesh\+\_\+data\+\_\+read@{bem3d\+\_\+mesh\+\_\+data\+\_\+read}}
 \index{bem3d\+\_\+mesh\+\_\+data\+\_\+read@{bem3d\+\_\+mesh\+\_\+data\+\_\+read}!Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}}
@@ -231,47 +285,53 @@ Allocate \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block of a g
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+mesh\+\_\+data\+\_\+new(), and bem3d\+\_\+mesh\+\_\+data\+\_\+read().
+Referenced by bem3d\+\_\+mesh\+\_\+data\+\_\+merge(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), and bem3d\+\_\+mesh\+\_\+data\+\_\+read().
 
-\mbox{\label{group__data_ga747738facf7c1014fc6ba598f59819b4}} 
+\mbox{\label{group__data_ga409fb405712584435c8df106fe012572}} 
 \index{Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}!bem3d\+\_\+mesh\+\_\+data\+\_\+write@{bem3d\+\_\+mesh\+\_\+data\+\_\+write}}
 \index{bem3d\+\_\+mesh\+\_\+data\+\_\+write@{bem3d\+\_\+mesh\+\_\+data\+\_\+write}!Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}}
 \subsubsection{bem3d\+\_\+mesh\+\_\+data\+\_\+write()}
-{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+data\+\_\+write (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{F\+I\+LE $\ast$}]{fp }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+data\+\_\+write (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{F\+I\+LE $\ast$}]{fp,  }\item[{gchar $\ast$}]{header }\end{DoxyParamCaption})}
 
 Write a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block to a file. The output format is one line containing\+:
 
 {\itshape NP} {\itshape NE} \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData}
 
-where {\itshape NP} is the number of nodes in the block and {\itshape NE} is the number of elements per point, followed by {\itshape NP} lines each containing {\itshape NE} numerical entries.
+where {\itshape NP} is the number of nodes in the block and {\itshape NE} is the number of numerical entries per point, followed by {\itshape NP} lines each containing {\itshape NE} numerical entries. If {\itshape header} is not N\+U\+LL, it is used in place of the standard first line. If it contains C formatting strings d, these generate {\itshape NP} and {\itshape NE}.
 
 
 \begin{DoxyParams}{Parameters}
 {\em f} & \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block; \\
 \hline
-{\em fp} & file pointer.\\
+{\em fp} & file pointer; \\
+\hline
+{\em header} & first line of output file (may be N\+U\+LL)\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 0 on success. 
 \end{DoxyReturn}
-\mbox{\label{group__data_ga4c681905c8f27f12e72135f02ebe5914}} 
-\index{Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}!bem3d\+\_\+mesh\+\_\+function\+\_\+limits@{bem3d\+\_\+mesh\+\_\+function\+\_\+limits}}
-\index{bem3d\+\_\+mesh\+\_\+function\+\_\+limits@{bem3d\+\_\+mesh\+\_\+function\+\_\+limits}!Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}}
-\subsubsection{bem3d\+\_\+mesh\+\_\+function\+\_\+limits()}
-{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+function\+\_\+limits (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{gint}]{i,  }\item[{gdouble $\ast$}]{xmin,  }\item[{gdouble $\ast$}]{xmax }\end{DoxyParamCaption})}
+\mbox{\label{group__data_ga64881a8e9f45f0ba9d93f9221f91ffc1}} 
+\index{Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}!bem3d\+\_\+mesh\+\_\+data\+\_\+write\+\_\+weights@{bem3d\+\_\+mesh\+\_\+data\+\_\+write\+\_\+weights}}
+\index{bem3d\+\_\+mesh\+\_\+data\+\_\+write\+\_\+weights@{bem3d\+\_\+mesh\+\_\+data\+\_\+write\+\_\+weights}!Data on B\+E\+M3\+D surfaces@{Data on B\+E\+M3\+D surfaces}}
+\subsubsection{bem3d\+\_\+mesh\+\_\+data\+\_\+write\+\_\+weights()}
+{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+data\+\_\+write\+\_\+weights (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Data} $\ast$}]{f,  }\item[{F\+I\+LE $\ast$}]{fp,  }\item[{gint $\ast$}]{fields,  }\item[{gint}]{nfields }\end{DoxyParamCaption})}
 
-Extract maximum and minimum values of a function from a \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block
+Write a block of data in the form of a single row suitable for use in a weighting matrix, e.\+g. of a type generated by \doxyref{bem3d\+\_\+function\+\_\+integral\+\_\+weights}{p.}{group__functions_ga042d41960a69e5549aed4d2c24161005}. Data are written on one row in the form
+
+index f0 f1 f2 index f0 f1 f2 ...
+
+with any entries with all data equal to zero neglected, effectively treating the data as a sparse matrix.
 
 
 \begin{DoxyParams}{Parameters}
-{\em f} & \doxyref{B\+E\+M3\+D\+Mesh\+Data}{p.}{structBEM3DMeshData} block; \\
+{\em f} & data to write; \\
 \hline
-{\em i} & field to check; \\
+{\em fp} & file pointer for output; \\
 \hline
-{\em xmin} & minimum value of field; \\
+{\em fields} & indices of fields to write to output (must all be less than the number of fields per node in {\itshape f}); \\
 \hline
-{\em xmax} & maximum value of field.\\
+{\em nfields} & number of fields to write.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}

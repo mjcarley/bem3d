@@ -110,4 +110,8 @@ gint parse_complex(gchar *v, gdouble z[]) ;
 
 gint printf_fixed_width(gchar *str, gint width, gchar *prefix, FILE *f) ;
 
+gint append_mesh_from_file(GPtrArray *meshes, gchar *ipfile) ;
+gint range_double(gchar *arg, GArray *range) ;
+gint range_int(gchar *arg, GArray *range) ;
+
 #endif /*_BEM_PRIVATE_H_INCLUDED_*/

@@ -95,6 +95,8 @@ Functions</h2></td></tr>
 <tr class="separator:gab260c6934997caf2c6c5502113b4a10a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga44ddaeb5a7bf4e16ae05477efc71bf13"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mesh.html#ga44ddaeb5a7bf4e16ae05477efc71bf13">bem3d_mesh_quad_dgdn</a> (<a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m, <a class="el" href="structBEM3DConfiguration.html">BEM3DConfiguration</a> *config, <a class="el" href="structBEM3DParameters.html">BEM3DParameters</a> *gdata, <a class="el" href="structBEM3DLookupFunc.html">BEM3DLookupFunc</a> lfunc, gpointer ldata, <a class="el" href="structBEM3DEquationFunc.html">BEM3DEquationFunc</a> efunc, gpointer edata)</td></tr>
 <tr class="separator:ga44ddaeb5a7bf4e16ae05477efc71bf13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaffb8fc0b84f5dbea5437d04d82968ea0"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mesh.html#gaffb8fc0b84f5dbea5437d04d82968ea0">bem3d_mesh_disjoint_quad_dgdn</a> (<a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m1, <a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m2, <a class="el" href="structBEM3DConfiguration.html">BEM3DConfiguration</a> *config, <a class="el" href="structBEM3DParameters.html">BEM3DParameters</a> *gdata, <a class="el" href="structBEM3DLookupFunc.html">BEM3DLookupFunc</a> lfunc, gpointer ldata, <a class="el" href="structBEM3DEquationFunc.html">BEM3DEquationFunc</a> efunc, gpointer edata)</td></tr>
+<tr class="separator:gaffb8fc0b84f5dbea5437d04d82968ea0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga46930949200d4f0e25f3abeb4761ea26"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__belement.html#ga3cfa160210c58ab7257ec296c1b8a0af">BEM3DElement</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mesh.html#ga46930949200d4f0e25f3abeb4761ea26">bem3d_mesh_face_element</a> (<a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m, GtsFace *f)</td></tr>
 <tr class="separator:ga46930949200d4f0e25f3abeb4761ea26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf07fbc700dd3748dd0934e88f62b2708"><td class="memItemLeft" align="right" valign="top">GtsVertex *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mesh.html#gaf07fbc700dd3748dd0934e88f62b2708">bem3d_mesh_node_from_index</a> (<a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m, gint i)</td></tr>
@@ -139,7 +141,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>TRUE if <em>obj</em> is from the <a class="el" href="structBEM3DMeshClass.html">BEM3DMeshClass</a> class </p>
 
-<p class="reference">Referenced by <a class="el" href="group__edge.html#gabe450d81d63254f8e50a1315070d597b">bem3d_edge_is_oriented()</a>, <a class="el" href="group__belement.html#gab16742c4aff2a0b479d8176684c34d71">bem3d_element_from_node()</a>, <a class="el" href="group__belement.html#ga0a135441c98740d19366b6998aba51fc">bem3d_element_index_nodes()</a>, <a class="el" href="group__belement.html#ga3cba5ede20485707e2b89608acebc7de">bem3d_element_neighbours()</a>, <a class="el" href="group__belement.html#ga7a297bce7df5cdbb22bf47972af2846e">bem3d_elements_from_vertices()</a>, <a class="el" href="group__mesh.html#ga0a721c81148616d9a53e1e27b9681829">bem3d_gmsh_read()</a>, <a class="el" href="group__mesh.html#gaf8f6f8c5965c437154b4eb7926fb75a8">bem3d_mesh_add_element()</a>, <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__mesh.html#ga53045c1fd977f0ded50765fb00e9ef40">bem3d_mesh_discretize()</a>, <a class="el" href="group__edge.html#ga8b2021a683d9c9328eacfbd9f524ed49">bem3d_mesh_extract_edges()</a>, <a class="el" href="group__mesh.html#ga46930949200d4f0e25f3abeb4761ea26">bem3d_mesh_face_element()</a>, <a class="el" href="group__mesh.html#gac160e1d17b8c48645ad3c724efff2a5f">bem3d_mesh_index_from_node()</a>, <a class="el" href="group__mesh.html#ga50fd1015244f7a9194802139bf8e339a">bem3d_mesh_index_nodes()</a>, <a class="el" href="group__mesh.html#ga7dce64871fb6d5cc10062a1e02247d9e">bem3d_mesh_node_elements()</a>, <a class="el" href="group__mesh.html#gaf07fbc700dd3748dd0934e88f62b2708">bem3d_mesh_node_from_index()</a>, <a class="el" href="group__mesh.html#gaf4ca16ac8bcb96e5eef381593e1aca93">bem3d_mesh_node_number()</a>, <a class="el" href="group__mesh.html#ga44ddaeb5a7bf4e16ae05477efc71bf13">bem3d_mesh_quad_dgdn()</a>, <a class="el" href="group__radiation.html#gaf7e1f8394b2d261020b17d51846660af">bem3d_mesh_radiation_mesh()</a>, <a class="el" href="group__radiation.html#ga105574415fa7a9d888a32070320f417f">bem3d_mesh_radiation_point()</a>, <a class="el" href="group__mesh.html#gad9997585b43accd5aef9299bd47ac32d">bem3d_mesh_read()</a>, <a class="el" href="group__mesh.html#gab260c6934997caf2c6c5502113b4a10a">bem3d_mesh_set_bc()</a>, <a class="el" href="group__edge.html#gafac8a1e13404b34dbcd6873684f4b796">bem3d_mesh_sharp_vertices()</a>, <a class="el" href="group__mesh.html#gaf5323fe694ef03caa5b0dc5930286b3e">bem3d_mesh_vertex_elements()</a>, <a class="el" href="group__edge.html#ga922d584e196c796d1b1b1b0d71b39973">bem3d_mesh_vertex_index_number()</a>, <a class="el" href="group__mesh.html#ga0c120fac975c902bcab1003d297dcba9">bem3d_mesh_write()</a>, <a class="el" href="group__mesh.html#ga9035b1ad98c6be01f7a78eee78bc2185">bem3d_mesh_write_nodes()</a>, <a class="el" href="group__operators.html#gafef1fdaa7240bf4d90fcd8fe6f0e901b">bem3d_node_normal()</a>, and <a class="el" href="group__operators.html#gab03357d45593995da0c7fd9fd19604e3">bem3d_operator_gradient()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__edge.html#gabe450d81d63254f8e50a1315070d597b">bem3d_edge_is_oriented()</a>, <a class="el" href="group__belement.html#gab16742c4aff2a0b479d8176684c34d71">bem3d_element_from_node()</a>, <a class="el" href="group__belement.html#ga0a135441c98740d19366b6998aba51fc">bem3d_element_index_nodes()</a>, <a class="el" href="group__belement.html#ga3cba5ede20485707e2b89608acebc7de">bem3d_element_neighbours()</a>, <a class="el" href="group__belement.html#ga7a297bce7df5cdbb22bf47972af2846e">bem3d_elements_from_vertices()</a>, <a class="el" href="group__mesh.html#ga0a721c81148616d9a53e1e27b9681829">bem3d_gmsh_read()</a>, <a class="el" href="group__mesh.html#gaf8f6f8c5965c437154b4eb7926fb75a8">bem3d_mesh_add_element()</a>, <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__mesh.html#ga53045c1fd977f0ded50765fb00e9ef40">bem3d_mesh_discretize()</a>, <a class="el" href="group__mesh.html#gaffb8fc0b84f5dbea5437d04d82968ea0">bem3d_mesh_disjoint_quad_dgdn()</a>, <a class="el" href="group__edge.html#ga8b2021a683d9c9328eacfbd9f524ed49">bem3d_mesh_extract_edges()</a>, <a class="el" href="group__mesh.html#ga46930949200d4f0e25f3abeb4761ea26">bem3d_mesh_face_element()</a>, <a class="el" href="group__mesh.html#gac160e1d17b8c48645ad3c724efff2a5f">bem3d_mesh_index_from_node()</a>, <a class="el" href="group__mesh.html#ga50fd1015244f7a9194802139bf8e339a">bem3d_mesh_index_nodes()</a>, <a class="el" href="group__mesh.html#ga7dce64871fb6d5cc10062a1e02247d9e">bem3d_mesh_node_elements()</a>, <a class="el" href="group__mesh.html#gaf07fbc700dd3748dd0934e88f62b2708">bem3d_mesh_node_from_index()</a>, <a class="el" href="group__mesh.html#gaf4ca16ac8bcb96e5eef381593e1aca93">bem3d_mesh_node_number()</a>, <a class="el" href="group__mesh.html#ga44ddaeb5a7bf4e16ae05477efc71bf13">bem3d_mesh_quad_dgdn()</a>, <a class="el" href="group__radiation.html#gaf7e1f8394b2d261020b17d51846660af">bem3d_mesh_radiation_mesh()</a>, <a class="el" href="group__radiation.html#ga105574415fa7a9d888a32070320f417f">bem3d_mesh_radiation_point()</a>, <a class="el" href="group__mesh.html#gad9997585b43accd5aef9299bd47ac32d">bem3d_mesh_read()</a>, <a class="el" href="group__mesh.html#gab260c6934997caf2c6c5502113b4a10a">bem3d_mesh_set_bc()</a>, <a class="el" href="group__edge.html#gafac8a1e13404b34dbcd6873684f4b796">bem3d_mesh_sharp_vertices()</a>, <a class="el" href="group__mesh.html#gaf5323fe694ef03caa5b0dc5930286b3e">bem3d_mesh_vertex_elements()</a>, <a class="el" href="group__edge.html#ga922d584e196c796d1b1b1b0d71b39973">bem3d_mesh_vertex_index_number()</a>, <a class="el" href="group__mesh.html#ga0c120fac975c902bcab1003d297dcba9">bem3d_mesh_write()</a>, <a class="el" href="group__mesh.html#ga9035b1ad98c6be01f7a78eee78bc2185">bem3d_mesh_write_nodes()</a>, <a class="el" href="group__operators.html#gafef1fdaa7240bf4d90fcd8fe6f0e901b">bem3d_node_normal()</a>, and <a class="el" href="group__operators.html#gab03357d45593995da0c7fd9fd19604e3">bem3d_operator_gradient()</a>.</p>
 
 </div>
 </div>
@@ -234,7 +236,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Maximum index of node to be considered in <a class="el" href="group__mesh.html#ga39295d4861dca739ea6b22d4e72a9494">bem3d_mesh_foreach_node</a> </p>
 
-<p class="reference">Referenced by <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__mesh.html#ga44ddaeb5a7bf4e16ae05477efc71bf13">bem3d_mesh_quad_dgdn()</a>, <a class="el" href="group__radiation.html#gaf7e1f8394b2d261020b17d51846660af">bem3d_mesh_radiation_mesh()</a>, and <a class="el" href="group__radiation.html#ga105574415fa7a9d888a32070320f417f">bem3d_mesh_radiation_point()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__mesh.html#gaffb8fc0b84f5dbea5437d04d82968ea0">bem3d_mesh_disjoint_quad_dgdn()</a>, <a class="el" href="group__mesh.html#ga44ddaeb5a7bf4e16ae05477efc71bf13">bem3d_mesh_quad_dgdn()</a>, <a class="el" href="group__radiation.html#gaf7e1f8394b2d261020b17d51846660af">bem3d_mesh_radiation_mesh()</a>, and <a class="el" href="group__radiation.html#ga105574415fa7a9d888a32070320f417f">bem3d_mesh_radiation_point()</a>.</p>
 
 </div>
 </div>
@@ -255,7 +257,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Minimum index of node to be considered in <a class="el" href="group__mesh.html#ga39295d4861dca739ea6b22d4e72a9494">bem3d_mesh_foreach_node</a> </p>
 
-<p class="reference">Referenced by <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__mesh.html#ga44ddaeb5a7bf4e16ae05477efc71bf13">bem3d_mesh_quad_dgdn()</a>, <a class="el" href="group__radiation.html#gaf7e1f8394b2d261020b17d51846660af">bem3d_mesh_radiation_mesh()</a>, and <a class="el" href="group__radiation.html#ga105574415fa7a9d888a32070320f417f">bem3d_mesh_radiation_point()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__mesh.html#gaffb8fc0b84f5dbea5437d04d82968ea0">bem3d_mesh_disjoint_quad_dgdn()</a>, <a class="el" href="group__mesh.html#ga44ddaeb5a7bf4e16ae05477efc71bf13">bem3d_mesh_quad_dgdn()</a>, <a class="el" href="group__radiation.html#gaf7e1f8394b2d261020b17d51846660af">bem3d_mesh_radiation_mesh()</a>, and <a class="el" href="group__radiation.html#ga105574415fa7a9d888a32070320f417f">bem3d_mesh_radiation_point()</a>.</p>
 
 </div>
 </div>
@@ -487,6 +489,87 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="gaffb8fc0b84f5dbea5437d04d82968ea0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaffb8fc0b84f5dbea5437d04d82968ea0">&#9670;&nbsp;</a></span>bem3d_mesh_disjoint_quad_dgdn()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">gint bem3d_mesh_disjoint_quad_dgdn </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *&#160;</td>
+          <td class="paramname"><em>m1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *&#160;</td>
+          <td class="paramname"><em>m2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structBEM3DConfiguration.html">BEM3DConfiguration</a> *&#160;</td>
+          <td class="paramname"><em>config</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structBEM3DParameters.html">BEM3DParameters</a> *&#160;</td>
+          <td class="paramname"><em>gdata</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structBEM3DLookupFunc.html">BEM3DLookupFunc</a>&#160;</td>
+          <td class="paramname"><em>lfunc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gpointer&#160;</td>
+          <td class="paramname"><em>ldata</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structBEM3DEquationFunc.html">BEM3DEquationFunc</a>&#160;</td>
+          <td class="paramname"><em>efunc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gpointer&#160;</td>
+          <td class="paramname"><em>edata</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Integrate the normal derivative of the Green's function over a mesh at points on a different mesh. This is intended for use where a surface is broken into two or more disjoint patches which combine to form a single closed surface. The integratation is performed over <em>m1</em> for each point on <em>m2</em>. The two meshes can be the same.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">m1</td><td><a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> </td></tr>
+    <tr><td class="paramname">m2</td><td><a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> </td></tr>
+    <tr><td class="paramname">config</td><td><a class="el" href="structBEM3DConfiguration.html">BEM3DConfiguration</a> for the problem; </td></tr>
+    <tr><td class="paramname">gdata</td><td><a class="el" href="structBEM3DParameters.html">BEM3DParameters</a> to pass to Green's function; </td></tr>
+    <tr><td class="paramname">lfunc</td><td><a class="el" href="structBEM3DLookupFunc.html">BEM3DLookupFunc</a>; use <a class="el" href="group__lookup.html#gab516d2a6f9e1c4486840a450aa81a7b2">bem3d_lookup_func_unit</a> (for real problems) or bem3d_lookup_func_unit_c (for complex) </td></tr>
+    <tr><td class="paramname">ldata</td><td>data to pass to the lookup function </td></tr>
+    <tr><td class="paramname">efunc</td><td>equation function for problem. This will be called with the row and column numbers equal. </td></tr>
+    <tr><td class="paramname">edata</td><td>user data to pass to efunc</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>::BEM3D_SUCCESS on success </dd></dl>
+
+<p class="reference">References <a class="el" href="group__mesh.html#ga5f6f70f01b1af5b8fedde2cdb7314941">BEM3D_IS_MESH</a>, <a class="el" href="group__mesh.html#ga39295d4861dca739ea6b22d4e72a9494">bem3d_mesh_foreach_node()</a>, <a class="el" href="group__mesh.html#ga6671ccf15833db4c8c85b6e092cc09ac">bem3d_mesh_node_index_max</a>, and <a class="el" href="group__mesh.html#ga8749ab4003a44b36664f457d2bc5fcd4">bem3d_mesh_node_index_min</a>.</p>
+
+</div>
+</div>
 <a id="gaf79088b2b5de7b0bee3bb5e7871b9d3e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaf79088b2b5de7b0bee3bb5e7871b9d3e">&#9670;&nbsp;</a></span>bem3d_mesh_element_node_number_max()</h2>
 
@@ -674,7 +757,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>::BEM3D_SUCCESS on success </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="group__fmm.html#ga539d1105d7fedc93ea5bfdfc4eb14b00">bem3d_fmm_matrix_new()</a>, <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__mesh.html#ga9119f73d4e4ad3fa9b1b3b2389c4cb48">bem3d_mesh_index_range()</a>, <a class="el" href="group__mesh.html#gaf4ca16ac8bcb96e5eef381593e1aca93">bem3d_mesh_node_number()</a>, <a class="el" href="group__mesh.html#ga44ddaeb5a7bf4e16ae05477efc71bf13">bem3d_mesh_quad_dgdn()</a>, <a class="el" href="group__radiation.html#gaf7e1f8394b2d261020b17d51846660af">bem3d_mesh_radiation_mesh()</a>, <a class="el" href="group__mesh.html#ga9035b1ad98c6be01f7a78eee78bc2185">bem3d_mesh_write_nodes()</a>, and <a class="el" href="group__motion.html#ga74256952d6fb9a32c4dd8f415403e708">bem3d_motion_mesh_position()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__fmm.html#ga539d1105d7fedc93ea5bfdfc4eb14b00">bem3d_fmm_matrix_new()</a>, <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#gab001ecc763ca8a763537695cc835d74f">bem3d_mesh_data_add_mesh()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__mesh.html#gaffb8fc0b84f5dbea5437d04d82968ea0">bem3d_mesh_disjoint_quad_dgdn()</a>, <a class="el" href="group__mesh.html#ga9119f73d4e4ad3fa9b1b3b2389c4cb48">bem3d_mesh_index_range()</a>, <a class="el" href="group__mesh.html#gaf4ca16ac8bcb96e5eef381593e1aca93">bem3d_mesh_node_number()</a>, <a class="el" href="group__mesh.html#ga44ddaeb5a7bf4e16ae05477efc71bf13">bem3d_mesh_quad_dgdn()</a>, <a class="el" href="group__radiation.html#gaf7e1f8394b2d261020b17d51846660af">bem3d_mesh_radiation_mesh()</a>, <a class="el" href="group__mesh.html#ga9035b1ad98c6be01f7a78eee78bc2185">bem3d_mesh_write_nodes()</a>, and <a class="el" href="group__motion.html#ga74256952d6fb9a32c4dd8f415403e708">bem3d_motion_mesh_position()</a>.</p>
 
 </div>
 </div>
@@ -974,7 +1057,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="group__mesh.html#ga5f6f70f01b1af5b8fedde2cdb7314941">BEM3D_IS_MESH</a>, and <a class="el" href="group__mesh.html#ga39295d4861dca739ea6b22d4e72a9494">bem3d_mesh_foreach_node()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__skeleton.html#gaccd4b3b43d662fa781d77fd3f89e9b71">bem3d_mesh_skeleton_init()</a>, <a class="el" href="group__skeleton.html#ga1884465ee9765b8298fab319c8a0b478">bem3d_mesh_skeleton_new()</a>, <a class="el" href="group__motion.html#ga021c02e194e8cffb8b94410a66085940">bem3d_motion_new()</a>, <a class="el" href="group__reduction.html#ga10cfd7ae7c31f96d0ca9564f75a4983b">bem3d_reduction_func_max()</a>, <a class="el" href="group__reduction.html#ga75ddf4c8ceb054511d24f4ea7bf139b9">bem3d_reduction_func_min()</a>, and <a class="el" href="group__reduction.html#ga2d32523f739945b6cb9c5e08f35c729e">bem3d_reduction_func_sum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__mesh.html#ga3f9e7a6d8ca54892a8efbd2254fa6e67">bem3d_mesh_assemble_equations()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, <a class="el" href="group__skeleton.html#gaccd4b3b43d662fa781d77fd3f89e9b71">bem3d_mesh_skeleton_init()</a>, <a class="el" href="group__skeleton.html#ga1884465ee9765b8298fab319c8a0b478">bem3d_mesh_skeleton_new()</a>, and <a class="el" href="group__motion.html#ga021c02e194e8cffb8b94410a66085940">bem3d_motion_new()</a>.</p>
 
 </div>
 </div>
@@ -1036,7 +1119,7 @@ Functions</h2></td></tr>
 <p>Integrate the normal derivative of the Green's function over a mesh.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">m</td><td>BEM3DMEsh </td></tr>
+    <tr><td class="paramname">m</td><td><a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> </td></tr>
     <tr><td class="paramname">config</td><td><a class="el" href="structBEM3DConfiguration.html">BEM3DConfiguration</a> for the problem; </td></tr>
     <tr><td class="paramname">gdata</td><td><a class="el" href="structBEM3DParameters.html">BEM3DParameters</a> to pass to Green's function; </td></tr>
     <tr><td class="paramname">lfunc</td><td><a class="el" href="structBEM3DLookupFunc.html">BEM3DLookupFunc</a>; use <a class="el" href="group__lookup.html#gab516d2a6f9e1c4486840a450aa81a7b2">bem3d_lookup_func_unit</a> (for real problems) or bem3d_lookup_func_unit_c (for complex) </td></tr>
@@ -1302,7 +1385,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 4 2018 12:03:00 for BEM3D by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 28 2019 10:12:58 for BEM3D by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.14
 </small></address>

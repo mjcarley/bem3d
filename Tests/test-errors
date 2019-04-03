@@ -8,7 +8,7 @@ optk=1.0
 
 optscale=0.8409
 optlenmax=0.281
-optnsteps=12
+optnsteps=4
 
 len=${optlenmax}
 

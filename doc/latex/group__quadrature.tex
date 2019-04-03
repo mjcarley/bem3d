@@ -41,6 +41,8 @@ gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman} (Gts\+Point $\ast$xs,
 gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient} (Gts\+Point $\ast$xs, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
 \item 
 gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss} (Gts\+Point $\ast$p, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
+\item 
+gint \textbf{ bem3d\+\_\+quadrature\+\_\+rule\+\_\+series} (Gts\+Point $\ast$xs, \textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$gfunc, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$param, gpointer data)
 \end{DoxyCompactItemize}
 
 
@@ -334,7 +336,7 @@ References bem3d\+\_\+element\+\_\+corner\+\_\+number.
 
 
 
-Referenced by bem3d\+\_\+quadrature\+\_\+selector\+\_\+default().
+Referenced by bem3d\+\_\+quadrature\+\_\+rule\+\_\+series(), and bem3d\+\_\+quadrature\+\_\+selector\+\_\+default().
 
 \mbox{\label{group__quadrature_gab8c62f1d7010abb68f92d137dec6bdd7}} 
 \index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs}}
@@ -426,6 +428,36 @@ Remap a node and weight of a quadrature rule to a new base triangle. The main us
 \begin{DoxyReturn}{Returns}
 \+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
 \end{DoxyReturn}
+\mbox{\label{group__quadrature_gab921c4ee4fac5be445cc7fe96573dadf}} 
+\index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+series@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+series}}
+\index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+series@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+series}!Quadrature rules@{Quadrature rules}}
+\subsubsection{bem3d\+\_\+quadrature\+\_\+rule\+\_\+series()}
+{\footnotesize\ttfamily gint bem3d\+\_\+quadrature\+\_\+rule\+\_\+series (\begin{DoxyParamCaption}\item[{Gts\+Point $\ast$}]{xs,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Greens\+Function} $\ast$}]{gfunc,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{param,  }\item[{gpointer}]{data }\end{DoxyParamCaption})}
+
+Semi-\/analytical series expansion for Helmholtz potential
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & field point (ignored) \\
+\hline
+{\em e} & element to integrate over \\
+\hline
+{\em q} & quadrature rule to fill \\
+\hline
+{\em gfunc} & ignored; \\
+\hline
+{\em param} & ignored; \\
+\hline
+{\em data} & pointer ignored.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+element\+\_\+find\+\_\+node(), bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+vertex, bem3d\+\_\+element\+\_\+vertex\+\_\+number, bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz(), bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs(), bem3d\+\_\+greens\+\_\+func\+\_\+laplace(), bem3d\+\_\+greens\+\_\+function\+\_\+func, bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real, bem3d\+\_\+parameters\+\_\+lambda\+\_\+imag, bem3d\+\_\+parameters\+\_\+lambda\+\_\+real, bem3d\+\_\+parameters\+\_\+wavenumber, bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx().
+
 \mbox{\label{group__quadrature_ga56b24893173c2ea5856186fc42592a8a}} 
 \index{Quadrature rules@{Quadrature rules}!bem3d\+\_\+quadrature\+\_\+rule\+\_\+write@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+write}}
 \index{bem3d\+\_\+quadrature\+\_\+rule\+\_\+write@{bem3d\+\_\+quadrature\+\_\+rule\+\_\+write}!Quadrature rules@{Quadrature rules}}
@@ -476,5 +508,5 @@ References bem3d\+\_\+element\+\_\+corner\+\_\+number.
 
 
 
-Referenced by bem3d\+\_\+element\+\_\+area(), and bem3d\+\_\+quadrature\+\_\+selector\+\_\+default().
+Referenced by bem3d\+\_\+element\+\_\+area(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+series(), and bem3d\+\_\+quadrature\+\_\+selector\+\_\+default().
 

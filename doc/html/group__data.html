@@ -57,12 +57,10 @@ Functions</h2></td></tr>
 <tr class="separator:ga9301ffa46f86eb0139c5220260abaea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa28701d5f03c9ae65850963597a8d69c"><td class="memItemLeft" align="right" valign="top">gdouble *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#gaa28701d5f03c9ae65850963597a8d69c">bem3d_mesh_data_get</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *m, gint i)</td></tr>
 <tr class="separator:gaa28701d5f03c9ae65850963597a8d69c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4c681905c8f27f12e72135f02ebe5914"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#ga4c681905c8f27f12e72135f02ebe5914">bem3d_mesh_function_limits</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f, gint i, gdouble *xmin, gdouble *xmax)</td></tr>
-<tr class="separator:ga4c681905c8f27f12e72135f02ebe5914"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf5317a69aed083fea33ca23ccae65cb5"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#gaf5317a69aed083fea33ca23ccae65cb5">bem3d_mesh_data_add</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f, gint i, GArray *g)</td></tr>
 <tr class="separator:gaf5317a69aed083fea33ca23ccae65cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga747738facf7c1014fc6ba598f59819b4"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#ga747738facf7c1014fc6ba598f59819b4">bem3d_mesh_data_write</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f, FILE *fp)</td></tr>
-<tr class="separator:ga747738facf7c1014fc6ba598f59819b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga409fb405712584435c8df106fe012572"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#ga409fb405712584435c8df106fe012572">bem3d_mesh_data_write</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f, FILE *fp, gchar *header)</td></tr>
+<tr class="separator:ga409fb405712584435c8df106fe012572"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa19a6d2cd10140b35d7e7673a7f3dd2b"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#gaa19a6d2cd10140b35d7e7673a7f3dd2b">bem3d_mesh_data_read</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> **f, FILE *fp, gint width)</td></tr>
 <tr class="separator:gaa19a6d2cd10140b35d7e7673a7f3dd2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6fa5766a482e9f8b2be3fbb8084b97e4"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#ga6fa5766a482e9f8b2be3fbb8084b97e4">bem3d_mesh_data_add_node</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *m, gint i)</td></tr>
@@ -71,6 +69,12 @@ Functions</h2></td></tr>
 <tr class="separator:ga1f2747030cf84458a2e5b3b4291ce23d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7cd91d22c9f2580825bfe1c5854e550e"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#ga7cd91d22c9f2580825bfe1c5854e550e">bem3d_mesh_data_node_number</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *d)</td></tr>
 <tr class="separator:ga7cd91d22c9f2580825bfe1c5854e550e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga95a42216156f5bfa64769cb1beeec05a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#ga95a42216156f5bfa64769cb1beeec05a">bem3d_mesh_data_merge</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f1, <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f2, gboolean strict)</td></tr>
+<tr class="separator:ga95a42216156f5bfa64769cb1beeec05a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab001ecc763ca8a763537695cc835d74f"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#gab001ecc763ca8a763537695cc835d74f">bem3d_mesh_data_add_mesh</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *d, <a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m)</td></tr>
+<tr class="separator:gab001ecc763ca8a763537695cc835d74f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga64881a8e9f45f0ba9d93f9221f91ffc1"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__data.html#ga64881a8e9f45f0ba9d93f9221f91ffc1">bem3d_mesh_data_write_weights</a> (<a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f, FILE *fp, gint *fields, gint nfields)</td></tr>
+<tr class="separator:ga64881a8e9f45f0ba9d93f9221f91ffc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Function Documentation</h2>
@@ -117,6 +121,45 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
 
 <p class="reference">References <a class="el" href="group__data.html#gaa28701d5f03c9ae65850963597a8d69c">bem3d_mesh_data_get()</a>.</p>
+
+</div>
+</div>
+<a id="gab001ecc763ca8a763537695cc835d74f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab001ecc763ca8a763537695cc835d74f">&#9670;&nbsp;</a></span>bem3d_mesh_data_add_mesh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">gint bem3d_mesh_data_add_mesh </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *&#160;</td>
+          <td class="paramname"><em>d</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *&#160;</td>
+          <td class="paramname"><em>m</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Expand a <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> to include entries for another mesh, so that the data block contains data for more than one mesh.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">d</td><td>an existing <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> </td></tr>
+    <tr><td class="paramname">m</td><td>a <a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> whose nodes are to be added to <em>d</em> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
+
+<p class="reference">References <a class="el" href="group__mesh.html#ga39295d4861dca739ea6b22d4e72a9494">bem3d_mesh_foreach_node()</a>.</p>
 
 </div>
 </div>
@@ -246,7 +289,53 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a pointer to the data for node i, NULL if the index is not in the block. </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="group__gmsh.html#ga83ac0ef0dad6e3d54bab17a72ac6b00f">bem3d_gmsh_write_element()</a>, <a class="el" href="group__data.html#gaf5317a69aed083fea33ca23ccae65cb5">bem3d_mesh_data_add()</a>, <a class="el" href="group__data.html#ga6fa5766a482e9f8b2be3fbb8084b97e4">bem3d_mesh_data_add_node()</a>, <a class="el" href="group__reduction.html#ga10cfd7ae7c31f96d0ca9564f75a4983b">bem3d_reduction_func_max()</a>, <a class="el" href="group__reduction.html#ga75ddf4c8ceb054511d24f4ea7bf139b9">bem3d_reduction_func_min()</a>, and <a class="el" href="group__reduction.html#ga2d32523f739945b6cb9c5e08f35c729e">bem3d_reduction_func_sum()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__gmsh.html#ga83ac0ef0dad6e3d54bab17a72ac6b00f">bem3d_gmsh_write_element()</a>, <a class="el" href="group__data.html#gaf5317a69aed083fea33ca23ccae65cb5">bem3d_mesh_data_add()</a>, <a class="el" href="group__data.html#ga6fa5766a482e9f8b2be3fbb8084b97e4">bem3d_mesh_data_add_node()</a>, and <a class="el" href="group__reduction.html#ga2d32523f739945b6cb9c5e08f35c729e">bem3d_reduction_func_sum()</a>.</p>
+
+</div>
+</div>
+<a id="ga95a42216156f5bfa64769cb1beeec05a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga95a42216156f5bfa64769cb1beeec05a">&#9670;&nbsp;</a></span>bem3d_mesh_data_merge()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a>* bem3d_mesh_data_merge </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *&#160;</td>
+          <td class="paramname"><em>f1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *&#160;</td>
+          <td class="paramname"><em>f2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gboolean&#160;</td>
+          <td class="paramname"><em>strict</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Merge two data blocks into a single block. This is intended for merging data generated for two disjoint meshes, with different indices. If an index appears in both blocks the behaviour is undefined. The output block will be sized to accomodate all data from both inputs, with zero padding where required.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f1</td><td>an input <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a>; </td></tr>
+    <tr><td class="paramname">f2</td><td>another input <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a>; </td></tr>
+    <tr><td class="paramname">strict</td><td>(not currently used).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a new <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> containing the data from <em>f1</em> and <em>f2</em>. </dd></dl>
+
+<p class="reference">References <a class="el" href="group__data.html#ga7cd91d22c9f2580825bfe1c5854e550e">bem3d_mesh_data_node_number()</a>, and <a class="el" href="group__data.html#ga864fb827bf3c17436a427f94761b51d1">bem3d_mesh_data_sized_new()</a>.</p>
 
 </div>
 </div>
@@ -339,6 +428,8 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the number of nodes in <em>d</em>, or zero if d is NULL. </dd></dl>
 
+<p class="reference">Referenced by <a class="el" href="group__data.html#ga95a42216156f5bfa64769cb1beeec05a">bem3d_mesh_data_merge()</a>, and <a class="el" href="group__reduction.html#ga2d32523f739945b6cb9c5e08f35c729e">bem3d_reduction_func_sum()</a>.</p>
+
 </div>
 </div>
 <a id="gaa19a6d2cd10140b35d7e7673a7f3dd2b"></a>
@@ -422,12 +513,12 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> block. </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, and <a class="el" href="group__data.html#gaa19a6d2cd10140b35d7e7673a7f3dd2b">bem3d_mesh_data_read()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__data.html#ga95a42216156f5bfa64769cb1beeec05a">bem3d_mesh_data_merge()</a>, <a class="el" href="group__data.html#ga4e26190bdd6b26ee494e3f040f6c4c03">bem3d_mesh_data_new()</a>, and <a class="el" href="group__data.html#gaa19a6d2cd10140b35d7e7673a7f3dd2b">bem3d_mesh_data_read()</a>.</p>
 
 </div>
 </div>
-<a id="ga747738facf7c1014fc6ba598f59819b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga747738facf7c1014fc6ba598f59819b4">&#9670;&nbsp;</a></span>bem3d_mesh_data_write()</h2>
+<a id="ga409fb405712584435c8df106fe012572"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga409fb405712584435c8df106fe012572">&#9670;&nbsp;</a></span>bem3d_mesh_data_write()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -442,7 +533,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">FILE *&#160;</td>
-          <td class="paramname"><em>fp</em>&#160;</td>
+          <td class="paramname"><em>fp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gchar *&#160;</td>
+          <td class="paramname"><em>header</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -453,11 +550,12 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Write a <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> block to a file. The output format is one line containing:</p>
 <p><em>NP</em> <em>NE</em> <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a></p>
-<p>where <em>NP</em> is the number of nodes in the block and <em>NE</em> is the number of elements per point, followed by <em>NP</em> lines each containing <em>NE</em> numerical entries.</p>
+<p>where <em>NP</em> is the number of nodes in the block and <em>NE</em> is the number of numerical entries per point, followed by <em>NP</em> lines each containing <em>NE</em> numerical entries. If <em>header</em> is not NULL, it is used in place of the standard first line. If it contains C formatting strings d, these generate <em>NP</em> and <em>NE</em>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">f</td><td><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> block; </td></tr>
-    <tr><td class="paramname">fp</td><td>file pointer.</td></tr>
+    <tr><td class="paramname">fp</td><td>file pointer; </td></tr>
+    <tr><td class="paramname">header</td><td>first line of output file (may be NULL)</td></tr>
   </table>
   </dd>
 </dl>
@@ -465,14 +563,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga4c681905c8f27f12e72135f02ebe5914"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4c681905c8f27f12e72135f02ebe5914">&#9670;&nbsp;</a></span>bem3d_mesh_function_limits()</h2>
+<a id="ga64881a8e9f45f0ba9d93f9221f91ffc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga64881a8e9f45f0ba9d93f9221f91ffc1">&#9670;&nbsp;</a></span>bem3d_mesh_data_write_weights()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">gint bem3d_mesh_function_limits </td>
+          <td class="memname">gint bem3d_mesh_data_write_weights </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *&#160;</td>
           <td class="paramname"><em>f</em>, </td>
@@ -480,20 +578,20 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>fp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gint *&#160;</td>
+          <td class="paramname"><em>fields</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">gint&#160;</td>
-          <td class="paramname"><em>i</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">gdouble *&#160;</td>
-          <td class="paramname"><em>xmin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">gdouble *&#160;</td>
-          <td class="paramname"><em>xmax</em>&#160;</td>
+          <td class="paramname"><em>nfields</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -502,13 +600,15 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Extract maximum and minimum values of a function from a <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> block</p>
+<p>Write a block of data in the form of a single row suitable for use in a weighting matrix, e.g. of a type generated by <a class="el" href="group__functions.html#ga042d41960a69e5549aed4d2c24161005">bem3d_function_integral_weights</a>. Data are written on one row in the form</p>
+<p>index f0 f1 f2 index f0 f1 f2 ...</p>
+<p>with any entries with all data equal to zero neglected, effectively treating the data as a sparse matrix.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">f</td><td><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> block; </td></tr>
-    <tr><td class="paramname">i</td><td>field to check; </td></tr>
-    <tr><td class="paramname">xmin</td><td>minimum value of field; </td></tr>
-    <tr><td class="paramname">xmax</td><td>maximum value of field.</td></tr>
+    <tr><td class="paramname">f</td><td>data to write; </td></tr>
+    <tr><td class="paramname">fp</td><td>file pointer for output; </td></tr>
+    <tr><td class="paramname">fields</td><td>indices of fields to write to output (must all be less than the number of fields per node in <em>f</em>); </td></tr>
+    <tr><td class="paramname">nfields</td><td>number of fields to write.</td></tr>
   </table>
   </dd>
 </dl>
@@ -519,7 +619,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 4 2018 12:03:00 for BEM3D by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 28 2019 10:12:58 for BEM3D by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.14
 </small></address>

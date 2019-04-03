@@ -1,6 +1,6 @@
 /* bem3d-function.c
  * 
- * Copyright (C) 2010, 2017, 2018 Michael Carley
+ * Copyright (C) 2010, 2017, 2018, 2019 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -37,9 +37,19 @@
 #include "bem3d.h"
 #include "bem3d-private.h"
 
+#define SURFACE_DATA_WIDTH     16
+#define SURFACE_DATA_INDEX      0
+#define SURFACE_DATA_FUNCTION   1
+#define SURFACE_DATA_QUADRATURE 2
+#define SURFACE_DATA_DATA       3
+#define SURFACE_DATA_MESHES     4
+#define SURFACE_DATA_OUTPUT     5
+#define SURFACE_DATA_FIELDS     6
+#define SURFACE_DATA_
+
 #define __USAGE_MESSAGE_1__						\
   "%s: evaluate functions on BEM3D meshes and data using\n"		\
-  "analytically-specified functions\n\n"				\
+  "analytically-defined functions\n\n"				\
   "Typical uses are generation of boundary conditions and post-processing\n" \
   "of results using functions. Functions are input as a BEM3DFunction\n" \
   "specified using the -F option (see below). A simple example would be" \
@@ -72,14 +82,23 @@
   "when it includes blank space.\n\n"
 
 #define __USAGE_MESSAGE_2__						\
-  "A set of reduction operations are also available via the `-R' option:\n\n"
+  "A set of reduction operations are also available via the `-r' option:\n\n"
 
 #define __USAGE_MESSAGE_3__						\
   "\nand can be applied like this, for example:\n\n"			\
-  "   %s -E 4 -i (geometry file) -F source.fn -R max > bc.dat\n\n"	\
+  "   %s -E 4 -i (geometry file) -F source.fn -r max > bc.dat\n\n"	\
   "which performs the same operation as in the previous example and then\n" \
-  "outputs the maximum value in each column of the data block to stderr.\n"
-
+  "outputs the maximum value in each column of the data block and its node\n" \
+  "index to stderr.\n\n" \
+  "The -w option treats the function as integrand and outputs a block of\n" \
+  "which can be used as a set of weights for estimating an integral on a\n" \
+  "surface. For example, if a single element function is supplied, with\n" \
+  "the -w option:\n\n"							\
+  "  %s -w -F function.fn -i surface.bem -o weights.dat\n\n"		\
+  "an integral of f(x)g(x) over the surface can be estimated using\n\n" \
+  "  %s -F multiply.fn -d weights.dat -e data.dat -o output.dat\n\n"	\
+  "where data.dat contains g(x) and the function multiply.fn is given by\n" \
+  "f[0] = f[0]*g[0].\n"
 
 static void detailed_usage(gchar *progname)
 
@@ -90,7 +109,7 @@ static void detailed_usage(gchar *progname)
 
   bem3d_reduction_func_list(stderr, "   %s: %s;\n", TRUE) ;
 
-  fprintf(stderr, __USAGE_MESSAGE_3__, progname) ;
+  fprintf(stderr, __USAGE_MESSAGE_3__, progname, progname, progname) ;
   
   return ;
 }
@@ -108,45 +127,128 @@ gint main(gint argc, gchar **argv)
 
 #else /*HAVE_LIBMATHEVAL*/
 
+static void write_sparse(gint i, gdouble *d, gint nf, gpointer *sdata)
+
+{
+  FILE *fs = sdata[0] ;
+  GArray *fields = sdata[1] ;
+  gint row = *((gint *)sdata[2]) ;
+  gint j, idx ;
+  gboolean write_entry = FALSE ;
+
+  for ( j = 0 ; j < fields->len ; j ++ ) {
+    idx = g_array_index(fields, gint, j) ;
+    if ( d[idx] != 0.0 ) write_entry = TRUE ;
+  }
+  if ( !write_entry ) return ;
+
+  fprintf(fs, "%d %d", row, i) ;
+  for ( j = 0 ; j < fields->len ; j ++ ) {
+    idx = g_array_index(fields, gint, j) ;
+    fprintf(fs, " %1.16e", d[idx]) ;
+  }
+  fprintf(fs, "\n") ;
+  
+  return ;
+}
+
+static gint write_surface_matrix(gint i, GtsVertex *v, gpointer *data)
+
+{
+  gint imesh = *((gint *)data[SURFACE_DATA_INDEX]) ;
+  BEM3DFunction *efunc = data[SURFACE_DATA_FUNCTION] ;
+  BEM3DQuadratureRule *q = data[SURFACE_DATA_QUADRATURE] ;
+  BEM3DMeshData *f = data[SURFACE_DATA_DATA] ;
+  GPtrArray *meshes = data[SURFACE_DATA_MESHES] ;
+  FILE *fs = data[SURFACE_DATA_OUTPUT] ;
+  GArray *fields = data[SURFACE_DATA_FIELDS] ;
+  GtsVector n ;
+  gint j, ilimits[64], ni, nd, idx ;
+  gdouble limits[64] ;
+  gboolean write_line ;
+  gpointer sdata[] = {fs, fields, &i} ;
+    
+  bem3d_mesh_data_clear(f) ;
+  bem3d_node_normal(g_ptr_array_index(meshes, imesh), i, n, BEM3D_AVERAGE_MWA) ;
+  
+  for ( j = 0 ; j < meshes->len ; j ++ ) {
+    bem3d_function_integral_weights(efunc,
+				    g_ptr_array_index(meshes, j), j,
+				    v, n, i, q, f) ;
+  }
+
+  /*write data here*/
+  write_line = FALSE ;
+  bem3d_reduction_func_limits(NULL, f, ilimits, &ni, limits, &nd, NULL) ;
+  for ( j = 0 ; j < fields->len ; j ++ ) {
+    idx = g_array_index(fields, gint , j) ;
+    if ( limits[2*idx+0] != 0.0 || limits[2*idx+1] != 0.0 )
+      write_line = TRUE ;
+  }
+
+  if ( !write_line ) return 0 ; /*no non-zero entries for this vertex*/
+
+  /* fprintf(fs, "%d ", i) ; */
+
+  bem3d_mesh_data_foreach(f, (BEM3DMeshDataEntryFunc)write_sparse, sdata) ;
+
+  /* fprintf(fs, "\n") ; */
+  
+  return 0 ;
+}
+
 gint main(gint argc, gchar **argv)
 
 {
-  BEM3DMesh *m, *m0 ;
+  BEM3DMesh *m ;
+  GPtrArray *meshes ;
   BEM3DMeshData *f, *g, *fmerge ;
   GtsFile *fid ;
   gchar *progname ;
-  gchar *ipfile, *opfile, *datafile, *edatafile, *funcfile ;
+  gchar *opfile, *datafile, *edatafile, *funcfile ;
   gchar **reductions ;
   GLogLevelFlags loglevel ;
   FILE *fs ;
-  gint mesh_data_width, i, j, k ;
-  gint idata[64], ni, nd ;
+  gint mesh_data_width, i, j, k, idata[64], nc, ni, nd, nnodes, lineno ;
   gdouble ddata[64] ;
-  gchar ch ;
+  gchar ch, line[1024], *point_file ;
   GPtrArray *overrides ;
-  gboolean write_func, merge ;
+  GArray *isurf ;
+  gboolean write_func, merge, write_data, integral_weights ;
   BEM3DFunction *efunc ;
-  BEM3DMotion *motion ;
+  BEM3DQuadratureRule *q ;
+  GtsPoint *x ;
   gchar *header = NULL ;
+  gpointer surfdata[SURFACE_DATA_WIDTH] ;
   
   progname = g_strdup(g_path_get_basename(argv[0])) ;
 
   f = g = NULL ;
+  integral_weights = FALSE ;
   write_func = FALSE ;
+  write_data = TRUE ;
+  point_file = NULL ;
   merge = FALSE ;
   overrides = g_ptr_array_new() ;
   loglevel = G_LOG_LEVEL_MESSAGE ;
   mesh_data_width = 1 ;
-  ipfile = opfile = datafile = edatafile = funcfile = NULL ; fs = NULL ;
+  opfile = datafile = edatafile = funcfile = NULL ; fs = NULL ;
   reductions = NULL ;
+  nnodes = 0 ;
+  isurf = g_array_new(TRUE, TRUE, sizeof(gint)) ;
   
-  while ( (ch = getopt(argc, argv, "HhDd:E:e:F:l:mi:o:pr:s:")) != EOF ) {
+  meshes = g_ptr_array_new() ;
+  m = NULL ;
+  
+  bem3d_shapefunc_lookup_init() ;
+
+  while ( (ch = getopt(argc, argv, "HhDd:E:e:F:l:mi:o:pqr:S:s:wX:")) != EOF ) {
     switch (ch) {
     default: 
     case 'h':
       fprintf(stderr, 
 	      "%s: evaluate functions on BEM3D meshes and data using\n"
-	      "analytically-specified functions\n\n",
+	      "analytically-defined functions\n\n",
 	      progname) ;
       fprintf(stderr, "Usage: %s <options>\n", progname) ;
       fprintf(stderr, 
@@ -159,13 +261,22 @@ gint main(gint argc, gchar **argv)
 	      "        -F <function definition file>\n"
 	      "        -H (print longer help message and exit)\n"
 	      "        -l # (set logging level)\n"
-	      "        -m merge the input (-d) and extra (-e) data files\n"
-	      "           and output as a single block\n"
-	      "        -i <bem3d mesh input file>\n"
+	      "        -m merge the input (-d) and extra (-e) data files and\n"
+	      "           output as a single block\n"
+	      "        -i <bem3d mesh input file> (can be repeated for "
+	      "multiple\n"
+	      "           meshes)\n"
 	      "        -o <output file name>\n"
 	      "        -p (write expanded parsed function to stderr)\n"
+	      "        -q do not write evaluated function data to output\n"
 	      "        -r <comma separated list of reduction operations>\n"
-	      "        -s <expression> (set a function variable)\n") ;
+	      "        -s <expression> (set a function variable)\n"
+	      "        -S (list) write output as surface data file with\n"
+	      "           components in list\n"
+	      "        -w treat function as integrand of integral weights\n"
+	      "        -X <file name> list of points in bem3d-dump\n"
+	      "           format\n"
+	      ) ;
       return 0 ;
       break ;
     case 'H':
@@ -181,17 +292,19 @@ gint main(gint argc, gchar **argv)
     case 'F': funcfile = g_strdup(optarg) ; break ;
     case 'l': loglevel = 1 << atoi(optarg) ; break ;
     case 'm': merge = TRUE ; break ;
-    case 'i': ipfile = g_strdup(optarg) ; break ;
+    case 'i': append_mesh_from_file(meshes,  optarg) ; break ;
     case 'o': opfile = g_strdup(optarg) ; break ;
     case 'p': write_func = TRUE ; break ;
+    case 'q': write_data = FALSE ; break ;
     case 'r': reductions = g_strsplit_set(optarg, " ,", 0) ; break ;
+    case 'S': range_int(optarg, isurf) ; break ;
     case 's': g_ptr_array_add(overrides, g_strdup(optarg)) ; break ;
+    case 'w': integral_weights = TRUE ; break ;      
+    case 'X': point_file = g_strdup(optarg) ; break ;
     }
   }
 
   bem3d_logging_init(stderr, "", loglevel, NULL) ;
-  bem3d_shapefunc_lookup_init() ;
-
   fprintf(stderr, "%s", BEM3D_STARTUP_MESSAGE) ;
 
   efunc = bem3d_function_new(bem3d_function_class()) ;
@@ -207,6 +320,8 @@ gint main(gint argc, gchar **argv)
       bem3d_function_insert_string(efunc,
 				   (gchar *)g_ptr_array_index(overrides,i)) ;
     }
+
+    bem3d_function_expand_functions(efunc) ;
 
     if ( write_func) bem3d_function_write(efunc, stderr) ;
   }
@@ -247,26 +362,29 @@ gint main(gint argc, gchar **argv)
     
     return 0 ;
   }
-  
-  if ( ipfile == NULL ) fs = stdin ;
-  else fs = file_open(ipfile, "-", "r", stdin) ;
-    
-  fid = gts_file_new(fs) ;
-  m = bem3d_mesh_new(bem3d_mesh_class(), gts_face_class(),
-		   gts_edge_class(), gts_vertex_class()) ;
-  bem3d_mesh_read(m, fid) ;
 
-  file_close(fs) ;
+  if ( point_file != NULL ) {
+    lineno = 1 ;
+    x = gts_point_new(gts_point_class(), 0, 0, 0) ;
+    fs = file_open(point_file, "-", "r", stdin) ;
 
-  if ( ipfile == NULL ) fs = stdin ;
-  else fs = file_open(ipfile, "-", "r", stdin) ;
-    
-  fid = gts_file_new(fs) ;
-  m0 = bem3d_mesh_new(bem3d_mesh_class(), gts_face_class(),
-		      gts_edge_class(), gts_vertex_class()) ;
-  bem3d_mesh_read(m0, fid) ;
+    while ( (nc = fscanf(fs, "%[^\n]c", line)) != EOF && ( nc != 0 ) ) {
+      nc = sscanf(line, "%d %lg %lg %lg", &j, &(x->x), &(x->y), &(x->z)) ;
+      if ( nc != 4 ) {
+	fprintf(stderr, "%s: cannot parse line %d\n  %s\n",
+		progname, lineno, line) ;
+	exit(1) ;
+      }
+      fprintf(stdout, "%d", j) ;
+      j = bem3d_function_eval_point(efunc, x, NULL, 0, ddata, 8) ;
+      for ( i = 0 ; i <= j ; i ++ ) fprintf(stdout, " %lg", ddata[i]) ;
+      fprintf(stdout, "\n") ;
+      lineno ++ ;
+      if ( (nc = fscanf(fs, "%*c")) == EOF ) break ;
+    }
 
-  file_close(fs) ;
+    return 0 ;
+  }
 
   if ( datafile != NULL ) {
     fs = file_open(datafile, "-", "r", stdin) ;
@@ -280,7 +398,14 @@ gint main(gint argc, gchar **argv)
   }
 
   if ( f == NULL ) {
+    m = g_ptr_array_index(meshes, 0) ;
+    nnodes = bem3d_mesh_node_number(m) ;
     f = bem3d_mesh_data_new(m, mesh_data_width) ;
+    for ( i = 1 ; i < meshes->len ; i ++ ) {
+      m = g_ptr_array_index(meshes, i) ;
+      nnodes += bem3d_mesh_node_number(m) ;
+      bem3d_mesh_data_add_mesh(f, m) ;
+    }
     bem3d_mesh_data_clear(f) ;
   }
 
@@ -295,30 +420,71 @@ gint main(gint argc, gchar **argv)
     file_close(fs) ;
   }
 
-  motion = bem3d_motion_new(bem3d_motion_class(), m, m0) ;
-
-  bem3d_motion_expand_defs(motion) ;
-  bem3d_motion_create_evaluators(motion) ;
-  bem3d_motion_mesh_position(motion, 0.0) ;
-
   if ( funcfile != NULL ) {
-    bem3d_function_expand_functions(efunc) ;
-    bem3d_function_apply(efunc, motion, 0.0, f, g) ;
+    if ( integral_weights && isurf->len == 0 ) {
+      q = bem3d_quadrature_rule_new(7, 1) ;
+      for ( i = 0 ; i < meshes->len ; i ++ ) {
+	bem3d_function_integral_weights(efunc,
+					g_ptr_array_index(meshes, i), i,
+					NULL, NULL, 0, q, f) ;
+      }
+    } else {
+      bem3d_function_apply_mesh_list(efunc, meshes, f, g) ;
+    }
+  }
+
+  if ( integral_weights && isurf->len != 0 ) {
+    if ( funcfile == NULL ) {
+      fprintf(stderr,
+	      "%s: need a function definition to generate integral weights\n",
+	      progname) ;
+      return 1 ;
+    }
+    if ( opfile == NULL ) fs = stdout ;
+    else fs = file_open(opfile, "-", "w", stdout) ;
+
+    q = bem3d_quadrature_rule_new(7, 1) ;
+
+    surfdata[SURFACE_DATA_INDEX] = &i ;
+    surfdata[SURFACE_DATA_FUNCTION] = efunc ;
+    surfdata[SURFACE_DATA_QUADRATURE] = q ;
+    surfdata[SURFACE_DATA_DATA] = f ;
+    surfdata[SURFACE_DATA_MESHES] = meshes ;
+    surfdata[SURFACE_DATA_OUTPUT] = fs ;
+    surfdata[SURFACE_DATA_FIELDS] = isurf ;
+
+    fprintf(fs, "%d %d BEM3DSurface\n",
+	    bem3d_mesh_data_node_number(f), isurf->len) ;
+    fprintf(fs, "sparse\n") ;
+    
+    for ( i = 0 ; i < meshes->len ; i ++ ) {
+      bem3d_mesh_foreach_node(g_ptr_array_index(meshes, i),
+			      (BEM3DNodeFunc)write_surface_matrix,
+			      surfdata) ;
+    }
+    
+    file_close(fs) ;
+
+    return 0 ;
   }
   
-  if ( opfile == NULL ) fs = stdout ;
-  else
-    fs = file_open(opfile, "-", "w", stdout) ;
-  bem3d_mesh_data_write(f, fs, header) ;
-
-  file_close(fs) ;
-
+  if ( write_data ) {
+    if ( opfile == NULL ) fs = stdout ;
+    else fs = file_open(opfile, "-", "w", stdout) ;
+    bem3d_mesh_data_write(f, fs, header) ;
+    
+    file_close(fs) ;
+  }
+  
   if ( reductions != NULL ) {
     mesh_data_width = bem3d_mesh_data_element_number(f) ;
+    if ( meshes->len == 0 ) m = NULL ;
+    else m = g_ptr_array_index(meshes, 0) ;
+    
     for ( i = 0 ; reductions[i] != NULL ; i ++ ) {
+      fprintf(stdout, "%s:", reductions[i]) ;
       bem3d_reduction_func_apply(reductions[i],
 				 m, f, idata, &ni, ddata, &nd, NULL) ;
-      fprintf(stdout, "%s:", reductions[i]) ;
       for ( j = 0 ; j < mesh_data_width ; j ++ ) {
 	for ( k = 0 ; k < ni ; k ++ )
 	  fprintf(stdout, " %d", idata[j*ni+k]) ;

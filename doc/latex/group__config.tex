@@ -21,6 +21,8 @@ gint \textbf{ bem3d\+\_\+configuration\+\_\+add\+\_\+identifier} (const gchar $\
 gchar $\ast$ \textbf{ bem3d\+\_\+configuration\+\_\+identifier\+\_\+from\+\_\+pointer} (gpointer v)
 \item 
 gpointer \textbf{ bem3d\+\_\+configuration\+\_\+pointer\+\_\+from\+\_\+identifier} (const gchar $\ast$id)
+\item 
+gint \textbf{ bem3d\+\_\+configuration\+\_\+write\+\_\+generic} (gboolean write\+\_\+descriptions, gint line\+\_\+width, gchar $\ast$prefix, gchar $\ast$comment, F\+I\+LE $\ast$f)
 \end{DoxyCompactItemize}
 
 
@@ -54,6 +56,8 @@ quadrature[1] = bem3d\+\_\+quadrature\+\_\+polar(0.\+0,16,16)
 
 \begin{DoxyParams}{Parameters}
 {\em id} & name of identifier; \\
+\hline
+{\em description} & text string describing the variable (e.\+g. to be used as a comment in a configuration file) \\
 \hline
 {\em v} & a pointer to the identified object\\
 \hline
@@ -163,3 +167,29 @@ Set fields of a \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguratio
 
 Referenced by bem3d\+\_\+configuration\+\_\+read().
 
+\mbox{\label{group__config_ga91fa14900c6df070f11bb26bd186e634}} 
+\index{Configuring B\+E\+M3D@{Configuring B\+E\+M3D}!bem3d\+\_\+configuration\+\_\+write\+\_\+generic@{bem3d\+\_\+configuration\+\_\+write\+\_\+generic}}
+\index{bem3d\+\_\+configuration\+\_\+write\+\_\+generic@{bem3d\+\_\+configuration\+\_\+write\+\_\+generic}!Configuring B\+E\+M3D@{Configuring B\+E\+M3D}}
+\subsubsection{bem3d\+\_\+configuration\+\_\+write\+\_\+generic()}
+{\footnotesize\ttfamily gint bem3d\+\_\+configuration\+\_\+write\+\_\+generic (\begin{DoxyParamCaption}\item[{gboolean}]{write\+\_\+descriptions,  }\item[{gint}]{line\+\_\+width,  }\item[{gchar $\ast$}]{prefix,  }\item[{gchar $\ast$}]{comment,  }\item[{F\+I\+LE $\ast$}]{f }\end{DoxyParamCaption})}
+
+Write generic configuration data containing all possible settings, which can be used as a template for a configuration file. Output is written in the form\+:
+
+[Group name] {\itshape prefix} [setting] = [variable name] {\itshape prefix} [setting] = [variable name] {\itshape prefix} [setting] = [variable name]
+
+
+\begin{DoxyParams}{Parameters}
+{\em write\+\_\+descriptions} & insert comment with description of variable before each line \\
+\hline
+{\em line\+\_\+width} & total number of characters per line in output, applied to lines of description only \\
+\hline
+{\em prefix} & string to insert at start of each variable line, such as `\#' to comment out entries \\
+\hline
+{\em comment} & string to insert at start of descriptions, to comment out text \\
+\hline
+{\em f} & output file stream\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success 
+\end{DoxyReturn}

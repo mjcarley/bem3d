@@ -392,6 +392,24 @@ typedef enum {
   } BEM3DMeshData ;
 
 
+  
+  /**
+   * @struct BEM3DMeshDataEntryFunc
+   *
+   * gint BEM3DMeshDataEntryFunc(gint i, gdouble *d, gint nf, gpointer data)
+   *
+   * Function for visiting entries in a BEM3DMeshData
+   *
+   * @param i index of entry in a BEM3DMeshData
+   * @param d row of data for block
+   * @param nf number of fields in block
+   * @param data user data
+   */
+  
+  typedef gint (*BEM3DMeshDataEntryFunc)(gint i, gdouble *d, gint nf,
+					 gpointer data) ;
+  
+  
   /**
    * @struct BEM3DLookupFunc
    *
@@ -1575,12 +1593,10 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
   gint bem3d_mesh_data_add_node(BEM3DMeshData *m, gint i) ;
   gdouble *bem3d_mesh_data_get(BEM3DMeshData *m, gint i) ;
   gint bem3d_mesh_data_node_number(BEM3DMeshData *d) ;
-/*   gint bem3d_mesh_function_eval(BEM3DMesh *m,  */
-/* 				BEM3DMeshDataFunc f, */
-/* 				gpointer fdata,  */
-/* 				BEM3DMeshData *d) ; */
-  gint bem3d_mesh_function_limits(BEM3DMeshData *f, gint i,
-				  gdouble *xmin, gdouble *xmax) ;
+  gint bem3d_mesh_data_add_mesh(BEM3DMeshData *d, BEM3DMesh *m) ;
+  gint bem3d_mesh_data_foreach(BEM3DMeshData *f, BEM3DMeshDataEntryFunc func,
+			       gpointer data) ;
+
   gint bem3d_mesh_data_clear(BEM3DMeshData *m) ;
   gint bem3d_mesh_data_add(BEM3DMeshData *f, gint i, GArray *g) ;
 
@@ -1747,6 +1763,8 @@ gint bem3d_quadrature_rule_decomp_gradient(GtsPoint *xs, BEM3DElement *e,
   gint bem3d_geometry_plane(GtsSurface *s, gint ni, gint nj) ;
   GtsVertex *bem3d_vertex_from_segments(GtsSegment *s1, GtsSegment *s2) ;
   gint bem3d_mesh_data_write(BEM3DMeshData *f, FILE *fp, gchar *header) ;
+  gint bem3d_mesh_data_write_weights(BEM3DMeshData *f, FILE *fp,
+				     gint *fields, gint nfields) ;
   gint bem3d_mesh_data_read(BEM3DMeshData **f, FILE *fp, gint width) ;
   BEM3DMeshData *bem3d_mesh_data_merge(BEM3DMeshData *f1,
 				       BEM3DMeshData *f2,
@@ -1831,11 +1849,33 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
   gint bem3d_function_variable_add(BEM3DFunction *f, gchar *var, gchar *def) ;
   gint bem3d_function_expand_functions(BEM3DFunction *f) ;
   gchar *bem3d_function_variable_lookup(BEM3DFunction *f, gchar *var) ;
-  gint bem3d_function_apply(BEM3DFunction *f, 
-			    BEM3DMotion *m,
-			    gdouble t,
-			    BEM3DMeshData *d,
-			    BEM3DMeshData *e) ;
+  gint bem3d_function_apply_motion(BEM3DFunction *f, 
+				   BEM3DMotion *m,
+				   gdouble t,
+				   BEM3DMeshData *d,
+				   BEM3DMeshData *e) ;
+  gint bem3d_function_apply_motion_list(BEM3DFunction *func, 
+					GPtrArray *motions,
+					gdouble t,
+					BEM3DMeshData *f,
+					BEM3DMeshData *g) ;
+  gint bem3d_function_apply_mesh(BEM3DFunction *f, 
+				 BEM3DMesh *m,
+				 BEM3DMeshData *d,
+				 BEM3DMeshData *e) ;
+  gint bem3d_function_apply_mesh_list(BEM3DFunction *func, 
+				      GPtrArray *meshes,
+				      BEM3DMeshData *f,
+				      BEM3DMeshData *g) ;
+  gint bem3d_function_integral_weights(BEM3DFunction *func,
+				       BEM3DMesh *m, gint imesh,
+				       GtsVertex *x, GtsVector n, gint i,
+				       BEM3DQuadratureRule *q,
+				       BEM3DMeshData *f) ;
+  gint bem3d_function_eval_point(BEM3DFunction *func,
+				 GtsPoint *x, GtsVector n, gint i,
+				 gdouble *result, gint nres) ;
+  
   gboolean bem3d_function_token_is_reserved(gchar *var) ;
   gint bem3d_function_write(BEM3DFunction *f, FILE *fid) ; 
   gint bem3d_function_read(BEM3DFunction *f, GtsFile *fid) ;
@@ -1849,6 +1889,10 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
 				gint *idata, gint *ni,
 				gdouble *ddata, gint *nd,
 				gpointer data) ;
+  gint bem3d_reduction_func_limits(BEM3DMesh *m, BEM3DMeshData *f,
+				   gint *idata, gint *ni,
+				   gdouble *ddata, gint *nd,
+				   gpointer data) ;
   gint bem3d_reduction_func_sum(BEM3DMesh *m, BEM3DMeshData *f,
 				gint *idata, gint *ni,
 				gdouble *ddata, gint *nd,

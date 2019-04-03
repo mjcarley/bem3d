@@ -605,7 +605,7 @@ static gint gmsh_element_n_nodes(gint type)
 }
 
 static gint gmsh_add_element(BEM3DMesh *m, GHashTable *h,
-			    gint elem, gint *nodes, gint nn) 
+			     gint elem, gint *nodes, gint nn) 
 
 {
   GtsEdge *e[32] ;
@@ -626,6 +626,7 @@ static gint gmsh_add_element(BEM3DMesh *m, GHashTable *h,
     w[0] = g_hash_table_lookup(h,GINT_TO_POINTER(nodes[0])) ;
     w[1] = g_hash_table_lookup(h,GINT_TO_POINTER(nodes[1])) ;
     w[2] = g_hash_table_lookup(h,GINT_TO_POINTER(nodes[2])) ;
+    g_assert(w[0] != NULL && w[1] != NULL && w[2] != NULL) ;
     build_func = bem3d_element_build_t1 ;
     nb = 3 ;
     break ;
@@ -807,7 +808,10 @@ static gint gmsh_read_element2(FILE *f, gint *i, gint *e,
   if ( fscanf(f, "%d", i) != 1) return -1 ;
   if ( fscanf(f, "%d", e) != 1) return -1 ;
 
+  g_debug("%s: tag %d; element %d", __FUNCTION__, *i, *e) ;
+  
   *nn = gmsh_element_n_nodes(*e) ;
+  g_debug("%s: %d nodes", __FUNCTION__, *nn) ;
 
   if ( fscanf(f, "%d", &nt) != 1) return -1 ;
 
@@ -820,32 +824,50 @@ static gint gmsh_read_element2(FILE *f, gint *i, gint *e,
   return 0 ;
 }
 
-static guint gmsh_read_file2(FILE *f, BEM3DMesh *m)
+static gint gmsh_read_element4(FILE *f, gint *i, gint elem,
+			       gint *nodes, gint *nn)
+
+{
+  gint j ;
+  
+  if ( fscanf(f, "%d", i) != 1) return -1 ;
+
+  g_debug("%s: tag %d; element %d", __FUNCTION__, *i, elem) ;
+  
+  *nn = gmsh_element_n_nodes(elem) ;
+  g_debug("%s: %d nodes", __FUNCTION__, *nn) ;
+
+  for ( j = 0 ; j < (*nn) ; j ++ )
+    if ( fscanf(f, "%d", &nodes[j]) != 1 ) return -1 ;
+  g_debug("%s: nodes: %d, ..., %d", __FUNCTION__, nodes[0], nodes[*nn-1]) ;
+
+  return 0 ;
+}
+
+static gint search_line(FILE *f, gchar *string, guint lineno, gint *nv)
 
 {
   gchar line[256] ;
-  guint lineno = 2 ;
+
+  *nv = fscanf(f, "%[^\n]s", line) ;
+  while ( strncmp(string, line, strlen(string)) != 0 ) {
+    lineno ++ ;
+    fscanf(f, "%*c") ;
+    if ( ( *nv = fscanf(f, "%[^\n]s", line) ) == EOF ) return lineno ;
+  }
+  fscanf(f, "%*c") ;
+  
+  return lineno ;
+}
+
+static guint gmsh_read_file2_0(FILE *f, BEM3DMesh *m, guint lineno)
+
+{
+  gchar line[256] ;
   gint i, j, np, ne, nv, elem, ntags, data[32], tags[32] ;
-  gint ft, ds ;
-  gdouble version ;
   GHashTable *h ;
   gdouble x, y, z ;
-
-  if ( (nv = fscanf(f, "%lg %d %d", &version, &ft, &ds) ) != 3 ) {
-    g_debug("%s: error reading mesh format information", 
-	    __FUNCTION__) ;
-    return lineno ;
-  }
-  if ( version < 2.0 || version >= 3.0 ) {
-    g_debug("%s: file version (%lg) should be 2.0",  
-	    __FUNCTION__, version) ;
-    return lineno ;
-  }
-  lineno ++ ;
-
-  g_debug("%s: file format %lg, file type %d, data size %d",  
-	  __FUNCTION__, version, ft, ds) ;
-
+  
   nv = fscanf(f, "%s", line) ;
   g_debug("%s: %s", __FUNCTION__, line) ;
   if ( strcmp(line, "$EndMeshFormat") || nv == 0) {
@@ -927,6 +949,160 @@ static guint gmsh_read_file2(FILE *f, BEM3DMesh *m)
 
   g_hash_table_destroy(h) ;  
 
+  return 0 ;
+}
+
+static guint gmsh_read_file4_0(FILE *f, BEM3DMesh *m, guint lineno)
+
+{
+  gint i, j, k, ne, np, nv, elem, ntags, data[32] ;
+  gint n_ent, n_nodes, n_elem, imin, imax, dim, etag, nnblock, *tags ;
+  gboolean parametric ;
+  GHashTable *h ;
+  gdouble x, y, z ;
+  
+  lineno = search_line(f, "$EndMeshFormat", lineno, &nv) ;
+  if ( nv == EOF ) {
+    g_debug("%s: no $EndMeshFormat marker found", __FUNCTION__) ;
+    return lineno ;
+  }
+  
+  lineno = search_line(f, "$Nodes", lineno, &nv) ;
+  if ( nv == EOF ) {
+    g_debug("%s: no $Nodes marker found", __FUNCTION__) ;
+    return lineno ;
+  }
+
+  nv = fscanf(f, "%d %d %d %d", &n_ent, &n_nodes, &imin, &imax) ;
+  lineno ++ ;
+  g_debug("%s: line %u; %d entities; %d nodes; min %d; max %d\n",
+	  __FUNCTION__, lineno, n_ent, n_nodes, imin, imax) ;
+  if ( nv == 0 ) {
+    g_debug("%s: error reading number of vertices", __FUNCTION__) ;
+    return lineno ;
+  }
+
+  h = g_hash_table_new(NULL, NULL) ;
+  tags = (gint *)g_malloc(MAX(n_nodes, 32)*sizeof(gint)) ;
+  for ( i = np = 0 ; i < n_ent ; i ++ ) {
+    nv = fscanf(f, "%d %d %d %d", &dim, &etag, &parametric, &nnblock) ;
+
+    lineno ++ ;
+    g_debug("%s: line %u; dimension %d; tag %d; parametric %d; "
+	    "nnodes block %d\n",
+	    __FUNCTION__, lineno, dim, etag, parametric, nnblock) ;
+
+    for ( k = 0 ; k < nnblock ; k ++ ) {
+      nv = fscanf(f, "%d", &j) ;
+      if ( nv == 0 ) {
+	g_debug("%s: line %u; error reading vertex tag",
+		__FUNCTION__, lineno) ;
+	return lineno ;
+      }
+      lineno ++ ;
+      tags[k] = j ;
+    }
+    
+    for ( k = 0 ; k < nnblock ; k ++ ) {
+      nv = fscanf(f, "%lg %lg %lg", &x, &y, &z) ;
+      lineno ++ ;
+      if ( nv != 3 ) {
+	g_debug("%s: error reading vertex at line %u", __FUNCTION__, lineno) ;
+      }
+      g_hash_table_insert(h, GINT_TO_POINTER(tags[k]), 
+			  gts_vertex_new(GTS_SURFACE(m)->vertex_class, 
+					 x, y, z)) ;
+      np ++ ;
+    }
+  }
+  
+  g_debug("%s: %d vertices read", __FUNCTION__, np) ;
+
+  lineno = search_line(f, "$EndNodes", lineno, &nv) ;
+  if ( nv == EOF ) {
+    g_debug("%s: line %u; no $EndNodes marker found", __FUNCTION__, lineno) ;
+    return lineno ;
+  }
+
+  lineno = search_line(f, "$Elements", lineno, &nv) ;
+  if ( nv == EOF ) {
+    g_debug("%s: no $Elements marker found", __FUNCTION__) ;
+    return lineno ;
+  }
+
+  nv = fscanf(f, "%d %d %d %d", &n_ent, &n_elem, &imin, &imax) ;
+  lineno ++ ;
+  g_debug("%s: line %u; %d entities; %d elements; min %d; max %d\n",
+	  __FUNCTION__, lineno, n_ent, n_elem, imin, imax) ;
+
+  for ( i = ne = 0 ; i < n_ent ; i ++ ) {
+    nv = fscanf(f, "%d %d %d %d", &dim, &etag, &elem, &nnblock) ;
+    if ( nv != 4 )
+      g_debug("%s: error reading element data at line %u",
+	      __FUNCTION__, lineno) ;
+    lineno ++ ;
+    g_debug("%s: line %u; dimension %d; tag %d; type %d; "
+	    "%d elements\n",
+	    __FUNCTION__, lineno, dim, etag, elem, nnblock) ;
+    for ( j = 0 ; j < nnblock ; j ++ ) {
+      if ( gmsh_read_element4(f, &k, elem, data, &ntags) != 0 ) {
+	g_debug("%s: error reading element at line %u", __FUNCTION__, lineno) ;
+	return lineno ;
+      }
+      lineno ++ ;
+      if ( gmsh_add_element(m, h, elem, data, ntags) != 0 ) {
+	g_debug("%s: error adding element at line %u", __FUNCTION__, lineno) ;
+	return lineno ;
+      }
+    }
+    ne ++ ;
+  }
+
+  lineno ++ ;
+  
+  lineno = search_line(f, "$EndElements", lineno, &nv) ;
+  if ( nv == EOF ) {
+    g_debug("%s: no $EndElements marker found", __FUNCTION__) ;
+    return lineno ;
+  }
+
+  g_debug("%s: line %u; %d elements read", __FUNCTION__, lineno, ne) ;
+
+  g_hash_table_destroy(h) ;  
+
+  return 0 ;
+}
+
+static guint gmsh_read_file2(FILE *f, BEM3DMesh *m)
+
+{
+  guint lineno = 2 ;
+  gint ft, ds, nv ;
+  gdouble version ;
+
+  if ( (nv = fscanf(f, "%lg %d %d", &version, &ft, &ds) ) != 3 ) {
+    g_debug("%s: error reading mesh format information", 
+	    __FUNCTION__) ;
+    return lineno ;
+  }
+  if ( version < 2.0 || version > 4.1 ) {
+    g_debug("%s: file version (%lg) should be 2.0",  
+	    __FUNCTION__, version) ;
+    return lineno ;
+  }
+  lineno ++ ;
+
+  g_debug("%s: file format %lg, file type %d, data size %d",  
+	  __FUNCTION__, version, ft, ds) ;
+
+  if ( version >= 2.0 && version < 4.0 )
+    return gmsh_read_file2_0(f, m, lineno) ;
+  
+  if ( version >= 4.0 )
+    return gmsh_read_file4_0(f, m, lineno) ;
+
+  g_assert_not_reached() ;
+  
   return 0 ;
 }
 

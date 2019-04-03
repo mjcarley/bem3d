@@ -51,6 +51,8 @@ Functions</h2></td></tr>
 <tr class="separator:ga10cfd7ae7c31f96d0ca9564f75a4983b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga75ddf4c8ceb054511d24f4ea7bf139b9"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reduction.html#ga75ddf4c8ceb054511d24f4ea7bf139b9">bem3d_reduction_func_min</a> (<a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m, <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f, gint *idata, gint *ni, gdouble *ddata, gint *nd, gpointer data)</td></tr>
 <tr class="separator:ga75ddf4c8ceb054511d24f4ea7bf139b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39be199a381ed38c9f4a698490ab90e3"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reduction.html#ga39be199a381ed38c9f4a698490ab90e3">bem3d_reduction_func_limits</a> (<a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m, <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f, gint *idata, gint *ni, gdouble *ddata, gint *nd, gpointer data)</td></tr>
+<tr class="separator:ga39be199a381ed38c9f4a698490ab90e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2d32523f739945b6cb9c5e08f35c729e"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reduction.html#ga2d32523f739945b6cb9c5e08f35c729e">bem3d_reduction_func_sum</a> (<a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m, <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f, gint *idata, gint *ni, gdouble *ddata, gint *nd, gpointer data)</td></tr>
 <tr class="separator:ga2d32523f739945b6cb9c5e08f35c729e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8abc72eb60ec1a4c770fe39fb1a738a6"><td class="memItemLeft" align="right" valign="top">gint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reduction.html#ga8abc72eb60ec1a4c770fe39fb1a738a6">bem3d_reduction_func_int</a> (<a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *m, <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *f, gint *idata, gint *ni, gdouble *ddata, gint *nd, gpointer data)</td></tr>
@@ -243,6 +245,78 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ga39be199a381ed38c9f4a698490ab90e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga39be199a381ed38c9f4a698490ab90e3">&#9670;&nbsp;</a></span>bem3d_reduction_func_limits()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">gint bem3d_reduction_func_limits </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> *&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> *&#160;</td>
+          <td class="paramname"><em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gint *&#160;</td>
+          <td class="paramname"><em>idata</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gint *&#160;</td>
+          <td class="paramname"><em>ni</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gdouble *&#160;</td>
+          <td class="paramname"><em>ddata</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gint *&#160;</td>
+          <td class="paramname"><em>nd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">gpointer&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Minimum and maximum values of entries in each column of data</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">m</td><td>a <a class="el" href="structBEM3DMesh.html">BEM3DMesh</a> </td></tr>
+    <tr><td class="paramname">f</td><td>a <a class="el" href="structBEM3DMeshData.html">BEM3DMeshData</a> containing data for <em>m</em> </td></tr>
+    <tr><td class="paramname">idata</td><td>on exit, index of minimum and maximum value in each column </td></tr>
+    <tr><td class="paramname">ni</td><td>on exit 2 </td></tr>
+    <tr><td class="paramname">ddata</td><td>minimum and maximum value in each column of <em>f</em> </td></tr>
+    <tr><td class="paramname">nd</td><td>on exit 2 </td></tr>
+    <tr><td class="paramname">data</td><td>ignored</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
+
+</div>
+</div>
 <a id="ga9859de54a3d7d9a82f66e151ec5cf36e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga9859de54a3d7d9a82f66e151ec5cf36e">&#9670;&nbsp;</a></span>bem3d_reduction_func_list()</h2>
 
@@ -283,7 +357,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>The format string should be appropriate to the setting of <em>describe</em>. If <em>describe</em> is FALSE, <em>format</em> should contain one entry of &lsquo;s&rsquo; (for the name of the operation); if TRUE, <em>format</em> should contain &lsquo;s&rsquo; twice (one for the name of the operation and one for its description).</p>
+<p>The format string should be appropriate to the setting of <em>describe</em>. If <em>describe</em> is FALSE, <em>format</em> should contain one entry of &lsquo;s&rsquo; (for the name of the operation); if TRUE, <em>format</em> should contain &lsquo;s&rsquo; twice (once for the name of the operation and once for its description).</p>
 <dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
 
 </div>
@@ -358,8 +432,6 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
 
-<p class="reference">References <a class="el" href="group__data.html#gaa28701d5f03c9ae65850963597a8d69c">bem3d_mesh_data_get()</a>, and <a class="el" href="group__mesh.html#gaf4ca16ac8bcb96e5eef381593e1aca93">bem3d_mesh_node_number()</a>.</p>
-
 </div>
 </div>
 <a id="ga75ddf4c8ceb054511d24f4ea7bf139b9"></a>
@@ -431,8 +503,6 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
-
-<p class="reference">References <a class="el" href="group__data.html#gaa28701d5f03c9ae65850963597a8d69c">bem3d_mesh_data_get()</a>, and <a class="el" href="group__mesh.html#gaf4ca16ac8bcb96e5eef381593e1aca93">bem3d_mesh_node_number()</a>.</p>
 
 </div>
 </div>
@@ -506,14 +576,14 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
 
-<p class="reference">References <a class="el" href="group__data.html#gaa28701d5f03c9ae65850963597a8d69c">bem3d_mesh_data_get()</a>, and <a class="el" href="group__mesh.html#gaf4ca16ac8bcb96e5eef381593e1aca93">bem3d_mesh_node_number()</a>.</p>
+<p class="reference">References <a class="el" href="group__data.html#gaa28701d5f03c9ae65850963597a8d69c">bem3d_mesh_data_get()</a>, and <a class="el" href="group__data.html#ga7cd91d22c9f2580825bfe1c5854e550e">bem3d_mesh_data_node_number()</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 4 2018 12:03:00 for BEM3D by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 28 2019 10:12:58 for BEM3D by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.14
 </small></address>

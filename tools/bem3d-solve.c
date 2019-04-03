@@ -423,6 +423,57 @@ static sisl_matrix_t *read_surface_diagonal(FILE *f, gdouble *Ad, gint nc,
   return A ;  
 }
 
+static sisl_matrix_t *read_surface_sparse(FILE *f, gdouble *Ad, gint nc,
+					  gint str, gint imin, gint imax,
+					  sisl_matrix_t *Ai)
+
+{
+  sisl_matrix_t *A ;
+  sisl_complex_t rc ;
+  gint i, j, n, lineno ;
+  gdouble x ;
+  gsl_complex xc ;
+  gchar line[1024] ;
+  
+  rc = (str == 1 ? SISL_REAL : SISL_COMPLEX) ;
+  if ( Ai == NULL ) {
+    A = sisl_matrix_new(rc, SISL_MATRIX_SPARSE) ;
+    /* sisl_matrix_set_block_size(A, nc, nc) ; */
+    sisl_matrix_local_row_start(A) = imin ;
+    sisl_matrix_local_row_end(A) = imax ;
+    sisl_matrix_row_number(A) = sisl_matrix_column_number(A) = nc ;
+  } else {
+    A = Ai ;
+  }
+
+  lineno = 3 ;
+  if ( sisl_is_real(A) ) {
+    g_assert_not_reached() ; /*unchecked code*/
+    /* sisl_matrix_set_all(A, Ad[0]) ; */
+    /* while ( (i = fscanf(f, "%[^\n]c", line)) != EOF && ( i != 0 ) ) { */
+    /*   i = sscanf(line, "%d %lg", &j, &x) ; */
+    /*   if ( i != 2 ) g_error("%s: cannot parse line %d\n  %s\n", */
+    /* 			    __FUNCTION__, lineno, line) ; */
+    /*   sisl_matrix_set(A, j, j, x) ; */
+    /*   lineno ++ ; */
+    /*   if ( (i = fscanf(f, "%*c")) == EOF ) break ; */
+    /* }     */
+  } else {
+    /* GSL_SET_COMPLEX(&xc, Ad[0], Ad[1]) ; */
+    /* sisl_matrix_set_all_complex(A, xc) ; */
+    while ( (n = fscanf(f, "%[^\n]c", line)) != EOF && ( n != 0 ) ) {
+      n = sscanf(line, "%d %d %lg %lg", &i, &j, &GSL_REAL(xc), &GSL_IMAG(xc)) ;
+      if ( n != 4 ) g_error("%s: cannot parse line %d\n  %s\n",
+			    __FUNCTION__, lineno, line) ;
+      sisl_matrix_set_complex(A, i, j, xc) ;
+      lineno ++ ;
+      if ( (n = fscanf(f, "%*c")) == EOF ) break ;
+    }
+  }
+
+  return A ;  
+}
+
 static sisl_matrix_t *read_surface_matrix(FILE *f, gdouble *Ad,
 					  gint imin, gint imax,
 					  gint nnodes, sisl_matrix_t *Ai)
@@ -489,6 +540,10 @@ static sisl_matrix_t *read_surface_matrix(FILE *f, gdouble *Ad,
     return read_surface_diagonal(f, Ad, nc, str, imin, imax, A) ;
   }
 
+  if ( strncmp(line, "sparse", 6) == 0) {
+    return read_surface_sparse(f, Ad, nc, str, imin, imax, A) ;
+  }
+
   g_error("%s: unrecognized or unimplemented matrix type %s",
 	  __FUNCTION__, line) ;
   
@@ -503,7 +558,7 @@ gint main(gint argc, gchar **argv)
   BEM3DMeshData *data ;
   BEM3DParameters param ;
   GPtrArray *meshes ;
-  sisl_matrix_t *A, *B, *surface_A, *surface_B ;
+  sisl_matrix_t *A, *B, *surface_alpha, *surface_beta ;
   sisl_vector_t *phi, *dphi, *rhs, *v1, *v2 ;
   sisl_solver_workspace_t *w ;
   sisl_solver_performance_t perf ;
@@ -511,7 +566,7 @@ gint main(gint argc, gchar **argv)
   gchar *ipfile, *opfile, *matfile, *datfile, solver_name[256] ;
   FILE *input, *output ;
   GtsFile *fp ;
-  gchar *progname, ch, p[32], *surface_A_file, *surface_B_file ;
+  gchar *progname, ch, p[32], *surface_alpha_file, *surface_beta_file ;
   gint np, i, j, mstride, solver ;
   guint imin, imax, itmp0, itmp1 ;
   gsl_complex zc, ac ;
@@ -538,8 +593,8 @@ gint main(gint argc, gchar **argv)
   config = bem3d_configuration_new() ;
   bem3d_parameters_wavenumber(&param) = G_MAXDOUBLE ;
 
-  surface_A_file = surface_B_file = NULL ;
-  surface_A = surface_B = NULL ;
+  surface_alpha_file = surface_beta_file = NULL ;
+  surface_alpha = surface_beta = NULL ;
   invertB = FALSE ;
   
   while ( (ch = getopt(argc, argv, "hA:C:d:i:k:m:t:o:Z:")) != EOF ) {
@@ -569,7 +624,7 @@ gint main(gint argc, gchar **argv)
       wmpi_shutdown() ;
       return 0 ;
       break ;
-    case 'A': surface_A_file = g_strdup(optarg) ; break ;
+    case 'A': surface_alpha_file = g_strdup(optarg) ; break ;
     case 'C': bem3d_configuration_read(config, optarg) ; break ;
     case 'd': datfile = g_strdup(optarg) ; break ;
     case 'i': 
@@ -596,7 +651,7 @@ gint main(gint argc, gchar **argv)
     case 'o': opfile = g_strdup(optarg) ; break ;
     case 'Z':
       g_assert_not_reached() ; /*unchecked code*/
-      surface_B_file = g_strdup(optarg) ; break ;
+      surface_beta_file = g_strdup(optarg) ; break ;
     }
   }
 
@@ -758,49 +813,51 @@ gint main(gint argc, gchar **argv)
 
   /*surface treatment (impedance) matrices*/
   /*limited to diagonal (locally-reacting) case for now*/
-  if ( surface_B_file == NULL ) {
+  if ( surface_beta_file == NULL ) {
     /*default setting for impedance term*/
-    surface_B = sisl_matrix_new(rc, SISL_MATRIX_DIAGONAL) ;    
-    sisl_matrix_set_block_size(surface_B, np, np) ;
-    sisl_matrix_row_number(surface_B) =
-    sisl_matrix_column_number(surface_B) = np ;
-    sisl_matrix_local_row_start(surface_B) = imin ;
-    sisl_matrix_local_row_end(surface_B) = imax ;
+    surface_beta = sisl_matrix_new(rc, SISL_MATRIX_DIAGONAL) ;    
+    sisl_matrix_set_block_size(surface_beta, np, np) ;
+    sisl_matrix_row_number(surface_beta) =
+    sisl_matrix_column_number(surface_beta) = np ;
+    sisl_matrix_local_row_start(surface_beta) = imin ;
+    sisl_matrix_local_row_end(surface_beta) = imax ;
 
     /*this is the default for a locally-reacting surface*/
-    sisl_matrix_set_all(surface_B, 1.0) ;
+    sisl_matrix_set_all(surface_beta, 1.0) ;
   } else {
     g_assert_not_reached() ;
   }
   
-  if ( surface_A_file == NULL ) {
-    surface_A = sisl_matrix_new(rc, SISL_MATRIX_DIAGONAL) ;
-    sisl_matrix_set_block_size(surface_A, np, np) ; 
-    sisl_matrix_row_number(surface_A) =
-      sisl_matrix_column_number(surface_A) = np ;
-    sisl_matrix_local_row_start(surface_A) = imin ;
-    sisl_matrix_local_row_end(surface_A) = imax ;
+  if ( surface_alpha_file == NULL ) {
+    surface_alpha = sisl_matrix_new(rc, SISL_MATRIX_DIAGONAL) ;
+    sisl_matrix_set_block_size(surface_alpha, np, np) ; 
+    sisl_matrix_row_number(surface_alpha) =
+      sisl_matrix_column_number(surface_alpha) = np ;
+    sisl_matrix_local_row_start(surface_alpha) = imin ;
+    sisl_matrix_local_row_end(surface_alpha) = imax ;
 
     /*take the local admittance from the configuration (usually zero)*/
     if ( rc == SISL_REAL ) {
-      sisl_matrix_set_all(surface_A, config->bc_default_admittance[0]) ;
+      sisl_matrix_set_all(surface_alpha, config->bc_default_admittance[0]) ;
     } else {
       GSL_SET_COMPLEX(&zc,
 		      config->bc_default_admittance[0],
 		      config->bc_default_admittance[1]) ;
-      sisl_matrix_set_all_complex(surface_A, zc) ;
+      sisl_matrix_set_all_complex(surface_alpha, zc) ;
     }
   } else {
     /*we need to read surface admittance data*/
+    fprintf(stderr, "%s: reading surface admittance matrix %s: t=%f\n",
+	    progname, surface_alpha_file, g_timer_elapsed(t, NULL)) ;
     GSL_SET_COMPLEX(&zc,
 		    config->bc_default_admittance[0],
 		    config->bc_default_admittance[1]) ;
-    input = file_open(surface_A_file, "", "r", NULL) ;
-    surface_A = read_surface_matrix(input, &(GSL_REAL(zc)), imin, imax,
-				    np, surface_A) ;
-    if ( surface_A == NULL ) {
+    input = file_open(surface_alpha_file, "", "r", NULL) ;
+    surface_alpha = read_surface_matrix(input, &(GSL_REAL(zc)), imin, imax,
+				    np, surface_alpha) ;
+    if ( surface_alpha == NULL ) {
       fprintf(stderr, "%s: could not read surface data matrix from %s",
-	      progname, surface_A_file) ;
+	      progname, surface_alpha_file) ;
       exit(1) ;
     }
     
@@ -808,16 +865,14 @@ gint main(gint argc, gchar **argv)
   }
 
   /*if required, invert the surface admittance matrix*/
-  if ( invertB ) sisl_matrix_invert(surface_B) ;
+  if ( invertB ) sisl_matrix_invert(surface_beta) ;
 
   /*apply the surface treatment to the A matrix: A-> A - B\beta^{-1}\alpha*/
   if ( rc == SISL_REAL ) {
-    sisl_matrix_triple_mul_w(B, surface_B, surface_A, A, -1.0, 1.0) ;
+    sisl_matrix_triple_mul_w(B, surface_beta, surface_alpha, A, -1.0, 1.0) ;
   } else {
-    /*in the complex case, the admittance is multiplied by jk*/
-    GSL_SET_COMPLEX(&zc, 1.0, 0.0) ;
-    GSL_SET_COMPLEX(&ac, 0.0, -bem3d_parameters_wavenumber(&param)) ;
-    sisl_matrix_triple_mul_w_complex(B, surface_B, surface_A, A, ac, zc) ;
+    GSL_SET_COMPLEX(&zc, 1.0, 0.0) ; GSL_SET_COMPLEX(&ac, -1.0, 0.0) ;
+    sisl_matrix_triple_mul_w_complex(B, surface_beta, surface_alpha, A, ac, zc) ;
   }
 
   if ( wmpi_rank() == 0 ) 
@@ -857,8 +912,8 @@ gint main(gint argc, gchar **argv)
   sisl_vector_set_length(v2, np) ;
 
   /*initialize the right hand side*/
-  sisl_matrix_vector_mul(surface_A, phi, v1) ;
-  sisl_matrix_vector_mul(surface_B, v1, v2) ;
+  sisl_matrix_vector_mul(surface_alpha, phi, v1) ;
+  sisl_matrix_vector_mul(surface_beta, v1, v2) ;
   sisl_vector_sub(v2, dphi) ;
   sisl_matrix_vector_mul(B, v2, rhs) ;
 
@@ -866,10 +921,6 @@ gint main(gint argc, gchar **argv)
   sisl_vector_copy(v1, phi) ;
   
   w = sisl_solver_workspace_new() ;
-
-  /* i = 319 ;  */
-  /* zc = sisl_vector_get_complex(rhs,i) ;       */
-  /* fprintf(stderr, "%1.16e %1.16e\n", GSL_REAL(zc), GSL_IMAG(zc)) ; */
 
 #ifdef FMM_MATRIX_CHECK
   sisl_matrix_vector_mul(A, rhs, dphi) ;
@@ -888,8 +939,8 @@ gint main(gint argc, gchar **argv)
   /*phi now contains the scattered potential: generate the scattered
     dphi to make the solution complete*/
   sisl_vector_add(v1, phi) ;
-  sisl_matrix_vector_mul(surface_A, v1, v2) ;
-  sisl_matrix_vector_mul(surface_B, v2, v1) ;
+  sisl_matrix_vector_mul(surface_alpha, v1, v2) ;
+  sisl_matrix_vector_mul(surface_beta, v2, v1) ;
   sisl_vector_sub(v1, dphi) ;
   
   wmpi_pause() ;

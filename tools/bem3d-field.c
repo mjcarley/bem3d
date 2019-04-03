@@ -1,6 +1,6 @@
 /* bem3d-field.c
  * 
- * Copyright (C) 2006, 2008, 2018 Michael Carley
+ * Copyright (C) 2006, 2008, 2018, 2019 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -87,9 +87,9 @@ gint main(gint argc, gchar **argv)
 
 {
   BEM3DMesh *s, *m ;
-  GPtrArray *meshes, *mdata ;
+  GPtrArray *meshes, *mdata, *overrides ;
   GArray *field ;
-  GtsPoint *x ;
+  GtsVertex *x ;
   GtsFile *fp ;
   gint i, j, lineno, nc ;
   gchar ch, p[32], *progname, line[2048] ;
@@ -98,8 +98,9 @@ gint main(gint argc, gchar **argv)
   BEM3DLookupFunc lfunc ;
   BEM3DMeshData *sdata ;
   gint nmp, ndp ;
-  gdouble k, M ;
+  gdouble k, M, result[32] = {0.0} ;
   gboolean helmholtz, point_input ;
+  BEM3DFunction *efunc ;
   FILE *input, *output ;
   BEM3DConfiguration *config ;
 
@@ -121,12 +122,14 @@ gint main(gint argc, gchar **argv)
   ipfile = opfile = sfile = NULL ;
   
   point_input = FALSE ;
+  efunc = NULL ;
+  overrides = g_ptr_array_new() ;
   nmp = ndp = 0 ;
 
   /*default configuration*/
   config = bem3d_configuration_new() ;
 
-  while ( (ch = getopt(argc, argv, "C:d:hi:k:M:o:s:X")) != EOF ) {
+  while ( (ch = getopt(argc, argv, "hC:d:F:i:k:M:o:s:v:X")) != EOF ) {
     switch (ch) {
     default:
           case 'h':
@@ -139,13 +142,18 @@ gint main(gint argc, gchar **argv)
 	      "        -h (print this message and exit)\n"
 	      "        -C <configuration file name>\n"
 	      "        -d <data file name>\n"
+	      "        -F <function file> function to add to computed field\n"
+	      "           when pointwise calculation is selected with -X\n"
 	      "        -i <bem3d input file> (can be repeated)\n"
 	      "        -k # (wave number for Helmholtz calculation)\n"
 	      "        -M # (Mach number for convected Helmholtz equation)\n"
 	      "        -o <output file name>\n"
-	      "        -s <surface file name> (a BEM3D file of points "
+	      "        -s <surface file name> (a BEM3D mesh file of points "
 	      "where the\n"
 	      "           field will be computed)\n"
+	      "        -v <expression> set variables in the function "
+	      "specified\n"
+	      "           with -F option\n"
 	      "        -X treat surface file as list of points in bem3d-dump\n"
 	      "           format\n") ;
       return 0 ;
@@ -159,6 +167,14 @@ gint main(gint argc, gchar **argv)
       bem3d_mesh_data_read(&sdata, input, 0) ;
       g_ptr_array_add(mdata, sdata) ;
       ndp += bem3d_mesh_data_node_number(sdata) ;
+      file_close(input) ;
+      break ;
+    case 'F':
+      efunc = bem3d_function_new(bem3d_function_class()) ;
+      input = file_open(optarg, "-", "r", stdin) ;
+
+      fp = gts_file_new(input) ;
+      bem3d_function_read(efunc, fp) ;
       file_close(input) ;
       break ;
     case 'i': 
@@ -183,6 +199,7 @@ gint main(gint argc, gchar **argv)
     case 'M': sscanf(optarg, "%lg", &M) ; break ;
     case 'o': opfile = g_strdup(optarg) ; break ;
     case 's': sfile = g_strdup(optarg) ; break ;
+    case 'v': g_ptr_array_add(overrides, g_strdup(optarg)) ; break ;
     case 'X': point_input = TRUE ; break ;
     }
   }
@@ -219,14 +236,25 @@ gint main(gint argc, gchar **argv)
   else
     input = file_open(sfile, "-", "r", stdin) ;
 
+  if ( efunc != NULL ) {
+    for ( i = 0 ; i < overrides->len ; i ++ ) {
+      bem3d_function_insert_string(efunc,
+				   (gchar *)g_ptr_array_index(overrides,i)) ;
+    }
+    bem3d_function_expand_functions(efunc) ;
+  }
+
   if ( point_input ) {
-    x = gts_point_new(gts_point_class(), 0, 0, 0) ;
+    x = gts_vertex_new(gts_vertex_class(), 0, 0, 0) ;
     lineno = 1 ;
     field = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
 
+    
     while ( (nc = fscanf(input, "%[^\n]c", line)) != EOF && ( nc != 0 ) ) {
-      /* if ( nc == 0 ) break ; */
-      nc = sscanf(line, "%d %lg %lg %lg", &j, &(x->x), &(x->y), &(x->z)) ;
+      nc = sscanf(line, "%d %lg %lg %lg", &j,
+		  &(GTS_POINT(x)->x),
+		  &(GTS_POINT(x)->y),
+		  &(GTS_POINT(x)->z)) ;
       if ( nc != 4 ) {
 	fprintf(stderr, "%s: cannot parse line %d\n  %s\n",
 		progname, lineno, line) ;
@@ -236,11 +264,16 @@ gint main(gint argc, gchar **argv)
 	bem3d_mesh_radiation_point(g_ptr_array_index(meshes,i),
 				   config, &gdata,
 				   lfunc, g_ptr_array_index(mdata,i),
-				   x, field) ;
+				   GTS_POINT(x), field) ;
+      }
+      if ( efunc != NULL ) {
+	memset(result, 0, 32*sizeof(gdouble)) ;
+	i = bem3d_function_eval_point(efunc, GTS_POINT(x), NULL, 0, result, 8) ;
       }
       fprintf(output, "%d", j) ;
       for ( i = 0 ; i < field->len ; i ++ )
-	fprintf(output, " %lg", g_array_index(field,gdouble,i)) ;
+	fprintf(output, " %lg",
+		g_array_index(field,gdouble,i) + result[i]) ;
       fprintf(output, "\n") ;
       lineno ++ ;
       if ( (nc = fscanf(input, "%*c")) == EOF ) break ;
@@ -256,6 +289,10 @@ gint main(gint argc, gchar **argv)
   
     sdata = bem3d_mesh_data_new(s, 8) ;
     bem3d_mesh_data_clear(sdata) ;
+    
+    if ( efunc != NULL ) {
+      bem3d_function_apply_mesh(efunc, s, sdata, NULL) ;
+    }
     
     for ( i = 0 ; i < meshes->len ; i ++ ) {
       bem3d_mesh_radiation_mesh(g_ptr_array_index(meshes,i),

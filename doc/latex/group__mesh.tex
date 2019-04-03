@@ -49,6 +49,8 @@ gint \textbf{ bem3d\+\_\+mesh\+\_\+set\+\_\+bc} (\textbf{ B\+E\+M3\+D\+Mesh} $\a
 \item 
 gint \textbf{ bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Configuration} $\ast$config, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$gdata, \textbf{ B\+E\+M3\+D\+Lookup\+Func} lfunc, gpointer ldata, \textbf{ B\+E\+M3\+D\+Equation\+Func} efunc, gpointer edata)
 \item 
+gint \textbf{ bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m1, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m2, \textbf{ B\+E\+M3\+D\+Configuration} $\ast$config, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$gdata, \textbf{ B\+E\+M3\+D\+Lookup\+Func} lfunc, gpointer ldata, \textbf{ B\+E\+M3\+D\+Equation\+Func} efunc, gpointer edata)
+\item 
 \textbf{ B\+E\+M3\+D\+Element} $\ast$ \textbf{ bem3d\+\_\+mesh\+\_\+face\+\_\+element} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, Gts\+Face $\ast$f)
 \item 
 Gts\+Vertex $\ast$ \textbf{ bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, gint i)
@@ -87,7 +89,7 @@ guint \textbf{ bem3d\+\_\+gmsh\+\_\+read} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, 
 
 T\+R\+UE if {\itshape obj} is from the \doxyref{B\+E\+M3\+D\+Mesh\+Class}{p.}{structBEM3DMeshClass} class 
 
-Referenced by bem3d\+\_\+edge\+\_\+is\+\_\+oriented(), bem3d\+\_\+element\+\_\+from\+\_\+node(), bem3d\+\_\+element\+\_\+index\+\_\+nodes(), bem3d\+\_\+element\+\_\+neighbours(), bem3d\+\_\+elements\+\_\+from\+\_\+vertices(), bem3d\+\_\+gmsh\+\_\+read(), bem3d\+\_\+mesh\+\_\+add\+\_\+element(), bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+discretize(), bem3d\+\_\+mesh\+\_\+extract\+\_\+edges(), bem3d\+\_\+mesh\+\_\+face\+\_\+element(), bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node(), bem3d\+\_\+mesh\+\_\+index\+\_\+nodes(), bem3d\+\_\+mesh\+\_\+node\+\_\+elements(), bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index(), bem3d\+\_\+mesh\+\_\+node\+\_\+number(), bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+point(), bem3d\+\_\+mesh\+\_\+read(), bem3d\+\_\+mesh\+\_\+set\+\_\+bc(), bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices(), bem3d\+\_\+mesh\+\_\+vertex\+\_\+elements(), bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number(), bem3d\+\_\+mesh\+\_\+write(), bem3d\+\_\+mesh\+\_\+write\+\_\+nodes(), bem3d\+\_\+node\+\_\+normal(), and bem3d\+\_\+operator\+\_\+gradient().
+Referenced by bem3d\+\_\+edge\+\_\+is\+\_\+oriented(), bem3d\+\_\+element\+\_\+from\+\_\+node(), bem3d\+\_\+element\+\_\+index\+\_\+nodes(), bem3d\+\_\+element\+\_\+neighbours(), bem3d\+\_\+elements\+\_\+from\+\_\+vertices(), bem3d\+\_\+gmsh\+\_\+read(), bem3d\+\_\+mesh\+\_\+add\+\_\+element(), bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+discretize(), bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+extract\+\_\+edges(), bem3d\+\_\+mesh\+\_\+face\+\_\+element(), bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node(), bem3d\+\_\+mesh\+\_\+index\+\_\+nodes(), bem3d\+\_\+mesh\+\_\+node\+\_\+elements(), bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index(), bem3d\+\_\+mesh\+\_\+node\+\_\+number(), bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+point(), bem3d\+\_\+mesh\+\_\+read(), bem3d\+\_\+mesh\+\_\+set\+\_\+bc(), bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices(), bem3d\+\_\+mesh\+\_\+vertex\+\_\+elements(), bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number(), bem3d\+\_\+mesh\+\_\+write(), bem3d\+\_\+mesh\+\_\+write\+\_\+nodes(), bem3d\+\_\+node\+\_\+normal(), and bem3d\+\_\+operator\+\_\+gradient().
 
 \mbox{\label{group__mesh_gacabe0d1e72fb99d219a9f59d4cbf4719}} 
 \index{B\+E\+M3\+D meshes@{B\+E\+M3\+D meshes}!B\+E\+M3\+D\+\_\+\+M\+E\+SH@{B\+E\+M3\+D\+\_\+\+M\+E\+SH}}
@@ -140,7 +142,7 @@ Referenced by bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init(), and bem3d\+\_\+mesh\+\_
 
 Maximum index of node to be considered in \doxyref{bem3d\+\_\+mesh\+\_\+foreach\+\_\+node}{p.}{group__mesh_ga39295d4861dca739ea6b22d4e72a9494} 
 
-Referenced by bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh(), and bem3d\+\_\+mesh\+\_\+radiation\+\_\+point().
+Referenced by bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh(), and bem3d\+\_\+mesh\+\_\+radiation\+\_\+point().
 
 \mbox{\label{group__mesh_ga8749ab4003a44b36664f457d2bc5fcd4}} 
 \index{B\+E\+M3\+D meshes@{B\+E\+M3\+D meshes}!bem3d\+\_\+mesh\+\_\+node\+\_\+index\+\_\+min@{bem3d\+\_\+mesh\+\_\+node\+\_\+index\+\_\+min}}
@@ -150,7 +152,7 @@ Referenced by bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\
 
 Minimum index of node to be considered in \doxyref{bem3d\+\_\+mesh\+\_\+foreach\+\_\+node}{p.}{group__mesh_ga39295d4861dca739ea6b22d4e72a9494} 
 
-Referenced by bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh(), and bem3d\+\_\+mesh\+\_\+radiation\+\_\+point().
+Referenced by bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh(), and bem3d\+\_\+mesh\+\_\+radiation\+\_\+point().
 
 
 
@@ -272,6 +274,40 @@ Discretize a surface by splitting its triangles into higher order elements.
 
 References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH.
 
+\mbox{\label{group__mesh_gaffb8fc0b84f5dbea5437d04d82968ea0}} 
+\index{B\+E\+M3\+D meshes@{B\+E\+M3\+D meshes}!bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn@{bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn}}
+\index{bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn@{bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn}!B\+E\+M3\+D meshes@{B\+E\+M3\+D meshes}}
+\subsubsection{bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn()}
+{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m1,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m2,  }\item[{\textbf{ B\+E\+M3\+D\+Configuration} $\ast$}]{config,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{gdata,  }\item[{\textbf{ B\+E\+M3\+D\+Lookup\+Func}}]{lfunc,  }\item[{gpointer}]{ldata,  }\item[{\textbf{ B\+E\+M3\+D\+Equation\+Func}}]{efunc,  }\item[{gpointer}]{edata }\end{DoxyParamCaption})}
+
+Integrate the normal derivative of the Green\textquotesingle{}s function over a mesh at points on a different mesh. This is intended for use where a surface is broken into two or more disjoint patches which combine to form a single closed surface. The integratation is performed over {\itshape m1} for each point on {\itshape m2}. The two meshes can be the same.
+
+
+\begin{DoxyParams}{Parameters}
+{\em m1} & \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
+\hline
+{\em m2} & \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
+\hline
+{\em config} & \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration} for the problem; \\
+\hline
+{\em gdata} & \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} to pass to Green\textquotesingle{}s function; \\
+\hline
+{\em lfunc} & \doxyref{B\+E\+M3\+D\+Lookup\+Func}{p.}{structBEM3DLookupFunc}; use \doxyref{bem3d\+\_\+lookup\+\_\+func\+\_\+unit}{p.}{group__lookup_gab516d2a6f9e1c4486840a450aa81a7b2} (for real problems) or bem3d\+\_\+lookup\+\_\+func\+\_\+unit\+\_\+c (for complex) \\
+\hline
+{\em ldata} & data to pass to the lookup function \\
+\hline
+{\em efunc} & equation function for problem. This will be called with the row and column numbers equal. \\
+\hline
+{\em edata} & user data to pass to efunc\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\end{DoxyReturn}
+
+
+References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, bem3d\+\_\+mesh\+\_\+foreach\+\_\+node(), bem3d\+\_\+mesh\+\_\+node\+\_\+index\+\_\+max, and bem3d\+\_\+mesh\+\_\+node\+\_\+index\+\_\+min.
+
 \mbox{\label{group__mesh_gaf79088b2b5de7b0bee3bb5e7871b9d3e}} 
 \index{B\+E\+M3\+D meshes@{B\+E\+M3\+D meshes}!bem3d\+\_\+mesh\+\_\+element\+\_\+node\+\_\+number\+\_\+max@{bem3d\+\_\+mesh\+\_\+element\+\_\+node\+\_\+number\+\_\+max}}
 \index{bem3d\+\_\+mesh\+\_\+element\+\_\+node\+\_\+number\+\_\+max@{bem3d\+\_\+mesh\+\_\+element\+\_\+node\+\_\+number\+\_\+max}!B\+E\+M3\+D meshes@{B\+E\+M3\+D meshes}}
@@ -388,7 +424,7 @@ Visit each collocation point of a mesh and execute a function
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+fmm\+\_\+matrix\+\_\+new(), bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+index\+\_\+range(), bem3d\+\_\+mesh\+\_\+node\+\_\+number(), bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh(), bem3d\+\_\+mesh\+\_\+write\+\_\+nodes(), and bem3d\+\_\+motion\+\_\+mesh\+\_\+position().
+Referenced by bem3d\+\_\+fmm\+\_\+matrix\+\_\+new(), bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+add\+\_\+mesh(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+disjoint\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+index\+\_\+range(), bem3d\+\_\+mesh\+\_\+node\+\_\+number(), bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+mesh(), bem3d\+\_\+mesh\+\_\+write\+\_\+nodes(), and bem3d\+\_\+motion\+\_\+mesh\+\_\+position().
 
 \mbox{\label{group__mesh_gac160e1d17b8c48645ad3c724efff2a5f}} 
 \index{B\+E\+M3\+D meshes@{B\+E\+M3\+D meshes}!bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node@{bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node}}
@@ -568,7 +604,7 @@ References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, and bem3d\+\_\+mesh\+\_\+for
 
 
 
-Referenced by bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init(), bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new(), bem3d\+\_\+motion\+\_\+new(), bem3d\+\_\+reduction\+\_\+func\+\_\+max(), bem3d\+\_\+reduction\+\_\+func\+\_\+min(), and bem3d\+\_\+reduction\+\_\+func\+\_\+sum().
+Referenced by bem3d\+\_\+mesh\+\_\+assemble\+\_\+equations(), bem3d\+\_\+mesh\+\_\+data\+\_\+new(), bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init(), bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new(), and bem3d\+\_\+motion\+\_\+new().
 
 \mbox{\label{group__mesh_ga44ddaeb5a7bf4e16ae05477efc71bf13}} 
 \index{B\+E\+M3\+D meshes@{B\+E\+M3\+D meshes}!bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn@{bem3d\+\_\+mesh\+\_\+quad\+\_\+dgdn}}
@@ -580,7 +616,7 @@ Integrate the normal derivative of the Green\textquotesingle{}s function over a 
 
 
 \begin{DoxyParams}{Parameters}
-{\em m} & B\+E\+M3\+D\+M\+Esh \\
+{\em m} & \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
 \hline
 {\em config} & \doxyref{B\+E\+M3\+D\+Configuration}{p.}{structBEM3DConfiguration} for the problem; \\
 \hline

@@ -1,0 +1,16 @@
+BEM3DFunction
+# mixture of modes on a square region
+dx = 0.3
+dy = 0.5
+a0 = 0.9
+a1 = -4
+a2 = 0.35
+a3 = 1.2
+
+CX1 = cos(2*pi*1*x/2/dx)
+CY1 = cos(2*pi*1*y/2/dy)
+SX1 = sin(2*pi*1*x/2/dx)
+SY1 = sin(2*pi*1*y/2/dy)
+
+f[0] = a0*1.0 + a1*CX1 + a2*SX1 + a3*CY1 + CX1*SY1
+

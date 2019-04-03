@@ -174,7 +174,7 @@ the \doxyref{B\+E\+M3\+D\+Greens\+Func}{p.}{group__gfunc_gaac35a3008ab05a7d7fb49
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+configuration\+\_\+new(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient().
+Referenced by bem3d\+\_\+configuration\+\_\+new(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
 \mbox{\label{group__gfunc_ga674154b56656ccf034590ec98f11ba56}} 
 \index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real@{bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real}}
@@ -194,7 +194,7 @@ T\+R\+UE if {\itshape g} is real.
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+configuration\+\_\+new(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+point(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient().
+Referenced by bem3d\+\_\+configuration\+\_\+new(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+mesh\+\_\+radiation\+\_\+point(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
 \mbox{\label{group__gfunc_ga16e5d54cacc73758f99ecac2a6617aa7}} 
 \index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+function\+\_\+precompute@{bem3d\+\_\+greens\+\_\+function\+\_\+precompute}}
@@ -304,7 +304,7 @@ imaginary part of coupling parameter
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch(), and bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs().
+Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch(), bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
 \mbox{\label{group__gfunc_ga958514a82b12c5033274bb1d046ed52f}} 
 \index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+lambda\+\_\+real@{bem3d\+\_\+parameters\+\_\+lambda\+\_\+real}}
@@ -324,7 +324,7 @@ real part of coupling parameter (address can be cast to $\ast$gsl\+\_\+complex)
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch(), and bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs().
+Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch(), bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
 \mbox{\label{group__gfunc_ga207e8fe1a058e71a5a345049337d63ac}} 
 \index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+parameters\+\_\+mach\+\_\+number@{bem3d\+\_\+parameters\+\_\+mach\+\_\+number}}
@@ -376,7 +376,7 @@ the value of the wavenumber contained in {\itshape p}
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+gradient\+\_\+helmholtz(), bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz(), bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch(), and bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs().
+Referenced by bem3d\+\_\+greens\+\_\+func\+\_\+gradient\+\_\+helmholtz(), bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz(), bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch(), bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+hs(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
 
 
@@ -495,6 +495,10 @@ Green\textquotesingle{}s function for Helmholtz equation\+: $G=\exp(\mathrm{J} k
 
 References bem3d\+\_\+parameters\+\_\+wavenumber.
 
+
+
+Referenced by bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
+
 \mbox{\label{group__gfunc_gadcc0b1009949d92ab5846bef00efae6c}} 
 \index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch@{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch}}
 \index{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch@{bem3d\+\_\+greens\+\_\+func\+\_\+helmholtz\+\_\+ch}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
@@ -555,6 +559,10 @@ Green\textquotesingle{}s function for Helmholtz equation, Burton and Miller hype
 
 References bem3d\+\_\+parameters\+\_\+lambda\+\_\+imag, bem3d\+\_\+parameters\+\_\+lambda\+\_\+real, and bem3d\+\_\+parameters\+\_\+wavenumber.
 
+
+
+Referenced by bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
+
 \mbox{\label{group__gfunc_ga7be3ccc1b8aa94be24b6029f34f009ea}} 
 \index{Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}!bem3d\+\_\+greens\+\_\+func\+\_\+laplace@{bem3d\+\_\+greens\+\_\+func\+\_\+laplace}}
 \index{bem3d\+\_\+greens\+\_\+func\+\_\+laplace@{bem3d\+\_\+greens\+\_\+func\+\_\+laplace}!Green\textquotesingle{}s functions@{Green\textquotesingle{}s functions}}
@@ -583,5 +591,5 @@ Green\textquotesingle{}s function for Laplace equation\+: $G=1/4\pi R$, $R=|\mat
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+configuration\+\_\+new(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient().
+Referenced by bem3d\+\_\+configuration\+\_\+new(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
