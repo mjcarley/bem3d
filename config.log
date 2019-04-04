@@ -552,7 +552,6 @@ config.status:1508: cd src       && sed -e '/# am--include-marker/d' Makefile   
 make: Nothing to be done for 'am--depfiles'.
 config.status:1513: $? = 0
 config.status:1508: cd tools       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
-make: Nothing to be done for 'am--depfiles'.
 config.status:1513: $? = 0
 config.status:1508: cd mpitools       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for 'am--depfiles'.

@@ -1769,14 +1769,17 @@ gint bem3d_quadrature_rule_decomp_gradient(GtsPoint *xs, BEM3DElement *e,
   BEM3DMeshData *bem3d_mesh_data_merge(BEM3DMeshData *f1,
 				       BEM3DMeshData *f2,
 				       gboolean strict) ;
-  gint bem3d_mesh_write_gmsh(BEM3DMesh *m, BEM3DMeshData *f, gint k,
-			     gchar *view, bem3d_gmsh_mode_t mode,
-			     FILE *fp) ;
-  gint bem3d_gmsh_write_element(BEM3DElement *e, BEM3DMeshData *f,
-				gint nv, 
-				gint *indices_g, gint *indices_d,
-				gchar *ename,
-				gint k, gint nf, FILE *fp) ;
+  gint bem3d_mesh_write_msh(BEM3DMesh *m, BEM3DMeshData *f, gint k,
+			    gchar *view, gdouble t,
+			    bem3d_gmsh_mode_t mode, FILE *fp) ;
+  gint bem3d_mesh_write_pos(BEM3DMesh *m, BEM3DMeshData *f, gint k,
+			    gchar *view, bem3d_gmsh_mode_t mode,
+			    FILE *fp) ;
+  gint bem3d_element_write_pos(BEM3DElement *e, BEM3DMeshData *f,
+			       gint nv, 
+			       gint *indices_g, gint *indices_d,
+			       gchar *ename,
+			       gint k, gint nf, FILE *fp) ;
   gint bem3d_edge_write_pos(BEM3DEdge *edge, gchar *view, FILE *f) ;
 
   GSList *bem3d_mesh_index_sharp_edges(BEM3DMesh *m, gdouble angle, 

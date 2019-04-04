@@ -133,9 +133,9 @@ gint bem3d_mesh_write(BEM3DMesh *m, FILE *f)
   s = GTS_SURFACE(m) ;
   data[0] = f ;
   data[1] = &n ;
-  data[2] = vindex = g_hash_table_new (NULL, NULL) ;
-  data[3] = eindex = g_hash_table_new (NULL, NULL) ;
-  data[4] = findex = g_hash_table_new (NULL, NULL) ;
+  data[2] = vindex = g_hash_table_new(NULL, NULL) ;
+  data[3] = eindex = g_hash_table_new(NULL, NULL) ;
+  data[4] = findex = g_hash_table_new(NULL, NULL) ;
 
   gts_surface_stats (s, &stats) ;
   fprintf (f, "%u %u %u", 
@@ -1107,7 +1107,9 @@ static guint gmsh_read_file2(FILE *f, BEM3DMesh *m)
 }
 
 /** 
- * Read a GMSH 1.0 or 2.0 mesh file to a ::BEM3DMesh.
+ * Read a GMSH mesh file of format up to 4.1 (see
+ * http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format) to a
+ * ::BEM3DMesh.
  * 
  * @param m a ::BEM3DMesh;
  * @param f input file pointer.

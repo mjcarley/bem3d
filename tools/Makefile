@@ -90,8 +90,8 @@ build_triplet = x86_64-unknown-linux-gnu
 host_triplet = x86_64-unknown-linux-gnu
 bin_PROGRAMS = bem3d-assemble$(EXEEXT) bem3d-solve$(EXEEXT) \
 	bem3d-dump$(EXEEXT) gts2bem3d$(EXEEXT) msh2bem3d$(EXEEXT) \
-	bem3d2pos$(EXEEXT) bem3d-plane$(EXEEXT) bem3d-sphere$(EXEEXT) \
-	bem3d-field$(EXEEXT) bem3d-aero$(EXEEXT) \
+	bem3d2pos$(EXEEXT) bem3d2msh$(EXEEXT) bem3d-plane$(EXEEXT) \
+	bem3d-sphere$(EXEEXT) bem3d-field$(EXEEXT) bem3d-aero$(EXEEXT) \
 	bem3d-function$(EXEEXT) bem3d-skeleton$(EXEEXT) \
 	bem3d-configuration$(EXEEXT)
 subdir = tools
@@ -160,6 +160,10 @@ bem3d_sphere_SOURCES = bem3d-sphere.c
 bem3d_sphere_OBJECTS = bem3d-sphere.$(OBJEXT)
 bem3d_sphere_LDADD = $(LDADD)
 bem3d_sphere_DEPENDENCIES = $(top_builddir)/src/.libs/libbem3d.a
+bem3d2msh_SOURCES = bem3d2msh.c
+bem3d2msh_OBJECTS = bem3d2msh.$(OBJEXT)
+bem3d2msh_LDADD = $(LDADD)
+bem3d2msh_DEPENDENCIES = $(top_builddir)/src/.libs/libbem3d.a
 bem3d2pos_SOURCES = bem3d2pos.c
 bem3d2pos_OBJECTS = bem3d2pos.$(OBJEXT)
 bem3d2pos_LDADD = $(LDADD)
@@ -191,8 +195,8 @@ am__depfiles_remade = ./$(DEPDIR)/bem3d-assemble.Po \
 	./$(DEPDIR)/bem3d-configuration.Po ./$(DEPDIR)/bem3d-dump.Po \
 	./$(DEPDIR)/bem3d-field.Po ./$(DEPDIR)/bem3d-function.Po \
 	./$(DEPDIR)/bem3d-plane.Po ./$(DEPDIR)/bem3d-skeleton.Po \
-	./$(DEPDIR)/bem3d-sphere.Po ./$(DEPDIR)/bem3d2pos.Po \
-	./$(DEPDIR)/bem3d_aero-bem3d-aero.Po \
+	./$(DEPDIR)/bem3d-sphere.Po ./$(DEPDIR)/bem3d2msh.Po \
+	./$(DEPDIR)/bem3d2pos.Po ./$(DEPDIR)/bem3d_aero-bem3d-aero.Po \
 	./$(DEPDIR)/bem3d_solve-bem3d-solve.Po \
 	./$(DEPDIR)/gts2bem3d.Po ./$(DEPDIR)/msh2bem3d.Po
 am__mv = mv -f
@@ -216,12 +220,12 @@ am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = bem3d-aero.c bem3d-assemble.c bem3d-configuration.c \
 	bem3d-dump.c bem3d-field.c bem3d-function.c bem3d-plane.c \
-	bem3d-skeleton.c bem3d-solve.c bem3d-sphere.c bem3d2pos.c \
-	gts2bem3d.c msh2bem3d.c
+	bem3d-skeleton.c bem3d-solve.c bem3d-sphere.c bem3d2msh.c \
+	bem3d2pos.c gts2bem3d.c msh2bem3d.c
 DIST_SOURCES = bem3d-aero.c bem3d-assemble.c bem3d-configuration.c \
 	bem3d-dump.c bem3d-field.c bem3d-function.c bem3d-plane.c \
-	bem3d-skeleton.c bem3d-solve.c bem3d-sphere.c bem3d2pos.c \
-	gts2bem3d.c msh2bem3d.c
+	bem3d-skeleton.c bem3d-solve.c bem3d-sphere.c bem3d2msh.c \
+	bem3d2pos.c gts2bem3d.c msh2bem3d.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -532,6 +536,10 @@ bem3d-sphere$(EXEEXT): $(bem3d_sphere_OBJECTS) $(bem3d_sphere_DEPENDENCIES) $(EX
 	@rm -f bem3d-sphere$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(bem3d_sphere_OBJECTS) $(bem3d_sphere_LDADD) $(LIBS)
 
+bem3d2msh$(EXEEXT): $(bem3d2msh_OBJECTS) $(bem3d2msh_DEPENDENCIES) $(EXTRA_bem3d2msh_DEPENDENCIES) 
+	@rm -f bem3d2msh$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(bem3d2msh_OBJECTS) $(bem3d2msh_LDADD) $(LIBS)
+
 bem3d2pos$(EXEEXT): $(bem3d2pos_OBJECTS) $(bem3d2pos_DEPENDENCIES) $(EXTRA_bem3d2pos_DEPENDENCIES) 
 	@rm -f bem3d2pos$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(bem3d2pos_OBJECTS) $(bem3d2pos_LDADD) $(LIBS)
@@ -558,6 +566,7 @@ include ./$(DEPDIR)/bem3d-function.Po # am--include-marker
 include ./$(DEPDIR)/bem3d-plane.Po # am--include-marker
 include ./$(DEPDIR)/bem3d-skeleton.Po # am--include-marker
 include ./$(DEPDIR)/bem3d-sphere.Po # am--include-marker
+include ./$(DEPDIR)/bem3d2msh.Po # am--include-marker
 include ./$(DEPDIR)/bem3d2pos.Po # am--include-marker
 include ./$(DEPDIR)/bem3d_aero-bem3d-aero.Po # am--include-marker
 include ./$(DEPDIR)/bem3d_solve-bem3d-solve.Po # am--include-marker
@@ -763,6 +772,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/bem3d-plane.Po
 	-rm -f ./$(DEPDIR)/bem3d-skeleton.Po
 	-rm -f ./$(DEPDIR)/bem3d-sphere.Po
+	-rm -f ./$(DEPDIR)/bem3d2msh.Po
 	-rm -f ./$(DEPDIR)/bem3d2pos.Po
 	-rm -f ./$(DEPDIR)/bem3d_aero-bem3d-aero.Po
 	-rm -f ./$(DEPDIR)/bem3d_solve-bem3d-solve.Po
@@ -821,6 +831,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/bem3d-plane.Po
 	-rm -f ./$(DEPDIR)/bem3d-skeleton.Po
 	-rm -f ./$(DEPDIR)/bem3d-sphere.Po
+	-rm -f ./$(DEPDIR)/bem3d2msh.Po
 	-rm -f ./$(DEPDIR)/bem3d2pos.Po
 	-rm -f ./$(DEPDIR)/bem3d_aero-bem3d-aero.Po
 	-rm -f ./$(DEPDIR)/bem3d_solve-bem3d-solve.Po

@@ -17,6 +17,7 @@ bin_PROGRAMS = \
 	gts2bem3d \
 	msh2bem3d \
 	bem3d2pos \
+	bem3d2msh \
 	bem3d-plane \
 	bem3d-sphere \
 	bem3d-field \

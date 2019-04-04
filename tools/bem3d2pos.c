@@ -20,6 +20,8 @@
 /** 
 @page bem3d2pos bem3d2pos: convert BEM3D meshes to GMSH .pos format
 
+This code is now superseded by ::bem3d2msh
+
 The GMSH pos format is deprecated, since visualization is now done
 with mesh files, but it is still sufficient for visualization of data
 from BEM3D calculations.
@@ -178,7 +180,7 @@ gint main(gint argc, gchar **argv)
     }
   }
   
-  bem3d_mesh_write_gmsh(m, f, field, title, mode, fs) ;
+  bem3d_mesh_write_pos(m, f, field, title, mode, fs) ;
 
   if ( edgefiles->len != 0 ) {
     edge = bem3d_edge_new(bem3d_edge_class()) ;
