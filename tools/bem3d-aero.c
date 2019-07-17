@@ -105,6 +105,7 @@ including selecting the right edge for wake shedding.
 #define DATA_PHI           12
 #define DATA_COUNTER       13
 #define DATA_CONFIG        14
+#define DATA_WORK          15
 
 static gint element_assemble(BEM3DElement *e, gpointer data[])
 
@@ -115,6 +116,7 @@ static gint element_assemble(BEM3DElement *e, gpointer data[])
   GtsPoint *p = data[DATA_POINT] ;
   gint i = *((gint *)(data[DATA_INDEX])) ;
   BEM3DConfiguration *config = data[DATA_CONFIG] ;
+  BEM3DWorkspace *work = data[DATA_WORK] ;
   static GArray *G = NULL ;
   static GArray *dGdn = NULL ;
   gint j, k ;
@@ -127,7 +129,7 @@ static gint element_assemble(BEM3DElement *e, gpointer data[])
   
   g_array_set_size(G,bem3d_element_node_number(e)) ; 
   g_array_set_size(dGdn,bem3d_element_node_number(e)) ;
-  bem3d_element_assemble_equations(e, p, config, &pm, G, dGdn) ;
+  bem3d_element_assemble_equations(e, p, config, &pm, G, dGdn, work) ;
   
   for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
     k = bem3d_element_global_index(e,j) ;
@@ -151,6 +153,7 @@ static gint self_assemble(BEM3DElement *e, gpointer data[])
   GtsPoint *p = data[DATA_POINT] ;
   gint i = *((gint *)(data[DATA_INDEX])) ;
   BEM3DConfiguration *config = data[DATA_CONFIG] ;
+  BEM3DWorkspace *work = data[DATA_WORK] ;  
   static GArray *G = NULL ;
   static GArray *dGdn = NULL ;
   gint j, k ;
@@ -163,7 +166,7 @@ static gint self_assemble(BEM3DElement *e, gpointer data[])
   
   g_array_set_size(G,bem3d_element_node_number(e)) ; 
   g_array_set_size(dGdn,bem3d_element_node_number(e)) ;
-  bem3d_element_assemble_equations(e, p, config, &pm, G, dGdn) ;
+  bem3d_element_assemble_equations(e, p, config, &pm, G, dGdn, work) ;
 
   if ( isnan(g_array_index(G,gdouble,0)) ||
        isnan(g_array_index(G,gdouble,1)) ||
@@ -242,10 +245,11 @@ static void mesh_mesh_assemble(BEM3DMesh *m1, BEM3DMesh *m2,
 			       BEM3DConfiguration *config,
 			       GHashTable *wakenodes,
 			       sisl_matrix_t *A, gdouble ee,
-			       GArray *dphi, sisl_vector_t *rhs)
+			       GArray *dphi, sisl_vector_t *rhs,
+			       BEM3DWorkspace *work)
 
 {
-  gpointer data[DATA_WIDTH] ;
+  gpointer data[DATA_WIDTH] = {NULL} ;
   gint count ;
 
   data[DATA_MESH_1] = m1 ; data[DATA_MESH_2] = m2 ;
@@ -258,6 +262,8 @@ static void mesh_mesh_assemble(BEM3DMesh *m1, BEM3DMesh *m2,
   data[DATA_COUNTER] = &count ; count = 0 ;
   data[DATA_CONFIG] = config ;
 
+  data[DATA_WORK] = work ;
+  
   bem3d_mesh_foreach_node(m1, (BEM3DNodeFunc)mesh_assemble, data) ;
 
   return ;
@@ -273,6 +279,7 @@ static gint wake_element_assemble(BEM3DElement *e, gpointer data[])
   sisl_vector_t *rhs = data[DATA_RHS] ;
   gint ind = *((gint *)(data[DATA_INDEX])) ;
   BEM3DConfiguration *config = data[DATA_CONFIG] ;
+  BEM3DWorkspace *work = data[DATA_WORK] ;
   static GArray *G = NULL ;
   static GArray *dGdn = NULL ;
   gdouble *x ;
@@ -286,7 +293,7 @@ static gint wake_element_assemble(BEM3DElement *e, gpointer data[])
 
   g_array_set_size(G,bem3d_element_node_number(e)) ; 
   g_array_set_size(dGdn,bem3d_element_node_number(e)) ;
-  bem3d_element_assemble_equations(e, p, config, &pt, G, dGdn) ;
+  bem3d_element_assemble_equations(e, p, config, &pt, G, dGdn, work) ;
   for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
     if ( (idx = g_hash_table_lookup(wakelines, bem3d_element_node(e,i)))
 	 == NULL ) {
@@ -357,10 +364,12 @@ static void mesh_wake_assemble(BEM3DMesh *m,
 			       GHashTable *wakelines,
 			       gdouble ee,
 			       sisl_matrix_t *A,
-			       sisl_vector_t *rhs)
+			       sisl_vector_t *rhs,
+			       BEM3DWorkspace *work)
+			       
 
 {
-  gpointer data[DATA_WIDTH] ;
+  gpointer data[DATA_WIDTH] = {NULL} ;
   gint i ;
 
   data[DATA_MESH_1] = m ;
@@ -370,7 +379,8 @@ static void mesh_wake_assemble(BEM3DMesh *m,
   data[DATA_WAKE_LINES] = wakelines ;
   data[DATA_POINT] = gts_point_new(gts_point_class(), 0, 0, 0) ;
   data[DATA_CONFIG] = config ;
-
+  data[DATA_WORK] = work ;
+  
   for ( i = 0 ; i < wakes->len ; i ++ ) {
     data[DATA_MESH_2] = g_ptr_array_index(wakes,i) ;
     data[DATA_MESH_DATA_2] = g_ptr_array_index(wakedata,i) ;
@@ -495,6 +505,7 @@ gint main(gint argc, gchar **argv)
 
 {
   BEM3DMesh *m ;
+  BEM3DWorkspace *work ;
   GPtrArray *meshes, *refmeshes, *wakes, *wakedata, *aerodata ;
   GPtrArray *edges, *edges1, *edges2, *motions ;
   GPtrArray *aerofiles, *adatafiles, *wakefiles, *wdatafiles ;
@@ -748,7 +759,8 @@ gint main(gint argc, gchar **argv)
 
   /*set up the solver workspace*/
   ws = sisl_solver_workspace_new() ;
-
+  work = bem3d_workspace_new() ;
+  
   for ( (i = 0), (np = 0) ; i < meshes->len ; i ++ ) {
     nc = bem3d_mesh_node_number(g_ptr_array_index(meshes,i)) ;
     if ( wmpi_rank() == 0 )
@@ -869,14 +881,14 @@ gint main(gint argc, gchar **argv)
 			     g_ptr_array_index(meshes,j),
 			     config, 
 			     wake_nodes,
-			     A, ee, dphi, rhs) ;
+			     A, ee, dphi, rhs, work) ;
 
       /*mesh-wake interaction and Kutta condition*/
       for ( i = 0 ; i < meshes->len ; i ++ ) {
 	mesh_wake_assemble(g_ptr_array_index(meshes,i),
 			   config,
 			   wakes, wakedata,
-			   wake_nodes, wake_lines, ee, A, rhs) ;
+			   wake_nodes, wake_lines, ee, A, rhs, work) ;
       }
       sisl_solve(SISL_SOLVER_BICGSTAB, A, phi, rhs, tol, 128, ws, &perf) ;
 

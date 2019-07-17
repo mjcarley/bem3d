@@ -113,7 +113,8 @@ edge.lo: edge.c /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/sched.h /usr/include/bits/sched.h \
  /usr/include/bits/cpu-set.h /usr/include/bits/setjmp.h \
  /usr/include/glib-2.0/glib/glib-autocleanups.h bem3d.h \
- /usr/include/gts.h /usr/include/gtsconfig.h bem3dconfig.h
+ /usr/include/gts.h /usr/include/gtsconfig.h \
+ /home/ensmjc/Codes/include/gqr.h bem3dconfig.h
 
 /usr/include/stdc-predef.h:
 
@@ -462,5 +463,7 @@ bem3d.h:
 /usr/include/gts.h:
 
 /usr/include/gtsconfig.h:
+
+/home/ensmjc/Codes/include/gqr.h:
 
 bem3dconfig.h:

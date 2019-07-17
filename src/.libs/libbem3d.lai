@@ -14,10 +14,10 @@ library_names='libbem3d-0.2.so.0.0.1 libbem3d-0.2.so.0 libbem3d.so'
 old_library='libbem3d.a'
 
 # Linker flags that cannot go in dependency_libs.
-inherited_linker_flags=' -pthread'
+inherited_linker_flags=' -pthread -fopenmp'
 
 # Libraries that this one depends upon.
-dependency_libs=' -L/home/ensmjc/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. /home/ensmjc/Codes/lib/libwmpi_s.la /home/ensmjc/Codes/lib/libgqr.la -llapack -lcblas -lf77blas -latlas -lgfortran -lquadmath -lgsl -lgslcblas -L/usr/local/lib64 /usr/local/lib/libmatheval.la -lfl /usr/lib64/libgts.la -lgthread-2.0 -lgmodule-2.0 -lglib-2.0 -lm'
+dependency_libs=' -L/home/ensmjc/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. /home/ensmjc/Codes/lib/libwmpi_s.la /home/ensmjc/Codes/lib/libsisl.la /home/ensmjc/Codes/lib/libwbfmm-base.la /home/ensmjc/Codes/lib/libwbfmm.la /home/ensmjc/Codes/lib/libgqr.la -llapack -lcblas -lf77blas -latlas -lgfortran -lquadmath -lgsl -lgslcblas -L/usr/local/lib64 /usr/local/lib/libmatheval.la -lfl /usr/lib64/libgts.la -lgthread-2.0 -lgmodule-2.0 -lglib-2.0 -lm'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''

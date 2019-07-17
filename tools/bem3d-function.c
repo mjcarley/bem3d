@@ -329,8 +329,8 @@ gint main(gint argc, gchar **argv)
   if ( merge ) {
     if ( (datafile == NULL) || (edatafile == NULL) ) {
       fprintf(stderr,
-	      "Data file and extra data file must be specified for data "
-	      "merge\n") ;
+	      "Data file (-f) and extra data file (-e) must be specified "
+	      "for data merge\n") ;
       exit(1) ;
     }
 

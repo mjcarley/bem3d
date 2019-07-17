@@ -37,24 +37,24 @@
 #define DATA_REDUCTION_MESH  3
 
 
-static gchar *_operations[] = {"max",
-			       "min",
-			       "lim",
-			       "sum",
-			       "int",
-			      ""} ;
-static gchar *_descriptions[] = {"maximum value in each column",
-				 "minimum value in each column",
-				 "maximum and minimum value in each column",
-				 "sum of values in each column",
-				 "integral of data over BEM3D surface",
-				 ""} ;
-static BEM3DReductionFunc _funcs[] = {bem3d_reduction_func_max,
-				      bem3d_reduction_func_min,
-				      bem3d_reduction_func_limits,
-				      bem3d_reduction_func_sum,
-				      bem3d_reduction_func_int,
-				      NULL} ;
+gchar *_operations[] = {"max",
+			"min",
+			"lim",
+			"sum",
+			"int",
+			""} ;
+gchar *_descriptions[] = {"maximum value in each column",
+			  "minimum value in each column",
+			  "maximum and minimum value in each column",
+			  "sum of values in each column",
+			  "integral of data over BEM3D surface",
+			  ""} ;
+BEM3DReductionFunc _funcs[] = {bem3d_reduction_func_max,
+			       bem3d_reduction_func_min,
+			       bem3d_reduction_func_limits,
+			       bem3d_reduction_func_sum,
+			       bem3d_reduction_func_int,
+			       NULL} ;
 
 static void fill_data(gpointer data[],
 		      BEM3DMeshData *f, gdouble *ddata, gint *idata,
@@ -317,7 +317,7 @@ static gint integrate_func(BEM3DElement *e, gpointer *data)
   gdouble L[32], dLds[32], dLdt[32], s, t, wt, J, n[3], *d ;
   gint i, j, k ;
   
-  bem3d_quadrature_rule_wx(NULL, e, q, NULL, NULL, &ngp) ;
+  bem3d_quadrature_rule_wx(NULL, e, q, NULL, NULL, &ngp, NULL) ;
 
   for ( i = 0 ; i < bem3d_quadrature_vertex_number(q) ; i ++ ) {
     s = bem3d_quadrature_xi(q,i) ;

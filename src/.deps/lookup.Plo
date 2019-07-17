@@ -112,8 +112,8 @@ lookup.lo: lookup.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/libio.h \
  /usr/include/bits/_G_config.h /usr/include/bits/types/__mbstate_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
- /usr/include/bits/stdio.h /usr/include/gtsconfig.h bem3d.h bem3dconfig.h \
- bem3d-private.h
+ /usr/include/bits/stdio.h /usr/include/gtsconfig.h bem3d.h \
+ /home/ensmjc/Codes/include/gqr.h bem3dconfig.h bem3d-private.h
 
 /usr/include/stdc-predef.h:
 
@@ -464,6 +464,8 @@ lookup.lo: lookup.c /usr/include/stdc-predef.h ../config.h \
 /usr/include/gtsconfig.h:
 
 bem3d.h:
+
+/home/ensmjc/Codes/include/gqr.h:
 
 bem3dconfig.h:
 

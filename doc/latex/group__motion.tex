@@ -3,58 +3,60 @@
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-B\+E\+M3\+D\+Motion\+Class $\ast$ \textbf{ bem3d\+\_\+motion\+\_\+class} (void)
+B\+E\+M3\+D\+Motion\+Class $\ast$ {\bf bem3d\+\_\+motion\+\_\+class} (void)
 \item 
-\textbf{ B\+E\+M3\+D\+Motion} $\ast$ \textbf{ bem3d\+\_\+motion\+\_\+new} (B\+E\+M3\+D\+Motion\+Class $\ast$klass, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m0)
+{\bf B\+E\+M3\+D\+Motion} $\ast$ {\bf bem3d\+\_\+motion\+\_\+new} (B\+E\+M3\+D\+Motion\+Class $\ast$klass, {\bf B\+E\+M3\+D\+Mesh} $\ast$m, {\bf B\+E\+M3\+D\+Mesh} $\ast$m0)
 \item 
-gint \textbf{ bem3d\+\_\+motion\+\_\+variable\+\_\+add} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m, gchar $\ast$var, gchar $\ast$def)
+gint {\bf bem3d\+\_\+motion\+\_\+variable\+\_\+add} ({\bf B\+E\+M3\+D\+Motion} $\ast$m, gchar $\ast$var, gchar $\ast$def)
 \item 
-gchar $\ast$ \textbf{ bem3d\+\_\+motion\+\_\+variable\+\_\+lookup} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m, gchar $\ast$var)
+gchar $\ast$ {\bf bem3d\+\_\+motion\+\_\+variable\+\_\+lookup} ({\bf B\+E\+M3\+D\+Motion} $\ast$m, gchar $\ast$var)
 \item 
-gint \textbf{ bem3d\+\_\+motion\+\_\+write} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m, F\+I\+LE $\ast$f)
+gint {\bf bem3d\+\_\+motion\+\_\+write} ({\bf B\+E\+M3\+D\+Motion} $\ast$m, F\+I\+L\+E $\ast$f)
 \item 
-gint \textbf{ bem3d\+\_\+motion\+\_\+expand\+\_\+defs} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m)
+gint {\bf bem3d\+\_\+motion\+\_\+expand\+\_\+defs} ({\bf B\+E\+M3\+D\+Motion} $\ast$m)
 \item 
-gint \textbf{ bem3d\+\_\+motion\+\_\+write\+\_\+expansions} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m, F\+I\+LE $\ast$f)
+gint {\bf bem3d\+\_\+motion\+\_\+write\+\_\+expansions} ({\bf B\+E\+M3\+D\+Motion} $\ast$m, F\+I\+L\+E $\ast$f)
 \item 
-gint \textbf{ bem3d\+\_\+motion\+\_\+create\+\_\+evaluators} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m)
+gint {\bf bem3d\+\_\+motion\+\_\+create\+\_\+evaluators} ({\bf B\+E\+M3\+D\+Motion} $\ast$m)
 \item 
-gint \textbf{ bem3d\+\_\+motion\+\_\+free\+\_\+evaluators} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m)
+gint {\bf bem3d\+\_\+motion\+\_\+free\+\_\+evaluators} ({\bf B\+E\+M3\+D\+Motion} $\ast$m)
 \item 
-gint \textbf{ bem3d\+\_\+motion\+\_\+mesh\+\_\+position} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m, gdouble t)
+gint {\bf bem3d\+\_\+motion\+\_\+mesh\+\_\+position} ({\bf B\+E\+M3\+D\+Motion} $\ast$m, gdouble t)
 \item 
-gboolean \textbf{ bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved} (gchar $\ast$token)
+gboolean {\bf bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved} (gchar $\ast$token)
 \item 
-guint \textbf{ bem3d\+\_\+motion\+\_\+read} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m, Gts\+File $\ast$f)
+guint {\bf bem3d\+\_\+motion\+\_\+read} ({\bf B\+E\+M3\+D\+Motion} $\ast$m, Gts\+File $\ast$f)
 \item 
-gint \textbf{ bem3d\+\_\+motion\+\_\+node\+\_\+velocity} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m, gint i, gdouble t, Gts\+Vector u)
+gint {\bf bem3d\+\_\+motion\+\_\+node\+\_\+velocity} ({\bf B\+E\+M3\+D\+Motion} $\ast$m, gint i, gdouble t, Gts\+Vector u)
 \item 
-gint \textbf{ bem3d\+\_\+motion\+\_\+node\+\_\+acceleration} (\textbf{ B\+E\+M3\+D\+Motion} $\ast$m, gint i, gdouble t, Gts\+Vector a)
+gint {\bf bem3d\+\_\+motion\+\_\+node\+\_\+acceleration} ({\bf B\+E\+M3\+D\+Motion} $\ast$m, gint i, gdouble t, Gts\+Vector a)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-B\+E\+M3D contains a simple interpreter, using the libmatheval library ({\tt http\+://www.\+gnu.\+org/software/libmatheval/}) of Aleksandar Samardzic, which can be used to analytically specify the motion of the nodes of a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} and analytically derive the surface velocity for use in the boundary condition. Motion definitions are defined using equations of the form `x = ...', where the right hand side may include other user-\/defined functions and constants. See \doxyref{bem3d\+\_\+motion\+\_\+variable\+\_\+add}{p.}{group__motion_gabac941c41da8d12510a5faf154176d36} to see how this works. 
+B\+E\+M3\+D contains a simple interpreter, using the libmatheval library ({\tt http\+://www.\+gnu.\+org/software/libmatheval/}) of Aleksandar Samardzic, which can be used to analytically specify the motion of the nodes of a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} and analytically derive the surface velocity for use in the boundary condition. Motion definitions are defined using equations of the form `x = ...\textquotesingle{}, where the right hand side may include other user-\/defined functions and constants. See \doxyref{bem3d\+\_\+motion\+\_\+variable\+\_\+add}{p.}{group__motion_gabac941c41da8d12510a5faf154176d36} to see how this works. 
 
 \subsection{Function Documentation}
-\mbox{\label{group__motion_ga7b586b9fc4261d07789548915cb2f274}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+class@{bem3d\+\_\+motion\+\_\+class}}
 \index{bem3d\+\_\+motion\+\_\+class@{bem3d\+\_\+motion\+\_\+class}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+class()}
-{\footnotesize\ttfamily B\+E\+M3\+D\+Motion\+Class$\ast$ bem3d\+\_\+motion\+\_\+class (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+class}]{\setlength{\rightskip}{0pt plus 5cm}B\+E\+M3\+D\+Motion\+Class$\ast$ bem3d\+\_\+motion\+\_\+class (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}\label{group__motion_ga7b586b9fc4261d07789548915cb2f274}
 The basic class for a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}.
 
 \begin{DoxyReturn}{Returns}
 the class definition for a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}. 
 \end{DoxyReturn}
-\mbox{\label{group__motion_ga194075c8df234910fa99fbb7109d0fcd}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+create\+\_\+evaluators@{bem3d\+\_\+motion\+\_\+create\+\_\+evaluators}}
 \index{bem3d\+\_\+motion\+\_\+create\+\_\+evaluators@{bem3d\+\_\+motion\+\_\+create\+\_\+evaluators}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+create\+\_\+evaluators()}
-{\footnotesize\ttfamily gint bem3d\+\_\+motion\+\_\+create\+\_\+evaluators (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m }\end{DoxyParamCaption})}
-
-Create the libmatheval ({\tt http\+://www.\+gnu.\+org/software/libmatheval/}) evaluators for the expressions of a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}, prior to evaluating node positions for a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}. If B\+E\+M3D has been compiled without libmatheval support, this function will fail.
+\subsubsection[{bem3d\+\_\+motion\+\_\+create\+\_\+evaluators}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+motion\+\_\+create\+\_\+evaluators (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m}
+\end{DoxyParamCaption}
+)}\label{group__motion_ga194075c8df234910fa99fbb7109d0fcd}
+Create the libmatheval ({\tt http\+://www.\+gnu.\+org/software/libmatheval/}) evaluators for the expressions of a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}, prior to evaluating node positions for a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}. If B\+E\+M3\+D has been compiled without libmatheval support, this function will fail.
 
 
 \begin{DoxyParams}{Parameters}
@@ -62,14 +64,15 @@ Create the libmatheval ({\tt http\+://www.\+gnu.\+org/software/libmatheval/}) ev
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__motion_gaf27c7df25ca9f09103f60410ee6e56a2}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+expand\+\_\+defs@{bem3d\+\_\+motion\+\_\+expand\+\_\+defs}}
 \index{bem3d\+\_\+motion\+\_\+expand\+\_\+defs@{bem3d\+\_\+motion\+\_\+expand\+\_\+defs}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+expand\+\_\+defs()}
-{\footnotesize\ttfamily gint bem3d\+\_\+motion\+\_\+expand\+\_\+defs (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+expand\+\_\+defs}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+motion\+\_\+expand\+\_\+defs (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m}
+\end{DoxyParamCaption}
+)}\label{group__motion_gaf27c7df25ca9f09103f60410ee6e56a2}
 Expand the equations for surface variables (displacement and velocity) in a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} to give expressions in terms of the reserved tokens only so that the variables can be evaluated using \doxyref{bem3d\+\_\+motion\+\_\+mesh\+\_\+position}{p.}{group__motion_ga74256952d6fb9a32c4dd8f415403e708}.
 
 
@@ -78,15 +81,16 @@ Expand the equations for surface variables (displacement and velocity) in a \dox
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__motion_gac9b705a905ab264288e1ab502aa3c093}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+free\+\_\+evaluators@{bem3d\+\_\+motion\+\_\+free\+\_\+evaluators}}
 \index{bem3d\+\_\+motion\+\_\+free\+\_\+evaluators@{bem3d\+\_\+motion\+\_\+free\+\_\+evaluators}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+free\+\_\+evaluators()}
-{\footnotesize\ttfamily gint bem3d\+\_\+motion\+\_\+free\+\_\+evaluators (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m }\end{DoxyParamCaption})}
-
-Free the function evaluators of a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}. Note that this does not affect the stored expressions, only the libmatheval evaluators. This function will fail if B\+E\+M3D has been compiled without libmatheval support.
+\subsubsection[{bem3d\+\_\+motion\+\_\+free\+\_\+evaluators}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+motion\+\_\+free\+\_\+evaluators (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m}
+\end{DoxyParamCaption}
+)}\label{group__motion_gac9b705a905ab264288e1ab502aa3c093}
+Free the function evaluators of a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}. Note that this does not affect the stored expressions, only the libmatheval evaluators. This function will fail if B\+E\+M3\+D has been compiled without libmatheval support.
 
 
 \begin{DoxyParams}{Parameters}
@@ -94,14 +98,16 @@ Free the function evaluators of a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DM
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__motion_ga74256952d6fb9a32c4dd8f415403e708}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+mesh\+\_\+position@{bem3d\+\_\+motion\+\_\+mesh\+\_\+position}}
 \index{bem3d\+\_\+motion\+\_\+mesh\+\_\+position@{bem3d\+\_\+motion\+\_\+mesh\+\_\+position}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+mesh\+\_\+position()}
-{\footnotesize\ttfamily gint bem3d\+\_\+motion\+\_\+mesh\+\_\+position (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{gdouble}]{t }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+mesh\+\_\+position}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+motion\+\_\+mesh\+\_\+position (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m, }
+\item[{gdouble}]{t}
+\end{DoxyParamCaption}
+)}\label{group__motion_ga74256952d6fb9a32c4dd8f415403e708}
 Position the nodes of a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} linked to a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}.
 
 
@@ -112,18 +118,21 @@ Position the nodes of a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} linked 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+mesh\+\_\+foreach\+\_\+node().
 
-\mbox{\label{group__motion_ga021c02e194e8cffb8b94410a66085940}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+new@{bem3d\+\_\+motion\+\_\+new}}
 \index{bem3d\+\_\+motion\+\_\+new@{bem3d\+\_\+motion\+\_\+new}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+new()}
-{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Motion}$\ast$ bem3d\+\_\+motion\+\_\+new (\begin{DoxyParamCaption}\item[{B\+E\+M3\+D\+Motion\+Class $\ast$}]{klass,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m0 }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Motion}$\ast$ bem3d\+\_\+motion\+\_\+new (
+\begin{DoxyParamCaption}
+\item[{B\+E\+M3\+D\+Motion\+Class $\ast$}]{klass, }
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m0}
+\end{DoxyParamCaption}
+)}\label{group__motion_ga021c02e194e8cffb8b94410a66085940}
 Generate a new \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}.
 
 
@@ -132,7 +141,7 @@ Generate a new \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}.
 \hline
 {\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} to which the motion equations will be applied; \\
 \hline
-{\em m0} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} which will be used as the reference geometry in computing the motion. The \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} is initialized with the default equations `x = x0', `y = y0', `z = z0', `u = 0', `v = 0', `w = 0', `nx = 0', `ny = 0', `nz = 0'.\\
+{\em m0} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} which will be used as the reference geometry in computing the motion. The \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} is initialized with the default equations `x = x0\textquotesingle{}, `y = y0\textquotesingle{}, `z = z0\textquotesingle{}, `u = 0\textquotesingle{}, `v = 0\textquotesingle{}, `w = 0\textquotesingle{}, `nx = 0\textquotesingle{}, `ny = 0\textquotesingle{}, `nz = 0\textquotesingle{}.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -142,12 +151,16 @@ the new \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}.
 
 References bem3d\+\_\+mesh\+\_\+node\+\_\+number().
 
-\mbox{\label{group__motion_ga0a29e07557140c56b45e039523b161fc}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+node\+\_\+acceleration@{bem3d\+\_\+motion\+\_\+node\+\_\+acceleration}}
 \index{bem3d\+\_\+motion\+\_\+node\+\_\+acceleration@{bem3d\+\_\+motion\+\_\+node\+\_\+acceleration}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+node\+\_\+acceleration()}
-{\footnotesize\ttfamily gint bem3d\+\_\+motion\+\_\+node\+\_\+acceleration (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{gint}]{i,  }\item[{gdouble}]{t,  }\item[{Gts\+Vector}]{a }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+node\+\_\+acceleration}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+motion\+\_\+node\+\_\+acceleration (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m, }
+\item[{gint}]{i, }
+\item[{gdouble}]{t, }
+\item[{Gts\+Vector}]{a}
+\end{DoxyParamCaption}
+)}\label{group__motion_ga0a29e07557140c56b45e039523b161fc}
 Evaluate the acceleration of a node on a mesh from the position specification in a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}.
 
 
@@ -162,18 +175,22 @@ Evaluate the acceleration of a node on a mesh from the position specification in
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index().
 
-\mbox{\label{group__motion_gac2dee213fa103ab3bfb155c6eae5ce5e}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+node\+\_\+velocity@{bem3d\+\_\+motion\+\_\+node\+\_\+velocity}}
 \index{bem3d\+\_\+motion\+\_\+node\+\_\+velocity@{bem3d\+\_\+motion\+\_\+node\+\_\+velocity}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+node\+\_\+velocity()}
-{\footnotesize\ttfamily gint bem3d\+\_\+motion\+\_\+node\+\_\+velocity (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{gint}]{i,  }\item[{gdouble}]{t,  }\item[{Gts\+Vector}]{u }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+node\+\_\+velocity}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+motion\+\_\+node\+\_\+velocity (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m, }
+\item[{gint}]{i, }
+\item[{gdouble}]{t, }
+\item[{Gts\+Vector}]{u}
+\end{DoxyParamCaption}
+)}\label{group__motion_gac2dee213fa103ab3bfb155c6eae5ce5e}
 Evaluate the velocity of a node on a mesh from the position specification in a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}.
 
 
@@ -188,18 +205,20 @@ Evaluate the velocity of a node on a mesh from the position specification in a \
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index().
 
-\mbox{\label{group__motion_gad69fa9e41752d6de1db2cb61ddf42031}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+read@{bem3d\+\_\+motion\+\_\+read}}
 \index{bem3d\+\_\+motion\+\_\+read@{bem3d\+\_\+motion\+\_\+read}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+read()}
-{\footnotesize\ttfamily guint bem3d\+\_\+motion\+\_\+read (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{Gts\+File $\ast$}]{f }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+read}]{\setlength{\rightskip}{0pt plus 5cm}guint bem3d\+\_\+motion\+\_\+read (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m, }
+\item[{Gts\+File $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__motion_gad69fa9e41752d6de1db2cb61ddf42031}
 Read the definition of a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} from file. The file format is that used by \doxyref{bem3d\+\_\+motion\+\_\+write}{p.}{group__motion_ga0fb6dab50c07ea51c06a544b7b1c077f}.
 
 
@@ -216,12 +235,13 @@ Read the definition of a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} fr
 
 References bem3d\+\_\+motion\+\_\+variable\+\_\+add().
 
-\mbox{\label{group__motion_ga4b41de87573b17497072c15b49217775}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved@{bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved}}
 \index{bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved@{bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved()}
-{\footnotesize\ttfamily gboolean bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved (\begin{DoxyParamCaption}\item[{gchar $\ast$}]{token }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved}]{\setlength{\rightskip}{0pt plus 5cm}gboolean bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved (
+\begin{DoxyParamCaption}
+\item[{gchar $\ast$}]{token}
+\end{DoxyParamCaption}
+)}\label{group__motion_ga4b41de87573b17497072c15b49217775}
 Check if a token is a reserved word for a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} function.
 
 
@@ -230,18 +250,21 @@ Check if a token is a reserved word for a \doxyref{B\+E\+M3\+D\+Motion}{p.}{stru
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-T\+R\+UE if {\itshape token} is a reserved word for \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} functions. 
+T\+R\+U\+E if {\itshape token} is a reserved word for \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} functions. 
 \end{DoxyReturn}
 
 
 Referenced by bem3d\+\_\+motion\+\_\+variable\+\_\+add().
 
-\mbox{\label{group__motion_gabac941c41da8d12510a5faf154176d36}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+variable\+\_\+add@{bem3d\+\_\+motion\+\_\+variable\+\_\+add}}
 \index{bem3d\+\_\+motion\+\_\+variable\+\_\+add@{bem3d\+\_\+motion\+\_\+variable\+\_\+add}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+variable\+\_\+add()}
-{\footnotesize\ttfamily gint bem3d\+\_\+motion\+\_\+variable\+\_\+add (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{gchar $\ast$}]{var,  }\item[{gchar $\ast$}]{def }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+variable\+\_\+add}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+motion\+\_\+variable\+\_\+add (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m, }
+\item[{gchar $\ast$}]{var, }
+\item[{gchar $\ast$}]{def}
+\end{DoxyParamCaption}
+)}\label{group__motion_gabac941c41da8d12510a5faf154176d36}
 Add a variable definition to a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}, in the form {\itshape var} = {\itshape def}. The variable name {\itshape var} may not be one of the reserved tokens but may otherwise be any valid libmatheval token. The variables which must be defined (and are given default definitions in \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}) are $x$, $y$, $z$ which will be evaluated to give the node position and $u$, $v$ and $w$ which will give the surface velocity, other than that due to surface motion (e.\+g. in scattering problems). Reserved tokens are $x0$, $y0$, $z0$, the position of a node on the reference \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}, $nx$, $ny$, $nz$, $nx0$, $ny0$, $nz0$, the components of the local surface normal on the mesh and the reference mesh respectively, $t$, time, $i$, the node index and $j$, the complex variable.
 
 
@@ -254,7 +277,7 @@ Add a variable definition to a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMoti
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
@@ -264,12 +287,14 @@ References bem3d\+\_\+motion\+\_\+token\+\_\+is\+\_\+reserved().
 
 Referenced by bem3d\+\_\+motion\+\_\+read().
 
-\mbox{\label{group__motion_ga4b147285d4d4ee619abf3d3935c7496c}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+variable\+\_\+lookup@{bem3d\+\_\+motion\+\_\+variable\+\_\+lookup}}
 \index{bem3d\+\_\+motion\+\_\+variable\+\_\+lookup@{bem3d\+\_\+motion\+\_\+variable\+\_\+lookup}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+variable\+\_\+lookup()}
-{\footnotesize\ttfamily gchar$\ast$ bem3d\+\_\+motion\+\_\+variable\+\_\+lookup (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{gchar $\ast$}]{var }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+variable\+\_\+lookup}]{\setlength{\rightskip}{0pt plus 5cm}gchar$\ast$ bem3d\+\_\+motion\+\_\+variable\+\_\+lookup (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m, }
+\item[{gchar $\ast$}]{var}
+\end{DoxyParamCaption}
+)}\label{group__motion_ga4b147285d4d4ee619abf3d3935c7496c}
 Find the definition of a variable in a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}.
 
 
@@ -280,15 +305,17 @@ Find the definition of a variable in a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structB
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-the definition of {\itshape var} or N\+U\+LL if {\itshape var} is not defined in {\itshape m}. 
+the definition of {\itshape var} or N\+U\+L\+L if {\itshape var} is not defined in {\itshape m}. 
 \end{DoxyReturn}
-\mbox{\label{group__motion_ga0fb6dab50c07ea51c06a544b7b1c077f}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+write@{bem3d\+\_\+motion\+\_\+write}}
 \index{bem3d\+\_\+motion\+\_\+write@{bem3d\+\_\+motion\+\_\+write}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+write()}
-{\footnotesize\ttfamily gint bem3d\+\_\+motion\+\_\+write (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{F\+I\+LE $\ast$}]{f }\end{DoxyParamCaption})}
-
-Write the definitions in a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} to file. The file format is a header line `\doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}', followed by the variable definitions, one per line, in the format\+: `x = ...'.
+\subsubsection[{bem3d\+\_\+motion\+\_\+write}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+motion\+\_\+write (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m, }
+\item[{F\+I\+L\+E $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__motion_ga0fb6dab50c07ea51c06a544b7b1c077f}
+Write the definitions in a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} to file. The file format is a header line `\+B\+E\+M3\+D\+Motion\textquotesingle{}, followed by the variable definitions, one per line, in the format\+: `x = ...\textquotesingle{}.
 
 
 \begin{DoxyParams}{Parameters}
@@ -298,23 +325,25 @@ Write the definitions in a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__motion_gab3c4ee02d4ee09f13b714acde08cf409}} 
 \index{Motion specification@{Motion specification}!bem3d\+\_\+motion\+\_\+write\+\_\+expansions@{bem3d\+\_\+motion\+\_\+write\+\_\+expansions}}
 \index{bem3d\+\_\+motion\+\_\+write\+\_\+expansions@{bem3d\+\_\+motion\+\_\+write\+\_\+expansions}!Motion specification@{Motion specification}}
-\subsubsection{bem3d\+\_\+motion\+\_\+write\+\_\+expansions()}
-{\footnotesize\ttfamily gint bem3d\+\_\+motion\+\_\+write\+\_\+expansions (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Motion} $\ast$}]{m,  }\item[{F\+I\+LE $\ast$}]{f }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+motion\+\_\+write\+\_\+expansions}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+motion\+\_\+write\+\_\+expansions (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Motion} $\ast$}]{m, }
+\item[{F\+I\+L\+E $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__motion_gab3c4ee02d4ee09f13b714acde08cf409}
 Write the expanded expressions for displacement and velocity in a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion} to file. There is no need to do this to store a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}\+: \doxyref{bem3d\+\_\+motion\+\_\+write}{p.}{group__motion_ga0fb6dab50c07ea51c06a544b7b1c077f} should be used instead.
 
 
 \begin{DoxyParams}{Parameters}
 {\em m} & a \doxyref{B\+E\+M3\+D\+Motion}{p.}{structBEM3DMotion}; \\
 \hline
-{\em f} & a F\+I\+LE to which the expansions in {\itshape m} should be written.\\
+{\em f} & a F\+I\+L\+E to which the expansions in {\itshape m} should be written.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}

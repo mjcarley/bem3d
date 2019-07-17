@@ -117,13 +117,13 @@ belement.lo: belement.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/sched.h /usr/include/bits/sched.h \
  /usr/include/bits/cpu-set.h /usr/include/bits/setjmp.h \
  /usr/include/glib-2.0/glib/glib-autocleanups.h /usr/include/gts.h \
- /usr/include/gtsconfig.h bem3d.h bem3dconfig.h bem3d-private.h trace.h \
- /usr/include/gsl/gsl_multimin.h /usr/include/gsl/gsl_types.h \
- /usr/include/gsl/gsl_math.h /usr/include/gsl/gsl_sys.h \
- /usr/include/gsl/gsl_inline.h /usr/include/gsl/gsl_machine.h \
- /usr/include/gsl/gsl_precision.h /usr/include/gsl/gsl_nan.h \
- /usr/include/gsl/gsl_pow_int.h /usr/include/gsl/gsl_minmax.h \
- /usr/include/gsl/gsl_vector.h \
+ /usr/include/gtsconfig.h bem3d.h /home/ensmjc/Codes/include/gqr.h \
+ bem3dconfig.h bem3d-private.h trace.h /usr/include/gsl/gsl_multimin.h \
+ /usr/include/gsl/gsl_types.h /usr/include/gsl/gsl_math.h \
+ /usr/include/gsl/gsl_sys.h /usr/include/gsl/gsl_inline.h \
+ /usr/include/gsl/gsl_machine.h /usr/include/gsl/gsl_precision.h \
+ /usr/include/gsl/gsl_nan.h /usr/include/gsl/gsl_pow_int.h \
+ /usr/include/gsl/gsl_minmax.h /usr/include/gsl/gsl_vector.h \
  /usr/include/gsl/gsl_vector_complex_long_double.h \
  /usr/include/gsl/gsl_errno.h /usr/include/errno.h \
  /usr/include/bits/errno.h /usr/include/linux/errno.h \
@@ -527,6 +527,8 @@ belement.lo: belement.c /usr/include/stdc-predef.h ../config.h \
 /usr/include/gtsconfig.h:
 
 bem3d.h:
+
+/home/ensmjc/Codes/include/gqr.h:
 
 bem3dconfig.h:
 

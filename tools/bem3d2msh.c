@@ -23,7 +23,7 @@
 The most basic invocation of @c bem3d2msh is
 @verbatim
 bem3d2msh -i input.bem -o output.msh @endverbatim
-which generates a visualization file @c output.msh which can be viewed
+which generates a mesh file @c output.msh which can be viewed
 with
 @verbatim
 gmsh output.msh @endverbatim
@@ -35,6 +35,9 @@ bem3d2msh -i input.bem -d input.dat -f 4 -o output.msh @endverbatim
 will generate a file @c output.msh which contains the geometry of 
 @c input.bem with the nodes coloured according to the value of field
 4 of the data block in @c input.dat (the field option defaults to 0). 
+
+The main purpose of the program is visualization of geometries and
+data, rather than meshing.
 
 *
 */
@@ -63,17 +66,15 @@ gint main(gint argc, gchar **argv)
   BEM3DMeshData *f ;
   GtsFile *fid ;
   GPtrArray *edgefiles ;
-  gchar *progname ;
-  gchar *ipfile = NULL, *opfile = NULL, *datafile = NULL ;
+  gchar *progname, *ipfile = NULL, *opfile = NULL, *datafile = NULL ;
   gchar *title = NULL ;
   GLogLevelFlags loglevel ;
   FILE *fs, *ip ;
   BEM3DEdge *edge ;
   bem3d_gmsh_mode_t mode ;
   gdouble t ;
-  gint field ;
+  gint i, field ;
   gchar ch ;
-  gint i ;
 
   progname = g_strdup(g_path_get_basename(argv[0])) ;
 
@@ -86,7 +87,8 @@ gint main(gint argc, gchar **argv)
     default: 
     case 'h':
       fprintf(stderr, 
-	      "%s: translate a BEM3D geometry and data to gmsh .msh format\n\n",
+	      "%s: convert BEM3D geometry and (optionally) data to "
+	      "gmsh .msh format\n\n",
 	      progname) ;
       fprintf(stderr, "Usage: %s <options>\n", progname) ;
       fprintf(stderr, 

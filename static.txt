@@ -1,0 +1,8 @@
+src/data.c:  static gdouble *buffer = NULL ;
+src/data.c:  static gint nb = 0 ;
+src/location.c:  static const gsl_min_fminimizer_type *m ;
+src/location.c:  static gsl_min_fminimizer *s ;
+src/location.c:  static GtsPoint *y = NULL ;
+src/location.c:  static GtsPoint *y  = NULL ;
+src/quadrature.c:  static GArray *cache_mn = NULL ;
+src/quadrature.c:  static GPtrArray *cache_rules = NULL ;

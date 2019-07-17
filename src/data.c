@@ -50,6 +50,9 @@
 #define DATA_FOREACH_HASH       2
 #define DATA_FOREACH_DATA       3
 
+gdouble *_multiproc_buffer = NULL ;
+gint _multiproc_nb ;
+
 static gint _bem3d_init_data(gint i, GtsVertex *v, BEM3DMeshData *m)
 
 {
@@ -368,24 +371,26 @@ gint bem3d_mesh_data_add_node(BEM3DMeshData *m, gint i)
 gint bem3d_mesh_data_multiproc_sum(BEM3DMeshData *m)
 
 {
-  static gdouble *buffer = NULL ;
-  static gint nb = 0 ;
+  /* static gdouble *buffer = NULL ; */
+  /* static gint nb = 0 ; */
 
   if ( wmpi_process_number() == 1 ) return 0 ;
 
-  if ( buffer == NULL ) {
-    nb = m->d->len ;
-    buffer = (gdouble *)g_malloc(nb*sizeof(gdouble)) ;
+  if ( _multiproc_buffer == NULL ) {
+    _multiproc_nb = m->d->len ;
+    _multiproc_buffer = (gdouble *)g_malloc(_multiproc_nb*sizeof(gdouble)) ;
   }
 
-  if ( nb < m->d->len) {
-    nb = m->d->len ;
-    buffer = (gdouble *)g_realloc(buffer, nb*sizeof(gdouble)) ;
+  if ( _multiproc_nb < m->d->len) {
+    _multiproc_nb = m->d->len ;
+    _multiproc_buffer = (gdouble *)g_realloc(_multiproc_buffer,
+					     _multiproc_nb*sizeof(gdouble)) ;
   }
 
-  g_memmove(buffer, m->d->data, m->d->len*sizeof(gdouble)) ;
+  g_memmove(_multiproc_buffer, m->d->data, m->d->len*sizeof(gdouble)) ;
 
-  wmpi_sum_all_double((gdouble *)(m->d->data), buffer, m->d->len) ;
+  wmpi_sum_all_double((gdouble *)(m->d->data),
+		      _multiproc_buffer, m->d->len) ;
 
   wmpi_pause() ;
 

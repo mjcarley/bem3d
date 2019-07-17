@@ -120,7 +120,7 @@ gfunc.lo: gfunc.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/glib-2.0/glib/glib-autocleanups.h /usr/include/gts.h \
  /usr/include/gtsconfig.h /usr/include/gsl/gsl_complex.h \
  /usr/include/gsl/gsl_complex_math.h /usr/include/gsl/gsl_inline.h \
- bem3d.h bem3dconfig.h bem3d-private.h
+ bem3d.h /home/ensmjc/Codes/include/gqr.h bem3dconfig.h bem3d-private.h
 
 /usr/include/stdc-predef.h:
 
@@ -495,6 +495,8 @@ gfunc.lo: gfunc.c /usr/include/stdc-predef.h ../config.h \
 /usr/include/gsl/gsl_inline.h:
 
 bem3d.h:
+
+/home/ensmjc/Codes/include/gqr.h:
 
 bem3dconfig.h:
 

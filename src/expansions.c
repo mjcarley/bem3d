@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <glib.h>
 
+gint htri_select_expansion(gdouble dx, gdouble tol,
+			   gdouble **coefficients_cos, gint *nc,
+			   gdouble **coefficients_sin, gint *ns) ;
+
+
 gdouble _coefficients_sin_T0[] = {0.0, 0.0} ;
 #define _n_coefficients_sin_T0 0
 gdouble _coefficients_cos_T0[] = {1.0, 0.0} ;

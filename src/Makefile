@@ -174,8 +174,9 @@ am__libbem3d_la_SOURCES_DIST = acoord.c belement.c logging.c files.c \
 	matrix.c operators.c newman.c edge.c motion.c util.c data.c \
 	configure.c polar.c polar.h series.c intsincos.c gradient.c \
 	transforms.c qpanel.c cpanel.c skeleton.c fmm.c fmmlib3d_1_2.c \
-	fmmlib3d_1_2.h htriquad.c htriquad.h binomials.c binomials.h \
-	expansions.c htri-transforms.c trace.c trace.h reduction.c \
+	fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h htriquad.c \
+	htriquad.h binomials.c binomials.h expansions.c \
+	htri-transforms.c trace.c trace.h reduction.c work.c \
 	../fmmlib3d-1.2/src/cdjseval3d.f \
 	../fmmlib3d-1.2/src/d3mtreeplot.f \
 	../fmmlib3d-1.2/src/d3tstrcr.f ../fmmlib3d-1.2/src/dfft.f \
@@ -237,9 +238,9 @@ am_libbem3d_la_OBJECTS = acoord.lo belement.lo logging.lo files.lo \
 	wandzura.lo location.lo matrix.lo operators.lo newman.lo \
 	edge.lo motion.lo util.lo data.lo configure.lo polar.lo \
 	series.lo intsincos.lo gradient.lo transforms.lo qpanel.lo \
-	cpanel.lo skeleton.lo fmm.lo fmmlib3d_1_2.lo htriquad.lo \
-	binomials.lo expansions.lo htri-transforms.lo trace.lo \
-	reduction.lo $(am__objects_1)
+	cpanel.lo skeleton.lo fmm.lo fmmlib3d_1_2.lo wbfmm-bem3d.lo \
+	htriquad.lo binomials.lo expansions.lo htri-transforms.lo \
+	trace.lo reduction.lo work.lo $(am__objects_1)
 libbem3d_la_OBJECTS = $(am_libbem3d_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -284,7 +285,8 @@ am__depfiles_remade = ./$(DEPDIR)/acoord.Plo ./$(DEPDIR)/belement.Plo \
 	./$(DEPDIR)/series.Plo ./$(DEPDIR)/shapefunc.Plo \
 	./$(DEPDIR)/skeleton.Plo ./$(DEPDIR)/trace.Plo \
 	./$(DEPDIR)/transforms.Plo ./$(DEPDIR)/util.Plo \
-	./$(DEPDIR)/wandzura.Plo
+	./$(DEPDIR)/wandzura.Plo ./$(DEPDIR)/wbfmm-bem3d.Plo \
+	./$(DEPDIR)/work.Plo
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -360,7 +362,7 @@ AWK = gawk
 BEM3D_VERSION = 0.2.1
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include
+CFLAGS = -g -O3 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include -fopenmp -I/home/ensmjc/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -375,7 +377,7 @@ ECHO_T =
 EGREP = /usr/bin/grep -E
 EXEEXT = 
 F77 = g77
-FFLAGS = -g -O2
+FFLAGS = -std=legacy
 FGREP = /usr/bin/grep -F
 GQR = yes
 GREP = /usr/bin/grep
@@ -388,7 +390,7 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS =  -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -L/home/ensmjc/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/ensmjc/Codes/lib -lwmpi_s -lglib-2.0 -L/home/ensmjc/Codes/lib -lglib-2.0 -lm
+LDFLAGS =  -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -L/home/ensmjc/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/ensmjc/Codes/lib -lwmpi_s -lglib-2.0 -L/home/ensmjc/Codes/lib -lglib-2.0 -lm -L/home/ensmjc/Codes/lib -lsisl -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath 		  -L/home/ensmjc/Codes/lib -lwbfmm-base -lwbfmm -lglib-2.0 -lm
 LIBOBJS = 
 LIBS = -L/home/ensmjc/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/usr/local/lib64 -lmatheval -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -lm 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
@@ -427,6 +429,7 @@ SHELL = /bin/sh
 SISL = yes
 STRIP = strip
 VERSION = 0.2
+WBFMM = yes
 WMPI = yes
 abs_builddir = /home/ensmjc/Codes/C/BEM3D/src
 abs_srcdir = /home/ensmjc/Codes/C/BEM3D/src
@@ -494,6 +497,8 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
+wbfmm_cflags = -fopenmp -I/home/ensmjc/Codes/include
+wbfmm_libs = -L/home/ensmjc/Codes/lib -lwbfmm-base -lwbfmm -lglib-2.0 -lm
 wmpi_cflags = -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include
 wmpi_libs = -L/home/ensmjc/Codes/lib -lwmpi_s -lglib-2.0 -L/home/ensmjc/Codes/lib -lglib-2.0 -lm
 AM_CPPFLAGS = -I$(top_srcdir) -I$(includedir) -DG_LOG_DOMAIN=\"BEM3D\"
@@ -512,8 +517,9 @@ libbem3d_la_SOURCES = acoord.c belement.c logging.c files.c bmesh.c \
 	operators.c newman.c edge.c motion.c util.c data.c configure.c \
 	polar.c polar.h series.c intsincos.c gradient.c transforms.c \
 	qpanel.c cpanel.c skeleton.c fmm.c fmmlib3d_1_2.c \
-	fmmlib3d_1_2.h htriquad.c htriquad.h binomials.c binomials.h \
-	expansions.c htri-transforms.c trace.c trace.h reduction.c \
+	fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h htriquad.c \
+	htriquad.h binomials.c binomials.h expansions.c \
+	htri-transforms.c trace.c trace.h reduction.c work.c \
 	$(am__append_1)
 include_HEADERS = \
 	bem3d.h \
@@ -761,6 +767,8 @@ include ./$(DEPDIR)/trace.Plo # am--include-marker
 include ./$(DEPDIR)/transforms.Plo # am--include-marker
 include ./$(DEPDIR)/util.Plo # am--include-marker
 include ./$(DEPDIR)/wandzura.Plo # am--include-marker
+include ./$(DEPDIR)/wbfmm-bem3d.Plo # am--include-marker
+include ./$(DEPDIR)/work.Plo # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1004,6 +1012,8 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/transforms.Plo
 	-rm -f ./$(DEPDIR)/util.Plo
 	-rm -f ./$(DEPDIR)/wandzura.Plo
+	-rm -f ./$(DEPDIR)/wbfmm-bem3d.Plo
+	-rm -f ./$(DEPDIR)/work.Plo
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1090,6 +1100,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/transforms.Plo
 	-rm -f ./$(DEPDIR)/util.Plo
 	-rm -f ./$(DEPDIR)/wandzura.Plo
+	-rm -f ./$(DEPDIR)/wbfmm-bem3d.Plo
+	-rm -f ./$(DEPDIR)/work.Plo
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

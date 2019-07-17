@@ -3,24 +3,27 @@
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\textbf{ B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$ \textbf{ bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, gint order\+\_\+max)
+{\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$ {\bf bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, gint order\+\_\+max)
 \item 
-gint \textbf{ bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init} (\textbf{ B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$s, \textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, \textbf{ B\+E\+M3\+D\+Average} anorm)
+gint {\bf bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init} ({\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$s, {\bf B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, {\bf B\+E\+M3\+D\+Average} anorm)
 \item 
-gint \textbf{ bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write} (\textbf{ B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$s, F\+I\+LE $\ast$f)
+gint {\bf bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write} ({\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$s, F\+I\+L\+E $\ast$f)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-B\+E\+M3D skeletons are representations of meshes as arrays of point sources, mainly intended for use in interfacing to third-\/party libraries such as Fast Multipole Methods which take input as a set of elementary sources. 
+B\+E\+M3\+D skeletons are representations of meshes as arrays of point sources, mainly intended for use in interfacing to third-\/party libraries such as Fast Multipole Methods which take as input a set of elementary sources. 
 
 \subsection{Function Documentation}
-\mbox{\label{group__skeleton_gaccd4b3b43d662fa781d77fd3f89e9b71}} 
 \index{Mesh skeletons@{Mesh skeletons}!bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init}}
 \index{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init}!Mesh skeletons@{Mesh skeletons}}
-\subsubsection{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init()}
-{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{s,  }\item[{\textbf{ B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q,  }\item[{\textbf{ B\+E\+M3\+D\+Average}}]{anorm }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+mesh\+\_\+skeleton\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{s, }
+\item[{{\bf B\+E\+M3\+D\+Quadrature\+Rule} $\ast$}]{q, }
+\item[{{\bf B\+E\+M3\+D\+Average}}]{anorm}
+\end{DoxyParamCaption}
+)}\label{group__skeleton_gaccd4b3b43d662fa781d77fd3f89e9b71}
 Initialize a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} which has been allocated with \doxyref{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new}{p.}{group__skeleton_ga1884465ee9765b8298fab319c8a0b478}. You should be careful to use a \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} which guarantees source points which are distinct from the collocation points. For example, a three-\/point Gaussian quadrature with nodes at the midpoints of triangle edges will generate source points which coincide with the mid-\/edge nodes of a second-\/order triangular element.
 
 
@@ -33,18 +36,20 @@ Initialize a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+mesh\+\_\+element\+\_\+number, bem3d\+\_\+mesh\+\_\+foreach\+\_\+element(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
+References bem3d\+\_\+mesh\+\_\+element\+\_\+number, bem3d\+\_\+mesh\+\_\+foreach\+\_\+element(), bem3d\+\_\+mesh\+\_\+foreach\+\_\+node(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
 
-\mbox{\label{group__skeleton_ga1884465ee9765b8298fab319c8a0b478}} 
 \index{Mesh skeletons@{Mesh skeletons}!bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new}}
 \index{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new}!Mesh skeletons@{Mesh skeletons}}
-\subsubsection{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new()}
-{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Mesh\+Skeleton}$\ast$ bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{gint}]{order\+\_\+max }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Mesh\+Skeleton}$\ast$ bem3d\+\_\+mesh\+\_\+skeleton\+\_\+new (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{gint}]{order\+\_\+max}
+\end{DoxyParamCaption}
+)}\label{group__skeleton_ga1884465ee9765b8298fab319c8a0b478}
 Allocate a new \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} for a given mesh
 
 
@@ -61,21 +66,23 @@ a new \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} on succ
 
 References bem3d\+\_\+mesh\+\_\+element\+\_\+node\+\_\+number\+\_\+max(), bem3d\+\_\+mesh\+\_\+element\+\_\+number, bem3d\+\_\+mesh\+\_\+index\+\_\+range(), and bem3d\+\_\+mesh\+\_\+node\+\_\+number().
 
-\mbox{\label{group__skeleton_gad72c9c5256e1ea90e9cf7944907ba841}} 
 \index{Mesh skeletons@{Mesh skeletons}!bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write}}
 \index{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write@{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write}!Mesh skeletons@{Mesh skeletons}}
-\subsubsection{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write()}
-{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{s,  }\item[{F\+I\+LE $\ast$}]{f }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+mesh\+\_\+skeleton\+\_\+write (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{s, }
+\item[{F\+I\+L\+E $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__skeleton_gad72c9c5256e1ea90e9cf7944907ba841}
 Write a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} to file
 
 
 \begin{DoxyParams}{Parameters}
 {\em s} & a \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} \\
 \hline
-{\em f} & F\+I\+LE pointer\\
+{\em f} & F\+I\+L\+E pointer\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
 \end{DoxyReturn}

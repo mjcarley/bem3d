@@ -32,6 +32,9 @@
 
 
 
+gint htri_quad_triangle_1_0(gdouble r1, gdouble r2, gdouble th,
+			    gdouble k, gdouble tol,
+			    gdouble *d0G, gdouble *d1G, gdouble *d2G) ;
 gint htri_tri_z_parameters(gdouble r1, gdouble r2, gdouble th, 
 			   gdouble phi, gdouble s, gdouble z,
 			   gdouble *S, gdouble *Rmax, gdouble *al) ;

@@ -15,9 +15,9 @@
 
 #include "trace.h"
 
-gdouble polyval2(gdouble *c, gint cstr,
-		 gdouble *d, gint dstr,
-		 gint nc, gdouble x)
+static gdouble polyval2(gdouble *c, gint cstr,
+			gdouble *d, gint dstr,
+			gint nc, gdouble x)
 /*
   evaluate polynomial \sum c_{i}d_{i}x^{i}
 

@@ -780,7 +780,7 @@ gint bem3d_function_apply_mesh(BEM3DFunction *func,
  * list (so the ordering of the data in the list matters).
  * 
  * @param func ::BEM3DFunction to apply;
- * @param motions array of pointers to ::BEM3DMesh for surfaces;
+ * @param meshes array of pointers to ::BEM3DMesh for surfaces;
  * @param f a ::BEM3DMeshData block containing data for mesh (must 
  * not be NULL);
  * @param g a ::BEM3DMeshData block containing supplementary data 
@@ -921,7 +921,7 @@ static void integrate_func(BEM3DElement *e, gpointer *data)
 
   /*note no gradient operator included (all zeroed)*/
   
-  bem3d_quadrature_rule_wx(NULL, e, q, NULL, NULL, &ngp) ;
+  bem3d_quadrature_rule_wx(NULL, e, q, NULL, NULL, &ngp, NULL) ;
 
   for ( i = 0 ; i < bem3d_quadrature_vertex_number(q) ; i ++ ) {
     s = bem3d_quadrature_xi(q,i) ;

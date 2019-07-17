@@ -29,12 +29,10 @@ extern "C" {
 #include <stdio.h>
 #include <glib.h>
 #include <gts.h>
-
+#include <gqr.h>
+  
 #include <bem3dconfig.h>
 
-#ifdef BEM3D_HAVE_GMC
-#include <gmc.h>
-#endif /*BEM3D_HAVE_GMC*/
 
   /*configuration options for the maintainer*/
 #define _FOREACH_USE_HASH_TABLE_ 1
@@ -757,12 +755,38 @@ typedef enum {
   
 #define bem3d_parameters_user_data(_p) ((_p)->user_data)
 
+#define BEM3D_WORKSPACE_DOUBLE_ARRAY_NUMBER 8
+#define BEM3D_WORKSPACE_GTS_POINT_NUMBER    8
+#define BEM3D_WORKSPACE_GQR_RULE_NUMBER     8
+  
+  /**
+   * @typedef BEM3DWorkspace
+   * @ingroup work
+   *
+   * Data type for workspaces passed to functions
+   *
+   */
+
+  typedef struct _BEM3DWorkspace         BEM3DWorkspace ;
+
+  struct _BEM3DWorkspace {
+    BEM3DQuadratureRule *q ; /*quadrature rule*/
+    GArray *doubles[BEM3D_WORKSPACE_DOUBLE_ARRAY_NUMBER] ;
+    GtsPoint *points[BEM3D_WORKSPACE_GTS_POINT_NUMBER] ;
+    gqr_rule_t *gqr[BEM3D_WORKSPACE_GQR_RULE_NUMBER] ;
+    gboolean
+    used_gqr[BEM3D_WORKSPACE_GQR_RULE_NUMBER],
+    used_points[BEM3D_WORKSPACE_GTS_POINT_NUMBER],
+      used_doubles[BEM3D_WORKSPACE_DOUBLE_ARRAY_NUMBER] ;
+  } ;
+
   /**
    * @struct BEM3DQuadratureRuleFunc
    * @ingroup quadrature 
    * gint BEM3DQuadratureRuleFunc(GtsPoint *p, BEM3DElement *e,
    * BEM3DQuadratureRule *q, BEM3DGreensFunction gfunc, 
-   * BEM3DParameters *param, gpointer data)
+   * BEM3DParameters *param, gpointer data, 
+   * BEM3DWorkspace *work)
    *
    * Function for generating quadrature rules
    * 
@@ -771,7 +795,8 @@ typedef enum {
    * @param q quadrature rule to hold points;
    * @param gfunc Green's function to integrate (ignored for some rules);
    * @param param parameters for @a gfunc;
-   * @param data user data passed to quadrature generation.
+   * @param data user data passed to quadrature generation;
+   * @param work a ::BEM3DWorkspace
    * 
    * @return 0 on success
    */
@@ -780,8 +805,8 @@ typedef enum {
 					  BEM3DQuadratureRule *q, 
 					  BEM3DGreensFunction *gfunc,
 					  BEM3DParameters *param,
-					  gpointer data) ;
-
+					  gpointer data,
+					  BEM3DWorkspace *work) ;					  
   /**
    * Quadrature selection rule structure. 
    * @ingroup quadrature
@@ -1110,6 +1135,8 @@ BEM3DFunctionClass * bem3d_function_class  (void);
   typedef enum {
     BEM3D_FMM_FMMLIB3D_1_2 = 1,    /**< fmmlib3d-1.2, 
 				https://github.com/zgimbutas/fmmlib3d*/ 
+    BEM3D_FMM_WBFMM = 2,          /**< wbfmm,
+				     https://github.com/mjcarley/wbfmm*/
   } BEM3DFastMultipole ;
 
   /**
@@ -1175,7 +1202,8 @@ struct _BEM3DConfiguration {
   GString                 *job ;
   GString                 *gfunc_comment, *qrule_comment ;
 } ;
-  
+
+
   /** 
    * @ingroup belement
    * 
@@ -1431,11 +1459,15 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
 					     GtsPoint *x, gint ix,
 					     BEM3DConfiguration *config,
 					     BEM3DParameters *gdata,
-					     gdouble *a, gdouble *b) ;
+					     gdouble *a, gdouble *b,
+					     BEM3DWorkspace *work) ;
+					     
   gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
 					BEM3DConfiguration *config,
 					BEM3DParameters *gdata,
-					GArray *G, GArray *dGdn) ;
+					GArray *G, GArray *dGdn,
+					BEM3DWorkspace *work) ;
+					
   gint bem3d_element_nearest_vertex(BEM3DElement *e, GtsPoint *p,
 				    gint *i, gdouble *R) ;
   gint bem3d_element_boundary_nearest_point(BEM3DElement *e, GtsPoint *x,
@@ -1509,19 +1541,22 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
 				  BEM3DConfiguration *config,
 				  BEM3DParameters *gdata,
 				  BEM3DLookupFunc lf, gpointer ldata,
-				  GtsPoint *x, GArray *f) ;
+				  GtsPoint *x, GArray *f,
+				  BEM3DWorkspace *work) ;
   gint bem3d_element_radiation_point(BEM3DElement *e, 
 				     BEM3DConfiguration *config,
 				     BEM3DParameters *gdata,	     
 				     BEM3DLookupFunc lfunc, gpointer ldata,
 				     GtsPoint *x, 
 				     GArray *G, GArray *dGdn,
-				     GArray *phi, GArray *dphi) ;
+				     GArray *phi, GArray *dphi,
+				     BEM3DWorkspace *work) ;
   gint bem3d_mesh_radiation_mesh(BEM3DMesh *m,
 				 BEM3DConfiguration *config,
 				 BEM3DParameters *gdata,
 				 BEM3DLookupFunc lf, gpointer ldata,
-				 BEM3DMesh *s, BEM3DMeshData *f) ;
+				 BEM3DMesh *s, BEM3DMeshData *f,
+				 BEM3DWorkspace *work) ;
 
   GtsVertex *bem3d_mesh_node_from_index(BEM3DMesh *m, gint i) ;
   gint bem3d_mesh_index_from_node(BEM3DMesh *m, GtsVertex *v) ;
@@ -1540,7 +1575,9 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
   gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n,
 				     BEM3DConfiguration *config,
 				     BEM3DParameters *gdata,
-				     BEM3DEquationFunc efunc, gpointer edata) ;
+				     BEM3DEquationFunc efunc, gpointer edata,
+				     BEM3DWorkspace *work) ;
+
   gint bem3d_equation_func_simple(gint i, gint j,
 				  gdouble *G, gdouble *dGdn, gint n,
 				  gpointer *e) ;
@@ -1554,13 +1591,15 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
 			    BEM3DConfiguration *config,
 			    BEM3DParameters *gdata,
 			    BEM3DLookupFunc lfunc, gpointer ldata,
-			    BEM3DEquationFunc efunc, gpointer edata) ;
+			    BEM3DEquationFunc efunc, gpointer edata,
+			    BEM3DWorkspace *work) ;
   gint bem3d_mesh_disjoint_quad_dgdn(BEM3DMesh *m1,
 				     BEM3DMesh *m2,
 				     BEM3DConfiguration *config,
 				     BEM3DParameters *gdata,
 				     BEM3DLookupFunc lfunc, gpointer ldata,
-				     BEM3DEquationFunc efunc, gpointer edata) ;
+				     BEM3DEquationFunc efunc, gpointer edata,
+				     BEM3DWorkspace *work) ;
 
   gint bem3d_mesh_merge(BEM3DMesh *m, BEM3DMesh *n) ;
   gint bem3d_mesh_element_moments(BEM3DMesh *m, gint H) ;
@@ -1684,74 +1723,102 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
 				   BEM3DQuadratureRule *q, 
 				   BEM3DGreensFunction *gfunc, 
 				   BEM3DParameters *param,
-				   gpointer n) ;
+				   gpointer n,
+				   BEM3DWorkspace *work) ;
+				  
   gint bem3d_quadrature_rule_default(GtsPoint *p,
 				     BEM3DElement *e,
 				     BEM3DQuadratureRule *q,
 				     BEM3DGreensFunction *gfunc, 
 				     BEM3DParameters *param,
-				     gpointer data) ;
+				     gpointer data,
+				     BEM3DWorkspace *work) ;
+				     
   gint bem3d_quadrature_rule_kw(GtsPoint *p, BEM3DElement *e,
 				BEM3DQuadratureRule *q, 
 				BEM3DGreensFunction *gfunc, 
 				BEM3DParameters *param,
-				gpointer data) ;
+				gpointer data,
+				BEM3DWorkspace *work) ;
+				
   gint bem3d_quadrature_rule_polar(GtsPoint *p, BEM3DElement *e,
 				   BEM3DQuadratureRule *q, 
 				   BEM3DGreensFunction *gfunc, 
 				   BEM3DParameters *param,
-				   gpointer data) ;
+				   gpointer data,
+				   BEM3DWorkspace *work) ;
+				   
   gint bem3d_quadrature_rule_polar_hs(GtsPoint *p, BEM3DElement *e,
 				      BEM3DQuadratureRule *q, 
 				      BEM3DGreensFunction *gfunc, 
 				      BEM3DParameters *param,
-				      gpointer data) ;
+				      gpointer data,
+				      BEM3DWorkspace *work) ;
+				      
   gint bem3d_quadrature_rule_hayami(GtsPoint *xs, BEM3DElement *e,
 				    BEM3DQuadratureRule *q, 
 				    BEM3DGreensFunction *gfunc, 
 				    BEM3DParameters *param,
-				    gpointer data) ;
+				    gpointer data,
+				   BEM3DWorkspace *work) ;
+				    
   gint bem3d_quadrature_rule_rnvr(GtsPoint *p, BEM3DElement *e,
 				  BEM3DQuadratureRule *q, 
 				  BEM3DGreensFunction *gfunc, 
 				  BEM3DParameters *param,
-				  gpointer data) ;
+				  gpointer data,
+				   BEM3DWorkspace *work) ;
+				  
   gint bem3d_quadrature_rule_wx(GtsPoint *p, BEM3DElement *e,
 				BEM3DQuadratureRule *q, 
 				BEM3DGreensFunction *gfunc, 
 				BEM3DParameters *param,
-				gpointer data) ;
+				gpointer data,
+				BEM3DWorkspace *work) ;
+				
   gint bem3d_quadrature_rule_newman(GtsPoint *xs, BEM3DElement *e,
 				    BEM3DQuadratureRule *q, 
 				    BEM3DGreensFunction *gfunc, 
 				    BEM3DParameters *param,
-				    gpointer data) ;
+				    gpointer data,
+				   BEM3DWorkspace *work) ;
+				    
   gint bem3d_quadrature_rule_newman_gradient(GtsPoint *xs, BEM3DElement *e,
 					     BEM3DQuadratureRule *q, 
 					     BEM3DGreensFunction *gfunc, 
 					     BEM3DParameters *param,
-					     gpointer data) ;
+					     gpointer data,
+				   BEM3DWorkspace *work) ;
+					     
   gint bem3d_quadrature_rule_series(GtsPoint *xs, BEM3DElement *e,
 				    BEM3DQuadratureRule *q, 
 				    BEM3DGreensFunction *gfunc,
 				    BEM3DParameters *param,
-				    gpointer data) ;
+				    gpointer data,
+				   BEM3DWorkspace *work) ;
+				    
   gint bem3d_quadrature_rule_mzht(GtsPoint *xs, BEM3DElement *e,
 				  BEM3DQuadratureRule *q, 
 				  BEM3DGreensFunction *gfunc,
 				  BEM3DParameters *param,
-				  gpointer data) ;
+				  gpointer data,
+				  BEM3DWorkspace *work) ;
+				  
 
 gint bem3d_quadrature_rule_decomp(GtsPoint *xs, BEM3DElement *e,
 				  BEM3DQuadratureRule *q, 
 				  BEM3DGreensFunction *gfunc,
 				  BEM3DParameters *param,
-				  gpointer data) ;
+				  gpointer data,
+				  BEM3DWorkspace *work) ;
+				  
 gint bem3d_quadrature_rule_decomp_gradient(GtsPoint *xs, BEM3DElement *e,
 					   BEM3DQuadratureRule *q, 
 					   BEM3DGreensFunction *gfunc,
 					   BEM3DParameters *param,
-					   gpointer data) ;
+					   gpointer data,
+					   BEM3DWorkspace *work) ;
+					   
   gdouble bem3d_quadrature_parameter(GtsPoint *p, BEM3DElement *e) ;
   gint bem3d_quadrature_rule_remap(gdouble xi0, gdouble eta0,
 				   gdouble xi1, gdouble eta1,
@@ -1913,6 +1980,14 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
   gint bem3d_reduction_func_list(FILE *output, gchar *format,
 				 gboolean describe) ;
   
+  BEM3DWorkspace *bem3d_workspace_new(void) ;
+  GArray *bem3d_workspace_double_array_get(BEM3DWorkspace *w) ;
+  gint bem3d_workspace_double_array_put(BEM3DWorkspace *w, GArray *g) ; 
+  GtsPoint *bem3d_workspace_gts_point_get(BEM3DWorkspace *w) ;
+  gint bem3d_workspace_gts_point_put(BEM3DWorkspace *w, GtsPoint *p) ;
+  gqr_rule_t *bem3d_workspace_gqr_rule_get(BEM3DWorkspace *w) ;
+  gint bem3d_workspace_gqr_rule_put(BEM3DWorkspace *w, gqr_rule_t *g) ;
+ 
   BEM3DConfiguration *bem3d_configuration_new(void) ;
   gint bem3d_configuration_init(void) ;
   gint bem3d_configuration_read(BEM3DConfiguration *c, gchar *file) ;
@@ -1951,7 +2026,8 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
 				       BEM3DMeshSkeleton *skel,
 				       BEM3DConfiguration *config,
 				       BEM3DParameters *param,
-				       gdouble r) ;
+				       gdouble r, BEM3DWorkspace *work) ;
+
   gchar *bem3d_solver_name(BEM3DSolver s) ;
   BEM3DSolver bem3d_solver_type(gchar *s) ;
 

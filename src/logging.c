@@ -40,6 +40,9 @@
 #define BEM3D_LOGGING_DATA_LEVEL     2
 #define BEM3D_LOGGING_DATA_EXIT_FUNC 3
 
+gpointer _logging_data[BEM3D_LOGGING_DATA_WIDTH] ;
+GLogLevelFlags _logging_level ;
+
 static const gchar *bem3d_logging_string(GLogLevelFlags level)
 
 {
@@ -105,20 +108,17 @@ gint bem3d_logging_init(FILE *f, gchar *p,
 			gpointer exit_func)
 
 {
-  static gpointer data[BEM3D_LOGGING_DATA_WIDTH] ;
-  static GLogLevelFlags level ;
-
   if ( f != NULL ) 
-    data[BEM3D_LOGGING_DATA_FID] = f ;
+    _logging_data[BEM3D_LOGGING_DATA_FID] = f ;
   else
-    data[BEM3D_LOGGING_DATA_FID] = stderr ;    
+    _logging_data[BEM3D_LOGGING_DATA_FID] = stderr ;    
   if ( p != NULL ) 
-    data[BEM3D_LOGGING_DATA_PREFIX] = g_strdup(p) ;
+    _logging_data[BEM3D_LOGGING_DATA_PREFIX] = g_strdup(p) ;
   else
-    data[BEM3D_LOGGING_DATA_PREFIX] = g_strdup("") ;
+    _logging_data[BEM3D_LOGGING_DATA_PREFIX] = g_strdup("") ;
 
-  level = log_level ;
-  data[BEM3D_LOGGING_DATA_LEVEL] = &level ;    
+  _logging_level = log_level ;
+  _logging_data[BEM3D_LOGGING_DATA_LEVEL] = &_logging_level ;    
     
   g_log_set_handler (G_LOG_DOMAIN, 
 		     G_LOG_FLAG_RECURSION |
@@ -129,7 +129,7 @@ gint bem3d_logging_init(FILE *f, gchar *p,
 		     G_LOG_LEVEL_MESSAGE |
 		     G_LOG_LEVEL_INFO |
 		     G_LOG_LEVEL_DEBUG,
-		     (GLogFunc)bem3d_logging_func, data);
+		     (GLogFunc)bem3d_logging_func, _logging_data);
 
   return BEM3D_SUCCESS ;
 }

@@ -87,10 +87,10 @@ gint main(gint argc, gchar **argv)
 
   if ( order <= 7 ) 
     bem3d_quadrature_rule_gauss(NULL, bem3d_mesh_element_sample(m), q, 
-				NULL, NULL, &order) ;
+				NULL, NULL, &order, NULL) ;
   else
     bem3d_quadrature_rule_wx(NULL, bem3d_mesh_element_sample(m), q, 
-			     NULL, NULL, &order) ;    
+			     NULL, NULL, &order, NULL) ;    
 
   s = bem3d_mesh_skeleton_new(m, order) ;
   bem3d_mesh_skeleton_init(s, q, anorm) ;

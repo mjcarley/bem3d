@@ -122,8 +122,8 @@ bem3d-field.o: bem3d-field.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/bits/cpu-set.h /usr/include/bits/setjmp.h \
  /usr/include/glib-2.0/glib/glib-autocleanups.h /usr/include/gts.h \
  /usr/include/gtsconfig.h /home/ensmjc/Codes/include/wmpi.h \
- ../src/bem3d.h ../src/bem3dconfig.h ../src/bem3d-private.h \
- ../src/bem3d.h
+ ../src/bem3d.h /home/ensmjc/Codes/include/gqr.h ../src/bem3dconfig.h \
+ ../src/bem3d-private.h ../src/bem3d.h
 
 /usr/include/stdc-predef.h:
 
@@ -508,6 +508,8 @@ bem3d-field.o: bem3d-field.c /usr/include/stdc-predef.h ../config.h \
 /home/ensmjc/Codes/include/wmpi.h:
 
 ../src/bem3d.h:
+
+/home/ensmjc/Codes/include/gqr.h:
 
 ../src/bem3dconfig.h:
 

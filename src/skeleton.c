@@ -37,7 +37,7 @@
  *
  * BEM3D skeletons are representations of meshes as arrays of point
  * sources, mainly intended for use in interfacing to third-party
- * libraries such as Fast Multipole Methods which take input as a set
+ * libraries such as Fast Multipole Methods which take as input a set
  * of elementary sources.
  *
  * @{

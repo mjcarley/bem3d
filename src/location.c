@@ -359,8 +359,8 @@ gint bem3d_element_edge_nearest_point(BEM3DElement *e, gint i, gint j,
 {
   gint status;
   gint k = 0, kmax = 8 ;
-  static const gsl_min_fminimizer_type *m;
-  static gsl_min_fminimizer *s;
+  static const gsl_min_fminimizer_type *m ;
+  static gsl_min_fminimizer *s ;
   gdouble a, b, t ;
   gsl_function f ;
   static GtsPoint *y = NULL ;

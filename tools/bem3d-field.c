@@ -87,6 +87,7 @@ gint main(gint argc, gchar **argv)
 
 {
   BEM3DMesh *s, *m ;
+  BEM3DWorkspace *work ;
   GPtrArray *meshes, *mdata, *overrides ;
   GArray *field ;
   GtsVertex *x ;
@@ -141,7 +142,8 @@ gint main(gint argc, gchar **argv)
 	      "Options:\n"
 	      "        -h (print this message and exit)\n"
 	      "        -C <configuration file name>\n"
-	      "        -d <data file name>\n"
+	      "        -d <data file name> (can be repeated, need one per \n"
+	      "           input file)\n"
 	      "        -F <function file> function to add to computed field\n"
 	      "           when pointwise calculation is selected with -X\n"
 	      "        -i <bem3d input file> (can be repeated)\n"
@@ -218,6 +220,12 @@ gint main(gint argc, gchar **argv)
     
     return 1 ;
   }
+
+  if ( mdata->len != meshes->len ) {
+    fprintf(stderr, "%s: require one data file per mesh (can be duplicates)\n",
+	    progname) ;
+    return 1 ;
+  }
   
   bem3d_parameters_wavenumber(&gdata) = k ;
   bem3d_parameters_mach_number(&gdata) = M ;
@@ -244,6 +252,8 @@ gint main(gint argc, gchar **argv)
     bem3d_function_expand_functions(efunc) ;
   }
 
+  work = bem3d_workspace_new() ;
+  
   if ( point_input ) {
     x = gts_vertex_new(gts_vertex_class(), 0, 0, 0) ;
     lineno = 1 ;
@@ -264,7 +274,7 @@ gint main(gint argc, gchar **argv)
 	bem3d_mesh_radiation_point(g_ptr_array_index(meshes,i),
 				   config, &gdata,
 				   lfunc, g_ptr_array_index(mdata,i),
-				   GTS_POINT(x), field) ;
+				   GTS_POINT(x), field, work) ;
       }
       if ( efunc != NULL ) {
 	memset(result, 0, 32*sizeof(gdouble)) ;
@@ -298,7 +308,7 @@ gint main(gint argc, gchar **argv)
       bem3d_mesh_radiation_mesh(g_ptr_array_index(meshes,i),
 				config, &gdata,
 				lfunc, g_ptr_array_index(mdata,i),
-				s, sdata) ;
+				s, sdata, work) ;
     }
 
     bem3d_mesh_data_write(sdata, output, NULL) ;

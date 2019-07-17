@@ -122,8 +122,8 @@ bem3d_aero-bem3d-aero.o: bem3d-aero.c /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/glib-autocleanups.h \
  /usr/include/gsl/gsl_complex.h /home/ensmjc/Codes/include/sislconfig.h \
  /home/ensmjc/Codes/include/wmpi.h ../src/bem3d.h /usr/include/gts.h \
- /usr/include/gtsconfig.h ../src/bem3dconfig.h ../src/bem3d-private.h \
- ../src/bem3d.h
+ /usr/include/gtsconfig.h /home/ensmjc/Codes/include/gqr.h \
+ ../src/bem3dconfig.h ../src/bem3d-private.h ../src/bem3d.h
 
 /usr/include/stdc-predef.h:
 
@@ -512,6 +512,8 @@ bem3d_aero-bem3d-aero.o: bem3d-aero.c /usr/include/stdc-predef.h \
 /usr/include/gts.h:
 
 /usr/include/gtsconfig.h:
+
+/home/ensmjc/Codes/include/gqr.h:
 
 ../src/bem3dconfig.h:
 

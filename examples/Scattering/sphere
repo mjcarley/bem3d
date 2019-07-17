@@ -1,6 +1,6 @@
 #!/bin/bash
 
-k=1.0
+k=1.4
 geometry=sphere
 #peanut
 
@@ -25,7 +25,7 @@ bem3d-solve -C ${config} -d bc-plane.dat -m ${geometry}.mtx \
 
 #-A admittance.mtx
 
-exit
+#exit
 
 ## generate a GMSH visualization to view the surface potential solution
 bem3d2pos -t "Surface" -i ${geometry}.bem -d solution.dat -o ${geometry}.pos

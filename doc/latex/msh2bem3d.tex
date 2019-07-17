@@ -1,5 +1,5 @@
-{\ttfamily msh2bem3d} is used to convert geometries from the G\+M\+SH to the B\+E\+M3D mesh format. This includes sharp edge detection and indexing the nodes, including multiple indices for nodes on sharp edges. The most basic invocation is\+: \begin{DoxyVerb}msh2bem3d < input.msh > output.bem \end{DoxyVerb}
- which takes a G\+M\+SH geometry {\ttfamily input.\+msh} and converts it to a B\+E\+M3D geometry {\ttfamily output.\+bem}, with indices starting at 0.
+{\ttfamily msh2bem3d} is used to convert geometries from the G\+M\+S\+H to the B\+E\+M3\+D mesh format. This includes sharp edge detection and indexing the nodes, including multiple indices for nodes on sharp edges. The most basic invocation is\+: \begin{DoxyVerb}msh2bem3d < input.msh > output.bem \end{DoxyVerb}
+ which takes a G\+M\+S\+H geometry {\ttfamily input.\+msh} and converts it to a B\+E\+M3\+D geometry {\ttfamily output.\+bem}, with indices starting at 0.
 
 To check for and properly index nodes lying in sharp edges, an angle must be specified as a criterion for deciding whether or not an edge is sharp, like this\+: \begin{DoxyVerb}msh2bem3d -a 89 -n 573 < input.msh > output.bem \end{DoxyVerb}
  This treats edges with an angle between elements greater than 89 degrees as sharp and assigns multiple indices to the corresponding nodes as necessary. As an example, this also shows the use of the option which sets the first index, here 573. This is useful in problems with multiple surfaces where each must be indexed starting from the last index of the previous surface.

@@ -157,7 +157,8 @@ location.lo: location.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/gsl/gsl_matrix_uint.h /usr/include/gsl/gsl_matrix_int.h \
  /usr/include/gsl/gsl_matrix_ushort.h /usr/include/gsl/gsl_matrix_short.h \
  /usr/include/gsl/gsl_matrix_uchar.h /usr/include/gsl/gsl_matrix_char.h \
- /usr/include/gsl/gsl_min.h bem3d.h bem3dconfig.h bem3d-private.h
+ /usr/include/gsl/gsl_min.h bem3d.h /home/ensmjc/Codes/include/gqr.h \
+ bem3dconfig.h bem3d-private.h
 
 /usr/include/stdc-predef.h:
 
@@ -656,6 +657,8 @@ location.lo: location.c /usr/include/stdc-predef.h ../config.h \
 /usr/include/gsl/gsl_min.h:
 
 bem3d.h:
+
+/home/ensmjc/Codes/include/gqr.h:
 
 bem3dconfig.h:
 

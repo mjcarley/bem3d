@@ -41,42 +41,42 @@ PATH: /usr/lib64/qt/bin
 ## Core tests. ##
 ## ----------- ##
 
-configure:2348: checking for a BSD-compatible install
-configure:2416: result: /usr/bin/ginstall -c
-configure:2427: checking whether build environment is sane
-configure:2482: result: yes
-configure:2633: checking for a thread-safe mkdir -p
-configure:2672: result: /usr/bin/mkdir -p
-configure:2679: checking for gawk
-configure:2695: found /usr/bin/gawk
-configure:2706: result: gawk
-configure:2717: checking whether make sets $(MAKE)
-configure:2739: result: yes
-configure:2768: checking whether make supports nested variables
-configure:2785: result: yes
-configure:2956: checking build system type
-configure:2970: result: x86_64-unknown-linux-gnu
-configure:2990: checking host system type
-configure:3003: result: x86_64-unknown-linux-gnu
-configure:3044: checking how to print strings
-configure:3071: result: printf
-configure:3096: checking whether make supports the include directive
-configure:3111: make -f confmf.GNU && cat confinc.out
+configure:2351: checking for a BSD-compatible install
+configure:2419: result: /usr/bin/ginstall -c
+configure:2430: checking whether build environment is sane
+configure:2485: result: yes
+configure:2636: checking for a thread-safe mkdir -p
+configure:2675: result: /usr/bin/mkdir -p
+configure:2682: checking for gawk
+configure:2698: found /usr/bin/gawk
+configure:2709: result: gawk
+configure:2720: checking whether make sets $(MAKE)
+configure:2742: result: yes
+configure:2771: checking whether make supports nested variables
+configure:2788: result: yes
+configure:2959: checking build system type
+configure:2973: result: x86_64-unknown-linux-gnu
+configure:2993: checking host system type
+configure:3006: result: x86_64-unknown-linux-gnu
+configure:3047: checking how to print strings
+configure:3074: result: printf
+configure:3099: checking whether make supports the include directive
+configure:3114: make -f confmf.GNU && cat confinc.out
 this is the am__doit target
-configure:3114: $? = 0
-configure:3133: result: yes (GNU style)
-configure:3203: checking for gcc
-configure:3219: found /usr/bin/gcc
-configure:3230: result: gcc
-configure:3459: checking for C compiler version
-configure:3468: gcc --version >&5
+configure:3117: $? = 0
+configure:3136: result: yes (GNU style)
+configure:3206: checking for gcc
+configure:3222: found /usr/bin/gcc
+configure:3233: result: gcc
+configure:3462: checking for C compiler version
+configure:3471: gcc --version >&5
 gcc (GCC) 8.2.0
 Copyright (C) 2018 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-configure:3479: $? = 0
-configure:3468: gcc -v >&5
+configure:3482: $? = 0
+configure:3471: gcc -v >&5
 Reading specs from /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/specs
 COLLECT_GCC=gcc
 COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-slackware-linux/8.2.0/lto-wrapper
@@ -84,147 +84,147 @@ Target: x86_64-slackware-linux
 Configured with: ../gcc-8.2.0/configure --prefix=/usr --libdir=/usr/lib64 --mandir=/usr/man --infodir=/usr/info --enable-shared --enable-bootstrap --enable-languages=ada,brig,c,c++,fortran,go,lto,objc --enable-threads=posix --enable-checking=release --enable-objc-gc --with-system-zlib --enable-libstdcxx-dual-abi --with-default-libstdcxx-abi=new --disable-libstdcxx-pch --disable-libunwind-exceptions --enable-__cxa_atexit --disable-libssp --enable-gnu-unique-object --enable-plugin --enable-lto --disable-install-libiberty --disable-werror --with-gnu-ld --verbose --with-arch-directory=amd64 --disable-gtktest --disable-multilib --target=x86_64-slackware-linux --build=x86_64-slackware-linux --host=x86_64-slackware-linux
 Thread model: posix
 gcc version 8.2.0 (GCC) 
-configure:3479: $? = 0
-configure:3468: gcc -V >&5
+configure:3482: $? = 0
+configure:3471: gcc -V >&5
 gcc: error: unrecognized command line option '-V'
 gcc: fatal error: no input files
 compilation terminated.
-configure:3479: $? = 1
-configure:3468: gcc -qversion >&5
+configure:3482: $? = 1
+configure:3471: gcc -qversion >&5
 gcc: error: unrecognized command line option '-qversion'; did you mean '--version'?
 gcc: fatal error: no input files
 compilation terminated.
-configure:3479: $? = 1
-configure:3499: checking whether the C compiler works
-configure:3521: gcc    conftest.c  >&5
-configure:3525: $? = 0
-configure:3573: result: yes
-configure:3576: checking for C compiler default output file name
-configure:3578: result: a.out
-configure:3584: checking for suffix of executables
-configure:3591: gcc -o conftest    conftest.c  >&5
-configure:3595: $? = 0
-configure:3617: result: 
-configure:3639: checking whether we are cross compiling
-configure:3647: gcc -o conftest    conftest.c  >&5
-configure:3651: $? = 0
-configure:3658: ./conftest
-configure:3662: $? = 0
-configure:3677: result: no
-configure:3682: checking for suffix of object files
-configure:3704: gcc -c   conftest.c >&5
-configure:3708: $? = 0
-configure:3729: result: o
-configure:3733: checking whether we are using the GNU C compiler
-configure:3752: gcc -c   conftest.c >&5
-configure:3752: $? = 0
-configure:3761: result: yes
-configure:3770: checking whether gcc accepts -g
-configure:3790: gcc -c -g  conftest.c >&5
-configure:3790: $? = 0
-configure:3831: result: yes
-configure:3848: checking for gcc option to accept ISO C89
-configure:3911: gcc  -c -g -O2  conftest.c >&5
-configure:3911: $? = 0
-configure:3924: result: none needed
-configure:3949: checking whether gcc understands -c and -o together
-configure:3971: gcc -c conftest.c -o conftest2.o
-configure:3974: $? = 0
-configure:3971: gcc -c conftest.c -o conftest2.o
-configure:3974: $? = 0
-configure:3986: result: yes
-configure:4005: checking dependency style of gcc
-configure:4116: result: gcc3
-configure:4131: checking for a sed that does not truncate output
-configure:4195: result: /usr/bin/sed
-configure:4213: checking for grep that handles long lines and -e
-configure:4271: result: /usr/bin/grep
-configure:4276: checking for egrep
-configure:4338: result: /usr/bin/grep -E
-configure:4343: checking for fgrep
-configure:4405: result: /usr/bin/grep -F
-configure:4440: checking for ld used by gcc
-configure:4507: result: /usr/bin/ld
-configure:4514: checking if the linker (/usr/bin/ld) is GNU ld
-configure:4529: result: yes
-configure:4541: checking for BSD- or MS-compatible name lister (nm)
-configure:4595: result: /usr/bin/nm -B
-configure:4725: checking the name lister (/usr/bin/nm -B) interface
-configure:4732: gcc -c -g -O2  conftest.c >&5
-configure:4735: /usr/bin/nm -B "conftest.o"
-configure:4738: output
+configure:3482: $? = 1
+configure:3502: checking whether the C compiler works
+configure:3524: gcc -g -O3   conftest.c  >&5
+configure:3528: $? = 0
+configure:3576: result: yes
+configure:3579: checking for C compiler default output file name
+configure:3581: result: a.out
+configure:3587: checking for suffix of executables
+configure:3594: gcc -o conftest -g -O3   conftest.c  >&5
+configure:3598: $? = 0
+configure:3620: result: 
+configure:3642: checking whether we are cross compiling
+configure:3650: gcc -o conftest -g -O3   conftest.c  >&5
+configure:3654: $? = 0
+configure:3661: ./conftest
+configure:3665: $? = 0
+configure:3680: result: no
+configure:3685: checking for suffix of object files
+configure:3707: gcc -c -g -O3  conftest.c >&5
+configure:3711: $? = 0
+configure:3732: result: o
+configure:3736: checking whether we are using the GNU C compiler
+configure:3755: gcc -c -g -O3  conftest.c >&5
+configure:3755: $? = 0
+configure:3764: result: yes
+configure:3773: checking whether gcc accepts -g
+configure:3793: gcc -c -g  conftest.c >&5
+configure:3793: $? = 0
+configure:3834: result: yes
+configure:3851: checking for gcc option to accept ISO C89
+configure:3914: gcc  -c -g -O3  conftest.c >&5
+configure:3914: $? = 0
+configure:3927: result: none needed
+configure:3952: checking whether gcc understands -c and -o together
+configure:3974: gcc -c conftest.c -o conftest2.o
+configure:3977: $? = 0
+configure:3974: gcc -c conftest.c -o conftest2.o
+configure:3977: $? = 0
+configure:3989: result: yes
+configure:4008: checking dependency style of gcc
+configure:4119: result: gcc3
+configure:4134: checking for a sed that does not truncate output
+configure:4198: result: /usr/bin/sed
+configure:4216: checking for grep that handles long lines and -e
+configure:4274: result: /usr/bin/grep
+configure:4279: checking for egrep
+configure:4341: result: /usr/bin/grep -E
+configure:4346: checking for fgrep
+configure:4408: result: /usr/bin/grep -F
+configure:4443: checking for ld used by gcc
+configure:4510: result: /usr/bin/ld
+configure:4517: checking if the linker (/usr/bin/ld) is GNU ld
+configure:4532: result: yes
+configure:4544: checking for BSD- or MS-compatible name lister (nm)
+configure:4598: result: /usr/bin/nm -B
+configure:4728: checking the name lister (/usr/bin/nm -B) interface
+configure:4735: gcc -c -g -O3  conftest.c >&5
+configure:4738: /usr/bin/nm -B "conftest.o"
+configure:4741: output
 0000000000000000 B some_variable
-configure:4745: result: BSD nm
-configure:4748: checking whether ln -s works
-configure:4752: result: yes
-configure:4760: checking the maximum length of command line arguments
-configure:4891: result: 1572864
-configure:4939: checking how to convert x86_64-unknown-linux-gnu file names to x86_64-unknown-linux-gnu format
-configure:4979: result: func_convert_file_noop
-configure:4986: checking how to convert x86_64-unknown-linux-gnu file names to toolchain format
-configure:5006: result: func_convert_file_noop
-configure:5013: checking for /usr/bin/ld option to reload object files
-configure:5020: result: -r
-configure:5094: checking for objdump
-configure:5110: found /usr/bin/objdump
-configure:5121: result: objdump
-configure:5153: checking how to recognize dependent libraries
-configure:5353: result: pass_all
-configure:5438: checking for dlltool
-configure:5454: found /usr/bin/dlltool
-configure:5465: result: dlltool
-configure:5498: checking how to associate runtime and link libraries
-configure:5525: result: printf %s\n
-configure:5586: checking for ar
-configure:5602: found /usr/bin/ar
-configure:5613: result: ar
-configure:5650: checking for archiver @FILE support
-configure:5667: gcc -c -g -O2  conftest.c >&5
-configure:5667: $? = 0
-configure:5670: ar cru libconftest.a @conftest.lst >&5
-configure:5673: $? = 0
-configure:5678: ar cru libconftest.a @conftest.lst >&5
+configure:4748: result: BSD nm
+configure:4751: checking whether ln -s works
+configure:4755: result: yes
+configure:4763: checking the maximum length of command line arguments
+configure:4894: result: 1572864
+configure:4942: checking how to convert x86_64-unknown-linux-gnu file names to x86_64-unknown-linux-gnu format
+configure:4982: result: func_convert_file_noop
+configure:4989: checking how to convert x86_64-unknown-linux-gnu file names to toolchain format
+configure:5009: result: func_convert_file_noop
+configure:5016: checking for /usr/bin/ld option to reload object files
+configure:5023: result: -r
+configure:5097: checking for objdump
+configure:5113: found /usr/bin/objdump
+configure:5124: result: objdump
+configure:5156: checking how to recognize dependent libraries
+configure:5356: result: pass_all
+configure:5441: checking for dlltool
+configure:5457: found /usr/bin/dlltool
+configure:5468: result: dlltool
+configure:5501: checking how to associate runtime and link libraries
+configure:5528: result: printf %s\n
+configure:5589: checking for ar
+configure:5605: found /usr/bin/ar
+configure:5616: result: ar
+configure:5653: checking for archiver @FILE support
+configure:5670: gcc -c -g -O3  conftest.c >&5
+configure:5670: $? = 0
+configure:5673: ar cru libconftest.a @conftest.lst >&5
+configure:5676: $? = 0
+configure:5681: ar cru libconftest.a @conftest.lst >&5
 ar: conftest.o: No such file or directory
-configure:5681: $? = 1
-configure:5693: result: @
-configure:5751: checking for strip
-configure:5767: found /usr/bin/strip
-configure:5778: result: strip
-configure:5850: checking for ranlib
-configure:5866: found /usr/bin/ranlib
-configure:5877: result: ranlib
-configure:5979: checking command to parse /usr/bin/nm -B output from gcc object
-configure:6132: gcc -c -g -O2  conftest.c >&5
-configure:6135: $? = 0
-configure:6139: /usr/bin/nm -B conftest.o \| sed -n -e 's/^.*[ ]\([ABCDGIRSTW][ABCDGIRSTW]*\)[ ][ ]*\([_A-Za-z][_A-Za-z0-9]*\)$/\1 \2 \2/p' | sed '/ __gnu_lto/d' \> conftest.nm
-configure:6142: $? = 0
-configure:6208: gcc -o conftest -g -O2   conftest.c conftstm.o >&5
-configure:6211: $? = 0
-configure:6249: result: ok
-configure:6296: checking for sysroot
-configure:6326: result: no
-configure:6333: checking for a working dd
-configure:6371: result: /usr/bin/dd
-configure:6375: checking how to truncate binary pipes
-configure:6390: result: /usr/bin/dd bs=4096 count=1
-configure:6526: gcc -c -g -O2  conftest.c >&5
-configure:6529: $? = 0
-configure:6719: checking for mt
-configure:6735: found /bin/mt
-configure:6746: result: mt
-configure:6769: checking if mt is a manifest tool
-configure:6775: mt '-?'
+configure:5684: $? = 1
+configure:5696: result: @
+configure:5754: checking for strip
+configure:5770: found /usr/bin/strip
+configure:5781: result: strip
+configure:5853: checking for ranlib
+configure:5869: found /usr/bin/ranlib
+configure:5880: result: ranlib
+configure:5982: checking command to parse /usr/bin/nm -B output from gcc object
+configure:6135: gcc -c -g -O3  conftest.c >&5
+configure:6138: $? = 0
+configure:6142: /usr/bin/nm -B conftest.o \| sed -n -e 's/^.*[ ]\([ABCDGIRSTW][ABCDGIRSTW]*\)[ ][ ]*\([_A-Za-z][_A-Za-z0-9]*\)$/\1 \2 \2/p' | sed '/ __gnu_lto/d' \> conftest.nm
+configure:6145: $? = 0
+configure:6211: gcc -o conftest -g -O3   conftest.c conftstm.o >&5
+configure:6214: $? = 0
+configure:6252: result: ok
+configure:6299: checking for sysroot
+configure:6329: result: no
+configure:6336: checking for a working dd
+configure:6374: result: /usr/bin/dd
+configure:6378: checking how to truncate binary pipes
+configure:6393: result: /usr/bin/dd bs=4096 count=1
+configure:6529: gcc -c -g -O3  conftest.c >&5
+configure:6532: $? = 0
+configure:6722: checking for mt
+configure:6738: found /bin/mt
+configure:6749: result: mt
+configure:6772: checking if mt is a manifest tool
+configure:6778: mt '-?'
 usage: mt [-v] [--version] [-h] [ -f device ] command [ count ]
-configure:6783: result: no
-configure:7460: checking how to run the C preprocessor
-configure:7491: gcc -E  conftest.c
-configure:7491: $? = 0
-configure:7505: gcc -E  conftest.c
+configure:6786: result: no
+configure:7463: checking how to run the C preprocessor
+configure:7494: gcc -E  conftest.c
+configure:7494: $? = 0
+configure:7508: gcc -E  conftest.c
 conftest.c:13:10: fatal error: ac_nonexistent.h: No such file or directory
  #include <ac_nonexistent.h>
           ^~~~~~~~~~~~~~~~~~
 compilation terminated.
-configure:7505: $? = 1
+configure:7508: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "bem3d"
@@ -239,15 +239,15 @@ configure: failed program was:
 | #define BEM3D_BINARY_AGE 1
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
-configure:7530: result: gcc -E
-configure:7550: gcc -E  conftest.c
-configure:7550: $? = 0
-configure:7564: gcc -E  conftest.c
+configure:7533: result: gcc -E
+configure:7553: gcc -E  conftest.c
+configure:7553: $? = 0
+configure:7567: gcc -E  conftest.c
 conftest.c:13:10: fatal error: ac_nonexistent.h: No such file or directory
  #include <ac_nonexistent.h>
           ^~~~~~~~~~~~~~~~~~
 compilation terminated.
-configure:7564: $? = 1
+configure:7567: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "bem3d"
@@ -262,108 +262,108 @@ configure: failed program was:
 | #define BEM3D_BINARY_AGE 1
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
-configure:7593: checking for ANSI C header files
-configure:7613: gcc -c -g -O2  conftest.c >&5
-configure:7613: $? = 0
-configure:7686: gcc -o conftest -g -O2   conftest.c  >&5
-configure:7686: $? = 0
-configure:7686: ./conftest
-configure:7686: $? = 0
-configure:7697: result: yes
-configure:7710: checking for sys/types.h
-configure:7710: gcc -c -g -O2  conftest.c >&5
-configure:7710: $? = 0
-configure:7710: result: yes
-configure:7710: checking for sys/stat.h
-configure:7710: gcc -c -g -O2  conftest.c >&5
-configure:7710: $? = 0
-configure:7710: result: yes
-configure:7710: checking for stdlib.h
-configure:7710: gcc -c -g -O2  conftest.c >&5
-configure:7710: $? = 0
-configure:7710: result: yes
-configure:7710: checking for string.h
-configure:7710: gcc -c -g -O2  conftest.c >&5
-configure:7710: $? = 0
-configure:7710: result: yes
-configure:7710: checking for memory.h
-configure:7710: gcc -c -g -O2  conftest.c >&5
-configure:7710: $? = 0
-configure:7710: result: yes
-configure:7710: checking for strings.h
-configure:7710: gcc -c -g -O2  conftest.c >&5
-configure:7710: $? = 0
-configure:7710: result: yes
-configure:7710: checking for inttypes.h
-configure:7710: gcc -c -g -O2  conftest.c >&5
-configure:7710: $? = 0
-configure:7710: result: yes
-configure:7710: checking for stdint.h
-configure:7710: gcc -c -g -O2  conftest.c >&5
-configure:7710: $? = 0
-configure:7710: result: yes
-configure:7710: checking for unistd.h
-configure:7710: gcc -c -g -O2  conftest.c >&5
-configure:7710: $? = 0
-configure:7710: result: yes
-configure:7724: checking for dlfcn.h
-configure:7724: gcc -c -g -O2  conftest.c >&5
-configure:7724: $? = 0
-configure:7724: result: yes
-configure:7980: checking for objdir
-configure:7995: result: .libs
-configure:8259: checking if gcc supports -fno-rtti -fno-exceptions
-configure:8277: gcc -c -g -O2  -fno-rtti -fno-exceptions conftest.c >&5
+configure:7596: checking for ANSI C header files
+configure:7616: gcc -c -g -O3  conftest.c >&5
+configure:7616: $? = 0
+configure:7689: gcc -o conftest -g -O3   conftest.c  >&5
+configure:7689: $? = 0
+configure:7689: ./conftest
+configure:7689: $? = 0
+configure:7700: result: yes
+configure:7713: checking for sys/types.h
+configure:7713: gcc -c -g -O3  conftest.c >&5
+configure:7713: $? = 0
+configure:7713: result: yes
+configure:7713: checking for sys/stat.h
+configure:7713: gcc -c -g -O3  conftest.c >&5
+configure:7713: $? = 0
+configure:7713: result: yes
+configure:7713: checking for stdlib.h
+configure:7713: gcc -c -g -O3  conftest.c >&5
+configure:7713: $? = 0
+configure:7713: result: yes
+configure:7713: checking for string.h
+configure:7713: gcc -c -g -O3  conftest.c >&5
+configure:7713: $? = 0
+configure:7713: result: yes
+configure:7713: checking for memory.h
+configure:7713: gcc -c -g -O3  conftest.c >&5
+configure:7713: $? = 0
+configure:7713: result: yes
+configure:7713: checking for strings.h
+configure:7713: gcc -c -g -O3  conftest.c >&5
+configure:7713: $? = 0
+configure:7713: result: yes
+configure:7713: checking for inttypes.h
+configure:7713: gcc -c -g -O3  conftest.c >&5
+configure:7713: $? = 0
+configure:7713: result: yes
+configure:7713: checking for stdint.h
+configure:7713: gcc -c -g -O3  conftest.c >&5
+configure:7713: $? = 0
+configure:7713: result: yes
+configure:7713: checking for unistd.h
+configure:7713: gcc -c -g -O3  conftest.c >&5
+configure:7713: $? = 0
+configure:7713: result: yes
+configure:7727: checking for dlfcn.h
+configure:7727: gcc -c -g -O3  conftest.c >&5
+configure:7727: $? = 0
+configure:7727: result: yes
+configure:7983: checking for objdir
+configure:7998: result: .libs
+configure:8262: checking if gcc supports -fno-rtti -fno-exceptions
+configure:8280: gcc -c -g -O3  -fno-rtti -fno-exceptions conftest.c >&5
 cc1: warning: command line option '-fno-rtti' is valid for C++/ObjC++ but not for C
-configure:8281: $? = 0
-configure:8294: result: no
-configure:8652: checking for gcc option to produce PIC
-configure:8659: result: -fPIC -DPIC
-configure:8667: checking if gcc PIC flag -fPIC -DPIC works
-configure:8685: gcc -c -g -O2  -fPIC -DPIC -DPIC conftest.c >&5
-configure:8689: $? = 0
-configure:8702: result: yes
-configure:8731: checking if gcc static flag -static works
-configure:8759: result: yes
-configure:8774: checking if gcc supports -c -o file.o
-configure:8795: gcc -c -g -O2  -o out/conftest2.o conftest.c >&5
-configure:8799: $? = 0
-configure:8821: result: yes
-configure:8829: checking if gcc supports -c -o file.o
-configure:8876: result: yes
-configure:8909: checking whether the gcc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries
-configure:10168: result: yes
-configure:10205: checking whether -lc should be explicitly linked in
-configure:10213: gcc -c -g -O2  conftest.c >&5
-configure:10216: $? = 0
-configure:10231: gcc -shared  -fPIC -DPIC conftest.o  -v -Wl,-soname -Wl,conftest -o conftest 2\>\&1 \| /usr/bin/grep  -lc  \>/dev/null 2\>\&1
-configure:10234: $? = 0
-configure:10248: result: no
-configure:10408: checking dynamic linker characteristics
-configure:10989: gcc -o conftest -g -O2   -Wl,-rpath -Wl,/foo conftest.c  >&5
-configure:10989: $? = 0
-configure:11226: result: GNU/Linux ld.so
-configure:11348: checking how to hardcode library paths into programs
-configure:11373: result: immediate
-configure:11921: checking whether stripping libraries is possible
-configure:11926: result: yes
-configure:11961: checking if libtool supports shared libraries
-configure:11963: result: yes
-configure:11966: checking whether to build shared libraries
-configure:11991: result: yes
-configure:11994: checking whether to build static libraries
-configure:11998: result: yes
-configure:12086: checking for gcc
-configure:12113: result: gcc
-configure:12342: checking for C compiler version
-configure:12351: gcc --version >&5
+configure:8284: $? = 0
+configure:8297: result: no
+configure:8655: checking for gcc option to produce PIC
+configure:8662: result: -fPIC -DPIC
+configure:8670: checking if gcc PIC flag -fPIC -DPIC works
+configure:8688: gcc -c -g -O3  -fPIC -DPIC -DPIC conftest.c >&5
+configure:8692: $? = 0
+configure:8705: result: yes
+configure:8734: checking if gcc static flag -static works
+configure:8762: result: yes
+configure:8777: checking if gcc supports -c -o file.o
+configure:8798: gcc -c -g -O3  -o out/conftest2.o conftest.c >&5
+configure:8802: $? = 0
+configure:8824: result: yes
+configure:8832: checking if gcc supports -c -o file.o
+configure:8879: result: yes
+configure:8912: checking whether the gcc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries
+configure:10171: result: yes
+configure:10208: checking whether -lc should be explicitly linked in
+configure:10216: gcc -c -g -O3  conftest.c >&5
+configure:10219: $? = 0
+configure:10234: gcc -shared  -fPIC -DPIC conftest.o  -v -Wl,-soname -Wl,conftest -o conftest 2\>\&1 \| /usr/bin/grep  -lc  \>/dev/null 2\>\&1
+configure:10237: $? = 0
+configure:10251: result: no
+configure:10411: checking dynamic linker characteristics
+configure:10992: gcc -o conftest -g -O3   -Wl,-rpath -Wl,/foo conftest.c  >&5
+configure:10992: $? = 0
+configure:11229: result: GNU/Linux ld.so
+configure:11351: checking how to hardcode library paths into programs
+configure:11376: result: immediate
+configure:11924: checking whether stripping libraries is possible
+configure:11929: result: yes
+configure:11964: checking if libtool supports shared libraries
+configure:11966: result: yes
+configure:11969: checking whether to build shared libraries
+configure:11994: result: yes
+configure:11997: checking whether to build static libraries
+configure:12001: result: yes
+configure:12089: checking for gcc
+configure:12116: result: gcc
+configure:12345: checking for C compiler version
+configure:12354: gcc --version >&5
 gcc (GCC) 8.2.0
 Copyright (C) 2018 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-configure:12362: $? = 0
-configure:12351: gcc -v >&5
+configure:12365: $? = 0
+configure:12354: gcc -v >&5
 Reading specs from /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/specs
 COLLECT_GCC=gcc
 COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-slackware-linux/8.2.0/lto-wrapper
@@ -371,39 +371,39 @@ Target: x86_64-slackware-linux
 Configured with: ../gcc-8.2.0/configure --prefix=/usr --libdir=/usr/lib64 --mandir=/usr/man --infodir=/usr/info --enable-shared --enable-bootstrap --enable-languages=ada,brig,c,c++,fortran,go,lto,objc --enable-threads=posix --enable-checking=release --enable-objc-gc --with-system-zlib --enable-libstdcxx-dual-abi --with-default-libstdcxx-abi=new --disable-libstdcxx-pch --disable-libunwind-exceptions --enable-__cxa_atexit --disable-libssp --enable-gnu-unique-object --enable-plugin --enable-lto --disable-install-libiberty --disable-werror --with-gnu-ld --verbose --with-arch-directory=amd64 --disable-gtktest --disable-multilib --target=x86_64-slackware-linux --build=x86_64-slackware-linux --host=x86_64-slackware-linux
 Thread model: posix
 gcc version 8.2.0 (GCC) 
-configure:12362: $? = 0
-configure:12351: gcc -V >&5
+configure:12365: $? = 0
+configure:12354: gcc -V >&5
 gcc: error: unrecognized command line option '-V'
 gcc: fatal error: no input files
 compilation terminated.
-configure:12362: $? = 1
-configure:12351: gcc -qversion >&5
+configure:12365: $? = 1
+configure:12354: gcc -qversion >&5
 gcc: error: unrecognized command line option '-qversion'; did you mean '--version'?
 gcc: fatal error: no input files
 compilation terminated.
-configure:12362: $? = 1
-configure:12366: checking whether we are using the GNU C compiler
-configure:12394: result: yes
-configure:12403: checking whether gcc accepts -g
-configure:12464: result: yes
-configure:12481: checking for gcc option to accept ISO C89
-configure:12557: result: none needed
-configure:12582: checking whether gcc understands -c and -o together
-configure:12619: result: yes
-configure:12638: checking dependency style of gcc
-configure:12749: result: gcc3
-configure:12825: checking for g77
-configure:12841: found /usr/bin/g77
-configure:12852: result: g77
-configure:12878: checking for Fortran 77 compiler version
-configure:12887: g77 --version >&5
+configure:12365: $? = 1
+configure:12369: checking whether we are using the GNU C compiler
+configure:12397: result: yes
+configure:12406: checking whether gcc accepts -g
+configure:12467: result: yes
+configure:12484: checking for gcc option to accept ISO C89
+configure:12560: result: none needed
+configure:12585: checking whether gcc understands -c and -o together
+configure:12622: result: yes
+configure:12641: checking dependency style of gcc
+configure:12752: result: gcc3
+configure:12828: checking for g77
+configure:12844: found /usr/bin/g77
+configure:12855: result: g77
+configure:12881: checking for Fortran 77 compiler version
+configure:12890: g77 --version >&5
 GNU Fortran (GCC) 8.2.0
 Copyright (C) 2018 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-configure:12898: $? = 0
-configure:12887: g77 -v >&5
+configure:12901: $? = 0
+configure:12890: g77 -v >&5
 Reading specs from /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/specs
 COLLECT_GCC=g77
 COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-slackware-linux/8.2.0/lto-wrapper
@@ -411,115 +411,118 @@ Target: x86_64-slackware-linux
 Configured with: ../gcc-8.2.0/configure --prefix=/usr --libdir=/usr/lib64 --mandir=/usr/man --infodir=/usr/info --enable-shared --enable-bootstrap --enable-languages=ada,brig,c,c++,fortran,go,lto,objc --enable-threads=posix --enable-checking=release --enable-objc-gc --with-system-zlib --enable-libstdcxx-dual-abi --with-default-libstdcxx-abi=new --disable-libstdcxx-pch --disable-libunwind-exceptions --enable-__cxa_atexit --disable-libssp --enable-gnu-unique-object --enable-plugin --enable-lto --disable-install-libiberty --disable-werror --with-gnu-ld --verbose --with-arch-directory=amd64 --disable-gtktest --disable-multilib --target=x86_64-slackware-linux --build=x86_64-slackware-linux --host=x86_64-slackware-linux
 Thread model: posix
 gcc version 8.2.0 (GCC) 
-configure:12898: $? = 0
-configure:12887: g77 -V >&5
+configure:12901: $? = 0
+configure:12890: g77 -V >&5
 g77: error: unrecognized command line option '-V'
 g77: fatal error: no input files
 compilation terminated.
-configure:12898: $? = 1
-configure:12887: g77 -qversion >&5
+configure:12901: $? = 1
+configure:12890: g77 -qversion >&5
 g77: error: unrecognized command line option '-qversion'; did you mean '--version'?
 g77: fatal error: no input files
 compilation terminated.
-configure:12898: $? = 1
-configure:12907: checking whether we are using the GNU Fortran 77 compiler
-configure:12920: g77 -c  conftest.F >&5
-configure:12920: $? = 0
-configure:12929: result: yes
-configure:12935: checking whether g77 accepts -g
-configure:12946: g77 -c -g conftest.f >&5
-configure:12946: $? = 0
-configure:12954: result: yes
-configure:13083: checking if libtool supports shared libraries
-configure:13085: result: yes
-configure:13088: checking whether to build shared libraries
-configure:13112: result: yes
-configure:13115: checking whether to build static libraries
-configure:13119: result: yes
-configure:13471: checking for g77 option to produce PIC
-configure:13478: result: -fPIC
-configure:13486: checking if g77 PIC flag -fPIC works
-configure:13504: g77 -c -g -O2 -fPIC conftest.f >&5
-configure:13508: $? = 0
-configure:13521: result: yes
-configure:13544: checking if g77 static flag -static works
-configure:13572: result: yes
-configure:13584: checking if g77 supports -c -o file.o
-configure:13605: g77 -c -g -O2 -o out/conftest2.o conftest.f >&5
-configure:13609: $? = 0
-configure:13631: result: yes
-configure:13636: checking if g77 supports -c -o file.o
-configure:13683: result: yes
-configure:13713: checking whether the g77 linker (/usr/bin/ld -m elf_x86_64) supports shared libraries
-configure:14922: result: yes
-configure:15063: checking dynamic linker characteristics
-configure:15802: result: GNU/Linux ld.so
-configure:15867: checking how to hardcode library paths into programs
-configure:15892: result: immediate
-configure:15930: checking for gawk
-configure:15957: result: gawk
-configure:15968: checking for library containing strerror
-configure:15999: gcc -o conftest -g -O2 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations   conftest.c  >&5
+configure:12901: $? = 1
+configure:12910: checking whether we are using the GNU Fortran 77 compiler
+configure:12923: g77 -c -std=legacy conftest.F >&5
+configure:12923: $? = 0
+configure:12932: result: yes
+configure:12938: checking whether g77 accepts -g
+configure:12949: g77 -c -g conftest.f >&5
+configure:12949: $? = 0
+configure:12957: result: yes
+configure:13086: checking if libtool supports shared libraries
+configure:13088: result: yes
+configure:13091: checking whether to build shared libraries
+configure:13115: result: yes
+configure:13118: checking whether to build static libraries
+configure:13122: result: yes
+configure:13474: checking for g77 option to produce PIC
+configure:13481: result: -fPIC
+configure:13489: checking if g77 PIC flag -fPIC works
+configure:13507: g77 -c -std=legacy -fPIC conftest.f >&5
+configure:13511: $? = 0
+configure:13524: result: yes
+configure:13547: checking if g77 static flag -static works
+configure:13575: result: yes
+configure:13587: checking if g77 supports -c -o file.o
+configure:13608: g77 -c -std=legacy -o out/conftest2.o conftest.f >&5
+configure:13612: $? = 0
+configure:13634: result: yes
+configure:13639: checking if g77 supports -c -o file.o
+configure:13686: result: yes
+configure:13716: checking whether the g77 linker (/usr/bin/ld -m elf_x86_64) supports shared libraries
+configure:14925: result: yes
+configure:15066: checking dynamic linker characteristics
+configure:15805: result: GNU/Linux ld.so
+configure:15870: checking how to hardcode library paths into programs
+configure:15895: result: immediate
+configure:15933: checking for gawk
+configure:15960: result: gawk
+configure:15971: checking for library containing strerror
+configure:16002: gcc -o conftest -g -O3 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations   conftest.c  >&5
 conftest.c:32:1: warning: function declaration isn't a prototype [-Wstrict-prototypes]
  char strerror ();
  ^~~~
 conftest.c:34:1: warning: function declaration isn't a prototype [-Wstrict-prototypes]
  main ()
  ^~~~
-configure:15999: $? = 0
-configure:16016: result: none required
-configure:16024: checking for ANSI C header files
-configure:16128: result: yes
-configure:16191: checking for pkg-config
-configure:16209: found /usr/bin/pkg-config
-configure:16221: result: /usr/bin/pkg-config
-configure:16246: checking pkg-config is at least version 0.9.0
-configure:16249: result: yes
-configure:16260: checking for gts
-configure:16267: $PKG_CONFIG --exists --print-errors "gts"
-configure:16270: $? = 0
-configure:16284: $PKG_CONFIG --exists --print-errors "gts"
-configure:16287: $? = 0
-configure:16427: result: yes
-configure:16435: checking for gsl
-configure:16442: $PKG_CONFIG --exists --print-errors "gsl"
-configure:16445: $? = 0
-configure:16459: $PKG_CONFIG --exists --print-errors "gsl"
-configure:16462: $? = 0
-configure:16520: result: yes
-configure:16542: checking for gqr-config
-configure:16558: found /home/ensmjc/Codes/bin/gqr-config
-configure:16570: result: yes
-configure:16597: checking for sisl-config
-configure:16613: found /home/ensmjc/Codes/bin/sisl-config
-configure:16625: result: yes
-configure:16652: checking for wmpi-config
-configure:16668: found /home/ensmjc/Codes/bin/wmpi-config
-configure:16680: result: yes
-configure:16721: checking for fmmlib3d-1.2
-configure:16734: result: yes
-configure:16757: checking for libmatheval
-configure:16764: $PKG_CONFIG --exists --print-errors "libmatheval"
-configure:16767: $? = 0
-configure:16781: $PKG_CONFIG --exists --print-errors "libmatheval"
-configure:16784: $? = 0
-configure:16842: result: yes
-configure:16873: checking for sqrt in -lm
-configure:16898: gcc -o conftest -g -O2 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include   -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -L/home/ensmjc/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/ensmjc/Codes/lib -lwmpi_s -lglib-2.0 -L/home/ensmjc/Codes/lib -lglib-2.0 -lm conftest.c -lm   >&5
-conftest.c:38:1: warning: function declaration isn't a prototype [-Wstrict-prototypes]
+configure:16002: $? = 0
+configure:16019: result: none required
+configure:16027: checking for ANSI C header files
+configure:16131: result: yes
+configure:16194: checking for pkg-config
+configure:16212: found /usr/bin/pkg-config
+configure:16224: result: /usr/bin/pkg-config
+configure:16249: checking pkg-config is at least version 0.9.0
+configure:16252: result: yes
+configure:16263: checking for gts
+configure:16270: $PKG_CONFIG --exists --print-errors "gts"
+configure:16273: $? = 0
+configure:16287: $PKG_CONFIG --exists --print-errors "gts"
+configure:16290: $? = 0
+configure:16430: result: yes
+configure:16438: checking for gsl
+configure:16445: $PKG_CONFIG --exists --print-errors "gsl"
+configure:16448: $? = 0
+configure:16462: $PKG_CONFIG --exists --print-errors "gsl"
+configure:16465: $? = 0
+configure:16523: result: yes
+configure:16530: checking for gqr-config
+configure:16546: found /home/ensmjc/Codes/bin/gqr-config
+configure:16558: result: yes
+configure:16585: checking for sisl-config
+configure:16601: found /home/ensmjc/Codes/bin/sisl-config
+configure:16613: result: yes
+configure:16640: checking for wmpi-config
+configure:16656: found /home/ensmjc/Codes/bin/wmpi-config
+configure:16668: result: yes
+configure:16711: checking for wbfmm-config
+configure:16727: found /home/ensmjc/Codes/bin/wbfmm-config
+configure:16739: result: yes
+configure:16764: checking for fmmlib3d-1.2
+configure:16777: result: yes
+configure:16800: checking for libmatheval
+configure:16807: $PKG_CONFIG --exists --print-errors "libmatheval"
+configure:16810: $? = 0
+configure:16824: $PKG_CONFIG --exists --print-errors "libmatheval"
+configure:16827: $? = 0
+configure:16885: result: yes
+configure:16919: checking for sqrt in -lm
+configure:16944: gcc -o conftest -g -O3 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include -fopenmp -I/home/ensmjc/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include   -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -L/home/ensmjc/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/ensmjc/Codes/lib -lwmpi_s -lglib-2.0 -L/home/ensmjc/Codes/lib -lglib-2.0 -lm -L/home/ensmjc/Codes/lib -lsisl -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath 		  -L/home/ensmjc/Codes/lib -lwbfmm-base -lwbfmm -lglib-2.0 -lm conftest.c -lm   >&5
+conftest.c:39:1: warning: function declaration isn't a prototype [-Wstrict-prototypes]
  char sqrt ();
  ^~~~
-conftest.c:38:6: warning: conflicting types for built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]
+conftest.c:39:6: warning: conflicting types for built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]
  char sqrt ();
       ^~~~
-conftest.c:40:1: warning: function declaration isn't a prototype [-Wstrict-prototypes]
+conftest.c:41:1: warning: function declaration isn't a prototype [-Wstrict-prototypes]
  main ()
  ^~~~
-configure:16898: $? = 0
-configure:16907: result: yes
-configure:17036: checking that generated files are newer than configure
-configure:17042: result: done
-configure:17073: creating ./config.status
+configure:16944: $? = 0
+configure:16953: result: yes
+configure:17082: checking that generated files are newer than configure
+configure:17088: result: done
+configure:17119: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -536,28 +539,29 @@ generated by GNU Autoconf 2.69.  Invocation command line was
 
 on aerialist-1.bath.ac.uk
 
-config.status:1202: creating Makefile
-config.status:1202: creating src/Makefile
-config.status:1202: creating src/bem3d-config
-config.status:1202: creating tools/Makefile
-config.status:1202: creating doc/Makefile
-config.status:1202: creating doc/html/Makefile
-config.status:1202: creating mpitools/Makefile
-config.status:1202: creating mpitools/bem3d-pbs-run
-config.status:1202: creating mpitools/bem3d-pbs-launch
-config.status:1202: creating config.h
-config.status:1383: config.h is unchanged
-config.status:1431: executing depfiles commands
-config.status:1508: cd src       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1210: creating Makefile
+config.status:1210: creating src/Makefile
+config.status:1210: creating src/bem3d-config
+config.status:1210: creating tools/Makefile
+config.status:1210: creating doc/Makefile
+config.status:1210: creating doc/html/Makefile
+config.status:1210: creating mpitools/Makefile
+config.status:1210: creating mpitools/bem3d-pbs-run
+config.status:1210: creating mpitools/bem3d-pbs-launch
+config.status:1210: creating config.h
+config.status:1391: config.h is unchanged
+config.status:1439: executing depfiles commands
+config.status:1516: cd src       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for 'am--depfiles'.
-config.status:1513: $? = 0
-config.status:1508: cd tools       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
-config.status:1513: $? = 0
-config.status:1508: cd mpitools       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+config.status:1521: $? = 0
+config.status:1516: cd tools       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
 make: Nothing to be done for 'am--depfiles'.
-config.status:1513: $? = 0
-config.status:1431: executing libtool commands
-config.status:1431: executing default-1 commands
+config.status:1521: $? = 0
+config.status:1516: cd mpitools       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+make: Nothing to be done for 'am--depfiles'.
+config.status:1521: $? = 0
+config.status:1439: executing libtool commands
+config.status:1439: executing default-1 commands
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -567,16 +571,16 @@ ac_cv_build=x86_64-unknown-linux-gnu
 ac_cv_c_compiler_gnu=yes
 ac_cv_env_CC_set=
 ac_cv_env_CC_value=
-ac_cv_env_CFLAGS_set=
-ac_cv_env_CFLAGS_value=
+ac_cv_env_CFLAGS_set=set
+ac_cv_env_CFLAGS_value='-g -O3'
 ac_cv_env_CPPFLAGS_set=
 ac_cv_env_CPPFLAGS_value=
 ac_cv_env_CPP_set=
 ac_cv_env_CPP_value=
 ac_cv_env_F77_set=
 ac_cv_env_F77_value=
-ac_cv_env_FFLAGS_set=
-ac_cv_env_FFLAGS_value=
+ac_cv_env_FFLAGS_set=set
+ac_cv_env_FFLAGS_value=-std=legacy
 ac_cv_env_GSL_CFLAGS_set=
 ac_cv_env_GSL_CFLAGS_value=
 ac_cv_env_GSL_LIBS_set=
@@ -635,6 +639,7 @@ ac_cv_prog_AWK=gawk
 ac_cv_prog_CPP='gcc -E'
 ac_cv_prog_GQR=yes
 ac_cv_prog_SISL=yes
+ac_cv_prog_WBFMM=yes
 ac_cv_prog_WMPI=yes
 ac_cv_prog_ac_ct_AR=ar
 ac_cv_prog_ac_ct_CC=gcc
@@ -712,7 +717,7 @@ AWK='gawk'
 BEM3D_VERSION='0.2.1'
 CC='gcc'
 CCDEPMODE='depmode=gcc3'
-CFLAGS='-g -O2 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include'
+CFLAGS='-g -O3 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include -fopenmp -I/home/ensmjc/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include'
 CPP='gcc -E'
 CPPFLAGS=''
 CYGPATH_W='echo'
@@ -727,7 +732,7 @@ ECHO_T=''
 EGREP='/usr/bin/grep -E'
 EXEEXT=''
 F77='g77'
-FFLAGS='-g -O2'
+FFLAGS='-std=legacy'
 FGREP='/usr/bin/grep -F'
 GQR='yes'
 GREP='/usr/bin/grep'
@@ -739,7 +744,7 @@ INSTALL_PROGRAM='${INSTALL}'
 INSTALL_SCRIPT='${INSTALL}'
 INSTALL_STRIP_PROGRAM='$(install_sh) -c -s'
 LD='/usr/bin/ld -m elf_x86_64'
-LDFLAGS=' -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -L/home/ensmjc/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/ensmjc/Codes/lib -lwmpi_s -lglib-2.0 -L/home/ensmjc/Codes/lib -lglib-2.0 -lm'
+LDFLAGS=' -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -L/home/ensmjc/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/ensmjc/Codes/lib -lwmpi_s -lglib-2.0 -L/home/ensmjc/Codes/lib -lglib-2.0 -lm -L/home/ensmjc/Codes/lib -lsisl -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath 		  -L/home/ensmjc/Codes/lib -lwbfmm-base -lwbfmm -lglib-2.0 -lm'
 LIBOBJS=''
 LIBS='-L/home/ensmjc/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/usr/local/lib64 -lmatheval -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -lm '
 LIBTOOL='$(SHELL) $(top_builddir)/libtool'
@@ -780,6 +785,7 @@ STRIP='strip'
 USE_FMMLIB3D_1_2_FALSE='#'
 USE_FMMLIB3D_1_2_TRUE=''
 VERSION='0.2'
+WBFMM='yes'
 WMPI='yes'
 ac_ct_AR='ar'
 ac_ct_CC='gcc'
@@ -844,6 +850,8 @@ sisl_cflags='-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmj
 sisl_libs='-L/home/ensmjc/Codes/lib -lsisl -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. -lgfortran -lm -lquadmath'
 sysconfdir='${prefix}/etc'
 target_alias=''
+wbfmm_cflags='-fopenmp -I/home/ensmjc/Codes/include'
+wbfmm_libs='-L/home/ensmjc/Codes/lib -lwbfmm-base -lwbfmm -lglib-2.0 -lm'
 wmpi_cflags='-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include'
 wmpi_libs='-L/home/ensmjc/Codes/lib -lwmpi_s -lglib-2.0 -L/home/ensmjc/Codes/lib -lglib-2.0 -lm'
 
@@ -878,8 +886,43 @@ wmpi_libs='-L/home/ensmjc/Codes/lib -lwmpi_s -lglib-2.0 -L/home/ensmjc/Codes/lib
 #define HAVE_GQR 1
 #define HAVE_SISL 1
 #define HAVE_WMPI 1
+#define HAVE_WBFMM 1
 #define HAVE_FMMLIB3D_1_2 1
 #define HAVE_LIBMATHEVAL 1
 #define HAVE_LIBM 1
 
 configure: exit 0
+
+## ---------------------- ##
+## Running config.status. ##
+## ---------------------- ##
+
+This file was extended by bem3d config.status 0.2, which was
+generated by GNU Autoconf 2.69.  Invocation command line was
+
+  CONFIG_FILES    = 
+  CONFIG_HEADERS  = 
+  CONFIG_LINKS    = 
+  CONFIG_COMMANDS = 
+  $ ./config.status src/bem3d-config
+
+on aerialist-1.bath.ac.uk
+
+config.status:1210: creating src/bem3d-config
+
+## ---------------------- ##
+## Running config.status. ##
+## ---------------------- ##
+
+This file was extended by bem3d config.status 0.2, which was
+generated by GNU Autoconf 2.69.  Invocation command line was
+
+  CONFIG_FILES    = 
+  CONFIG_HEADERS  = 
+  CONFIG_LINKS    = 
+  CONFIG_COMMANDS = 
+  $ ./config.status src/bem3d-config
+
+on aerialist-1.bath.ac.uk
+
+config.status:1210: creating src/bem3d-config

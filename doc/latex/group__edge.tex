@@ -1,32 +1,32 @@
-\section{B\+E\+M3D edges}
+\section{B\+E\+M3\+D edges}
 \label{group__edge}\index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
 \subsection*{Data Structures}
 \begin{DoxyCompactItemize}
 \item 
-struct \textbf{ B\+E\+M3\+D\+Edge\+Class}
+struct {\bf B\+E\+M3\+D\+Edge\+Class}
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\textbf{ B\+E\+M3\+D\+Edge} $\ast$ \textbf{ bem3d\+\_\+edge\+\_\+new} (\textbf{ B\+E\+M3\+D\+Edge\+Class} $\ast$klass)
+{\bf B\+E\+M3\+D\+Edge} $\ast$ {\bf bem3d\+\_\+edge\+\_\+new} ({\bf B\+E\+M3\+D\+Edge\+Class} $\ast$klass)
 \item 
-gint \textbf{ bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, Gts\+Vertex $\ast$v)
+gint {\bf bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, Gts\+Vertex $\ast$v)
 \item 
-G\+S\+List $\ast$ \textbf{ bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m)
+G\+S\+List $\ast$ {\bf bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m)
 \item 
-G\+S\+List $\ast$ \textbf{ bem3d\+\_\+mesh\+\_\+extract\+\_\+edges} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, G\+S\+List $\ast$$\ast$e)
+G\+S\+List $\ast$ {\bf bem3d\+\_\+mesh\+\_\+extract\+\_\+edges} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, G\+S\+List $\ast$$\ast$e)
 \item 
-gint \textbf{ bem3d\+\_\+edge\+\_\+clear} (\textbf{ B\+E\+M3\+D\+Edge} $\ast$e)
+gint {\bf bem3d\+\_\+edge\+\_\+clear} ({\bf B\+E\+M3\+D\+Edge} $\ast$e)
 \item 
-gint \textbf{ bem3d\+\_\+edge\+\_\+copy} (\textbf{ B\+E\+M3\+D\+Edge} $\ast$e, \textbf{ B\+E\+M3\+D\+Edge} $\ast$f)
+gint {\bf bem3d\+\_\+edge\+\_\+copy} ({\bf B\+E\+M3\+D\+Edge} $\ast$e, {\bf B\+E\+M3\+D\+Edge} $\ast$f)
 \item 
-gint \textbf{ bem3d\+\_\+edge\+\_\+write} (\textbf{ B\+E\+M3\+D\+Edge} $\ast$e, F\+I\+LE $\ast$f)
+gint {\bf bem3d\+\_\+edge\+\_\+write} ({\bf B\+E\+M3\+D\+Edge} $\ast$e, F\+I\+L\+E $\ast$f)
 \item 
-guint \textbf{ bem3d\+\_\+edge\+\_\+read} (\textbf{ B\+E\+M3\+D\+Edge} $\ast$e, Gts\+File $\ast$f)
+guint {\bf bem3d\+\_\+edge\+\_\+read} ({\bf B\+E\+M3\+D\+Edge} $\ast$e, Gts\+File $\ast$f)
 \item 
-gboolean \textbf{ bem3d\+\_\+edge\+\_\+is\+\_\+oriented} (\textbf{ B\+E\+M3\+D\+Edge} $\ast$e, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m)
+gboolean {\bf bem3d\+\_\+edge\+\_\+is\+\_\+oriented} ({\bf B\+E\+M3\+D\+Edge} $\ast$e, {\bf B\+E\+M3\+D\+Mesh} $\ast$m)
 \item 
-gint \textbf{ bem3d\+\_\+invert\+\_\+edge} (\textbf{ B\+E\+M3\+D\+Edge} $\ast$e)
+gint {\bf bem3d\+\_\+invert\+\_\+edge} ({\bf B\+E\+M3\+D\+Edge} $\ast$e)
 \end{DoxyCompactItemize}
 
 
@@ -34,12 +34,13 @@ gint \textbf{ bem3d\+\_\+invert\+\_\+edge} (\textbf{ B\+E\+M3\+D\+Edge} $\ast$e)
 A data type and set of functions which allow the handling of edges, oriented lists of sharp nodes on a mesh. 
 
 \subsection{Function Documentation}
-\mbox{\label{group__edge_gac3960b22f4037ef76286503ba914068e}} 
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+edge\+\_\+clear@{bem3d\+\_\+edge\+\_\+clear}}
 \index{bem3d\+\_\+edge\+\_\+clear@{bem3d\+\_\+edge\+\_\+clear}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+edge\+\_\+clear()}
-{\footnotesize\ttfamily gint bem3d\+\_\+edge\+\_\+clear (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Edge} $\ast$}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+edge\+\_\+clear}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+edge\+\_\+clear (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Edge} $\ast$}]{e}
+\end{DoxyParamCaption}
+)}\label{group__edge_gac3960b22f4037ef76286503ba914068e}
 Clear a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge}, i.\+e. set its number of nodes to zero.
 
 
@@ -48,15 +49,17 @@ Clear a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge}, i.\+e. set its number 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__edge_ga4f89fb27a48f0126dbd81f62baba966a}} 
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+edge\+\_\+copy@{bem3d\+\_\+edge\+\_\+copy}}
 \index{bem3d\+\_\+edge\+\_\+copy@{bem3d\+\_\+edge\+\_\+copy}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+edge\+\_\+copy()}
-{\footnotesize\ttfamily gint bem3d\+\_\+edge\+\_\+copy (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Edge} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Edge} $\ast$}]{f }\end{DoxyParamCaption})}
-
-Copy a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge}. This is a `deep' copy, i.\+e. the Gts\+Vertex at each node is copied into a new instance, rather than being linked to the same address, so that the copy can be swept without affecting the original points.
+\subsubsection[{bem3d\+\_\+edge\+\_\+copy}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+edge\+\_\+copy (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Edge} $\ast$}]{e, }
+\item[{{\bf B\+E\+M3\+D\+Edge} $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__edge_ga4f89fb27a48f0126dbd81f62baba966a}
+Copy a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge}. This is a `deep\textquotesingle{} copy, i.\+e. the Gts\+Vertex at each node is copied into a new instance, rather than being linked to the same address, so that the copy can be swept without affecting the original points.
 
 
 \begin{DoxyParams}{Parameters}
@@ -66,14 +69,16 @@ Copy a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge}. This is a `deep' copy, 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__edge_gabe450d81d63254f8e50a1315070d597b}} 
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+edge\+\_\+is\+\_\+oriented@{bem3d\+\_\+edge\+\_\+is\+\_\+oriented}}
 \index{bem3d\+\_\+edge\+\_\+is\+\_\+oriented@{bem3d\+\_\+edge\+\_\+is\+\_\+oriented}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+edge\+\_\+is\+\_\+oriented()}
-{\footnotesize\ttfamily gboolean bem3d\+\_\+edge\+\_\+is\+\_\+oriented (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Edge} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+edge\+\_\+is\+\_\+oriented}]{\setlength{\rightskip}{0pt plus 5cm}gboolean bem3d\+\_\+edge\+\_\+is\+\_\+oriented (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Edge} $\ast$}]{e, }
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m}
+\end{DoxyParamCaption}
+)}\label{group__edge_gabe450d81d63254f8e50a1315070d597b}
 Check if a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge} is aligned with its parent \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}, by comparing the direction of the edge with the corresponding edges on the mesh.
 
 
@@ -84,18 +89,19 @@ Check if a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge} is aligned with its 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-T\+R\+UE if {\itshape e} is compatibly aligned with the sharp edges of {\itshape m}. 
+T\+R\+U\+E if {\itshape e} is compatibly aligned with the sharp edges of {\itshape m}. 
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+find\+\_\+index(), bem3d\+\_\+elements\+\_\+from\+\_\+vertices(), B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, and bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index().
+References bem3d\+\_\+element\+\_\+find\+\_\+index(), bem3d\+\_\+elements\+\_\+from\+\_\+vertices(), B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, and bem3d\+\_\+mesh\+\_\+node\+\_\+from\+\_\+index().
 
-\mbox{\label{group__edge_gade5c594ce552932ca9e133908cbd02ea}} 
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+edge\+\_\+new@{bem3d\+\_\+edge\+\_\+new}}
 \index{bem3d\+\_\+edge\+\_\+new@{bem3d\+\_\+edge\+\_\+new}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+edge\+\_\+new()}
-{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Edge}$\ast$ bem3d\+\_\+edge\+\_\+new (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Edge\+Class} $\ast$}]{klass }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+edge\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Edge}$\ast$ bem3d\+\_\+edge\+\_\+new (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Edge\+Class} $\ast$}]{klass}
+\end{DoxyParamCaption}
+)}\label{group__edge_gade5c594ce552932ca9e133908cbd02ea}
 Allocate a new \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge}.
 
 
@@ -106,12 +112,18 @@ Allocate a new \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge}.
 \begin{DoxyReturn}{Returns}
 the newly allocated object. 
 \end{DoxyReturn}
-\mbox{\label{group__edge_ga9684358971869dc6599dc6ef437543b0}} 
+
+
+Referenced by bem3d\+\_\+mesh\+\_\+extract\+\_\+edges().
+
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+edge\+\_\+read@{bem3d\+\_\+edge\+\_\+read}}
 \index{bem3d\+\_\+edge\+\_\+read@{bem3d\+\_\+edge\+\_\+read}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+edge\+\_\+read()}
-{\footnotesize\ttfamily guint bem3d\+\_\+edge\+\_\+read (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Edge} $\ast$}]{e,  }\item[{Gts\+File $\ast$}]{f }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+edge\+\_\+read}]{\setlength{\rightskip}{0pt plus 5cm}guint bem3d\+\_\+edge\+\_\+read (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Edge} $\ast$}]{e, }
+\item[{Gts\+File $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__edge_ga9684358971869dc6599dc6ef437543b0}
 Read a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge} from a file. The format is that used by \doxyref{bem3d\+\_\+edge\+\_\+write}{p.}{group__edge_ga760de43a520f82fb2d3c327eb6fd1511}.
 
 
@@ -122,14 +134,16 @@ Read a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge} from a file. The format 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__edge_ga760de43a520f82fb2d3c327eb6fd1511}} 
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+edge\+\_\+write@{bem3d\+\_\+edge\+\_\+write}}
 \index{bem3d\+\_\+edge\+\_\+write@{bem3d\+\_\+edge\+\_\+write}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+edge\+\_\+write()}
-{\footnotesize\ttfamily gint bem3d\+\_\+edge\+\_\+write (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Edge} $\ast$}]{e,  }\item[{F\+I\+LE $\ast$}]{f }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+edge\+\_\+write}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+edge\+\_\+write (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Edge} $\ast$}]{e, }
+\item[{F\+I\+L\+E $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__edge_ga760de43a520f82fb2d3c327eb6fd1511}
 Write a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge} to a file. The output format is one line\+:
 
 {\itshape N} \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge}
@@ -144,14 +158,15 @@ where {\itshape N} is the number of edge nodes followed by {\itshape N} pairs of
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__edge_ga4ff6b88fbf0af49588330e52761d118a}} 
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+invert\+\_\+edge@{bem3d\+\_\+invert\+\_\+edge}}
 \index{bem3d\+\_\+invert\+\_\+edge@{bem3d\+\_\+invert\+\_\+edge}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+invert\+\_\+edge()}
-{\footnotesize\ttfamily gint bem3d\+\_\+invert\+\_\+edge (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Edge} $\ast$}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+invert\+\_\+edge}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+invert\+\_\+edge (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Edge} $\ast$}]{e}
+\end{DoxyParamCaption}
+)}\label{group__edge_ga4ff6b88fbf0af49588330e52761d118a}
 Invert a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge} by swapping the upper and lower indices to properly align it with its parent \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}.
 
 
@@ -160,14 +175,16 @@ Invert a \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge} by swapping the upper 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__edge_ga8b2021a683d9c9328eacfbd9f524ed49}} 
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+mesh\+\_\+extract\+\_\+edges@{bem3d\+\_\+mesh\+\_\+extract\+\_\+edges}}
 \index{bem3d\+\_\+mesh\+\_\+extract\+\_\+edges@{bem3d\+\_\+mesh\+\_\+extract\+\_\+edges}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+mesh\+\_\+extract\+\_\+edges()}
-{\footnotesize\ttfamily G\+S\+List$\ast$ bem3d\+\_\+mesh\+\_\+extract\+\_\+edges (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{G\+S\+List $\ast$$\ast$}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+mesh\+\_\+extract\+\_\+edges}]{\setlength{\rightskip}{0pt plus 5cm}G\+S\+List$\ast$ bem3d\+\_\+mesh\+\_\+extract\+\_\+edges (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{G\+S\+List $\ast$$\ast$}]{e}
+\end{DoxyParamCaption}
+)}\label{group__edge_ga8b2021a683d9c9328eacfbd9f524ed49}
 Extract the edge connectivity data from a list of sharp nodes.
 
 
@@ -182,14 +199,15 @@ a G\+S\+List of \doxyref{B\+E\+M3\+D\+Edge}{p.}{structBEM3DEdge}, each of which 
 \end{DoxyReturn}
 
 
-References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH.
+References bem3d\+\_\+edge\+\_\+new(), and B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H.
 
-\mbox{\label{group__edge_gafac8a1e13404b34dbcd6873684f4b796}} 
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices@{bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices}}
 \index{bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices@{bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices()}
-{\footnotesize\ttfamily G\+S\+List$\ast$ bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices}]{\setlength{\rightskip}{0pt plus 5cm}G\+S\+List$\ast$ bem3d\+\_\+mesh\+\_\+sharp\+\_\+vertices (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m}
+\end{DoxyParamCaption}
+)}\label{group__edge_gafac8a1e13404b34dbcd6873684f4b796}
 Find the sharp nodes of a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh}, i.\+e. those with multiple indices, as found by \doxyref{bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number}{p.}{group__edge_ga922d584e196c796d1b1b1b0d71b39973}.
 
 
@@ -202,14 +220,16 @@ a G\+S\+List of the Gts\+Vertex\textquotesingle{}s of {\itshape m} which have mu
 \end{DoxyReturn}
 
 
-References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH.
+References B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H.
 
-\mbox{\label{group__edge_ga922d584e196c796d1b1b1b0d71b39973}} 
 \index{B\+E\+M3\+D edges@{B\+E\+M3\+D edges}!bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number@{bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number}}
 \index{bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number@{bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number}!B\+E\+M3\+D edges@{B\+E\+M3\+D edges}}
-\subsubsection{bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number()}
-{\footnotesize\ttfamily gint bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{Gts\+Vertex $\ast$}]{v }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{Gts\+Vertex $\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__edge_ga922d584e196c796d1b1b1b0d71b39973}
 Find the number of indices assigned to a mesh vertex.
 
 
@@ -224,5 +244,5 @@ the number of indices used by {\itshape v} on {\itshape m}.
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+find\+\_\+vertex(), bem3d\+\_\+element\+\_\+global\+\_\+index, B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, and bem3d\+\_\+mesh\+\_\+vertex\+\_\+elements().
+References bem3d\+\_\+element\+\_\+find\+\_\+vertex(), bem3d\+\_\+element\+\_\+global\+\_\+index, B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, and bem3d\+\_\+mesh\+\_\+vertex\+\_\+elements().
 

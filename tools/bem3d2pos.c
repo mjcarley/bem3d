@@ -112,6 +112,9 @@ gint main(gint argc, gchar **argv)
 	      "        -o <output file name>\n"
 	      "        -t <title for GMSH view>\n",
 	      field) ;
+      fprintf(stderr,
+	      "%s is now superseded by bem3d2msh and is no longer "
+	      "supported.\n", progname) ;
       return 0 ;
       break ;
     case 'd': datafile = g_strdup(optarg) ; break ;

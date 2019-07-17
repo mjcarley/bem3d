@@ -45,6 +45,8 @@
 
 /* #define FMM_DIRECT_CONSTANT */
 
+#define ADATA_SIZE     32
+
 #define ADATA_MESHES        0
 #define ADATA_CONFIG        1
 #define ADATA_GDATA         2
@@ -63,8 +65,7 @@
 #define ADATA_GRADIENT_W_T 15
 #define ADATA_GRADIENT_W_I 16
 #define ADATA_GRADIENT_N_W 17
-
-#define ADATA_SIZE     32
+#define ADATA_WORK         18
 
 static gint skeleton_set_unit_sources(BEM3DMeshSkeleton *s, gdouble *dq)
 
@@ -101,9 +102,10 @@ static void _assemble_element(BEM3DElement *e, gpointer adata[])
   gdouble *b = adata[ADATA_ROW_B] ;
   GtsVertex *x = (GtsVertex *)adata[ADATA_POINT] ;
   gint i = *((gint *)(adata[ADATA_INDEX])) ;
-
+  BEM3DWorkspace *work = adata[ADATA_WORK] ;
+  
   bem3d_element_assemble_equations_direct(e, GTS_POINT(x), i, config, gdata,
-					  a, b) ;
+					  a, b, work) ;
   return ;
 }
 
@@ -119,13 +121,15 @@ static void _assemble_element_ch(BEM3DElement *e, gpointer adata[])
   gint j, nc = 2, idx ;
   static GArray *G = NULL ;
   static GArray *dG = NULL ;
+  BEM3DWorkspace *work = adata[ADATA_WORK] ;
 
   if ( G == NULL ) {
     G = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
     dG = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
   }
   
-  bem3d_element_assemble_equations(e, GTS_POINT(x), config, gdata, G, dG) ;
+  bem3d_element_assemble_equations(e, GTS_POINT(x), config, gdata, G, dG,
+				   work) ;
 
   for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
     idx = bem3d_element_global_index(e,j) ;
@@ -283,7 +287,8 @@ gint main(gint argc, gchar **argv)
   BEM3DFMMMatrix *mtx ;
   BEM3DAverage anorm ;
   BEM3DQuadratureRule *quad ;
-  BEM3DFMMWorkspace *work ;
+  BEM3DFMMWorkspace *fmmwork ;
+  BEM3DWorkspace *work ;
   GPtrArray *meshes ;
   gboolean meshes_closed ;
   GTimer *t ;
@@ -424,6 +429,8 @@ gint main(gint argc, gchar **argv)
 
   t = g_timer_new() ; g_timer_start(t) ;
 
+  work = bem3d_workspace_new() ;  
+
   if ( config->solver == BEM3D_SOLVER_DIRECT ) {
     if ( opfile != NULL ) {
       output = file_open(opfile, "-", "w", stdout) ;
@@ -446,6 +453,7 @@ gint main(gint argc, gchar **argv)
     adata[ADATA_IMIN] = &imin ; adata[ADATA_IMAX] = &imax ; 
     adata[ADATA_C] = C ;
     adata[ADATA_MESH] = &i ;
+    adata[ADATA_WORK] = work ;
 
     fprintf(stderr, "%s: starting assembly: t=%f\n", 
 	    progname, g_timer_elapsed(t, NULL)) ;
@@ -459,7 +467,8 @@ gint main(gint argc, gchar **argv)
       for ( i = 0 ; i < meshes->len ; i ++ )
 	bem3d_mesh_quad_dgdn(g_ptr_array_index(meshes,i),
 			     config, &gdata, dgfunc, NULL, 
-			     (BEM3DEquationFunc)equation_func_C, C) ;
+			     (BEM3DEquationFunc)equation_func_C, C,
+			     work) ;
     } else {
       /*if we have any open meshes, assume they are disjoint parts of the
        same surface and treat accordingly*/
@@ -468,14 +477,9 @@ gint main(gint argc, gchar **argv)
 	  bem3d_mesh_disjoint_quad_dgdn(g_ptr_array_index(meshes,i),
 					g_ptr_array_index(meshes,j),
 					config, &gdata, dgfunc, NULL, 
-					(BEM3DEquationFunc)equation_func_C, C) ;
+					(BEM3DEquationFunc)equation_func_C,
+					C, work) ;
     }
-
-    /* for ( i = 0 ; i < np ; i ++ ) fprintf(stderr, "%d %lg\n", i, C[i]) ; */
-
-    /* fprintf(stderr, "%lg %lg %lg\n", C[21], C[22], C[23]) ; */
-
-    /* exit(1) ; */
     
     config->gfunc = gfunc ;
     bem3d_parameters_wavenumber(&gdata) = k ;
@@ -535,10 +539,10 @@ gint main(gint argc, gchar **argv)
 
   if ( order <= 7 ) 
     bem3d_quadrature_rule_gauss(NULL, bem3d_mesh_element_sample(m), quad, 
-				NULL, NULL, &order) ;
+				NULL, NULL, &order, NULL) ;
   else
     bem3d_quadrature_rule_wx(NULL, bem3d_mesh_element_sample(m), quad, 
-			     NULL, NULL, &order) ;    
+			     NULL, NULL, &order, NULL) ;    
 
   skel = bem3d_mesh_skeleton_new(m, order) ;
   bem3d_mesh_skeleton_init(skel, quad, anorm) ;
@@ -547,18 +551,18 @@ gint main(gint argc, gchar **argv)
   config->gfunc = greens_func_laplace ;
 
   mtx = bem3d_fmm_matrix_new(config->fmm, BEM3D_FMM_LAPLACE,
-			     skel, config, NULL, r_correct) ;
+			     skel, config, NULL, r_correct, work) ;
 
   mtx->tol = config->fmm_tol ;
 
   unit = (gdouble *)g_malloc(skel->ns*sizeof(gdouble)) ;
 
-  work = bem3d_fmm_workspace_alloc(config->fmm, skel) ;
+  fmmwork = bem3d_fmm_workspace_alloc(config->fmm, skel) ;
 
   skeleton_set_unit_sources(skel, unit) ;
 
   bem3d_fmm_calculate(mtx->solver, mtx->problem, NULL, mtx->skel, mtx->tol,
-  		      NULL, unit, C, NULL, work) ;
+  		      NULL, unit, C, NULL, fmmwork) ;
 
   /*local correction terms in FMM integration*/
   for ( i = 0 ; i < np ; i ++ ) {

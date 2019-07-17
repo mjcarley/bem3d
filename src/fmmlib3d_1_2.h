@@ -1,4 +1,4 @@
-/* fmmlib3d_1_2.c
+/* fmmlib3d_1_2.h
  * 
  * Copyright (C) 2017, 2018 Michael Carley
  * 

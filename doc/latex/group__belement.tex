@@ -1,125 +1,125 @@
-\section{B\+E\+M3D elements}
+\section{B\+E\+M3\+D elements}
 \label{group__belement}\index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
 \subsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+face\+\_\+number}(e)
+\#define {\bf bem3d\+\_\+element\+\_\+face\+\_\+number}(e)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+vertex\+\_\+number}(e)
+\#define {\bf bem3d\+\_\+element\+\_\+vertex\+\_\+number}(e)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+node\+\_\+number}(e)
+\#define {\bf bem3d\+\_\+element\+\_\+node\+\_\+number}(e)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+corner\+\_\+number}(e)
+\#define {\bf bem3d\+\_\+element\+\_\+corner\+\_\+number}(e)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+corner}(e,  i)
+\#define {\bf bem3d\+\_\+element\+\_\+corner}(e,  i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+corner\+\_\+index}(e,  i)
+\#define {\bf bem3d\+\_\+element\+\_\+corner\+\_\+index}(e,  i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+global\+\_\+index}(\+\_\+e,  \+\_\+i)
+\#define {\bf bem3d\+\_\+element\+\_\+global\+\_\+index}(\+\_\+e,  \+\_\+i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+shape\+\_\+func}(e)
+\#define {\bf bem3d\+\_\+element\+\_\+shape\+\_\+func}(e)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+node\+\_\+func}(e)
+\#define {\bf bem3d\+\_\+element\+\_\+node\+\_\+func}(e)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+node}(e,  i)
+\#define {\bf bem3d\+\_\+element\+\_\+node}(e,  i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+node\+\_\+xi}(e,  i)
+\#define {\bf bem3d\+\_\+element\+\_\+node\+\_\+xi}(e,  i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+node\+\_\+eta}(e,  i)
+\#define {\bf bem3d\+\_\+element\+\_\+node\+\_\+eta}(e,  i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+vertex}(e,  i)
+\#define {\bf bem3d\+\_\+element\+\_\+vertex}(e,  i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+vertex\+\_\+xi}(e,  i)
+\#define {\bf bem3d\+\_\+element\+\_\+vertex\+\_\+xi}(e,  i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+vertex\+\_\+eta}(e,  i)
+\#define {\bf bem3d\+\_\+element\+\_\+vertex\+\_\+eta}(e,  i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+face}(e,  i)
+\#define {\bf bem3d\+\_\+element\+\_\+face}(e,  i)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+moment\+\_\+order}(e)
+\#define {\bf bem3d\+\_\+element\+\_\+moment\+\_\+order}(e)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+moment}(e,  m,  n)
+\#define {\bf bem3d\+\_\+element\+\_\+moment}(e,  m,  n)
 \item 
-\#define \textbf{ bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh}(m,  el)
+\#define {\bf bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh}(m,  el)
 \end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-typedef struct \+\_\+\+B\+E\+M3\+D\+Element \textbf{ B\+E\+M3\+D\+Element}
+typedef struct \+\_\+\+B\+E\+M3\+D\+Element {\bf B\+E\+M3\+D\+Element}
 \item 
-typedef struct \+\_\+\+B\+E\+M3\+D\+Element\+Class \textbf{ B\+E\+M3\+D\+Element\+Class}
+typedef struct \+\_\+\+B\+E\+M3\+D\+Element\+Class {\bf B\+E\+M3\+D\+Element\+Class}
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\textbf{ B\+E\+M3\+D\+Element\+Class} $\ast$ \textbf{ bem3d\+\_\+element\+\_\+class} (void)
+{\bf B\+E\+M3\+D\+Element\+Class} $\ast$ {\bf bem3d\+\_\+element\+\_\+class} (void)
 \item 
-\textbf{ B\+E\+M3\+D\+Element} $\ast$ \textbf{ bem3d\+\_\+element\+\_\+new} (\textbf{ B\+E\+M3\+D\+Element\+Class} $\ast$klass, gint nf, gint nv, gint nc, gint ns, \textbf{ B\+E\+M3\+D\+Shape\+Func} shf, \textbf{ B\+E\+M3\+D\+Shape\+Func} cpf)
+{\bf B\+E\+M3\+D\+Element} $\ast$ {\bf bem3d\+\_\+element\+\_\+new} ({\bf B\+E\+M3\+D\+Element\+Class} $\ast$klass, gint nf, gint nv, gint nc, gint ns, {\bf B\+E\+M3\+D\+Shape\+Func} shf, {\bf B\+E\+M3\+D\+Shape\+Func} cpf)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+add\+\_\+face} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gpointer f, gint i)
+gint {\bf bem3d\+\_\+element\+\_\+add\+\_\+face} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gpointer f, gint i)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+add\+\_\+vertex} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gpointer v, gint i)
+gint {\bf bem3d\+\_\+element\+\_\+add\+\_\+vertex} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gpointer v, gint i)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+add\+\_\+node} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gpointer v, gint i)
+gint {\bf bem3d\+\_\+element\+\_\+add\+\_\+node} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gpointer v, gint i)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+set\+\_\+index} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gint i, gint j)
+gint {\bf bem3d\+\_\+element\+\_\+set\+\_\+index} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gint i, gint j)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+set\+\_\+corner} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gint i, gint j)
+gint {\bf bem3d\+\_\+element\+\_\+set\+\_\+corner} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gint i, gint j)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+write} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, G\+Hash\+Table $\ast$v, G\+Hash\+Table $\ast$t, F\+I\+LE $\ast$f)
+gint {\bf bem3d\+\_\+element\+\_\+write} ({\bf B\+E\+M3\+D\+Element} $\ast$e, G\+Hash\+Table $\ast$v, G\+Hash\+Table $\ast$t, F\+I\+L\+E $\ast$f)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+find\+\_\+vertex} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
+gint {\bf bem3d\+\_\+element\+\_\+find\+\_\+vertex} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+find\+\_\+node} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
+gint {\bf bem3d\+\_\+element\+\_\+find\+\_\+node} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
 \item 
-gdouble \textbf{ bem3d\+\_\+element\+\_\+area} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gint ngp)
+gdouble {\bf bem3d\+\_\+element\+\_\+area} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gint ngp)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+position} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gdouble $\ast$L, Gts\+Point $\ast$q)
+gint {\bf bem3d\+\_\+element\+\_\+position} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gdouble $\ast$L, Gts\+Point $\ast$q)
 \item 
-gdouble \textbf{ bem3d\+\_\+element\+\_\+jacobian} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt)
+gdouble {\bf bem3d\+\_\+element\+\_\+jacobian} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+normal} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, Gts\+Vector normal, gdouble $\ast$J)
+gint {\bf bem3d\+\_\+element\+\_\+normal} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, Gts\+Vector normal, gdouble $\ast$J)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, Gts\+Vector normal, gdouble $\ast$J, gdouble $\ast$Ji)
+gint {\bf bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gdouble $\ast$d\+Lds, gdouble $\ast$d\+Ldt, Gts\+Vector normal, gdouble $\ast$J, gdouble $\ast$Ji)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+assemble\+\_\+equations} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$x, \textbf{ B\+E\+M3\+D\+Configuration} $\ast$config, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$gdata, G\+Array $\ast$G, G\+Array $\ast$d\+Gdn)
+gint {\bf bem3d\+\_\+element\+\_\+assemble\+\_\+equations} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$x, {\bf B\+E\+M3\+D\+Configuration} $\ast$config, {\bf B\+E\+M3\+D\+Parameters} $\ast$gdata, G\+Array $\ast$G, G\+Array $\ast$d\+Gdn, {\bf B\+E\+M3\+D\+Workspace} $\ast$work)
 \item 
-gboolean \textbf{ bem3d\+\_\+element\+\_\+has\+\_\+vertex} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
+gboolean {\bf bem3d\+\_\+element\+\_\+has\+\_\+vertex} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
 \item 
-gboolean \textbf{ bem3d\+\_\+element\+\_\+has\+\_\+node} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
+gboolean {\bf bem3d\+\_\+element\+\_\+has\+\_\+node} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
 \item 
-G\+S\+List $\ast$ \textbf{ bem3d\+\_\+element\+\_\+common\+\_\+nodes} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e1, \textbf{ B\+E\+M3\+D\+Element} $\ast$e2)
+G\+S\+List $\ast$ {\bf bem3d\+\_\+element\+\_\+common\+\_\+nodes} ({\bf B\+E\+M3\+D\+Element} $\ast$e1, {\bf B\+E\+M3\+D\+Element} $\ast$e2)
 \item 
-G\+S\+List $\ast$ \textbf{ bem3d\+\_\+element\+\_\+neighbours} (\textbf{ B\+E\+M3\+D\+Element} $\ast$el, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m)
+G\+S\+List $\ast$ {\bf bem3d\+\_\+element\+\_\+neighbours} ({\bf B\+E\+M3\+D\+Element} $\ast$el, {\bf B\+E\+M3\+D\+Mesh} $\ast$m)
 \item 
-\textbf{ B\+E\+M3\+D\+Element} $\ast$ \textbf{ bem3d\+\_\+element\+\_\+from\+\_\+node} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, Gts\+Vertex $\ast$v, gint i)
+{\bf B\+E\+M3\+D\+Element} $\ast$ {\bf bem3d\+\_\+element\+\_\+from\+\_\+node} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, Gts\+Vertex $\ast$v, gint i)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+index\+\_\+nodes} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, \textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, gint $\ast$n)
+gint {\bf bem3d\+\_\+element\+\_\+index\+\_\+nodes} ({\bf B\+E\+M3\+D\+Element} $\ast$e, {\bf B\+E\+M3\+D\+Mesh} $\ast$m, gint $\ast$n)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+local\+\_\+vectors} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gdouble d\+Lds[$\,$], gdouble d\+Ldt[$\,$], Gts\+Vector u1, gdouble $\ast$h1, Gts\+Vector u2, gdouble $\ast$h2)
+gint {\bf bem3d\+\_\+element\+\_\+local\+\_\+vectors} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gdouble d\+Lds[$\,$], gdouble d\+Ldt[$\,$], Gts\+Vector u1, gdouble $\ast$h1, Gts\+Vector u2, gdouble $\ast$h2)
 \item 
-G\+S\+List $\ast$ \textbf{ bem3d\+\_\+elements\+\_\+common\+\_\+edges} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e1, \textbf{ B\+E\+M3\+D\+Element} $\ast$e2)
+G\+S\+List $\ast$ {\bf bem3d\+\_\+elements\+\_\+common\+\_\+edges} ({\bf B\+E\+M3\+D\+Element} $\ast$e1, {\bf B\+E\+M3\+D\+Element} $\ast$e2)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+gradient\+\_\+weights} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gdouble xi, gdouble eta, gdouble $\ast$w)
+gint {\bf bem3d\+\_\+element\+\_\+gradient\+\_\+weights} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gdouble xi, gdouble eta, gdouble $\ast$w)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
+gint {\bf bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Vertex $\ast$v)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+find\+\_\+index} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gint i)
+gint {\bf bem3d\+\_\+element\+\_\+find\+\_\+index} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gint i)
 \item 
-Gts\+B\+Box $\ast$ \textbf{ bem3d\+\_\+element\+\_\+bounding\+\_\+box} (Gts\+B\+Box\+Class $\ast$klass, \textbf{ B\+E\+M3\+D\+Element} $\ast$e)
+Gts\+B\+Box $\ast$ {\bf bem3d\+\_\+element\+\_\+bounding\+\_\+box} (Gts\+B\+Box\+Class $\ast$klass, {\bf B\+E\+M3\+D\+Element} $\ast$e)
 \item 
-G\+S\+List $\ast$ \textbf{ bem3d\+\_\+elements\+\_\+from\+\_\+vertices} (\textbf{ B\+E\+M3\+D\+Mesh} $\ast$m, Gts\+Vertex $\ast$v1, Gts\+Vertex $\ast$v2)
+G\+S\+List $\ast$ {\bf bem3d\+\_\+elements\+\_\+from\+\_\+vertices} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, Gts\+Vertex $\ast$v1, Gts\+Vertex $\ast$v2)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$x, gint ix, \textbf{ B\+E\+M3\+D\+Configuration} $\ast$config, \textbf{ B\+E\+M3\+D\+Parameters} $\ast$gdata, gdouble $\ast$a, gdouble $\ast$b)
+gint {\bf bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$x, gint ix, {\bf B\+E\+M3\+D\+Configuration} $\ast$config, {\bf B\+E\+M3\+D\+Parameters} $\ast$gdata, gdouble $\ast$a, gdouble $\ast$b, {\bf B\+E\+M3\+D\+Workspace} $\ast$work)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+nearest\+\_\+vertex} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$p, gint $\ast$i, gdouble $\ast$R)
+gint {\bf bem3d\+\_\+element\+\_\+nearest\+\_\+vertex} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$p, gint $\ast$i, gdouble $\ast$R)
 \item 
-gboolean \textbf{ bem3d\+\_\+element\+\_\+point\+\_\+inside} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gdouble xi, gdouble eta)
+gboolean {\bf bem3d\+\_\+element\+\_\+point\+\_\+inside} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gdouble xi, gdouble eta)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+nearest\+\_\+point} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$x, gdouble $\ast$xi, gdouble $\ast$eta, gboolean constrain)
+gint {\bf bem3d\+\_\+element\+\_\+nearest\+\_\+point} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$x, gdouble $\ast$xi, gdouble $\ast$eta, gboolean constrain)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, gint i, gint j, Gts\+Point $\ast$x, gdouble $\ast$xi, gdouble $\ast$eta)
+gint {\bf bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point} ({\bf B\+E\+M3\+D\+Element} $\ast$e, gint i, gint j, Gts\+Point $\ast$x, gdouble $\ast$xi, gdouble $\ast$eta)
 \item 
-gint \textbf{ bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point} (\textbf{ B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$x, gdouble $\ast$xi, gdouble $\ast$eta)
+gint {\bf bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point} ({\bf B\+E\+M3\+D\+Element} $\ast$e, Gts\+Point $\ast$x, gdouble $\ast$xi, gdouble $\ast$eta)
 \end{DoxyCompactItemize}
 
 
@@ -127,12 +127,14 @@ gint \textbf{ bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point} (\textbf
 The definitions of the basic \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} and the functions for handling it. To see how to define new types of element, consult \doxyref{Building elements }{p.}{group__elements} 
 
 \subsection{Macro Definition Documentation}
-\mbox{\label{group__belement_gae3c00c3c94e601010e8496a52ae5add6}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+corner@{bem3d\+\_\+element\+\_\+corner}}
 \index{bem3d\+\_\+element\+\_\+corner@{bem3d\+\_\+element\+\_\+corner}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+corner}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+corner(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+corner}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+corner(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_gae3c00c3c94e601010e8496a52ae5add6}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -145,14 +147,16 @@ the Gts\+Vertex at the {\itshape i} th corner of {\itshape e}.
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner().
+Referenced by bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner(), bem3d\+\_\+quadrature\+\_\+parameter(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw().
 
-\mbox{\label{group__belement_ga59214bcf1b20dfb86e7284c92ff0dbd8}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+corner\+\_\+index@{bem3d\+\_\+element\+\_\+corner\+\_\+index}}
 \index{bem3d\+\_\+element\+\_\+corner\+\_\+index@{bem3d\+\_\+element\+\_\+corner\+\_\+index}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+corner\+\_\+index}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+corner\+\_\+index(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+corner\+\_\+index}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+corner\+\_\+index(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga59214bcf1b20dfb86e7284c92ff0dbd8}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -163,12 +167,17 @@ Referenced by bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner().
 \begin{DoxyReturn}{Returns}
 the local index of the {\itshape i} th corner of {\itshape e}. 
 \end{DoxyReturn}
-\mbox{\label{group__belement_ga60ec5936b2cf9c4bdbc4e61d9bcfdfab}} 
+
+
+Referenced by bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+point\+\_\+inside(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx().
+
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+corner\+\_\+number@{bem3d\+\_\+element\+\_\+corner\+\_\+number}}
 \index{bem3d\+\_\+element\+\_\+corner\+\_\+number@{bem3d\+\_\+element\+\_\+corner\+\_\+number}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+corner\+\_\+number}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+corner\+\_\+number(\begin{DoxyParamCaption}\item[{}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+corner\+\_\+number}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+corner\+\_\+number(
+\begin{DoxyParamCaption}
+\item[{}]{e}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga60ec5936b2cf9c4bdbc4e61d9bcfdfab}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}\\
@@ -179,14 +188,16 @@ the number of corners on the element {\itshape e}
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+set\+\_\+corner(), bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx().
+Referenced by bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+point\+\_\+inside(), bem3d\+\_\+element\+\_\+set\+\_\+corner(), bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+gauss(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+kw(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx().
 
-\mbox{\label{group__belement_ga65e78bf7c8f23389c3d782d5f49c77d7}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+face@{bem3d\+\_\+element\+\_\+face}}
 \index{bem3d\+\_\+element\+\_\+face@{bem3d\+\_\+element\+\_\+face}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+face}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+face(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+face}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+face(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga65e78bf7c8f23389c3d782d5f49c77d7}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -201,12 +212,13 @@ the {\itshape i} th Gts\+Face of {\itshape e}.
 
 Referenced by bem3d\+\_\+element\+\_\+neighbours(), and bem3d\+\_\+elements\+\_\+common\+\_\+edges().
 
-\mbox{\label{group__belement_gae3041617293c9d89af37028ae733f619}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+face\+\_\+number@{bem3d\+\_\+element\+\_\+face\+\_\+number}}
 \index{bem3d\+\_\+element\+\_\+face\+\_\+number@{bem3d\+\_\+element\+\_\+face\+\_\+number}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+face\+\_\+number}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+face\+\_\+number(\begin{DoxyParamCaption}\item[{}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+face\+\_\+number}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+face\+\_\+number(
+\begin{DoxyParamCaption}
+\item[{}]{e}
+\end{DoxyParamCaption}
+)}\label{group__belement_gae3041617293c9d89af37028ae733f619}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}\\
@@ -219,12 +231,14 @@ the number of Gts\+Faces on the element {\itshape e}
 
 Referenced by bem3d\+\_\+element\+\_\+add\+\_\+face(), bem3d\+\_\+element\+\_\+neighbours(), and bem3d\+\_\+elements\+\_\+common\+\_\+edges().
 
-\mbox{\label{group__belement_gab082c62518c3c8eebe9308d6ebe629f2}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+global\+\_\+index@{bem3d\+\_\+element\+\_\+global\+\_\+index}}
 \index{bem3d\+\_\+element\+\_\+global\+\_\+index@{bem3d\+\_\+element\+\_\+global\+\_\+index}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+global\+\_\+index}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+global\+\_\+index(\begin{DoxyParamCaption}\item[{}]{\+\_\+e,  }\item[{}]{\+\_\+i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+global\+\_\+index}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+global\+\_\+index(
+\begin{DoxyParamCaption}
+\item[{}]{\+\_\+e, }
+\item[{}]{\+\_\+i}
+\end{DoxyParamCaption}
+)}\label{group__belement_gab082c62518c3c8eebe9308d6ebe629f2}
 
 \begin{DoxyParams}{Parameters}
 {\em \+\_\+e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -239,12 +253,14 @@ the global index of the {\itshape i} th collocation point of {\itshape e}.
 
 Referenced by bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+find\+\_\+index(), bem3d\+\_\+element\+\_\+from\+\_\+node(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+mesh\+\_\+add\+\_\+element(), bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node(), and bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number().
 
-\mbox{\label{group__belement_ga47306e042588252599b0e58b067a41a2}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh@{bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh}}
 \index{bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh@{bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh(\begin{DoxyParamCaption}\item[{}]{m,  }\item[{}]{el }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+has\+\_\+parent\+\_\+mesh(
+\begin{DoxyParamCaption}
+\item[{}]{m, }
+\item[{}]{el}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga47306e042588252599b0e58b067a41a2}
 
 \begin{DoxyParams}{Parameters}
 {\em m} & a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} \\
@@ -253,14 +269,17 @@ Referenced by bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-T\+R\+UE if {\itshape el} is an element of {\itshape m}, F\+A\+L\+SE otherwise. 
+T\+R\+U\+E if {\itshape el} is an element of {\itshape m}, F\+A\+L\+S\+E otherwise. 
 \end{DoxyReturn}
-\mbox{\label{group__belement_ga4fe587c5ac933e6aaf3bed24c350fb2d}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+moment@{bem3d\+\_\+element\+\_\+moment}}
 \index{bem3d\+\_\+element\+\_\+moment@{bem3d\+\_\+element\+\_\+moment}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+moment}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+moment(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{m,  }\item[{}]{n }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+moment}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+moment(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{m, }
+\item[{}]{n}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga4fe587c5ac933e6aaf3bed24c350fb2d}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -273,12 +292,17 @@ T\+R\+UE if {\itshape el} is an element of {\itshape m}, F\+A\+L\+SE otherwise.
 \begin{DoxyReturn}{Returns}
 $I_{mn}$ for element {\itshape e}. 
 \end{DoxyReturn}
-\mbox{\label{group__belement_gac356112c63b91163f0718040cd10018a}} 
+
+
+Referenced by bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman().
+
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+moment\+\_\+order@{bem3d\+\_\+element\+\_\+moment\+\_\+order}}
 \index{bem3d\+\_\+element\+\_\+moment\+\_\+order@{bem3d\+\_\+element\+\_\+moment\+\_\+order}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+moment\+\_\+order}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+moment\+\_\+order(\begin{DoxyParamCaption}\item[{}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+moment\+\_\+order}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+moment\+\_\+order(
+\begin{DoxyParamCaption}
+\item[{}]{e}
+\end{DoxyParamCaption}
+)}\label{group__belement_gac356112c63b91163f0718040cd10018a}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}\\
@@ -289,14 +313,16 @@ the order of the moments for element {\itshape e}.
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+new().
+Referenced by bem3d\+\_\+element\+\_\+new(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman().
 
-\mbox{\label{group__belement_ga3444de01991e2ae61b890deb953fd6d1}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+node@{bem3d\+\_\+element\+\_\+node}}
 \index{bem3d\+\_\+element\+\_\+node@{bem3d\+\_\+element\+\_\+node}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+node}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+node(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+node}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+node(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga3444de01991e2ae61b890deb953fd6d1}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -311,12 +337,14 @@ the Gts\+Vertex of the {\itshape i} th node (collocation point) of {\itshape e}.
 
 Referenced by bem3d\+\_\+element\+\_\+common\+\_\+nodes(), bem3d\+\_\+element\+\_\+index\+\_\+nodes(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient().
 
-\mbox{\label{group__belement_ga2251ff6502f6d11c5d4d090f3e83598d}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+node\+\_\+eta@{bem3d\+\_\+element\+\_\+node\+\_\+eta}}
 \index{bem3d\+\_\+element\+\_\+node\+\_\+eta@{bem3d\+\_\+element\+\_\+node\+\_\+eta}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+node\+\_\+eta}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+node\+\_\+eta(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+node\+\_\+eta}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+node\+\_\+eta(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga2251ff6502f6d11c5d4d090f3e83598d}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -331,12 +359,13 @@ the local coordinate $\eta$ of the {\itshape i} th node of {\itshape e}.
 
 Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), and bem3d\+\_\+mesh\+\_\+read().
 
-\mbox{\label{group__belement_ga4a3d3930cf0826a17b77a56758e6178e}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+node\+\_\+func@{bem3d\+\_\+element\+\_\+node\+\_\+func}}
 \index{bem3d\+\_\+element\+\_\+node\+\_\+func@{bem3d\+\_\+element\+\_\+node\+\_\+func}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+node\+\_\+func}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+node\+\_\+func(\begin{DoxyParamCaption}\item[{}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+node\+\_\+func}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+node\+\_\+func(
+\begin{DoxyParamCaption}
+\item[{}]{e}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga4a3d3930cf0826a17b77a56758e6178e}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}\\
@@ -349,12 +378,13 @@ the collocation \doxyref{B\+E\+M3\+D\+Shape\+Func}{p.}{group__shapefunc_ga844301
 
 Referenced by bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), and bem3d\+\_\+element\+\_\+radiation\+\_\+point().
 
-\mbox{\label{group__belement_ga306e4faa21b99f530bccbaa2604bdf88}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+node\+\_\+number@{bem3d\+\_\+element\+\_\+node\+\_\+number}}
 \index{bem3d\+\_\+element\+\_\+node\+\_\+number@{bem3d\+\_\+element\+\_\+node\+\_\+number}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+node\+\_\+number}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+node\+\_\+number(\begin{DoxyParamCaption}\item[{}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+node\+\_\+number}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+node\+\_\+number(
+\begin{DoxyParamCaption}
+\item[{}]{e}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga306e4faa21b99f530bccbaa2604bdf88}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}\\
@@ -367,12 +397,14 @@ the number of nodes (collocation points) on the element {\itshape e}
 
 Referenced by bem3d\+\_\+element\+\_\+add\+\_\+node(), bem3d\+\_\+element\+\_\+area(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+common\+\_\+nodes(), bem3d\+\_\+element\+\_\+find\+\_\+index(), bem3d\+\_\+element\+\_\+gradient\+\_\+weights(), bem3d\+\_\+element\+\_\+has\+\_\+node(), bem3d\+\_\+element\+\_\+index\+\_\+nodes(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+element\+\_\+set\+\_\+index(), bem3d\+\_\+mesh\+\_\+add\+\_\+element(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
-\mbox{\label{group__belement_ga79caec2621263d2c4d33f69d6652981e}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+node\+\_\+xi@{bem3d\+\_\+element\+\_\+node\+\_\+xi}}
 \index{bem3d\+\_\+element\+\_\+node\+\_\+xi@{bem3d\+\_\+element\+\_\+node\+\_\+xi}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+node\+\_\+xi}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+node\+\_\+xi(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+node\+\_\+xi}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+node\+\_\+xi(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga79caec2621263d2c4d33f69d6652981e}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -387,12 +419,13 @@ the local coordinate $\xi$ of the {\itshape i} th node of {\itshape e}.
 
 Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), and bem3d\+\_\+mesh\+\_\+read().
 
-\mbox{\label{group__belement_gaad97fc878889ab3ce2162c7fcdb140e0}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+shape\+\_\+func@{bem3d\+\_\+element\+\_\+shape\+\_\+func}}
 \index{bem3d\+\_\+element\+\_\+shape\+\_\+func@{bem3d\+\_\+element\+\_\+shape\+\_\+func}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+shape\+\_\+func}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+shape\+\_\+func(\begin{DoxyParamCaption}\item[{}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+shape\+\_\+func}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+shape\+\_\+func(
+\begin{DoxyParamCaption}
+\item[{}]{e}
+\end{DoxyParamCaption}
+)}\label{group__belement_gaad97fc878889ab3ce2162c7fcdb140e0}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}\\
@@ -403,14 +436,16 @@ the geometric \doxyref{B\+E\+M3\+D\+Shape\+Func}{p.}{group__shapefunc_ga84430188
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+area(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+gradient\+\_\+weights(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), and bem3d\+\_\+node\+\_\+normal().
+Referenced by bem3d\+\_\+element\+\_\+area(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+gradient\+\_\+weights(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), bem3d\+\_\+node\+\_\+normal(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami().
 
-\mbox{\label{group__belement_gaa7293af66ec384f6bcc5eee34d0419ef}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+vertex@{bem3d\+\_\+element\+\_\+vertex}}
 \index{bem3d\+\_\+element\+\_\+vertex@{bem3d\+\_\+element\+\_\+vertex}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+vertex}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+vertex(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+vertex}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+vertex(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_gaa7293af66ec384f6bcc5eee34d0419ef}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -423,14 +458,16 @@ the Gts\+Vertex of the {\itshape i} th geometric point of {\itshape e}.
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+bounding\+\_\+box(), bem3d\+\_\+element\+\_\+local\+\_\+vectors(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
+Referenced by bem3d\+\_\+element\+\_\+bounding\+\_\+box(), bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+local\+\_\+vectors(), bem3d\+\_\+quadrature\+\_\+parameter(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+newman\+\_\+gradient(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
-\mbox{\label{group__belement_gab4c90c31a93ada6c4e655ea741daca22}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+vertex\+\_\+eta@{bem3d\+\_\+element\+\_\+vertex\+\_\+eta}}
 \index{bem3d\+\_\+element\+\_\+vertex\+\_\+eta@{bem3d\+\_\+element\+\_\+vertex\+\_\+eta}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+vertex\+\_\+eta}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+vertex\+\_\+eta(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+vertex\+\_\+eta}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+vertex\+\_\+eta(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_gab4c90c31a93ada6c4e655ea741daca22}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -443,14 +480,15 @@ the local coordinate $\eta$ of the {\itshape i} th vertex of {\itshape e}.
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), bem3d\+\_\+element\+\_\+nearest\+\_\+point(), and bem3d\+\_\+mesh\+\_\+read().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q1(), bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t1(), bem3d\+\_\+element\+\_\+build\+\_\+t2(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+point\+\_\+inside(), bem3d\+\_\+mesh\+\_\+read(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx().
 
-\mbox{\label{group__belement_gaa6f6ffcd29d6031e634dbb20dff451ae}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+vertex\+\_\+number@{bem3d\+\_\+element\+\_\+vertex\+\_\+number}}
 \index{bem3d\+\_\+element\+\_\+vertex\+\_\+number@{bem3d\+\_\+element\+\_\+vertex\+\_\+number}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+vertex\+\_\+number}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+vertex\+\_\+number(\begin{DoxyParamCaption}\item[{}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+vertex\+\_\+number}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+vertex\+\_\+number(
+\begin{DoxyParamCaption}
+\item[{}]{e}
+\end{DoxyParamCaption}
+)}\label{group__belement_gaa6f6ffcd29d6031e634dbb20dff451ae}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}\\
@@ -461,14 +499,16 @@ the number of geometrical vertices on the element {\itshape e}
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+bounding\+\_\+box(), bem3d\+\_\+element\+\_\+has\+\_\+vertex(), bem3d\+\_\+element\+\_\+jacobian(), bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal(), bem3d\+\_\+element\+\_\+local\+\_\+vectors(), bem3d\+\_\+element\+\_\+nearest\+\_\+vertex(), bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+position(), bem3d\+\_\+quadrature\+\_\+parameter(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
+Referenced by bem3d\+\_\+element\+\_\+add\+\_\+vertex(), bem3d\+\_\+element\+\_\+bounding\+\_\+box(), bem3d\+\_\+element\+\_\+has\+\_\+vertex(), bem3d\+\_\+element\+\_\+jacobian(), bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal(), bem3d\+\_\+element\+\_\+local\+\_\+vectors(), bem3d\+\_\+element\+\_\+nearest\+\_\+vertex(), bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+position(), bem3d\+\_\+quadrature\+\_\+parameter(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
-\mbox{\label{group__belement_ga0ae427ca819ebd0087b83cfd2278b452}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+vertex\+\_\+xi@{bem3d\+\_\+element\+\_\+vertex\+\_\+xi}}
 \index{bem3d\+\_\+element\+\_\+vertex\+\_\+xi@{bem3d\+\_\+element\+\_\+vertex\+\_\+xi}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+vertex\+\_\+xi}
-{\footnotesize\ttfamily \#define bem3d\+\_\+element\+\_\+vertex\+\_\+xi(\begin{DoxyParamCaption}\item[{}]{e,  }\item[{}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+vertex\+\_\+xi}]{\setlength{\rightskip}{0pt plus 5cm}\#define bem3d\+\_\+element\+\_\+vertex\+\_\+xi(
+\begin{DoxyParamCaption}
+\item[{}]{e, }
+\item[{}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga0ae427ca819ebd0087b83cfd2278b452}
 
 \begin{DoxyParams}{Parameters}
 {\em e} & a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} \\
@@ -481,34 +521,31 @@ the local coordinate $\xi$ of the {\itshape i} th vertex of {\itshape e}.
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), bem3d\+\_\+element\+\_\+nearest\+\_\+point(), and bem3d\+\_\+mesh\+\_\+read().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q1(), bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t1(), bem3d\+\_\+element\+\_\+build\+\_\+t2(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+point\+\_\+inside(), bem3d\+\_\+mesh\+\_\+read(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx().
 
 
 
 \subsection{Typedef Documentation}
-\mbox{\label{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!B\+E\+M3\+D\+Element@{B\+E\+M3\+D\+Element}}
 \index{B\+E\+M3\+D\+Element@{B\+E\+M3\+D\+Element}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{B\+E\+M3\+D\+Element}
-{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Element}}
+\subsubsection[{B\+E\+M3\+D\+Element}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element}}\label{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}
+Data type for B\+E\+M3\+D elements, containing the data for geometry and collocation points.
 
-Data type for B\+E\+M3D elements, containing the data for geometry and collocation points.
-
-The \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} type should usually be accessed only through the provided functions and macros. In order to implement new elements, you should look up the \doxyref{B\+E\+M3\+D\+Element\+Build\+Func}{p.}{structBEM3DElementBuildFunc} type. \mbox{\label{group__belement_gae5a035e4709d6f53faf20293e7b7620b}} 
-\index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!B\+E\+M3\+D\+Element\+Class@{B\+E\+M3\+D\+Element\+Class}}
+The \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} type should usually be accessed only through the provided functions and macros. In order to implement new elements, you should look up the \doxyref{B\+E\+M3\+D\+Element\+Build\+Func}{p.}{structBEM3DElementBuildFunc} type. \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!B\+E\+M3\+D\+Element\+Class@{B\+E\+M3\+D\+Element\+Class}}
 \index{B\+E\+M3\+D\+Element\+Class@{B\+E\+M3\+D\+Element\+Class}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{B\+E\+M3\+D\+Element\+Class}
-{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Element\+Class}}
-
+\subsubsection[{B\+E\+M3\+D\+Element\+Class}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element\+Class}}\label{group__belement_gae5a035e4709d6f53faf20293e7b7620b}
 The basic class for a B\+E\+M3\+D\+Element 
 
 \subsection{Function Documentation}
-\mbox{\label{group__belement_ga77bf03678d160bac380adb597bd857d3}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+add\+\_\+face@{bem3d\+\_\+element\+\_\+add\+\_\+face}}
 \index{bem3d\+\_\+element\+\_\+add\+\_\+face@{bem3d\+\_\+element\+\_\+add\+\_\+face}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+add\+\_\+face()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+add\+\_\+face (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gpointer}]{f,  }\item[{gint}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+add\+\_\+face}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+add\+\_\+face (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gpointer}]{f, }
+\item[{gint}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga77bf03678d160bac380adb597bd857d3}
 Add a new face to a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 
@@ -521,7 +558,7 @@ Add a new face to a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
@@ -529,14 +566,17 @@ References bem3d\+\_\+element\+\_\+face\+\_\+number.
 
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q1(), bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t1(), bem3d\+\_\+element\+\_\+build\+\_\+t2(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
 
-\mbox{\label{group__belement_ga942651caa9c3d5f26d302f6efb90a000}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+add\+\_\+node@{bem3d\+\_\+element\+\_\+add\+\_\+node}}
 \index{bem3d\+\_\+element\+\_\+add\+\_\+node@{bem3d\+\_\+element\+\_\+add\+\_\+node}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+add\+\_\+node()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+add\+\_\+node (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gpointer}]{v,  }\item[{gint}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+add\+\_\+node}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+add\+\_\+node (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gpointer}]{v, }
+\item[{gint}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga942651caa9c3d5f26d302f6efb90a000}
 Add a collocation point to a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}
 
 
@@ -549,7 +589,7 @@ Add a collocation point to a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
@@ -559,12 +599,15 @@ References bem3d\+\_\+element\+\_\+node\+\_\+number.
 
 Referenced by bem3d\+\_\+element\+\_\+build\+\_\+t0(), and bem3d\+\_\+mesh\+\_\+read().
 
-\mbox{\label{group__belement_ga7d601e4183ea04dbe874ae85df2b550f}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+add\+\_\+vertex@{bem3d\+\_\+element\+\_\+add\+\_\+vertex}}
 \index{bem3d\+\_\+element\+\_\+add\+\_\+vertex@{bem3d\+\_\+element\+\_\+add\+\_\+vertex}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+add\+\_\+vertex()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+add\+\_\+vertex (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gpointer}]{v,  }\item[{gint}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+add\+\_\+vertex}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+add\+\_\+vertex (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gpointer}]{v, }
+\item[{gint}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga7d601e4183ea04dbe874ae85df2b550f}
 Add a Gts\+Vertex to a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 
@@ -577,7 +620,7 @@ Add a Gts\+Vertex to a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
@@ -585,14 +628,16 @@ References bem3d\+\_\+element\+\_\+vertex\+\_\+number.
 
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q1(), bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t1(), bem3d\+\_\+element\+\_\+build\+\_\+t2(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
 
-\mbox{\label{group__belement_ga35a31078fb0a00049386f30c2f7c3983}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+area@{bem3d\+\_\+element\+\_\+area}}
 \index{bem3d\+\_\+element\+\_\+area@{bem3d\+\_\+element\+\_\+area}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+area()}
-{\footnotesize\ttfamily gdouble bem3d\+\_\+element\+\_\+area (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gint}]{ngp }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+area}]{\setlength{\rightskip}{0pt plus 5cm}gdouble bem3d\+\_\+element\+\_\+area (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gint}]{ngp}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga35a31078fb0a00049386f30c2f7c3983}
 Surface area of a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}, computed using a Gaussian quadrature rule.
 
 
@@ -609,12 +654,19 @@ computed area of {\itshape e}.
 
 References bem3d\+\_\+element\+\_\+jacobian(), bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+shape\+\_\+func, bem3d\+\_\+quadrature\+\_\+rule\+\_\+new(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+wx().
 
-\mbox{\label{group__belement_gab6f7a97d1b21a5f8fb5f2d411166c809}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+assemble\+\_\+equations@{bem3d\+\_\+element\+\_\+assemble\+\_\+equations}}
 \index{bem3d\+\_\+element\+\_\+assemble\+\_\+equations@{bem3d\+\_\+element\+\_\+assemble\+\_\+equations}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+assemble\+\_\+equations()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+assemble\+\_\+equations (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Point $\ast$}]{x,  }\item[{\textbf{ B\+E\+M3\+D\+Configuration} $\ast$}]{config,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{gdata,  }\item[{G\+Array $\ast$}]{G,  }\item[{G\+Array $\ast$}]{d\+Gdn }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+assemble\+\_\+equations}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+assemble\+\_\+equations (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{{\bf B\+E\+M3\+D\+Configuration} $\ast$}]{config, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{gdata, }
+\item[{G\+Array $\ast$}]{G, }
+\item[{G\+Array $\ast$}]{d\+Gdn, }
+\item[{{\bf B\+E\+M3\+D\+Workspace} $\ast$}]{work}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga1f307e68604af34bf06499fa70cf8285}
 Assemble equations for \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} and Gts\+Point.
 
 The integration of the Green\textquotesingle{}s function and its normal derivative weighted by the element shape functions is performed for a specified field point.
@@ -631,22 +683,32 @@ The integration of the Green\textquotesingle{}s function and its normal derivati
 \hline
 {\em G} & G\+Array of integral of $G L_{i}$ over element; \\
 \hline
-{\em d\+Gdn} & G\+Array of integral of $d G/d n L_{i}$ over element.\\
+{\em d\+Gdn} & G\+Array of integral of $d G/d n L_{i}$ over element. \\
+\hline
+{\em work} & a \doxyref{B\+E\+M3\+D\+Workspace}{p.}{group__work_gaf540948fbe875dff930ad182734d5dbb}\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+node\+\_\+func, bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+position(), bem3d\+\_\+element\+\_\+shape\+\_\+func, bem3d\+\_\+greens\+\_\+function\+\_\+func, and bem3d\+\_\+quadrature\+\_\+rule\+\_\+new().
+References bem3d\+\_\+element\+\_\+node\+\_\+func, bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+position(), bem3d\+\_\+element\+\_\+shape\+\_\+func, and bem3d\+\_\+greens\+\_\+function\+\_\+func.
 
-\mbox{\label{group__belement_ga2856eaa4cd95da50e329c97911142d2e}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct@{bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct}}
 \index{bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct@{bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Point $\ast$}]{x,  }\item[{gint}]{ix,  }\item[{\textbf{ B\+E\+M3\+D\+Configuration} $\ast$}]{config,  }\item[{\textbf{ B\+E\+M3\+D\+Parameters} $\ast$}]{gdata,  }\item[{gdouble $\ast$}]{a,  }\item[{gdouble $\ast$}]{b }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{gint}]{ix, }
+\item[{{\bf B\+E\+M3\+D\+Configuration} $\ast$}]{config, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{gdata, }
+\item[{gdouble $\ast$}]{a, }
+\item[{gdouble $\ast$}]{b, }
+\item[{{\bf B\+E\+M3\+D\+Workspace} $\ast$}]{work}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga58c1ea69bcc11e307f57d05094b23540}
 Assemble equations for an element inserting directly into matrix rows. Coefficients are accumulated directly in rows assuming zero-\/offset indexing, with stride 1 for real problems and 2 for complex, as determined from the Green\textquotesingle{}s function.
 
 
@@ -663,22 +725,28 @@ Assemble equations for an element inserting directly into matrix rows. Coefficie
 \hline
 {\em a} & matrix row which multiplies potential ( $\phi$) \\
 \hline
-{\em b} & matrix row which multiplies normal derivative of potential ( $\partial\phi/\partial n$)\\
+{\em b} & matrix row which multiplies normal derivative of potential ( $\partial\phi/\partial n$) \\
+\hline
+{\em work} & a \doxyref{B\+E\+M3\+D\+Workspace}{p.}{group__work_gaf540948fbe875dff930ad182734d5dbb}\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+global\+\_\+index, bem3d\+\_\+element\+\_\+node\+\_\+func, bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+position(), bem3d\+\_\+element\+\_\+shape\+\_\+func, bem3d\+\_\+greens\+\_\+function\+\_\+func, bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real, and bem3d\+\_\+quadrature\+\_\+rule\+\_\+new().
+References bem3d\+\_\+element\+\_\+global\+\_\+index, bem3d\+\_\+element\+\_\+node\+\_\+func, bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+normal(), bem3d\+\_\+element\+\_\+position(), bem3d\+\_\+element\+\_\+shape\+\_\+func, bem3d\+\_\+greens\+\_\+function\+\_\+func, and bem3d\+\_\+greens\+\_\+function\+\_\+is\+\_\+real.
 
-\mbox{\label{group__belement_gace8abb4009aa78c6b9c1a3e01620b440}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point@{bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point}}
 \index{bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point@{bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Point $\ast$}]{x,  }\item[{gdouble $\ast$}]{xi,  }\item[{gdouble $\ast$}]{eta }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{gdouble $\ast$}]{xi, }
+\item[{gdouble $\ast$}]{eta}
+\end{DoxyParamCaption}
+)}\label{group__belement_gace8abb4009aa78c6b9c1a3e01620b440}
 Find the area coordinates of the point on any edge of an element which is closest to a point x.
 
 
@@ -693,18 +761,24 @@ Find the area coordinates of the point on any edge of an element which is closes
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+shape\+\_\+func.
+References bem3d\+\_\+element\+\_\+corner\+\_\+index, bem3d\+\_\+element\+\_\+corner\+\_\+number, bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+position(), and bem3d\+\_\+element\+\_\+shape\+\_\+func.
 
-\mbox{\label{group__belement_ga35b493aa8774d76ab5886b449aa23636}} 
+
+
+Referenced by bem3d\+\_\+element\+\_\+nearest\+\_\+point().
+
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+bounding\+\_\+box@{bem3d\+\_\+element\+\_\+bounding\+\_\+box}}
 \index{bem3d\+\_\+element\+\_\+bounding\+\_\+box@{bem3d\+\_\+element\+\_\+bounding\+\_\+box}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+bounding\+\_\+box()}
-{\footnotesize\ttfamily Gts\+B\+Box$\ast$ bem3d\+\_\+element\+\_\+bounding\+\_\+box (\begin{DoxyParamCaption}\item[{Gts\+B\+Box\+Class $\ast$}]{klass,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+bounding\+\_\+box}]{\setlength{\rightskip}{0pt plus 5cm}Gts\+B\+Box$\ast$ bem3d\+\_\+element\+\_\+bounding\+\_\+box (
+\begin{DoxyParamCaption}
+\item[{Gts\+B\+Box\+Class $\ast$}]{klass, }
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga35b493aa8774d76ab5886b449aa23636}
 Generate a \+::\+Gts\+B\+Box containing the vertices of a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 
@@ -715,18 +789,19 @@ Generate a \+::\+Gts\+B\+Box containing the vertices of a \doxyref{B\+E\+M3\+D\+
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-a \+::\+Gts\+B\+Box containing the vertices of {\itshape e} or N\+U\+LL on error. 
+a \+::\+Gts\+B\+Box containing the vertices of {\itshape e} or N\+U\+L\+L on error. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+element\+\_\+vertex, and bem3d\+\_\+element\+\_\+vertex\+\_\+number.
 
-\mbox{\label{group__belement_ga8b7b24a700ecc5b7c88108ac169674f1}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+class@{bem3d\+\_\+element\+\_\+class}}
 \index{bem3d\+\_\+element\+\_\+class@{bem3d\+\_\+element\+\_\+class}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+class()}
-{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Element\+Class}$\ast$ bem3d\+\_\+element\+\_\+class (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+class}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element\+Class}$\ast$ bem3d\+\_\+element\+\_\+class (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga8b7b24a700ecc5b7c88108ac169674f1}
 The basic class for a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 \begin{DoxyReturn}{Returns}
@@ -734,14 +809,16 @@ the \doxyref{B\+E\+M3\+D\+Element\+Class}{p.}{group__belement_gae5a035e4709d6f53
 \end{DoxyReturn}
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t2(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q1(), bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t1(), bem3d\+\_\+element\+\_\+build\+\_\+t2(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
 
-\mbox{\label{group__belement_ga9325ffc83316319ebc8e4f35146f38ca}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+common\+\_\+nodes@{bem3d\+\_\+element\+\_\+common\+\_\+nodes}}
 \index{bem3d\+\_\+element\+\_\+common\+\_\+nodes@{bem3d\+\_\+element\+\_\+common\+\_\+nodes}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+common\+\_\+nodes()}
-{\footnotesize\ttfamily G\+S\+List$\ast$ bem3d\+\_\+element\+\_\+common\+\_\+nodes (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e1,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e2 }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+common\+\_\+nodes}]{\setlength{\rightskip}{0pt plus 5cm}G\+S\+List$\ast$ bem3d\+\_\+element\+\_\+common\+\_\+nodes (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e1, }
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e2}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga9325ffc83316319ebc8e4f35146f38ca}
 Find collocation points shared between two \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}\textquotesingle{}s.
 
 
@@ -758,12 +835,18 @@ G\+S\+List of common collocation points.
 
 References bem3d\+\_\+element\+\_\+find\+\_\+node(), bem3d\+\_\+element\+\_\+node, and bem3d\+\_\+element\+\_\+node\+\_\+number.
 
-\mbox{\label{group__belement_gabed9930abd1d9707b52cd0e6cfba07f0}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point@{bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point}}
 \index{bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point@{bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gint}]{i,  }\item[{gint}]{j,  }\item[{Gts\+Point $\ast$}]{x,  }\item[{gdouble $\ast$}]{xi,  }\item[{gdouble $\ast$}]{eta }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+edge\+\_\+nearest\+\_\+point (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gint}]{i, }
+\item[{gint}]{j, }
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{gdouble $\ast$}]{xi, }
+\item[{gdouble $\ast$}]{eta}
+\end{DoxyParamCaption}
+)}\label{group__belement_gabed9930abd1d9707b52cd0e6cfba07f0}
 Find the area coordinates of the point on the edge of an element which is closest to a point x.
 
 
@@ -782,14 +865,24 @@ Find the area coordinates of the point on the edge of an element which is closes
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
-\mbox{\label{group__belement_gab2418c4f7118a206b465052d99a40f84}} 
+
+
+References bem3d\+\_\+element\+\_\+vertex, bem3d\+\_\+element\+\_\+vertex\+\_\+eta, and bem3d\+\_\+element\+\_\+vertex\+\_\+xi.
+
+
+
+Referenced by bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point().
+
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+find\+\_\+index@{bem3d\+\_\+element\+\_\+find\+\_\+index}}
 \index{bem3d\+\_\+element\+\_\+find\+\_\+index@{bem3d\+\_\+element\+\_\+find\+\_\+index}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+find\+\_\+index()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+find\+\_\+index (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gint}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+find\+\_\+index}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+find\+\_\+index (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gint}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_gab2418c4f7118a206b465052d99a40f84}
 Locate a node of given global index on a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}
 
 
@@ -810,12 +903,14 @@ References bem3d\+\_\+element\+\_\+global\+\_\+index, and bem3d\+\_\+element\+\_
 
 Referenced by bem3d\+\_\+edge\+\_\+is\+\_\+oriented(), and bem3d\+\_\+mesh\+\_\+node\+\_\+elements().
 
-\mbox{\label{group__belement_gad6a8034d206b580d337db5f5e9e66822}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+find\+\_\+node@{bem3d\+\_\+element\+\_\+find\+\_\+node}}
 \index{bem3d\+\_\+element\+\_\+find\+\_\+node@{bem3d\+\_\+element\+\_\+find\+\_\+node}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+find\+\_\+node()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+find\+\_\+node (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Vertex $\ast$}]{v }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+find\+\_\+node}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+find\+\_\+node (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__belement_gad6a8034d206b580d337db5f5e9e66822}
 Find the local index of a collocation point on a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 
@@ -832,12 +927,14 @@ local index of collocation point if on element, -\/1 otherwise.
 
 Referenced by bem3d\+\_\+element\+\_\+common\+\_\+nodes(), bem3d\+\_\+element\+\_\+from\+\_\+node(), bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+series().
 
-\mbox{\label{group__belement_gaee4bb23e83a8dddb1a42a7d4a3acdf76}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+find\+\_\+vertex@{bem3d\+\_\+element\+\_\+find\+\_\+vertex}}
 \index{bem3d\+\_\+element\+\_\+find\+\_\+vertex@{bem3d\+\_\+element\+\_\+find\+\_\+vertex}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+find\+\_\+vertex()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+find\+\_\+vertex (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Vertex $\ast$}]{v }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+find\+\_\+vertex}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+find\+\_\+vertex (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__belement_gaee4bb23e83a8dddb1a42a7d4a3acdf76}
 Find the local index of a Gts\+Vertex on a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 
@@ -854,12 +951,15 @@ local index of vertex if on element, -\/1 otherwise.
 
 Referenced by bem3d\+\_\+element\+\_\+nearest\+\_\+point(), bem3d\+\_\+elements\+\_\+from\+\_\+vertices(), and bem3d\+\_\+mesh\+\_\+vertex\+\_\+index\+\_\+number().
 
-\mbox{\label{group__belement_gab16742c4aff2a0b479d8176684c34d71}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+from\+\_\+node@{bem3d\+\_\+element\+\_\+from\+\_\+node}}
 \index{bem3d\+\_\+element\+\_\+from\+\_\+node@{bem3d\+\_\+element\+\_\+from\+\_\+node}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+from\+\_\+node()}
-{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+from\+\_\+node (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{Gts\+Vertex $\ast$}]{v,  }\item[{gint}]{i }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+from\+\_\+node}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+from\+\_\+node (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{Gts\+Vertex $\ast$}]{v, }
+\item[{gint}]{i}
+\end{DoxyParamCaption}
+)}\label{group__belement_gab16742c4aff2a0b479d8176684c34d71}
 Find an element containing a given collocation point, identified by its Gts\+Vertex and its global index.
 
 
@@ -876,14 +976,18 @@ Find an element containing a given collocation point, identified by its Gts\+Ver
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+find\+\_\+node(), bem3d\+\_\+element\+\_\+global\+\_\+index, B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, and bem3d\+\_\+mesh\+\_\+vertex\+\_\+elements().
+References bem3d\+\_\+element\+\_\+find\+\_\+node(), bem3d\+\_\+element\+\_\+global\+\_\+index, B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, and bem3d\+\_\+mesh\+\_\+vertex\+\_\+elements().
 
-\mbox{\label{group__belement_ga1b44c855295a21e068fa75d9be65fed4}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+gradient\+\_\+weights@{bem3d\+\_\+element\+\_\+gradient\+\_\+weights}}
 \index{bem3d\+\_\+element\+\_\+gradient\+\_\+weights@{bem3d\+\_\+element\+\_\+gradient\+\_\+weights}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+gradient\+\_\+weights()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+gradient\+\_\+weights (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gdouble}]{xi,  }\item[{gdouble}]{eta,  }\item[{gdouble $\ast$}]{w }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+gradient\+\_\+weights}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+gradient\+\_\+weights (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gdouble}]{xi, }
+\item[{gdouble}]{eta, }
+\item[{gdouble $\ast$}]{w}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga1b44c855295a21e068fa75d9be65fed4}
 Calculate the weights for computing the gradient of a function on a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}. The gradient $\partial\phi/\partial x=\sum_{i=0}^{N}\phi_{i}w_{3i}$, $\partial\phi/\partial y=\sum_{i=0}^{N}\phi_{i}w_{3i+1}$, $\partial\phi/\partial z=\sum_{i=0}^{N}\phi_{i}w_{3i+2}$, where there are $N$ collocation points on the element {\itshape e}. The weights are computed by differentiation of the element shape functions.
 
 
@@ -898,18 +1002,20 @@ Calculate the weights for computing the gradient of a function on a \doxyref{B\+
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+element\+\_\+local\+\_\+vectors(), bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+shape\+\_\+func, bem3d\+\_\+matrix\+\_\+inverse(), and bem3d\+\_\+matrix\+\_\+vector\+\_\+mul().
 
-\mbox{\label{group__belement_gade3ad43cdd371750b64104d79393d68b}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+has\+\_\+node@{bem3d\+\_\+element\+\_\+has\+\_\+node}}
 \index{bem3d\+\_\+element\+\_\+has\+\_\+node@{bem3d\+\_\+element\+\_\+has\+\_\+node}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+has\+\_\+node()}
-{\footnotesize\ttfamily gboolean bem3d\+\_\+element\+\_\+has\+\_\+node (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Vertex $\ast$}]{v }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+has\+\_\+node}]{\setlength{\rightskip}{0pt plus 5cm}gboolean bem3d\+\_\+element\+\_\+has\+\_\+node (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__belement_gade3ad43cdd371750b64104d79393d68b}
 Check if a Gts\+Vertex is a node (collocation point) of a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 
@@ -920,18 +1026,20 @@ Check if a Gts\+Vertex is a node (collocation point) of a \doxyref{B\+E\+M3\+D\+
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-T\+R\+UE if {\itshape v} is a node of {\itshape e}, F\+A\+L\+SE otherwise. 
+T\+R\+U\+E if {\itshape v} is a node of {\itshape e}, F\+A\+L\+S\+E otherwise. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+element\+\_\+node\+\_\+number.
 
-\mbox{\label{group__belement_ga6d1b5b5a3b9c1af141a42fc6842d7b7e}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+has\+\_\+vertex@{bem3d\+\_\+element\+\_\+has\+\_\+vertex}}
 \index{bem3d\+\_\+element\+\_\+has\+\_\+vertex@{bem3d\+\_\+element\+\_\+has\+\_\+vertex}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+has\+\_\+vertex()}
-{\footnotesize\ttfamily gboolean bem3d\+\_\+element\+\_\+has\+\_\+vertex (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Vertex $\ast$}]{v }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+has\+\_\+vertex}]{\setlength{\rightskip}{0pt plus 5cm}gboolean bem3d\+\_\+element\+\_\+has\+\_\+vertex (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga6d1b5b5a3b9c1af141a42fc6842d7b7e}
 Check if a Gts\+Vertex is a vertex of the geometry of a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 
@@ -942,18 +1050,21 @@ Check if a Gts\+Vertex is a vertex of the geometry of a \doxyref{B\+E\+M3\+D\+El
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-T\+R\+UE if vertex is on element, F\+A\+L\+SE otherwise. 
+T\+R\+U\+E if vertex is on element, F\+A\+L\+S\+E otherwise. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+element\+\_\+vertex\+\_\+number.
 
-\mbox{\label{group__belement_ga0a135441c98740d19366b6998aba51fc}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+index\+\_\+nodes@{bem3d\+\_\+element\+\_\+index\+\_\+nodes}}
 \index{bem3d\+\_\+element\+\_\+index\+\_\+nodes@{bem3d\+\_\+element\+\_\+index\+\_\+nodes}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+index\+\_\+nodes()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+index\+\_\+nodes (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{gint $\ast$}]{n }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+index\+\_\+nodes}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+index\+\_\+nodes (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{gint $\ast$}]{n}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga0a135441c98740d19366b6998aba51fc}
 Index the collocation points of a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}. If a point is present in the \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} {\itshape m}, the collocation point there is used. If not, new indices are generated, starting from {\itshape n}, which is incremented as required.
 
 
@@ -966,18 +1077,21 @@ Index the collocation points of a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__bele
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+node, bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+set\+\_\+index(), B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, and bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node().
+References bem3d\+\_\+element\+\_\+node, bem3d\+\_\+element\+\_\+node\+\_\+number, bem3d\+\_\+element\+\_\+set\+\_\+index(), B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, and bem3d\+\_\+mesh\+\_\+index\+\_\+from\+\_\+node().
 
-\mbox{\label{group__belement_ga2d9db7135838d2d74c8778a8bd496398}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+jacobian@{bem3d\+\_\+element\+\_\+jacobian}}
 \index{bem3d\+\_\+element\+\_\+jacobian@{bem3d\+\_\+element\+\_\+jacobian}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+jacobian()}
-{\footnotesize\ttfamily gdouble bem3d\+\_\+element\+\_\+jacobian (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gdouble $\ast$}]{d\+Lds,  }\item[{gdouble $\ast$}]{d\+Ldt }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+jacobian}]{\setlength{\rightskip}{0pt plus 5cm}gdouble bem3d\+\_\+element\+\_\+jacobian (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gdouble $\ast$}]{d\+Lds, }
+\item[{gdouble $\ast$}]{d\+Ldt}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga2d9db7135838d2d74c8778a8bd496398}
 Compute Jacobian on a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} given derivatives of shape functions.
 
 
@@ -1000,12 +1114,18 @@ References bem3d\+\_\+element\+\_\+vertex\+\_\+number.
 
 Referenced by bem3d\+\_\+element\+\_\+area().
 
-\mbox{\label{group__belement_ga5cd23ab27e94a75aa5f8d006b43afcb0}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal@{bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal}}
 \index{bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal@{bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gdouble $\ast$}]{d\+Lds,  }\item[{gdouble $\ast$}]{d\+Ldt,  }\item[{Gts\+Vector}]{normal,  }\item[{gdouble $\ast$}]{J,  }\item[{gdouble $\ast$}]{Ji }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+jacobian\+\_\+matrix\+\_\+normal (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gdouble $\ast$}]{d\+Lds, }
+\item[{gdouble $\ast$}]{d\+Ldt, }
+\item[{Gts\+Vector}]{normal, }
+\item[{gdouble $\ast$}]{J, }
+\item[{gdouble $\ast$}]{Ji}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga5cd23ab27e94a75aa5f8d006b43afcb0}
 Compute Jacobian matrix, inverse and normal to an element.
 
 
@@ -1020,22 +1140,29 @@ Compute Jacobian matrix, inverse and normal to an element.
 \hline
 {\em J} & nine-\/element matrix for Jacobian; \\
 \hline
-{\em Ji} & nine-\/element matrix for inverse of Jacobian or N\+U\+LL.\\
+{\em Ji} & nine-\/element matrix for inverse of Jacobian or N\+U\+L\+L.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-0 on success. If {\itshape normal}, {\itshape J}, and/or {\itshape Ji} are N\+U\+LL, they are not computed, though if {\itshape Ji} is not N\+U\+LL, {\itshape J} must also be defined. 
+0 on success. If {\itshape normal}, {\itshape J}, and/or {\itshape Ji} are N\+U\+L\+L, they are not computed, though if {\itshape Ji} is not N\+U\+L\+L, {\itshape J} must also be defined. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+element\+\_\+vertex\+\_\+number.
 
-\mbox{\label{group__belement_ga44b2bf2e38675d86fcde862cca0d00ca}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+local\+\_\+vectors@{bem3d\+\_\+element\+\_\+local\+\_\+vectors}}
 \index{bem3d\+\_\+element\+\_\+local\+\_\+vectors@{bem3d\+\_\+element\+\_\+local\+\_\+vectors}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+local\+\_\+vectors()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+local\+\_\+vectors (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gdouble}]{d\+Lds[$\,$],  }\item[{gdouble}]{d\+Ldt[$\,$],  }\item[{Gts\+Vector}]{u1,  }\item[{gdouble $\ast$}]{h1,  }\item[{Gts\+Vector}]{u2,  }\item[{gdouble $\ast$}]{h2 }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+local\+\_\+vectors}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+local\+\_\+vectors (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gdouble}]{d\+Lds[$\,$], }
+\item[{gdouble}]{d\+Ldt[$\,$], }
+\item[{Gts\+Vector}]{u1, }
+\item[{gdouble $\ast$}]{h1, }
+\item[{Gts\+Vector}]{u2, }
+\item[{gdouble $\ast$}]{h2}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga44b2bf2e38675d86fcde862cca0d00ca}
 Generate two unit vectors, not necessarily orthogonal, which lie in the surface at a point of a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 
@@ -1056,7 +1183,7 @@ Generate two unit vectors, not necessarily orthogonal, which lie in the surface 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success 
 \end{DoxyReturn}
 
 
@@ -1066,12 +1193,17 @@ References bem3d\+\_\+element\+\_\+vertex, and bem3d\+\_\+element\+\_\+vertex\+\
 
 Referenced by bem3d\+\_\+element\+\_\+gradient\+\_\+weights().
 
-\mbox{\label{group__belement_ga2d7bc52ae15be170219cea70cc33efc7}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+nearest\+\_\+point@{bem3d\+\_\+element\+\_\+nearest\+\_\+point}}
 \index{bem3d\+\_\+element\+\_\+nearest\+\_\+point@{bem3d\+\_\+element\+\_\+nearest\+\_\+point}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+nearest\+\_\+point()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+nearest\+\_\+point (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Point $\ast$}]{x,  }\item[{gdouble $\ast$}]{xi,  }\item[{gdouble $\ast$}]{eta,  }\item[{gboolean}]{constrain }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+nearest\+\_\+point}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+nearest\+\_\+point (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{gdouble $\ast$}]{xi, }
+\item[{gdouble $\ast$}]{eta, }
+\item[{gboolean}]{constrain}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga2d7bc52ae15be170219cea70cc33efc7}
 Given a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}, find the area coordinates of the nearest point to a specified Gts\+Point, using a rootfinding method. The point found need not lie on the \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} proper. For a plane element, this is equivalent to projection onto the plane.
 
 
@@ -1084,22 +1216,30 @@ Given a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257
 \hline
 {\em eta} & second area coordinate of nearest point on \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}; \\
 \hline
-{\em constrain} & if T\+R\+UE, limit the search to points which lie on the element or its boundary; if F\+A\+L\+SE, the returned point may lie outside the element.\\
+{\em constrain} & if T\+R\+U\+E, limit the search to points which lie on the element or its boundary; if F\+A\+L\+S\+E, the returned point may lie outside the element.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+find\+\_\+vertex(), bem3d\+\_\+element\+\_\+vertex\+\_\+eta, and bem3d\+\_\+element\+\_\+vertex\+\_\+xi.
+References bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+find\+\_\+vertex(), bem3d\+\_\+element\+\_\+point\+\_\+inside(), bem3d\+\_\+element\+\_\+vertex\+\_\+eta, and bem3d\+\_\+element\+\_\+vertex\+\_\+xi.
 
-\mbox{\label{group__belement_gac1e96c31618f2aa43776d4a652f3aadd}} 
+
+
+Referenced by bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami(), bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+polar\+\_\+hs().
+
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+nearest\+\_\+vertex@{bem3d\+\_\+element\+\_\+nearest\+\_\+vertex}}
 \index{bem3d\+\_\+element\+\_\+nearest\+\_\+vertex@{bem3d\+\_\+element\+\_\+nearest\+\_\+vertex}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+nearest\+\_\+vertex()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+nearest\+\_\+vertex (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Point $\ast$}]{p,  }\item[{gint $\ast$}]{i,  }\item[{gdouble $\ast$}]{R }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+nearest\+\_\+vertex}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+nearest\+\_\+vertex (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Point $\ast$}]{p, }
+\item[{gint $\ast$}]{i, }
+\item[{gdouble $\ast$}]{R}
+\end{DoxyParamCaption}
+)}\label{group__belement_gac1e96c31618f2aa43776d4a652f3aadd}
 Find element vertex which is closest to a Gts\+Point.
 
 
@@ -1114,18 +1254,20 @@ Find element vertex which is closest to a Gts\+Point.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+element\+\_\+vertex\+\_\+number.
 
-\mbox{\label{group__belement_ga3cba5ede20485707e2b89608acebc7de}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+neighbours@{bem3d\+\_\+element\+\_\+neighbours}}
 \index{bem3d\+\_\+element\+\_\+neighbours@{bem3d\+\_\+element\+\_\+neighbours}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+neighbours()}
-{\footnotesize\ttfamily G\+S\+List$\ast$ bem3d\+\_\+element\+\_\+neighbours (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{el,  }\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+neighbours}]{\setlength{\rightskip}{0pt plus 5cm}G\+S\+List$\ast$ bem3d\+\_\+element\+\_\+neighbours (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{el, }
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga3cba5ede20485707e2b89608acebc7de}
 Find the elements of a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} which share an edge with a specified element.
 
 
@@ -1140,14 +1282,21 @@ a G\+S\+List of unique elements which border the specified element.
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+face, bem3d\+\_\+element\+\_\+face\+\_\+number, B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, and bem3d\+\_\+mesh\+\_\+face\+\_\+element().
+References bem3d\+\_\+element\+\_\+face, bem3d\+\_\+element\+\_\+face\+\_\+number, B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, and bem3d\+\_\+mesh\+\_\+face\+\_\+element().
 
-\mbox{\label{group__belement_ga1cf2fe58dce34516e0aacddb00ad495a}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+new@{bem3d\+\_\+element\+\_\+new}}
 \index{bem3d\+\_\+element\+\_\+new@{bem3d\+\_\+element\+\_\+new}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+new()}
-{\footnotesize\ttfamily \textbf{ B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+new (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element\+Class} $\ast$}]{klass,  }\item[{gint}]{nf,  }\item[{gint}]{nv,  }\item[{gint}]{nc,  }\item[{gint}]{ns,  }\item[{\textbf{ B\+E\+M3\+D\+Shape\+Func}}]{shf,  }\item[{\textbf{ B\+E\+M3\+D\+Shape\+Func}}]{cpf }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Element}$\ast$ bem3d\+\_\+element\+\_\+new (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element\+Class} $\ast$}]{klass, }
+\item[{gint}]{nf, }
+\item[{gint}]{nv, }
+\item[{gint}]{nc, }
+\item[{gint}]{ns, }
+\item[{{\bf B\+E\+M3\+D\+Shape\+Func}}]{shf, }
+\item[{{\bf B\+E\+M3\+D\+Shape\+Func}}]{cpf}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga1cf2fe58dce34516e0aacddb00ad495a}
 Allocate a new \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}
 
 
@@ -1176,14 +1325,19 @@ References bem3d\+\_\+element\+\_\+moment\+\_\+order.
 
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t2(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q1(), bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t1(), bem3d\+\_\+element\+\_\+build\+\_\+t2(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
 
-\mbox{\label{group__belement_ga9478ce7e6f51aa44297acb91075abd50}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+normal@{bem3d\+\_\+element\+\_\+normal}}
 \index{bem3d\+\_\+element\+\_\+normal@{bem3d\+\_\+element\+\_\+normal}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+normal()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+normal (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gdouble $\ast$}]{d\+Lds,  }\item[{gdouble $\ast$}]{d\+Ldt,  }\item[{Gts\+Vector}]{normal,  }\item[{gdouble $\ast$}]{J }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+normal}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+normal (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gdouble $\ast$}]{d\+Lds, }
+\item[{gdouble $\ast$}]{d\+Ldt, }
+\item[{Gts\+Vector}]{normal, }
+\item[{gdouble $\ast$}]{J}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga9478ce7e6f51aa44297acb91075abd50}
 Compute normal to, and Jacobian on, a B\+E\+M3\+D\+Element given shape function derivatives.
 
 
@@ -1200,7 +1354,7 @@ Compute normal to, and Jacobian on, a B\+E\+M3\+D\+Element given shape function 
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success; 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success; 
 \end{DoxyReturn}
 
 
@@ -1210,12 +1364,15 @@ References bem3d\+\_\+element\+\_\+vertex\+\_\+number.
 
 Referenced by bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), and bem3d\+\_\+node\+\_\+normal().
 
-\mbox{\label{group__belement_ga611e9027ea1ab4ffec98af328ea70052}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+point\+\_\+inside@{bem3d\+\_\+element\+\_\+point\+\_\+inside}}
 \index{bem3d\+\_\+element\+\_\+point\+\_\+inside@{bem3d\+\_\+element\+\_\+point\+\_\+inside}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+point\+\_\+inside()}
-{\footnotesize\ttfamily gboolean bem3d\+\_\+element\+\_\+point\+\_\+inside (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gdouble}]{xi,  }\item[{gdouble}]{eta }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+point\+\_\+inside}]{\setlength{\rightskip}{0pt plus 5cm}gboolean bem3d\+\_\+element\+\_\+point\+\_\+inside (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gdouble}]{xi, }
+\item[{gdouble}]{eta}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga611e9027ea1ab4ffec98af328ea70052}
 Given the local coordinates of a point on an element, check if it lies inside the element.
 
 
@@ -1228,14 +1385,25 @@ Given the local coordinates of a point on an element, check if it lies inside th
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-T\+R\+UE if ({\itshape xi}, {\itshape eta}) lies inside the element, F\+A\+L\+SE otherwise. 
+T\+R\+U\+E if ({\itshape xi}, {\itshape eta}) lies inside the element, F\+A\+L\+S\+E otherwise. 
 \end{DoxyReturn}
-\mbox{\label{group__belement_gad7b224b59720f28a1338d60800b52f5f}} 
+
+
+References bem3d\+\_\+element\+\_\+corner\+\_\+index, bem3d\+\_\+element\+\_\+corner\+\_\+number, bem3d\+\_\+element\+\_\+vertex\+\_\+eta, and bem3d\+\_\+element\+\_\+vertex\+\_\+xi.
+
+
+
+Referenced by bem3d\+\_\+element\+\_\+nearest\+\_\+point().
+
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+position@{bem3d\+\_\+element\+\_\+position}}
 \index{bem3d\+\_\+element\+\_\+position@{bem3d\+\_\+element\+\_\+position}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+position()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+position (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gdouble $\ast$}]{L,  }\item[{Gts\+Point $\ast$}]{q }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+position}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+position (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gdouble $\ast$}]{L, }
+\item[{Gts\+Point $\ast$}]{q}
+\end{DoxyParamCaption}
+)}\label{group__belement_gad7b224b59720f28a1338d60800b52f5f}
 Interpolate position on a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} given a set of shape functions.
 
 
@@ -1248,7 +1416,7 @@ Interpolate position on a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
@@ -1256,14 +1424,17 @@ References bem3d\+\_\+element\+\_\+vertex\+\_\+number.
 
 
 
-Referenced by bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), and bem3d\+\_\+element\+\_\+radiation\+\_\+point().
+Referenced by bem3d\+\_\+element\+\_\+assemble\+\_\+equations(), bem3d\+\_\+element\+\_\+assemble\+\_\+equations\+\_\+direct(), bem3d\+\_\+element\+\_\+boundary\+\_\+nearest\+\_\+point(), bem3d\+\_\+element\+\_\+radiation\+\_\+point(), and bem3d\+\_\+quadrature\+\_\+rule\+\_\+hayami().
 
-\mbox{\label{group__belement_ga526bf905e75a66030339ca1a58490e65}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+set\+\_\+corner@{bem3d\+\_\+element\+\_\+set\+\_\+corner}}
 \index{bem3d\+\_\+element\+\_\+set\+\_\+corner@{bem3d\+\_\+element\+\_\+set\+\_\+corner}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+set\+\_\+corner()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+set\+\_\+corner (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gint}]{i,  }\item[{gint}]{j }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+set\+\_\+corner}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+set\+\_\+corner (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gint}]{i, }
+\item[{gint}]{j}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga526bf905e75a66030339ca1a58490e65}
 Set a corner of a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}.
 
 
@@ -1276,7 +1447,7 @@ Set a corner of a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa16021
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
@@ -1284,14 +1455,17 @@ References bem3d\+\_\+element\+\_\+corner\+\_\+number.
 
 
 
-Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
+Referenced by bem3d\+\_\+element\+\_\+build\+\_\+q1(), bem3d\+\_\+element\+\_\+build\+\_\+q2(), bem3d\+\_\+element\+\_\+build\+\_\+t0(), bem3d\+\_\+element\+\_\+build\+\_\+t1(), bem3d\+\_\+element\+\_\+build\+\_\+t2(), bem3d\+\_\+element\+\_\+build\+\_\+t3(), and bem3d\+\_\+mesh\+\_\+read().
 
-\mbox{\label{group__belement_ga72a9a59800fd0b6fe9c3979636c6f391}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+set\+\_\+index@{bem3d\+\_\+element\+\_\+set\+\_\+index}}
 \index{bem3d\+\_\+element\+\_\+set\+\_\+index@{bem3d\+\_\+element\+\_\+set\+\_\+index}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+set\+\_\+index()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+set\+\_\+index (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{gint}]{i,  }\item[{gint}]{j }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+set\+\_\+index}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+set\+\_\+index (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{gint}]{i, }
+\item[{gint}]{j}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga72a9a59800fd0b6fe9c3979636c6f391}
 Set the global index of a collocation point.
 
 
@@ -1304,7 +1478,7 @@ Set the global index of a collocation point.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
@@ -1314,12 +1488,14 @@ References bem3d\+\_\+element\+\_\+node\+\_\+number.
 
 Referenced by bem3d\+\_\+element\+\_\+index\+\_\+nodes(), and bem3d\+\_\+mesh\+\_\+read().
 
-\mbox{\label{group__belement_gaa1e5a9af23bf86f4678a70393f510e6f}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner@{bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner}}
 \index{bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner@{bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{Gts\+Vertex $\ast$}]{v }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+vertex\+\_\+is\+\_\+corner (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{Gts\+Vertex $\ast$}]{v}
+\end{DoxyParamCaption}
+)}\label{group__belement_gaa1e5a9af23bf86f4678a70393f510e6f}
 Check if a vertex is a corner of an element.
 
 
@@ -1336,12 +1512,16 @@ the index of a corner of {\itshape e} if {\itshape v} is a corner, -\/1 otherwis
 
 References bem3d\+\_\+element\+\_\+corner, and bem3d\+\_\+element\+\_\+corner\+\_\+number.
 
-\mbox{\label{group__belement_ga34a4af041e053afa282ec37e9262abf5}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+element\+\_\+write@{bem3d\+\_\+element\+\_\+write}}
 \index{bem3d\+\_\+element\+\_\+write@{bem3d\+\_\+element\+\_\+write}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+element\+\_\+write()}
-{\footnotesize\ttfamily gint bem3d\+\_\+element\+\_\+write (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e,  }\item[{G\+Hash\+Table $\ast$}]{v,  }\item[{G\+Hash\+Table $\ast$}]{t,  }\item[{F\+I\+LE $\ast$}]{f }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+element\+\_\+write}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+element\+\_\+write (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e, }
+\item[{G\+Hash\+Table $\ast$}]{v, }
+\item[{G\+Hash\+Table $\ast$}]{t, }
+\item[{F\+I\+L\+E $\ast$}]{f}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga34a4af041e053afa282ec37e9262abf5}
 Write a \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} to file. Usually called from bem3d\+\_\+mesh\+\_\+write.
 
 Format\+: nf nv nc ns shf cpf [faces] [vertices] [collocation points] [vertex area coordinate] [collocation point area coordinates] [collocation point global indices] [corner indices]
@@ -1358,18 +1538,20 @@ Format\+: nf nv nc ns shf cpf [faces] [vertices] [collocation points] [vertex ar
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+SS on success. 
+\+::\+B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+shapefunc\+\_\+lookup\+\_\+name().
 
-\mbox{\label{group__belement_ga4876a0e032b20ade70360fef6cdd1c84}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+elements\+\_\+common\+\_\+edges@{bem3d\+\_\+elements\+\_\+common\+\_\+edges}}
 \index{bem3d\+\_\+elements\+\_\+common\+\_\+edges@{bem3d\+\_\+elements\+\_\+common\+\_\+edges}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+elements\+\_\+common\+\_\+edges()}
-{\footnotesize\ttfamily G\+S\+List$\ast$ bem3d\+\_\+elements\+\_\+common\+\_\+edges (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e1,  }\item[{\textbf{ B\+E\+M3\+D\+Element} $\ast$}]{e2 }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+elements\+\_\+common\+\_\+edges}]{\setlength{\rightskip}{0pt plus 5cm}G\+S\+List$\ast$ bem3d\+\_\+elements\+\_\+common\+\_\+edges (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e1, }
+\item[{{\bf B\+E\+M3\+D\+Element} $\ast$}]{e2}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga4876a0e032b20ade70360fef6cdd1c84}
 Find the Gts\+Edge\textquotesingle{}s common to two \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af}\textquotesingle{}s.
 
 
@@ -1380,18 +1562,21 @@ Find the Gts\+Edge\textquotesingle{}s common to two \doxyref{B\+E\+M3\+D\+Elemen
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-a G\+S\+List of Gts\+Edges common to {\itshape e1} and {\itshape e2}, or N\+U\+LL if the elements do not touch. 
+a G\+S\+List of Gts\+Edges common to {\itshape e1} and {\itshape e2}, or N\+U\+L\+L if the elements do not touch. 
 \end{DoxyReturn}
 
 
 References bem3d\+\_\+element\+\_\+face, and bem3d\+\_\+element\+\_\+face\+\_\+number.
 
-\mbox{\label{group__belement_ga7a297bce7df5cdbb22bf47972af2846e}} 
 \index{B\+E\+M3\+D elements@{B\+E\+M3\+D elements}!bem3d\+\_\+elements\+\_\+from\+\_\+vertices@{bem3d\+\_\+elements\+\_\+from\+\_\+vertices}}
 \index{bem3d\+\_\+elements\+\_\+from\+\_\+vertices@{bem3d\+\_\+elements\+\_\+from\+\_\+vertices}!B\+E\+M3\+D elements@{B\+E\+M3\+D elements}}
-\subsubsection{bem3d\+\_\+elements\+\_\+from\+\_\+vertices()}
-{\footnotesize\ttfamily G\+S\+List$\ast$ bem3d\+\_\+elements\+\_\+from\+\_\+vertices (\begin{DoxyParamCaption}\item[{\textbf{ B\+E\+M3\+D\+Mesh} $\ast$}]{m,  }\item[{Gts\+Vertex $\ast$}]{v1,  }\item[{Gts\+Vertex $\ast$}]{v2 }\end{DoxyParamCaption})}
-
+\subsubsection[{bem3d\+\_\+elements\+\_\+from\+\_\+vertices}]{\setlength{\rightskip}{0pt plus 5cm}G\+S\+List$\ast$ bem3d\+\_\+elements\+\_\+from\+\_\+vertices (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Mesh} $\ast$}]{m, }
+\item[{Gts\+Vertex $\ast$}]{v1, }
+\item[{Gts\+Vertex $\ast$}]{v2}
+\end{DoxyParamCaption}
+)}\label{group__belement_ga7a297bce7df5cdbb22bf47972af2846e}
 Find the \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c58ab7257ec296c1b8a0af} s shared by two Gts\+Vertex s.
 
 
@@ -1408,7 +1593,7 @@ a G\+S\+List of \doxyref{B\+E\+M3\+D\+Element}{p.}{group__belement_ga3cfa160210c
 \end{DoxyReturn}
 
 
-References bem3d\+\_\+element\+\_\+find\+\_\+vertex(), B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+SH, and bem3d\+\_\+mesh\+\_\+vertex\+\_\+elements().
+References bem3d\+\_\+element\+\_\+find\+\_\+vertex(), B\+E\+M3\+D\+\_\+\+I\+S\+\_\+\+M\+E\+S\+H, and bem3d\+\_\+mesh\+\_\+vertex\+\_\+elements().
 
 
 

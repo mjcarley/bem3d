@@ -58,6 +58,7 @@ FITNESS FOR A PARTICULAR PURPOSE.\n"
 #define BEM3D_BMESH_DATA_TREE    27
 #define BEM3D_BMESH_DATA_FIELD   28
 #define BEM3D_BMESH_DATA_CONFIG  29
+#define BEM3D_BMESH_DATA_WORK    30
 
 #ifndef g_debug
 #define g_debug(format...) g_log(G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, format)

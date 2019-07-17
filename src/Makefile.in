@@ -174,8 +174,9 @@ am__libbem3d_la_SOURCES_DIST = acoord.c belement.c logging.c files.c \
 	matrix.c operators.c newman.c edge.c motion.c util.c data.c \
 	configure.c polar.c polar.h series.c intsincos.c gradient.c \
 	transforms.c qpanel.c cpanel.c skeleton.c fmm.c fmmlib3d_1_2.c \
-	fmmlib3d_1_2.h htriquad.c htriquad.h binomials.c binomials.h \
-	expansions.c htri-transforms.c trace.c trace.h reduction.c \
+	fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h htriquad.c \
+	htriquad.h binomials.c binomials.h expansions.c \
+	htri-transforms.c trace.c trace.h reduction.c work.c \
 	../fmmlib3d-1.2/src/cdjseval3d.f \
 	../fmmlib3d-1.2/src/d3mtreeplot.f \
 	../fmmlib3d-1.2/src/d3tstrcr.f ../fmmlib3d-1.2/src/dfft.f \
@@ -237,9 +238,9 @@ am_libbem3d_la_OBJECTS = acoord.lo belement.lo logging.lo files.lo \
 	wandzura.lo location.lo matrix.lo operators.lo newman.lo \
 	edge.lo motion.lo util.lo data.lo configure.lo polar.lo \
 	series.lo intsincos.lo gradient.lo transforms.lo qpanel.lo \
-	cpanel.lo skeleton.lo fmm.lo fmmlib3d_1_2.lo htriquad.lo \
-	binomials.lo expansions.lo htri-transforms.lo trace.lo \
-	reduction.lo $(am__objects_1)
+	cpanel.lo skeleton.lo fmm.lo fmmlib3d_1_2.lo wbfmm-bem3d.lo \
+	htriquad.lo binomials.lo expansions.lo htri-transforms.lo \
+	trace.lo reduction.lo work.lo $(am__objects_1)
 libbem3d_la_OBJECTS = $(am_libbem3d_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -284,7 +285,8 @@ am__depfiles_remade = ./$(DEPDIR)/acoord.Plo ./$(DEPDIR)/belement.Plo \
 	./$(DEPDIR)/series.Plo ./$(DEPDIR)/shapefunc.Plo \
 	./$(DEPDIR)/skeleton.Plo ./$(DEPDIR)/trace.Plo \
 	./$(DEPDIR)/transforms.Plo ./$(DEPDIR)/util.Plo \
-	./$(DEPDIR)/wandzura.Plo
+	./$(DEPDIR)/wandzura.Plo ./$(DEPDIR)/wbfmm-bem3d.Plo \
+	./$(DEPDIR)/work.Plo
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -427,6 +429,7 @@ SHELL = @SHELL@
 SISL = @SISL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WBFMM = @WBFMM@
 WMPI = @WMPI@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -494,6 +497,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+wbfmm_cflags = @wbfmm_cflags@
+wbfmm_libs = @wbfmm_libs@
 wmpi_cflags = @wmpi_cflags@
 wmpi_libs = @wmpi_libs@
 AM_CPPFLAGS = -I$(top_srcdir) -I$(includedir) -DG_LOG_DOMAIN=\"BEM3D\"
@@ -512,8 +517,9 @@ libbem3d_la_SOURCES = acoord.c belement.c logging.c files.c bmesh.c \
 	operators.c newman.c edge.c motion.c util.c data.c configure.c \
 	polar.c polar.h series.c intsincos.c gradient.c transforms.c \
 	qpanel.c cpanel.c skeleton.c fmm.c fmmlib3d_1_2.c \
-	fmmlib3d_1_2.h htriquad.c htriquad.h binomials.c binomials.h \
-	expansions.c htri-transforms.c trace.c trace.h reduction.c \
+	fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h htriquad.c \
+	htriquad.h binomials.c binomials.h expansions.c \
+	htri-transforms.c trace.c trace.h reduction.c work.c \
 	$(am__append_1)
 include_HEADERS = \
 	bem3d.h \
@@ -761,6 +767,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transforms.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wandzura.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wbfmm-bem3d.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/work.Plo@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1004,6 +1012,8 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/transforms.Plo
 	-rm -f ./$(DEPDIR)/util.Plo
 	-rm -f ./$(DEPDIR)/wandzura.Plo
+	-rm -f ./$(DEPDIR)/wbfmm-bem3d.Plo
+	-rm -f ./$(DEPDIR)/work.Plo
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1090,6 +1100,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/transforms.Plo
 	-rm -f ./$(DEPDIR)/util.Plo
 	-rm -f ./$(DEPDIR)/wandzura.Plo
+	-rm -f ./$(DEPDIR)/wbfmm-bem3d.Plo
+	-rm -f ./$(DEPDIR)/work.Plo
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

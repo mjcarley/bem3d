@@ -55,6 +55,8 @@ libbem3d_la_SOURCES = \
 	fmm.c \
 	fmmlib3d_1_2.c \
 	fmmlib3d_1_2.h \
+	wbfmm-bem3d.c \
+	wbfmm-bem3d.h \
 	htriquad.c \
 	htriquad.h \
 	binomials.c \
@@ -63,7 +65,8 @@ libbem3d_la_SOURCES = \
 	htri-transforms.c \
 	trace.c \
 	trace.h \
-	reduction.c
+	reduction.c \
+	work.c
 
 if USE_FMMLIB3D_1_2
 libbem3d_la_SOURCES += \

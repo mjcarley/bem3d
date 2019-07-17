@@ -51,6 +51,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Wide Band Fast Multipole Method library available */
+#undef HAVE_WBFMM
+
 /* MPI wrapper library available */
 #undef HAVE_WMPI
 

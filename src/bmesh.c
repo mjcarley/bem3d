@@ -599,27 +599,28 @@ static void bem3d_element_subassemble(BEM3DElement *e, gpointer *data)
   BEM3DEquationFunc efunc = (BEM3DEquationFunc)data[BEM3D_BMESH_DATA_EFUNC] ;
   GtsVertex *x = (GtsVertex *)data[BEM3D_BMESH_DATA_NODE] ;
   gint row = *(gint *)data[BEM3D_BMESH_DATA_ROW] ;
-  static GArray *G = NULL ;
-  static GArray *dGdn = NULL ;
+  BEM3DWorkspace *work = data[BEM3D_BMESH_DATA_WORK] ;
+  GArray *G, *dGdn ;
   gint i, stride ;
 
-  if ( G == NULL ) {
-    G = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
-    dGdn = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
-  }
-
+  G = bem3d_workspace_double_array_get(work) ;
+  dGdn = bem3d_workspace_double_array_get(work) ;
+  
   g_array_set_size(G,bem3d_element_node_number(e)) ; 
   g_array_set_size(dGdn,bem3d_element_node_number(e)) ;
   bem3d_element_assemble_equations(e, GTS_POINT(x), 
 				   config, gdata,
-				   G, dGdn) ;
+				   G, dGdn, work) ;
   stride = (G->len)/bem3d_element_node_number(e) ;
   for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ )
     efunc(row, bem3d_element_global_index(e, i),
 	  &(g_array_index(G,gdouble,stride*i)),
 	  &(g_array_index(dGdn,gdouble,stride*i)),
 	  stride, edata) ;
-	  
+
+  bem3d_workspace_double_array_put(work, G) ;
+  bem3d_workspace_double_array_put(work, dGdn) ;
+  
   return ;
 }
 
@@ -652,6 +653,7 @@ static void bem3d_node_subassemble(gint i, GtsVertex *v, gpointer *data)
  * @param gdata ::BEM3DParameters for the Green's function;
  * @param efunc ::BEM3DEquationFunc for the problem
  * @param edata data to pass to efunc
+ * @param work a ::BEM3DWorkspace
  * 
  * @return ::BEM3D_SUCCESS on success
  */
@@ -659,9 +661,11 @@ static void bem3d_node_subassemble(gint i, GtsVertex *v, gpointer *data)
 gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n,
 				   BEM3DConfiguration *config,
 				   BEM3DParameters *gdata,
-				   BEM3DEquationFunc efunc, gpointer edata)
+				   BEM3DEquationFunc efunc, gpointer edata,
+				   BEM3DWorkspace *work)
+  
 {
-  gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
+  gpointer data[BEM3D_BMESH_DATA_WIDTH] = {NULL} ;
   gint np ;
 
   g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
@@ -681,6 +685,7 @@ gint bem3d_mesh_assemble_equations(BEM3DMesh *m, BEM3DMesh *n,
   data[BEM3D_BMESH_DATA_N] = &np ;
   data[BEM3D_BMESH_DATA_IMIN] = &(bem3d_mesh_node_index_min(m)) ;
   data[BEM3D_BMESH_DATA_IMAX] = &(bem3d_mesh_node_index_max(m)) ;
+  data[BEM3D_BMESH_DATA_WORK] = work ;
 
   g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "%s", __FUNCTION__) ;
 
@@ -744,7 +749,6 @@ static void bem3d_foreach_node(gpointer key, BEM3DElement *e, gpointer *fd)
     if ( (e->i[i] >= bem3d_mesh_node_index_min(m)) &&
 	 (e->i[i] < bem3d_mesh_node_index_max(m)) ) {
 #ifdef _FOREACH_USE_HASH_TABLE_
-/*       fprintf(stderr, "index: %d\n", e->i[i]) ; */
       if ( g_hash_table_lookup(h, GINT_TO_POINTER((e->i[i]+1))) == NULL ) {
 	func(e->i[i], e->c[i], data) ;
 	g_hash_table_insert(h, 
@@ -822,15 +826,12 @@ static void element_set_bc(BEM3DElement *e, gpointer *data)
   GHashTable *h = (GHashTable *)data[BEM3D_BMESH_DATA_HASH] ;
   BEM3DBCFunc bcf = (BEM3DBCFunc)data[BEM3D_BMESH_DATA_BFUNC] ;
   gpointer bdata = data[BEM3D_BMESH_DATA_BDATA] ;
-  static gdouble *dLds, *dLdt ;
+  gdouble dLds[64], dLdt[64] ;
   gdouble s, t, J ;
   GtsVector n ;
   gint i ;
 
-  if ( dLds == NULL ) {
-    dLds = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-    dLdt = (gdouble *)g_malloc(4*bem3d_element_node_number(e)*sizeof(gdouble)) ;
-  }
+  g_assert(bem3d_element_node_number(e) < 17) ;
 
   for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
     if ( !g_hash_table_lookup(h, GINT_TO_POINTER((e->i[i]+1))) ) {
@@ -889,26 +890,26 @@ static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
   gpointer ldata = data[BEM3D_BMESH_DATA_LDATA] ;
   BEM3DEquationFunc efunc = (BEM3DEquationFunc)data[BEM3D_BMESH_DATA_EFUNC] ;
   gpointer edata = data[BEM3D_BMESH_DATA_EDATA] ;
+  BEM3DWorkspace *work = data[BEM3D_BMESH_DATA_WORK] ;
   gint j ;
-  static GArray *g = NULL, *f = NULL, *zero = NULL ;
+  GArray *g = NULL, *f = NULL, *zero = NULL ;
 
-  if ( g == NULL ) {
-    f = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
-    zero = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
-    g = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;
-  }
+  f = bem3d_workspace_double_array_get(work) ;
+  zero = bem3d_workspace_double_array_get(work) ;
+  g = bem3d_workspace_double_array_get(work) ;
 
   for ( j = 0 ; j < f->len ; j ++ ) g_array_index(f,gdouble,j) = 0.0 ;
   bem3d_mesh_radiation_point(m, config, gdata,
-			     lf, ldata, GTS_POINT(v), f) ;
+			     lf, ldata, GTS_POINT(v), f, work) ;
   g_array_set_size(zero, f->len) ;
   efunc(i, i, 
 	&(g_array_index(zero,gdouble,0)),
 	&(g_array_index(f,gdouble,0)),
 	f->len, edata) ;
 
-  /* fprintf(stderr, "%d %lg %lg\n", i, */
-  /* 	  ((gdouble *)edata)[2*i+0], ((gdouble *)edata)[2*i+1]) ; */
+  bem3d_workspace_double_array_put(work, f) ;
+  bem3d_workspace_double_array_put(work, g) ;
+  bem3d_workspace_double_array_put(work, zero) ;
   
   return ;
 }
@@ -925,8 +926,9 @@ static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
  * or bem3d_lookup_func_unit_c (for complex) 
  * @param ldata data to pass to the lookup function 
  * @param efunc equation function for problem. This will be called with 
- * the row and column numbers equal.
+ * the row and column numbers equal
  * @param edata user data to pass to efunc
+ * @param work a ::BEM3DWorkspace
  * 
  * @return ::BEM3D_SUCCESS on success
  */
@@ -935,10 +937,11 @@ gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
 			  BEM3DConfiguration *config,
 			  BEM3DParameters *gdata,
 			  BEM3DLookupFunc lfunc, gpointer ldata,
-			  BEM3DEquationFunc efunc, gpointer edata)
+			  BEM3DEquationFunc efunc, gpointer edata,
+			  BEM3DWorkspace *work)
 
 {
-  gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
+  gpointer data[BEM3D_BMESH_DATA_WIDTH] = {NULL} ;
 
   g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
@@ -954,6 +957,7 @@ gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
   data[BEM3D_BMESH_DATA_IMAX] = &(bem3d_mesh_node_index_max(m)) ;
   data[BEM3D_BMESH_DATA_EFUNC] = efunc ;
   data[BEM3D_BMESH_DATA_EDATA] = edata ;
+  data[BEM3D_BMESH_DATA_WORK] = work ;
 
   bem3d_mesh_foreach_node(m, (BEM3DNodeFunc)mesh_quad_gfunc,
 			  (gpointer )(&data[0])) ;
@@ -979,6 +983,7 @@ gint bem3d_mesh_quad_dgdn(BEM3DMesh *m,
  * @param efunc equation function for problem. This will be called with 
  * the row and column numbers equal.
  * @param edata user data to pass to efunc
+ * @param work a ::BEM3DWorkspace
  * 
  * @return ::BEM3D_SUCCESS on success
  */
@@ -988,7 +993,9 @@ gint bem3d_mesh_disjoint_quad_dgdn(BEM3DMesh *m1,
 				   BEM3DConfiguration *config,
 				   BEM3DParameters *gdata,
 				   BEM3DLookupFunc lfunc, gpointer ldata,
-				   BEM3DEquationFunc efunc, gpointer edata)
+				   BEM3DEquationFunc efunc, gpointer edata,
+				   BEM3DWorkspace *work)
+				   
 
 {
   gpointer data[BEM3D_BMESH_DATA_WIDTH] ;
@@ -1009,6 +1016,7 @@ gint bem3d_mesh_disjoint_quad_dgdn(BEM3DMesh *m1,
   data[BEM3D_BMESH_DATA_IMAX] = &(bem3d_mesh_node_index_max(m2)) ;
   data[BEM3D_BMESH_DATA_EFUNC] = efunc ;
   data[BEM3D_BMESH_DATA_EDATA] = edata ;
+  data[BEM3D_BMESH_DATA_WORK] = work ;
 
   bem3d_mesh_foreach_node(m2, (BEM3DNodeFunc)mesh_quad_gfunc,
 			  (gpointer )(&data[0])) ;

@@ -125,7 +125,8 @@ bem3d_solve-bem3d-solve.o: bem3d-solve.c /usr/include/stdc-predef.h \
  /usr/include/gtsconfig.h /home/ensmjc/Codes/include/wmpi.h \
  /home/ensmjc/Codes/include/sisl.h /usr/include/gsl/gsl_complex.h \
  /home/ensmjc/Codes/include/sislconfig.h ../src/bem3d.h \
- ../src/bem3dconfig.h ../src/bem3d-private.h ../src/bem3d.h tools.h \
+ /home/ensmjc/Codes/include/gqr.h ../src/bem3dconfig.h \
+ ../src/bem3d-private.h ../src/bem3d.h tools.h \
  /usr/include/gsl/gsl_complex_math.h /usr/include/gsl/gsl_inline.h
 
 /usr/include/stdc-predef.h:
@@ -515,6 +516,8 @@ bem3d_solve-bem3d-solve.o: bem3d-solve.c /usr/include/stdc-predef.h \
 /home/ensmjc/Codes/include/sislconfig.h:
 
 ../src/bem3d.h:
+
+/home/ensmjc/Codes/include/gqr.h:
 
 ../src/bem3dconfig.h:
 

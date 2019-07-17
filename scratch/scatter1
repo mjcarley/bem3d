@@ -1,0 +1,97 @@
+#!/bin/bash
+##k=1.0
+
+xs=0.0
+ys=0.05
+zs=0.0
+M=0.0
+sigs=0.1
+fs=600
+tol=1e-6
+
+k=`echo 2*3.14159*${fs}/343 | bc -l`
+echo Wavenumber: ${k}
+pwd
+geometry=plate
+geometryP=plateImp1
+geometryR=plateRec1
+configP=plate.cfg
+##configgradient=windtunnel-gradient.cfg
+
+##msh2bem3d -a 89 < ${geometryP}.msh > ${geometryP}.bem
+##msh2bem3d -a 89 -n 4791 < ${geometryR}.msh > ${geometryR}.bem
+##msh2bem3d -a 89 < ${geometry}.msh > ${geometry}.bem
+
+msh2bem3d -a 89 < ${geometryP}.msh > test.bem 2 > index
+index=`tail -n1 index | cut -d: -f3`
+echo inde: ${index}
+
+## assemble the matrix for a Helmholtz problem
+bem3d-assemble -k ${k} -C ${configP} -i ${geometryP}.bem -i ${geometryR}.bem -o ${geometryP}.mtx
+
+bem3d-function -E 5 -i ${geometryP}.bem -F source.fn -s "k=${k}" \
+       -s "x0=${xs}" -s "y0=${ys}" -s "z0=${zs}" -s "sig=${sigs}" \
+	       -o bcP.dat
+
+bem3d-function -E 5 -i ${geometryR}.bem -F source.fn -s "k=${k}" \
+       -s "x0=${xs}" -s "y0=${ys}" -s "z0=${zs}" -s "sig=${sigs}" \
+	       -o bcR.dat
+
+bem3d-function -d bcP.dat -e bcR.dat -m -o bcPR.dat
+
+bem3d2pos -i ${geometryP}.bem -d bcP.dat -f 1 -o bcP.pos
+bem3d2pos -i ${geometryR}.bem -d bcR.dat -f 1 -o bcR.pos
+
+## solve for the surface potential using the plane wave boundary condition
+bem3d-solve -C ${configP} -d bcPR.dat -m ${geometryP}.mtx -o solutionP.dat ${tol}
+
+##bem3d-function -E 2 -i ${geometryP}.bem -F admittance.fn -D -o admittanceP.mtx 
+##bem3d-solve -C ${configP} -d bcPR.dat -m ${geometryP}.mtx -A admittanceP.mtx -k ${k} -o solutionPAP.dat
+##bem3d2pos -t "Surface" -i ${geometryP}.bem -d solutionPAP.dat -o ${geometryP}AP.pos
+
+bem3d-function -E 2 -i ${geometryR}.bem -F admittance.fn -D -o admittanceR.mtx 
+bem3d-solve -C ${configP} -d bcPR.dat -m ${geometryP}.mtx -A admittanceR.mtx -k ${k} -o solutionPAR.dat
+bem3d2pos -t "Surface" -i ${geometryR}.bem -d solutionPAR.dat -o ${geometryR}AR.pos
+
+bem3d-field -C ${configP} -d solutionP.dat -i ${geometryP}.bem -X -s micposZ.xyz -k ${k} -o micposZP-${fs}.dat
+bem3d-field -C ${configP} -d solutionP.dat -i ${geometryR}.bem -X -s micposZ.xyz -k ${k} -o micposZR-${fs}.dat
+		
+##bem3d2pos -t "Surface" -i ${geometryP}.bem -d solutionPAP.dat -o ${geometryP}.pos
+##bem3d2pos -t "Surface" -i ${geometryP}.bem -d solutionP.dat -o ${geometryP}.pos
+##bem3d2pos -t "Surface" -i ${geometryR}.bem -d solutionP.dat -o ${geometryR}.pos
+
+##############################################################################
+
+##msh2bem3d -a 89 < ${geometry}.msh > ${geometry}.bem
+bem3d-assemble -k ${k} -C ${configP} -i ${geometry}.bem -o ${geometry}.mtx
+
+bem3d-function -E 5 -i ${geometry}.bem -F source.fn -s "k=${k}" \
+       -s "x0=${xs}" -s "y0=${ys}" -s "z0=${zs}" -s "sig=${sigs}" \
+	       -o bc1.dat
+		   
+bem3d2pos -i ${geometry}.bem -d bc1.dat -f 1 -o bc1.pos
+
+bem3d-solve -C ${configP} -d bc1.dat -m ${geometry}.mtx -o solution.dat
+
+##bem3d-function -E 2 -i ${geometry}.bem -F admittance.fn -D -o admittance.mtx 
+##bem3d-solve -C ${configP} -d bc1.dat -m ${geometry}.mtx -A admittance.mtx -k ${k} -o solutionA.dat
+
+bem3d2pos -t "Surface" -i ${geometry}.bem -d solutionA.dat -o ${geometry}A.pos
+bem3d-field -C ${configP} -d solution.dat -i ${geometry}.bem -X -s micposZ.xyz -k ${k} -o micposZ-${fs}.dat
+
+#############################################################################
+
+bem3d-function -E 4 -i ${geometry}.bem -F plane.fn -s "k=${k}" -o bc-plane.dat
+##bem3d-function -E 4 -i ${geometry}.bem -F source.fn -s "k=${k}" -o bc-plane.dat
+
+#bem3d-function -E 2 -i ${geometry}.bem -F admittance.fn -D -o admittance.mtx
+
+## solve for the surface potential using the plane wave boundary condition
+bem3d-solve -C ${config} -d bc-plane.dat -m ${geometry}.mtx \
+            -o solution.dat -t 1e-6 -k ${k}
+#-A admittance.mtx
+
+##bem3d-plane -v -0.1,-1.5,0 -v 4.2,-1.5,0 -v 4.2,1.5,0 -v -0.1,1.5,0 -i 65 -j 65 | gts2bem3d > field.bem
+##bem3d-field -C ${config} -d solution.dat -i ${geometry}.bem -s field.bem -o phi.dat
+##bem3d2pos -t "Field" -i field.bem -d phi.dat -o field-zcentre.pos
+

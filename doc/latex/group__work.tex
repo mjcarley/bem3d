@@ -1,0 +1,40 @@
+\section{B\+E\+M3\+D workspaces}
+\label{group__work}\index{B\+E\+M3\+D workspaces@{B\+E\+M3\+D workspaces}}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \+\_\+\+B\+E\+M3\+D\+Workspace {\bf B\+E\+M3\+D\+Workspace}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf B\+E\+M3\+D\+Workspace} $\ast$ {\bf bem3d\+\_\+workspace\+\_\+new} (void)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Workspaces used for memory management and thread safety in various calculations. Currently under development. 
+
+\subsection{Typedef Documentation}
+\index{B\+E\+M3\+D workspaces@{B\+E\+M3\+D workspaces}!B\+E\+M3\+D\+Workspace@{B\+E\+M3\+D\+Workspace}}
+\index{B\+E\+M3\+D\+Workspace@{B\+E\+M3\+D\+Workspace}!B\+E\+M3\+D workspaces@{B\+E\+M3\+D workspaces}}
+\subsubsection[{B\+E\+M3\+D\+Workspace}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Workspace}}\label{group__work_gaf540948fbe875dff930ad182734d5dbb}
+Data type for workspaces passed to functions 
+
+\subsection{Function Documentation}
+\index{B\+E\+M3\+D workspaces@{B\+E\+M3\+D workspaces}!bem3d\+\_\+workspace\+\_\+new@{bem3d\+\_\+workspace\+\_\+new}}
+\index{bem3d\+\_\+workspace\+\_\+new@{bem3d\+\_\+workspace\+\_\+new}!B\+E\+M3\+D workspaces@{B\+E\+M3\+D workspaces}}
+\subsubsection[{bem3d\+\_\+workspace\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+Workspace}$\ast$ bem3d\+\_\+workspace\+\_\+new (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}\label{group__work_ga88dccfc47eba0d6094cf161868d9b603}
+Allocate a new \doxyref{B\+E\+M3\+D\+Workspace}{p.}{group__work_gaf540948fbe875dff930ad182734d5dbb}. This should be called to allocate space before any function using the workspace is called.
+
+\begin{DoxyReturn}{Returns}
+a newly allocated \doxyref{B\+E\+M3\+D\+Workspace}{p.}{group__work_gaf540948fbe875dff930ad182734d5dbb} 
+\end{DoxyReturn}
+
+
+References bem3d\+\_\+quadrature\+\_\+rule\+\_\+new().
+

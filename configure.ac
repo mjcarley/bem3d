@@ -90,21 +90,6 @@ fi
 
 PKG_CHECK_MODULES([GSL], [gsl]) 
 
-#AC_CHECK_PROG(GSL, gsl-config, yes, no)
-#if test x$GSL = xyes ; then
-#   gsl_cflags=`gsl-config --cflags`
-#   gsl_libs=`gsl-config --libs`
-#else
-#  echo \#################################################################
-#  echo \#
-#  echo \# GNU Scientific Library not available or not properly installed.
-#  echo \# You can get the most recent version from 
-#  echo \#      http://www.gnu.org/software/gsl/
-#  echo \#
-#  echo \#################################################################
-#  exit
-#fi
-
 AC_CHECK_PROG(GQR, gqr-config, yes, no)
 if test x$GQR = xyes ; then
    AC_DEFINE(HAVE_GQR, 1, [Gauss quadrature library available])
@@ -165,6 +150,20 @@ else
   echo \#################################################################
 fi
 
+AC_CHECK_PROG(WBFMM, wbfmm-config, yes, no)
+if test x$WBFMM = xyes ; then
+   AC_DEFINE(HAVE_WBFMM, 1, [Wide Band Fast Multipole Method library available])
+   wbfmm_cflags=`wbfmm-config --cflags`
+   wbfmm_libs=`wbfmm-config --libs`
+else
+  AC_DEFINE(HAVE_WBFMM, 0, [Wide Band Fast Multipole Method library available])
+  echo \#################################################################
+  echo \#
+  echo \# WBFMM not found: wide-band FMM not available
+  echo \#
+  echo \#################################################################
+fi
+
 AC_CHECK_FILES(fmmlib3d-1.2)
 
 AM_CONDITIONAL([USE_FMMLIB3D_1_2], [test x"$ac_cv_file_fmmlib3d_1_2" = xyes])
@@ -187,11 +186,14 @@ AC_SUBST(sisl_cflags)
 AC_SUBST(sisl_libs)
 AC_SUBST(wmpi_cflags)
 AC_SUBST(wmpi_libs)
+AC_SUBST(wbfmm_cflags)
+AC_SUBST(wbfmm_libs)
 AC_SUBST(mpi_tools)
 
 CFLAGS="$CFLAGS $libmatheval_CFLAGS $gts_cflags $gqr_cflags $GSL_CFLAGS \
-		$wmpi_cflags"
-LDFLAGS="$LDFLAGS $gts_libs $gqr_libs $GSL_LIBS $wmpi_libs"
+		$sisl_cflags $wbfmm_cflags $wmpi_cflags"
+LDFLAGS="$LDFLAGS $gts_libs $gqr_libs $GSL_LIBS $wmpi_libs $sisl_libs \
+		  $wbfmm_libs"
 
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)

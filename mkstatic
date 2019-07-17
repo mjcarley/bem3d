@@ -10,6 +10,7 @@ tools="bem3d-aero \
  bem3d-solve \
  bem3d-sphere \
  bem3d2pos \
+ bem3d2msh \
  msh2bem3d \
  gts2bem3d"
 		 

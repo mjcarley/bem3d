@@ -224,6 +224,7 @@ static gint correction_terms(gint i, GtsVertex *v, gpointer data[])
   BEM3DParameters *param = data[3] ;
   GArray *G  = data[6] ;
   GArray *dG = data[7] ;
+  BEM3DWorkspace *work = data[8] ;
   GSList *elements = NULL ;
   BEM3DElement *e ;
   gdouble *w, *y, *n, g[8], dg[8] ;
@@ -243,7 +244,8 @@ static gint correction_terms(gint i, GtsVertex *v, gpointer data[])
     e = BEM3D_ELEMENT(elements->data) ;
 
     /*add the integrated element contributions*/
-    bem3d_element_assemble_equations(e, GTS_POINT(v), config, param, G, dG) ;
+    bem3d_element_assemble_equations(e, GTS_POINT(v), config, param,
+				     G, dG, work) ;
 
     for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
       insert_correction_weights(m->gcorr, m->dgcorr, m->icorr,
@@ -299,7 +301,8 @@ static gint correction_terms(gint i, GtsVertex *v, gpointer data[])
  * @param config configuration for the problem (including quadrature rules
  * for correction calculation);
  * @param param parameters for the physics;
- * @param r radius for elements to included in correction calculation.
+ * @param r radius for elements to included in correction calculation;
+ * @param work a ::BEM3DWorkspace.
  * 
  * @return BEM3D_SUCCESS on success.
  */
@@ -309,11 +312,12 @@ BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
 				     BEM3DMeshSkeleton *skel,
 				     BEM3DConfiguration *config,
 				     BEM3DParameters *param,
-				     gdouble r)
+				     gdouble r,
+				     BEM3DWorkspace *work)
 
 {
   BEM3DFMMMatrix *m ;
-  gpointer data[8] ;
+  gpointer data[16] = {NULL} ;
   GArray *G, *dG ;
 
   m = (BEM3DFMMMatrix *)g_malloc(sizeof(BEM3DFMMMatrix)) ;
@@ -333,7 +337,8 @@ BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
 
   data[6] =  G = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
   data[7] = dG = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
-
+  data[8] = work ;
+  
   bem3d_mesh_foreach_node(skel->m, (BEM3DNodeFunc)correction_terms, data) ;
 
   g_array_free(G, TRUE) ; g_array_free(dG, TRUE) ;

@@ -427,7 +427,7 @@ gdouble bem3d_element_area(BEM3DElement *e, gint ngp)
 
 {
   gdouble J, dA ;
-  static gdouble *L = NULL, *dLds = NULL, *dLdt = NULL ;
+  gdouble L[64], dLds[64], dLdt[64] ;
   BEM3DShapeFunc sf = bem3d_element_shape_func(e) ;
   BEM3DQuadratureRule *q ;
   gint i ;
@@ -435,15 +435,10 @@ gdouble bem3d_element_area(BEM3DElement *e, gint ngp)
   g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
   g_return_val_if_fail(ngp > 0, BEM3D_NULL_ARGUMENT) ;
-
-  if ( L == NULL ) {
-    L = (gdouble *)g_malloc(bem3d_element_node_number(e)*4*sizeof(gdouble)) ;
-    dLds = (gdouble *)g_malloc(bem3d_element_node_number(e)*4*sizeof(gdouble)) ;
-    dLdt = (gdouble *)g_malloc(bem3d_element_node_number(e)*4*sizeof(gdouble)) ;
-  }
-
+  g_assert(bem3d_element_node_number(e) < 16) ;
+  
   q = bem3d_quadrature_rule_new(ngp, 1) ;
-  bem3d_quadrature_rule_wx(NULL, e, q, NULL, NULL, &ngp) ;
+  bem3d_quadrature_rule_wx(NULL, e, q, NULL, NULL, &ngp, NULL) ;
 
   dA = 0.0 ;
   for ( i = 0 ; i < bem3d_quadrature_vertex_number(q) ; i ++ ) {
@@ -665,6 +660,7 @@ gint bem3d_element_jacobian_matrix_normal(BEM3DElement *e,
  * @param gdata ::BEM3DParameters to pass to Green's function;
  * @param G GArray of integral of \f$G L_{i}\f$ over element;
  * @param dGdn GArray of integral of \f$d G/d n L_{i}\f$ over element. 
+ * @param work a ::BEM3DWorkspace
  * 
  * @return ::BEM3D_SUCCESS on success.
  */
@@ -672,13 +668,14 @@ gint bem3d_element_jacobian_matrix_normal(BEM3DElement *e,
 gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
 				      BEM3DConfiguration *config,
 				      BEM3DParameters *gdata,
-				      GArray *G, GArray *dGdn)
+				      GArray *G, GArray *dGdn,
+				      BEM3DWorkspace *work)
 				    
 {
   BEM3DShapeFunc shfunc = bem3d_element_shape_func(e) ;
   BEM3DShapeFunc cpfunc = bem3d_element_node_func(e) ;
-  static BEM3DQuadratureRule *q = NULL ;  
-  gdouble L[32], dLds[32], dLdt[32], g[16], dgdn[16] ;
+  BEM3DQuadratureRule *q = work->q ;
+  gdouble L[64], dLds[64], dLdt[64], g[16], dgdn[16] ;
   BEM3DQuadratureRuleFunc qf ;
   gpointer qd ;
   BEM3DGreensFunction gfunc ;
@@ -692,14 +689,13 @@ gint bem3d_element_assemble_equations(BEM3DElement *e, GtsPoint *x,
   g_return_val_if_fail(x != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(G != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(dGdn != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_assert(bem3d_element_node_number(e) < 16) ;
   
-  if ( q == NULL ) q = bem3d_quadrature_rule_new(0, 1) ;
-
   gfunc = config->gfunc ;
 
   qf = config->qrule ; qd = config->qdata ;
 
-  qf(x, e, q, &gfunc, gdata, qd) ;
+  qf(x, e, q, &gfunc, gdata, qd, work) ;
 
   /* g_debug("%s: quadrature rule weights total: %g", */
   /* 	__FUNCTION__, bem3d_quadrature_rule_sum_weights(q)) ; */
@@ -1385,6 +1381,7 @@ GSList *bem3d_elements_from_vertices(BEM3DMesh *m, GtsVertex *v1,
  * @param a matrix row which multiplies potential (\f$\phi\f$)
  * @param b matrix row which multiplies normal derivative of 
  * potential (\f$\partial\phi/\partial n\f$)
+ * @param work a ::BEM3DWorkspace
  * 
  * @return ::BEM3D_SUCCESS on success
  */
@@ -1393,13 +1390,14 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
 					     GtsPoint *x, gint ix,
 					     BEM3DConfiguration *config,
 					     BEM3DParameters *gdata,
-					     gdouble *a, gdouble *b)
+					     gdouble *a, gdouble *b,
+					     BEM3DWorkspace *work)
 
 {
   BEM3DShapeFunc shfunc = bem3d_element_shape_func(e) ;
   BEM3DShapeFunc cpfunc = bem3d_element_node_func(e) ;
-  gdouble L[32], dLds[32], dLdt[32], g[16], dgdn[16] ;
-  static BEM3DQuadratureRule *q = NULL ;
+  gdouble L[64], dLds[64], dLdt[64], g[16], dgdn[16] ;
+  BEM3DQuadratureRule *q = work->q ;
   BEM3DQuadratureRuleFunc qf ;
   gpointer qd ;
   BEM3DGreensFunction gfunc ;
@@ -1411,14 +1409,13 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
   g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
   g_return_val_if_fail(x != NULL, BEM3D_NULL_ARGUMENT) ;
-
-  if ( q == NULL ) q = bem3d_quadrature_rule_new(0, 1) ;
+  g_assert(bem3d_element_node_number(e) < 16) ;  
   
   gfunc = config->gfunc ;
 
   qf = config->qrule ; qd = config->qdata ;
 
-  qf(x, e, q, &gfunc, gdata, qd) ;
+  qf(x, e, q, &gfunc, gdata, qd, work) ;
 
   if ( (bem3d_quadrature_free_number(q) != 0) &&
        (bem3d_quadrature_free_number(q) != bem3d_element_node_number(e)) ) {

@@ -431,7 +431,6 @@ static sisl_matrix_t *read_surface_sparse(FILE *f, gdouble *Ad, gint nc,
   sisl_matrix_t *A ;
   sisl_complex_t rc ;
   gint i, j, n, lineno ;
-  gdouble x ;
   gsl_complex xc ;
   gchar line[1024] ;
   
@@ -557,6 +556,7 @@ gint main(gint argc, gchar **argv)
   BEM3DMesh *m ;
   BEM3DMeshData *data ;
   BEM3DParameters param ;
+  BEM3DWorkspace *work ;
   GPtrArray *meshes ;
   sisl_matrix_t *A, *B, *surface_alpha, *surface_beta ;
   sisl_vector_t *phi, *dphi, *rhs, *v1, *v2 ;
@@ -680,6 +680,7 @@ gint main(gint argc, gchar **argv)
 
   config->solver = bem3d_solver_type(solver_name) ;
 
+  work = bem3d_workspace_new() ;
   if ( config->solver == BEM3D_SOLVER_DIRECT ) {
     wmpi_split_range(0, np, &imin, &imax) ;
     if ( itmp0 != imin || itmp1 != imax ) {
@@ -763,10 +764,10 @@ gint main(gint argc, gchar **argv)
     quad = bem3d_quadrature_rule_new(order, 1) ;
     if ( order < 7 ) 
       bem3d_quadrature_rule_gauss(NULL, bem3d_mesh_element_sample(m), quad, 
-				NULL, NULL, &order) ;
+				  NULL, NULL, &order, NULL) ;
     else
       bem3d_quadrature_rule_wx(NULL, bem3d_mesh_element_sample(m), quad, 
-			       NULL, NULL, &order) ;    
+			       NULL, NULL, &order, NULL) ;    
 
     if ( wmpi_rank() == 0 ) 
       fprintf(stderr, "%s: generating mesh skeleton: t=%f\n",
@@ -782,7 +783,7 @@ gint main(gint argc, gchar **argv)
     mtx = bem3d_fmm_matrix_new(solver, 
 			       (rc == SISL_REAL ? 
 				BEM3D_FMM_LAPLACE : BEM3D_FMM_HELMHOLTZ),
-			       skel, config, &param, r_correct) ;
+			       skel, config, &param, r_correct, work) ;
     mtx->tol = config->fmm_tol ;
 
     for ( i = 0 ; i < np ; i ++ ) fscanf(input, "%*d %lg", &(mtx->C[i])) ;

@@ -81,7 +81,7 @@ BEM3DGreensFunction greens_func_gradient_helmholtz =
   function rather than in the hash tables
 */
 
-static gpointer _config_quadratures[] =
+gpointer _config_quadratures[] =
   {"bem3d_quadrature_newman",
    "quadrature[]",
    "analytical quadrature method for linear shape functions on "
@@ -127,7 +127,7 @@ static gpointer _config_quadratures[] =
    bem3d_quadrature_rule_mzht,
    NULL, NULL, NULL, NULL} ;
 
-static gpointer _config_physics[] =
+gpointer _config_physics[] =
   {"bem3d_greens_function_laplace",
    "greens_function", "",
    &greens_func_laplace,
@@ -154,22 +154,27 @@ static gpointer _config_physics[] =
    
    "[real or complex admittance]",
    "surface_admittance",
-   "default surface admittance, multiplied by wavenumber in Helmholtz problems",
+   "default surface admittance",
    NULL,
 
    NULL, NULL, NULL, NULL} ;
 
-static gpointer _config_solver[] =
+gpointer _config_solver[] =
   {"bem3d_fmm_fmmlib3d1.2",
    "fmm", "fast multipole solver of Greengard et al.",
    GINT_TO_POINTER(BEM3D_FMM_FMMLIB3D_1_2),
 
+   "bem3d_fmm_wbfmm",
+   "fmm", "wide-band fast multipole solver using Gumerov and Duraiswami method",
+   GINT_TO_POINTER(BEM3D_FMM_WBFMM),
+   
    "bem3d_solver_direct",
-   "solver", "direct solution using full matrices",
+   "solver", "direct solution using dense matrices",
    GINT_TO_POINTER(BEM3D_SOLVER_DIRECT),
 
    "bem3d_solver_fmm",
-   "solver", "solution using fast multipole method (selected using fmm = )",
+   "solver", "solution using fast multipole method (method selected using "
+   "fmm = )",
    GINT_TO_POINTER(BEM3D_SOLVER_FMM),
 
    "[exclusion distance for point sources in FMM]",
@@ -525,15 +530,12 @@ gint bem3d_configuration_init(void)
  * quadrature[1] = bem3d_quadrature_polar(0.0,16,16)
  *
  * @param id name of identifier;
- * @param description text string describing the variable (e.g. to be
- * used as a comment in a configuration file)
  * @param v a pointer to the identified object
  * 
  * @return ::BEM3D_SUCCESS on success
  */
 
-gint bem3d_configuration_add_identifier(const gchar *id,
-					gpointer v)
+gint bem3d_configuration_add_identifier(const gchar *id, gpointer v)
 
 {
   gboolean rt ;

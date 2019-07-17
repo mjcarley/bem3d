@@ -55,6 +55,7 @@
 #define _GMSH_DATA_HASH    6
 #define _GMSH_DATA_ETYPE   7
 #define _GMSH_DATA_ETYPES  8
+#define _GMSH_DATA_N_COM   9
 
 static gint _gmsh_element_tag(BEM3DElement *e)
 
@@ -76,12 +77,12 @@ static gint _write_element_pos(BEM3DElement *e, gpointer data[])
   gint k = *(gint *)data[_GMSH_DATA_INDEX] ;
   bem3d_gmsh_mode_t mode = *(bem3d_gmsh_mode_t *)data[_GMSH_DATA_MODE] ;
   gint nf, nn, gt, *indices_g, indices_d[64], i ;
-  static gint indices_st[] = {0, 1, 2} ;
-  static gint indices_st2[] = {0, 1, 2, 3, 4, 5} ;
-  /* static gint indices_st3[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} ; */
-  static gint indices_sq[] = {0, 1, 2, 3} ;
-  static gint indices_sq2[] = {0, 1, 2, 3, 4, 5, 6, 7, 8} ;
-  static gchar *gmsh_types[] = {
+  gint indices_st[] = {0, 1, 2} ;
+  gint indices_st2[] = {0, 1, 2, 3, 4, 5} ;
+  /* gint indices_st3[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} ; */
+  gint indices_sq[] = {0, 1, 2, 3} ;
+  gint indices_sq2[] = {0, 1, 2, 3, 4, 5, 6, 7, 8} ;
+  gchar *gmsh_types[] = {
     "SP", "VP", "TP", 
     "SL", "VL", "TL", 
     "ST", "VT", "TT", 
@@ -341,11 +342,8 @@ static gint write_data_msh(gint i, gdouble *d, gint nf, gpointer *data)
   gint k = *((gint *)data[_GMSH_DATA_INDEX]) ;
   FILE *fp = data[_GMSH_DATA_FILE] ;
   GHashTable *h = data[_GMSH_DATA_HASH] ;
-  bem3d_gmsh_mode_t mode = *((bem3d_gmsh_mode_t *)data[_GMSH_DATA_MODE]) ;
-  gint j, ncom ;
-
-  ncom = ( (mode == BEM3D_GMSH_SCALAR) ? 1 :
-	   ( mode == BEM3D_GMSH_VECTOR ? 3 : 9)) ;
+  gint ncom = *((gint *)data[_GMSH_DATA_N_COM]) ;
+  gint j ;
 
   j = GPOINTER_TO_INT(g_hash_table_lookup(h, GINT_TO_POINTER(i))) ;
 
@@ -379,11 +377,13 @@ static gint bem3d_mesh_write_msh_4_1(BEM3DMesh *m, BEM3DMeshData *f,
   data[_GMSH_DATA_HASH] = h = g_hash_table_new(NULL, NULL) ;
   data[_GMSH_DATA_ETYPE] = &etype ;
   data[_GMSH_DATA_ETYPES] = n_etypes ;
-
+  data[_GMSH_DATA_N_COM] = &ncom ;
+  
   /*this really only works for isoparametric elements*/
   nnodes = bem3d_mesh_node_number(m) ;
   nelem = bem3d_mesh_element_number(m) ;
 
+  /*we need to know how many elements of each type are to be written*/
   bem3d_mesh_foreach_element(m, (BEM3DElementFunc)count_element_types, data) ;
   
   fprintf(fp, "$MeshFormat\n") ;
@@ -426,12 +426,14 @@ static gint bem3d_mesh_write_msh_4_1(BEM3DMesh *m, BEM3DMeshData *f,
     fprintf(fp, "\"%s\"\n", view) ;
   else
     fprintf(fp, "\"BEM3D\"\n") ;
-  fprintf(fp, "1\n") ;
-  fprintf(fp, "%lg\n", t) ;
-  fprintf(fp, "3\n") ;
-  fprintf(fp, "0\n") ;
-  fprintf(fp, "%d\n", ncom) ;
-  fprintf(fp, "%d\n", nnodes) ;
+  fprintf(fp,
+	  "1\n"
+	  "%lg\n"
+	  "3\n"
+	  "0\n"
+	  "%d\n"
+	  "%d\n",
+	  t, ncom, nnodes) ;
 
   data[_GMSH_DATA_INDEX] = &k ;
   bem3d_mesh_data_foreach(f, (BEM3DMeshDataEntryFunc)write_data_msh, data) ;
@@ -450,6 +452,7 @@ static gint bem3d_mesh_write_msh_4_1(BEM3DMesh *m, BEM3DMeshData *f,
  * @param f data block;
  * @param k index of data block field to write;
  * @param view title of view or NULL;
+ * @param t time for GMSH view;
  * @param mode BEM3D_GMSH_SCALAR | BEM3D_GMSH_VECTOR | BEM3D_GMSH_TENSOR, if
  * a vector or tensor mode is chosen, the 3 or 9 elements are written
  * starting from the indicated field index \a k. The data block must
@@ -467,7 +470,6 @@ gint bem3d_mesh_write_msh(BEM3DMesh *m, BEM3DMeshData *f, gint k,
 {
   g_return_val_if_fail(m != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
-  /* g_return_val_if_fail(f != NULL, BEM3D_NULL_ARGUMENT) ; */
   g_return_val_if_fail(fp != NULL, BEM3D_NULL_ARGUMENT) ;
 
   return bem3d_mesh_write_msh_4_1(m, f, k, view, t, mode, fp) ;

@@ -117,7 +117,7 @@ data.lo: data.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/unistd.h /usr/include/bits/posix_opt.h \
  /usr/include/bits/environments.h /usr/include/bits/confname.h \
  /usr/include/bits/getopt_posix.h /usr/include/bits/getopt_core.h bem3d.h \
- bem3dconfig.h bem3d-private.h
+ /home/ensmjc/Codes/include/gqr.h bem3dconfig.h bem3d-private.h
 
 /usr/include/stdc-predef.h:
 
@@ -482,6 +482,8 @@ data.lo: data.c /usr/include/stdc-predef.h ../config.h \
 /usr/include/bits/getopt_core.h:
 
 bem3d.h:
+
+/home/ensmjc/Codes/include/gqr.h:
 
 bem3dconfig.h:
 
