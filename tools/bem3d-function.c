@@ -1,3 +1,4 @@
+
 /* bem3d-function.c
  * 
  * Copyright (C) 2010, 2017, 2018, 2019 Michael Carley
@@ -90,15 +91,18 @@
   "which performs the same operation as in the previous example and then\n" \
   "outputs the maximum value in each column of the data block and its node\n" \
   "index to stderr.\n\n" \
-  "The -w option treats the function as integrand and outputs a block of\n" \
-  "which can be used as a set of weights for estimating an integral on a\n" \
-  "surface. For example, if a single element function is supplied, with\n" \
+  "The -w option treats the function as an integrand and outputs a block of\n" \
+  "data which can be used as a set of weights for estimating an integral on\n" \
+  "a surface. For example, if a single element function is supplied, with\n" \
   "the -w option:\n\n"							\
   "  %s -w -F function.fn -i surface.bem -o weights.dat\n\n"		\
   "an integral of f(x)g(x) over the surface can be estimated using\n\n" \
   "  %s -F multiply.fn -d weights.dat -e data.dat -o output.dat\n\n"	\
   "where data.dat contains g(x) and the function multiply.fn is given by\n" \
-  "f[0] = f[0]*g[0].\n"
+  "f[0] = f[0]*g[0].\n\n"						\
+  "Adding the -S option generates integral weighting output in the form of\n" \
+  "a surface matrix which can be used to implement non-local boundary\n" \
+  "conditions.\n\n"
 
 static void detailed_usage(gchar *progname)
 
@@ -261,21 +265,24 @@ gint main(gint argc, gchar **argv)
 	      "        -F <function definition file>\n"
 	      "        -H (print longer help message and exit)\n"
 	      "        -l # (set logging level)\n"
-	      "        -m merge the input (-d) and extra (-e) data files and\n"
-	      "           output as a single block\n"
+	      "        -m merge the input (-d) and extra (-e) data files and "
+	      "output\n"
+	      "           as a single block\n"
 	      "        -i <bem3d mesh input file> (can be repeated for "
-	      "multiple\n"
-	      "           meshes)\n"
+	      "multiple meshes)\n"
 	      "        -o <output file name>\n"
 	      "        -p (write expanded parsed function to stderr)\n"
 	      "        -q do not write evaluated function data to output\n"
 	      "        -r <comma separated list of reduction operations>\n"
 	      "        -s <expression> (set a function variable)\n"
-	      "        -S (list) write output as surface data file with\n"
-	      "           components in list\n"
-	      "        -w treat function as integrand of integral weights\n"
-	      "        -X <file name> list of points in bem3d-dump\n"
-	      "           format\n"
+	      "        -S (list) write output as surface matrix using "
+	      "components\n"
+	      "           specified in (list)\n"
+	      "        -w treat function as integrand of integral weights "
+	      "and output\n"
+	      "           as surface condition matrix\n"
+	      "        -X <file name> list of points in bem3d-dump "
+	      "format\n"
 	      ) ;
       return 0 ;
       break ;
@@ -420,26 +427,20 @@ gint main(gint argc, gchar **argv)
     file_close(fs) ;
   }
 
-  if ( funcfile != NULL ) {
-    if ( integral_weights && isurf->len == 0 ) {
-      q = bem3d_quadrature_rule_new(7, 1) ;
-      for ( i = 0 ; i < meshes->len ; i ++ ) {
-	bem3d_function_integral_weights(efunc,
-					g_ptr_array_index(meshes, i), i,
-					NULL, NULL, 0, q, f) ;
-      }
-    } else {
-      bem3d_function_apply_mesh_list(efunc, meshes, f, g) ;
-    }
-  }
-
-  if ( integral_weights && isurf->len != 0 ) {
+  if ( integral_weights ) {
     if ( funcfile == NULL ) {
       fprintf(stderr,
 	      "%s: need a function definition to generate integral weights\n",
 	      progname) ;
       return 1 ;
     }
+    if ( meshes->len == 0 ) {
+      fprintf(stderr,
+	      "%s: need meshes to generate integral weights\n",
+	      progname) ;
+      return 1 ;
+    }
+      
     if ( opfile == NULL ) fs = stdout ;
     else fs = file_open(opfile, "-", "w", stdout) ;
 
@@ -453,14 +454,23 @@ gint main(gint argc, gchar **argv)
     surfdata[SURFACE_DATA_OUTPUT] = fs ;
     surfdata[SURFACE_DATA_FIELDS] = isurf ;
 
-    fprintf(fs, "%d %d BEM3DSurface\n",
-	    bem3d_mesh_data_node_number(f), isurf->len) ;
-    fprintf(fs, "sparse\n") ;
+    if ( isurf->len != 0 ) {
+      fprintf(fs, "%d %d BEM3DSurface\n",
+	      bem3d_mesh_data_node_number(f), isurf->len) ;
+      fprintf(fs, "sparse\n") ;
     
-    for ( i = 0 ; i < meshes->len ; i ++ ) {
-      bem3d_mesh_foreach_node(g_ptr_array_index(meshes, i),
-			      (BEM3DNodeFunc)write_surface_matrix,
-			      surfdata) ;
+      for ( i = 0 ; i < meshes->len ; i ++ ) {
+	bem3d_mesh_foreach_node(g_ptr_array_index(meshes, i),
+				(BEM3DNodeFunc)write_surface_matrix,
+				surfdata) ;
+      }
+    } else {
+      for ( i = 0 ; i < meshes->len ; i ++ ) {
+  	bem3d_function_integral_weights(efunc,
+  					g_ptr_array_index(meshes, i), i,
+  					NULL, NULL, 0, q, f) ;
+      }
+      bem3d_mesh_data_write(f, fs, header) ;      
     }
     
     file_close(fs) ;
@@ -468,6 +478,11 @@ gint main(gint argc, gchar **argv)
     return 0 ;
   }
   
+  if ( funcfile != NULL && integral_weights == FALSE ) {
+    /* basic evaluation of surface functions*/
+    bem3d_function_apply_mesh_list(efunc, meshes, f, g) ;
+  }
+
   if ( write_data ) {
     if ( opfile == NULL ) fs = stdout ;
     else fs = file_open(opfile, "-", "w", stdout) ;

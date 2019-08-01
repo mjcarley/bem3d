@@ -115,4 +115,18 @@ gint append_mesh_from_file(GPtrArray *meshes, gchar *ipfile) ;
 gint range_double(gchar *arg, GArray *range) ;
 gint range_int(gchar *arg, GArray *range) ;
 
+gint _bem3d_quadrature_add_point(BEM3DQuadratureRule *q,
+			   gdouble xi, gdouble eta,
+			   gdouble w) ;
+
+gint _bem3d_quadrature_rule_remap(gdouble xi0, gdouble eta0,
+				  gdouble xi1, gdouble eta1,
+				  gdouble xi2, gdouble eta2,
+				  gdouble s, gdouble t, gdouble w,
+				  gdouble *sn, gdouble *tn,
+				  gdouble *wn) ;
+gint _bem3d_edge_nearest_point(GtsPoint *x1, GtsPoint *x2,
+			       GtsPoint *x, GtsPoint *c) ;
+gdouble _bem3d_point_internal_angle(GtsPoint *x1, GtsPoint *x2, GtsPoint *x3) ;
+
 #endif /*_BEM_PRIVATE_H_INCLUDED_*/

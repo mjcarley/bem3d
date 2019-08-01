@@ -3,7 +3,7 @@
 
 
 \subsection{Detailed Description}
-gint \doxyref{B\+E\+M3\+D\+Quadrature\+Rule\+Func}{p.}{structBEM3DQuadratureRuleFunc}(Gts\+Point $\ast$p, B\+E\+M3\+D\+Element $\ast$e, \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} $\ast$q, \doxyref{B\+E\+M3\+D\+Greens\+Function}{p.}{structBEM3DGreensFunction} gfunc, \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} $\ast$param, gpointer data)
+gint \doxyref{B\+E\+M3\+D\+Quadrature\+Rule\+Func}{p.}{structBEM3DQuadratureRuleFunc}(Gts\+Point $\ast$p, B\+E\+M3\+D\+Element $\ast$e, \doxyref{B\+E\+M3\+D\+Quadrature\+Rule}{p.}{structBEM3DQuadratureRule} $\ast$q, \doxyref{B\+E\+M3\+D\+Greens\+Function}{p.}{structBEM3DGreensFunction} gfunc, \doxyref{B\+E\+M3\+D\+Parameters}{p.}{structBEM3DParameters} $\ast$param, gpointer data, B\+E\+M3\+D\+Workspace $\ast$work)
 
 Function for generating quadrature rules
 
@@ -19,7 +19,9 @@ Function for generating quadrature rules
 \hline
 {\em param} & parameters for {\itshape gfunc}; \\
 \hline
-{\em data} & user data passed to quadrature generation.\\
+{\em data} & user data passed to quadrature generation; \\
+\hline
+{\em work} & a \doxyref{B\+E\+M3\+D\+Workspace}{p.}{group__work_gaf540948fbe875dff930ad182734d5dbb}\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}

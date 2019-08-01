@@ -129,6 +129,7 @@ gint main(gint argc, gchar **argv)
 
   /*default configuration*/
   config = bem3d_configuration_new() ;
+  bem3d_parameters_init(&gdata) ;
 
   while ( (ch = getopt(argc, argv, "hC:d:F:i:k:M:o:s:v:X")) != EOF ) {
     switch (ch) {
@@ -229,6 +230,7 @@ gint main(gint argc, gchar **argv)
   
   bem3d_parameters_wavenumber(&gdata) = k ;
   bem3d_parameters_mach_number(&gdata) = M ;
+  bem3d_parameters_quadrature_tol(&gdata) = config->quad_tol ;
 
   /* if ( M != 0.0 ) { */
   /*   config->gfunc.func = bem3d_greens_func_convected_helmholtz ; */

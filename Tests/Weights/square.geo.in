@@ -1,4 +1,4 @@
-lc = 0.125 ;
+lc = 0.03125 ;
 
 dx = DELTA_X ;
 dy = DELTA_Y ;

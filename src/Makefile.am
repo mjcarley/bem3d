@@ -28,6 +28,7 @@ libbem3d_la_SOURCES = \
 	lookup.c \
 	qselect.c \
 	quadrature.c \
+	hayami.c \
 	radiation.c \
 	shapefunc.c \
 	bem3d-private.h \

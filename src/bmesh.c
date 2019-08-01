@@ -893,7 +893,19 @@ static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
   BEM3DWorkspace *work = data[BEM3D_BMESH_DATA_WORK] ;
   gint j ;
   GArray *g = NULL, *f = NULL, *zero = NULL ;
-
+  gdouble gsc = 0.0, dgsc = -0.5 ;
+  
+  /*check if we can use the shortcut, including check that we are not
+    at a sharp node (multiple indices) or on an open edge*/
+  if ( config->diagonal_shortcut &&
+       (bem3d_mesh_vertex_index_number(m, v) < 2) &&
+       !gts_vertex_is_boundary(v, GTS_SURFACE(m))
+       ) {
+    efunc(i, i, &gsc, &dgsc, 1, edata) ;
+    
+    return ;
+  }
+  
   f = bem3d_workspace_double_array_get(work) ;
   zero = bem3d_workspace_double_array_get(work) ;
   g = bem3d_workspace_double_array_get(work) ;
@@ -1265,7 +1277,7 @@ static gint index_range(gint i, GtsVertex *v, gpointer *data)
  * @return BEM3D_SUCCESS on success
  */
 
-gint bem3d_mesh_index_range(BEM3DMesh *m, gint *imin, gint *imax)
+gint bem3d_mesh_index_range(BEM3DMesh *m, guint *imin, guint *imax)
 
 {
   gpointer data[2] = {imin, imax} ;
@@ -1274,7 +1286,7 @@ gint bem3d_mesh_index_range(BEM3DMesh *m, gint *imin, gint *imax)
   g_return_val_if_fail(imin, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(imax, BEM3D_NULL_ARGUMENT) ;
 
-  *imin = G_MAXINT ; *imax = -1 ;
+  *imin = G_MAXINT ; *imax = 0 ;
   bem3d_mesh_foreach_node(m, (BEM3DNodeFunc)index_range, data) ;
 
   return 0 ;

@@ -120,7 +120,7 @@ static gboolean nodes_coincide(GtsPoint *x, GtsPoint *y)
   return (x->x == y->x && x->y == y->y && x->z == y->z) ;
 }
 
-static gint _quadrature_add_point(BEM3DQuadratureRule *q,
+gint _bem3d_quadrature_add_point(BEM3DQuadratureRule *q,
 				  gdouble xi, gdouble eta,
 				  gdouble w)
 
@@ -136,7 +136,7 @@ static gint _quadrature_add_point(BEM3DQuadratureRule *q,
   return BEM3D_SUCCESS ;
 }
 
-static gint _quadrature_rule_remap(gdouble xi0, gdouble eta0,
+gint _bem3d_quadrature_rule_remap(gdouble xi0, gdouble eta0,
 				   gdouble xi1, gdouble eta1,
 				   gdouble xi2, gdouble eta2,
 				   gdouble s, gdouble t, gdouble w,
@@ -154,7 +154,7 @@ static gint _quadrature_rule_remap(gdouble xi0, gdouble eta0,
   return BEM3D_SUCCESS ;
 }
  
-static gint edge_nearest_point(GtsPoint *x1, GtsPoint *x2,
+gint _bem3d_edge_nearest_point(GtsPoint *x1, GtsPoint *x2,
 			       GtsPoint *x, GtsPoint *c)
 
 {
@@ -165,17 +165,18 @@ static gint edge_nearest_point(GtsPoint *x1, GtsPoint *x2,
   gts_vector_init(s, x1, x) ;
 
   t = gts_vector_scalar(s,n)/gts_vector_scalar(n,n) ;
-
   gts_point_set(c,
 		(1-t)*GTS_POINT(x1)->x+t*GTS_POINT(x2)->x,
 		(1-t)*GTS_POINT(x1)->y+t*GTS_POINT(x2)->y,
 		(1-t)*GTS_POINT(x1)->z+t*GTS_POINT(x2)->z) ;
 
-  return BEM3D_SUCCESS ;
+  /* return BEM3D_SUCCESS ; */
+  if ( t < 0.0 ) return -1 ; /*outside the segment `before' x1*/
+  if ( t > 1.0 ) return  1 ; /*outside the segment `after' x2*/
+  return 0 ;                 /*within the segment, including the endpoints*/
 }
 
-static gdouble point_internal_angle(GtsPoint *x1, GtsPoint *x2,
-				    GtsPoint *x3)
+gdouble _bem3d_point_internal_angle(GtsPoint *x1, GtsPoint *x2, GtsPoint *x3)
 
 {
   GtsVector r1, r2 ;
@@ -191,51 +192,6 @@ static gdouble point_internal_angle(GtsPoint *x1, GtsPoint *x2,
   return (acos(c/n1/n2)) ;
 }
 
-static gint _bem3d_hayami_triangle_rule(gdouble hj, gdouble aj,
-					gdouble d, gdouble dtheta,
-					gqr_rule_t *qn,
-					gqr_rule_t *qm,
-					gdouble *rule)
-
-{
-  gdouble rmin, rmax, r, drdR ;
-  gdouble Rmin, Rmax, Rbar, dR, R ;
-  gdouble tmin, tmax, tbar, dt, t ;
-  gdouble theta, E, J ;
-  gdouble r0, r1 ;
-  gdouble Sdth ;
-  gint n, m, M ;
-
-  M = gqr_rule_length(qm) ;
-
-  tmin = 0.5*hj*log((1+sin(0-aj))/(1-sin(0-aj))) ;
-  tmax = 0.5*hj*log((1+sin(dtheta-aj))/(1-sin(dtheta-aj))) ;
-
-  gqr_rule_scale(qn, tmin, tmax, &tbar, &dt) ;
-  Sdth = sin(dtheta) ;
-  r0 = hj/cos(aj) ; r1 = hj/cos(dtheta-aj) ;
-
-  J = 1.0 ;
-  for ( n = 0 ; n < gqr_rule_length(qn) ; n ++ ) {
-    t = tbar + dt*gqr_rule_abscissa(qn,n) ;
-    E = exp(2.0*t/hj) ;
-    theta = asin((E-1)/(E+1)) + aj ;
-    rmin = 0.0 ; rmax = hj/cos(theta-aj) ;
-    Rmin = log(rmin+d) ; Rmax = log(rmax+d) ;
-    gqr_rule_scale(qm, Rmin, Rmax, &Rbar, &dR) ;
-    for ( m = 0 ; m < gqr_rule_length(qm) ; m ++ ) {
-      R = Rbar + dR*gqr_rule_abscissa(qm, m) ;
-      r = exp(R)-d ; drdR = r+d ;
-      g_assert(r != 0.0) ;
-      g_assert((rule[3*(n*M+m)+0] = r*sin(theta)/r1/Sdth) != 0.0) ;
-      rule[3*(n*M+m)+1] = r*sin(dtheta-theta)/r0/Sdth ;
-      rule[3*(n*M+m)+2] = J*r*drdR/rmax*dt*dR/r0/r1/Sdth*
-	gqr_rule_weight(qn,n)*gqr_rule_weight(qm,m) ;
-    }
-  }
-
-  return BEM3D_SUCCESS ;
-}
 
 static gint _bem3d_rule_fill_wx(gint n, 
 				gdouble xi0, gdouble eta0,
@@ -268,7 +224,7 @@ static gint _bem3d_rule_fill_wx(gint n,
   }
 
   for ( i = 0 ; i < n ; i ++ ) 
-    _quadrature_rule_remap(xi0, eta0, xi1, eta1, xi2, eta2,
+    _bem3d_quadrature_rule_remap(xi0, eta0, xi1, eta1, xi2, eta2,
 			   rule[3*i+0], rule[3*i+1], rule[3*i+2], 
 			   &(rule[3*i+0]), &(rule[3*i+1]), &(rule[3*i+2])) ;
 
@@ -385,31 +341,146 @@ gint bem3d_quadrature_add_point(BEM3DQuadratureRule *q,
   g_assert( bem3d_quadrature_vertex_number(q) < 
 	    bem3d_quadrature_vertex_number_max(q) ) ;
 
-  return _quadrature_add_point(q, xi, eta, w) ;
+  return _bem3d_quadrature_add_point(q, xi, eta, w) ;
 
+}
+
+static gint quad_order_1R(gdouble rmin, gdouble rmax, gdouble z,
+			  gint qmax, gdouble tol)
+
+/*
+  Estimate the order of expansion needed to approximate 1/R to
+  tolerance tol with R=(r^{2}+z^{2})^{1/2}, rmin<=r<=rmax
+
+  on exit, return order of expansion q which gives error less than
+  tol, or -1 if this cannot be achieved for order less than qmax
+
+  modified from the version in htriquad.c to keep things stand-alone
+*/
+
+{
+  gdouble P0, P1, tt, rb, dr, rho, rq ;
+  gint q ;
+
+  rb = 0.5*(rmax + rmin) ;
+  rho = sqrt(z*z + rb*rb) ;
+  dr = 0.5*(rmax - rmin)/rho ;
+  rb /= rho ;
+
+  rq = dr/rho ; P1 = rb ; P0 = 1.0 ;
+  for ( q = 0 ; q < qmax ; q ++ ) {
+    if ( (fabs(rq*P1) < tol) && (q > 3) ) return q ;
+    tt = P1 ; 
+    P1 = ((2.0*q+3)*rb*P1 - (gdouble)(q+1)*P0)/(q+2) ;
+    P0 = tt ;
+    rq *= dr ;
+  }
+  
+  return -1 ;
 }
 
 /** 
  * Quadrature selection parameter used in choosing quadrature rules
  * 
- * @param p field point
- * @param e element over which to integrate
+ * @param p field point;
+ * @param e element over which to integrate;
+ * @param tol tolerance for approximation of \f$1/R\f$
  * 
  * @return sigma parameter.
  */
 
-gdouble bem3d_quadrature_parameter(GtsPoint *p, BEM3DElement *e)
+gdouble bem3d_quadrature_parameter(GtsPoint *p, BEM3DElement *e,
+				   gdouble tol)
   
 {
   gdouble Rs, sc = M_SQRT2, Rp, len, s[3], t[3], n[3] ;
-  gint i ;
-  GtsPoint y ;
-
+  gdouble rmin, rmax, z, x0[2], x1[2], x2[2], x3[2], r01, r02, r03 ;
+  gint i, q ;
+  GtsPoint y, r0 ;
+  GtsPoint *c1, *c2, *c3 ;
+  GtsVector e1 ;
+  
 /*   g_debug("%s:", __FUNCTION__) ; */
 
+  g_assert(tol > 0.0) ;
+  
   for ( i = 0 ; i < bem3d_element_vertex_number(e) ; i ++ )
     if ( nodes_coincide(p, bem3d_element_vertex(e,i)) ) return 0.0 ;
 
+  if ( bem3d_element_corner_number(e) != 3 )
+    g_error("%s: only implemented for triangular elements for now",
+	    __FUNCTION__) ;
+
+  /*reference corners*/
+  c1 = GTS_POINT(bem3d_element_corner(e,0)) ;
+  c2 = GTS_POINT(bem3d_element_corner(e,1)) ;
+  c3 = GTS_POINT(bem3d_element_corner(e,2)) ;
+
+  /*system of axes*/
+  triangle_axes(&(c1->x), &(c2->x), &(c3->x), s, t, n) ;
+  
+  gts_vector_init(e1, c1, p) ;
+  z = gts_vector_scalar(n, e1) ;
+
+  /*projection of point onto element plane (thanks Eric)*/
+  gts_point_set(&r0, 
+		GTS_POINT(p)->x - z*n[0],
+		GTS_POINT(p)->y - z*n[1],
+		GTS_POINT(p)->z - z*n[2]) ;
+  r01 = gts_point_distance2(&r0, GTS_POINT(c1)) ;
+  r02 = gts_point_distance2(&r0, GTS_POINT(c1)) ;
+  r03 = gts_point_distance2(&r0, GTS_POINT(c1)) ;
+  rmax = 0.0 ;
+  rmax = MAX(rmax, r01) ;
+  rmax = MAX(rmax, r02) ;
+  rmax = MAX(rmax, r03) ;
+
+  rmax = sqrt(rmax) ;
+
+  /*project points onto element plane*/
+  x0[0] = r0.x*s[0] + r0.y*s[1] + r0.z*s[2] ;
+  x0[1] = r0.x*t[0] + r0.y*t[1] + r0.z*t[2] ;
+
+  x1[0] = c1->x*s[0] + c1->y*s[1] + c1->z*s[2] ;
+  x1[1] = c1->x*t[0] + c1->y*t[1] + c1->z*t[2] ;
+
+  x2[0] = c2->x*s[0] + c2->y*s[1] + c2->z*s[2] ;
+  x2[1] = c2->x*t[0] + c2->y*t[1] + c2->z*t[2] ;
+
+  x3[0] = c3->x*s[0] + c3->y*s[1] + c3->z*s[2] ;
+  x3[1] = c3->x*t[0] + c3->y*t[1] + c3->z*t[2] ;
+
+  if ( orient2d(x1, x2, x0) > 0.0 &&
+       orient2d(x2, x3, x0) > 0.0 &&
+       orient2d(x3, x1, x0) ) {
+    rmin = 0.0 ;
+  } else {
+    rmin = G_MAXDOUBLE ;
+    if ( ABS(_bem3d_edge_nearest_point(c1, c2, &r0, &y)) == 0 )
+      rmin = MIN(rmin, gts_point_distance2(&r0, &y)) ;
+    if ( ABS(_bem3d_edge_nearest_point(c2, c3, &r0, &y)) == 0 ) 
+      rmin = MIN(rmin, gts_point_distance2(&r0, &y)) ;
+    if ( ABS(_bem3d_edge_nearest_point(c3, c1, &r0, &y)) == 0 )
+      rmin = MIN(rmin, gts_point_distance2(&r0, &y)) ;
+  }
+
+  if ( rmin == G_MAXDOUBLE ) {
+    rmin = MIN(rmin, r01) ;
+    rmin = MIN(rmin, r02) ;
+    rmin = MIN(rmin, r03) ;
+  }
+  
+  rmin = sqrt(rmin) ;
+
+  q = quad_order_1R(rmin, rmax, z, 36, tol) ;
+
+  if ( q == -1 ) q = 36 ;
+  q = q-3 ;
+  g_assert(q > 0) ;
+
+  /*tan to make points far from the element give an "infinite" result*/
+  return tan(0.5*M_PI/(gdouble)q) ;
+  
   y.x = y.y = y.z = 0.0 ;
   for ( i = 0 ; i < bem3d_element_vertex_number(e) ; i ++ ) {
     y.x += GTS_POINT(bem3d_element_vertex(e,i))->x ;
@@ -448,7 +519,8 @@ gdouble bem3d_quadrature_parameter(GtsPoint *p, BEM3DElement *e)
  * @param q quadrature rule;
  * @param gfunc ignored;
  * @param param ignored;
- * @param data ignored.
+ * @param data ignored;
+ * @param work workspace.
  * 
  * @return ::BEM3D_SUCCESS on success.
  */
@@ -464,6 +536,7 @@ gint bem3d_quadrature_rule_default(GtsPoint *p,
 {
   gpointer qd ;
   BEM3DQuadratureRuleFunc f ;
+  gdouble tol ;
   
 /*   g_debug("%s: e=%p; q=%p; data = %p", __FUNCTION__, e, q, data) ; */
 
@@ -474,8 +547,9 @@ gint bem3d_quadrature_rule_default(GtsPoint *p,
   g_return_val_if_fail(q != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(data != NULL, BEM3D_NULL_ARGUMENT) ;
 
+  tol = bem3d_parameters_quadrature_tol(param) ;
   bem3d_quadrature_select((BEM3DQuadratureSelector *)data,
-			  bem3d_quadrature_parameter(p, e), &f, &qd) ;
+			  bem3d_quadrature_parameter(p, e, tol), &f, &qd) ;
   f(p, e, q, gfunc, param, qd, work) ;
 
   return BEM3D_SUCCESS ;
@@ -494,7 +568,8 @@ gint bem3d_quadrature_rule_default(GtsPoint *p,
  * @param gfunc ignored;
  * @param param ignored;
  * @param data gint[2], first element number of quadrature points in radius;
- * second element number of points in angle
+ * second element number of points in angle;
+ * @param work workspace.
  * 
  * @return ::BEM3D_SUCCESS on success
  */
@@ -626,7 +701,7 @@ gint bem3d_quadrature_rule_kw(GtsPoint *p, BEM3DElement *e,
 				     bem3d_element_corner(e,1),
 				     bem3d_element_corner(e,2),
 				     xsc, xi) ;
-  	  _quadrature_add_point(q, xi[0], xi[1], w) ;
+  	  _bem3d_quadrature_add_point(q, xi[0], xi[1], w) ;
 	}
       }
     }
@@ -963,7 +1038,8 @@ static gint _quadrature_rule_cubic_polar(GtsPoint *p, BEM3DElement *e,
  * @param gfunc ignored;
  * @param param ignored;
  * @param data gint[2], first element number of quadrature points in radius;
- * second element number of points in angle.
+ * second element number of points in angle;
+ * @param work workspace.
  * 
  * @return ::BEM3D_SUCCESS on success.
  */
@@ -1043,13 +1119,13 @@ gint bem3d_quadrature_rule_polar(GtsPoint *p, BEM3DElement *e,
       i = bem3d_quadrature_vertex_number(q) ;
       _bem3d_polar_triangle_rule(gN, gM, &(q->rule[3*i])) ;
       for ( j = 0 ; j < M*N ; j ++ ) {
-	_quadrature_rule_remap(xi0, eta0, xi1, eta1,
+	_bem3d_quadrature_rule_remap(xi0, eta0, xi1, eta1,
 			       xi2, eta2, 
 			       q->rule[3*(i+j)+0],
 			       q->rule[3*(i+j)+1],
 			       0.5*q->rule[3*(i+j)+2],
 			       &xn, &en, &ww) ;
- 	_quadrature_add_point(q, xn, en, ww) ;
+ 	_bem3d_quadrature_add_point(q, xn, en, ww) ;
       }
     }
   }
@@ -1069,7 +1145,8 @@ gint bem3d_quadrature_rule_polar(GtsPoint *p, BEM3DElement *e,
  * @param gfunc ignored;
  * @param param ignored;
  * @param data gint[2], first element number of quadrature points in radius;
- * second element number of points in angle.
+ * second element number of points in angle;
+ * @param work workspace.
  * 
  * @return ::BEM3D_SUCCESS on success.
  */
@@ -1151,13 +1228,13 @@ gint bem3d_quadrature_rule_polar_hs(GtsPoint *p, BEM3DElement *e,
       i = bem3d_quadrature_vertex_number(q) ;
       _bem3d_polar_triangle_rule(gN, gM, &(q->rule[3*i])) ;
       for ( j = 0 ; j < M*N ; j ++ ) {
-	_quadrature_rule_remap(xi0, eta0, xi1, eta1,
+	_bem3d_quadrature_rule_remap(xi0, eta0, xi1, eta1,
 			       xi2, eta2, 
 			       q->rule[3*(i+j)+0],
 			       q->rule[3*(i+j)+1],
 			       0.5*q->rule[3*(i+j)+2],
 			       &xn, &en, &ww) ;
- 	_quadrature_add_point(q, xn, en, ww) ;
+ 	_bem3d_quadrature_add_point(q, xn, en, ww) ;
       }
     }
   }
@@ -1184,7 +1261,8 @@ gint bem3d_quadrature_rule_polar_hs(GtsPoint *p, BEM3DElement *e,
  * @param gfunc ignored;
  * @param param ignored;
  * @param data gint *, number of points in rule (7, 25, 54, 85, 
- * 126, 175).
+ * 126, 175);
+ * @param work workspace (not used).
  * 
  * @return ::BEM3D_SUCCESS on success.
  */
@@ -1294,8 +1372,8 @@ gint bem3d_quadrature_rule_remap(gdouble xi0, gdouble eta0,
   g_return_val_if_fail(tn != NULL, BEM3D_NULL_ARGUMENT) ;
   g_return_val_if_fail(wn != NULL, BEM3D_NULL_ARGUMENT) ;
 
-  return _quadrature_rule_remap(xi0, eta0, xi1, eta1, xi2, eta2, 
-				s, t, w, sn, tn, wn) ;
+  return _bem3d_quadrature_rule_remap(xi0, eta0, xi1, eta1, xi2, eta2, 
+				      s, t, w, sn, tn, wn) ;
 
 }
 
@@ -1341,145 +1419,6 @@ gdouble bem3d_quadrature_rule_sum_weights(BEM3DQuadratureRule *q)
 }
 
 
-/** 
- * Quadrature rule for near-singular integrals, using the method of
- * Hayami, Ken, `Variable transformations for nearly singular
- * integrals in the boundary element method', Publ. RIMS, Kyoto Univ.,
- * 41:821--842, 2005 and Hayami, Ken & Matsumoto, Hideki, `A numerical
- * quadrature for nearly singular boundary element integrals',
- * Engineering Analysis with Boundary Elements, 13:143--154, 1994. The
- * integration point \a xs may not lie on the element.
- * 
- * @param xs field point;
- * @param e element to integrate over;
- * @param q quadrature rule to fill;
- * @param gfunc ignored;
- * @param param ignored;
- * @param data gint[2], first element number of quadrature points in radius;
- * second element number of points in angle.
- * 
- * @return ::BEM3D_SUCCESS on success. 
- */
-
-gint bem3d_quadrature_rule_hayami(GtsPoint *xs, BEM3DElement *e,
-				  BEM3DQuadratureRule *q, 
-				  BEM3DGreensFunction *gfunc,
-				  BEM3DParameters *param,
-				  gpointer data,
-				  BEM3DWorkspace *work)
-
-{
-  GtsPoint *xj, *xjp1 ;
-  gdouble d, L[32] ;
-  gdouble hj, aj, dtheta ;
-  BEM3DShapeFunc shfunc = NULL, shfsub = NULL ;
-  gint i, j, k, nc ;
-  gint M, N ;
-  gdouble xi0, eta0, xi1, eta1, xi2, eta2 ;
-  gdouble xn, en, ww ;
-  gint rot[32] ;
-  GtsPoint *x = NULL, *xst = NULL, *fj = NULL ;
-  gqr_rule_t *qn, *qm ;
-
-  g_debug("%s: ", __FUNCTION__) ;
-
-  /* g_error("%s: untested code", __FUNCTION__) ; */
-
-  g_return_val_if_fail(xs != NULL, BEM3D_NULL_ARGUMENT) ;
-  g_return_val_if_fail(GTS_IS_POINT(xs), BEM3D_ARGUMENT_WRONG_TYPE) ;
-  g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
-  g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
-  g_return_val_if_fail(q != NULL, BEM3D_NULL_ARGUMENT) ;
-
-  x = bem3d_workspace_gts_point_get(work) ;
-  xst = bem3d_workspace_gts_point_get(work) ;
-  fj = bem3d_workspace_gts_point_get(work) ;
-  qn = bem3d_workspace_gqr_rule_get(work) ;
-  qm = bem3d_workspace_gqr_rule_get(work) ;
-
-  /*number of corners on element*/
-  nc = bem3d_element_corner_number(e) ; 
-  switch ( nc ) {
-  default: g_log(G_LOG_DOMAIN, G_LOG_LEVEL_ERROR,
-		 "%s: element must have three or four sides",
-		 __FUNCTION__) ;
-    break ;
-  case 3: shfsub = bem3d_shfunc_t1 ; break ;
-  case 4: shfsub = bem3d_shfunc_q1 ; break ;
-  }
-  rotation_indices(nc, rot) ;
-
-  /*number of radial and angular quadrature points*/
-  N = ((gint *)data)[0] ; M = ((gint *)data)[1] ;
-  if ( N <= 0 ) 
-    g_error("%s: number of radial quadrature points (%d) must be greater "
-	    "than zero", __FUNCTION__, N) ;
-  if ( M <= 0 ) 
-    g_error("%s: number of angular quadrature points (%d) must be greater "
-	    "than zero", __FUNCTION__, M) ;
-
-  bem3d_quadrature_rule_realloc(q, 3*M*N) ;
-  bem3d_quadrature_clear(q) ;
-  
-  qm = gqr_rule_realloc(qm, M) ; qn = gqr_rule_realloc(qn, N) ;
-  gqr_rule_select(qn, GQR_GAUSS_LEGENDRE, N, NULL) ;
-  gqr_rule_select(qm, GQR_GAUSS_LEGENDRE, M, NULL) ;
-
-  /*location of quadrature point*/  
-  xi0 = eta0 = 0.0 ;
-  bem3d_element_nearest_point(e, xs, &xi0, &eta0, TRUE) ;
-
-  shfunc = bem3d_element_shape_func(e) ;
-  shfunc(xi0, eta0, L, NULL, NULL, NULL) ;
-  bem3d_element_position(e, L, x) ;
-  d = gts_point_distance(x, xs) ;
-
-  shfsub(xi0, eta0, L, NULL, NULL, NULL) ;
-  gts_point_set(xst, 0, 0, 0) ;
-  for ( i = 0 ; i < bem3d_element_corner_number(e) ; i ++ ) {
-    GTS_POINT(xst)->x += L[i]*GTS_POINT(bem3d_element_corner(e,i))->x ;
-    GTS_POINT(xst)->y += L[i]*GTS_POINT(bem3d_element_corner(e,i))->y ;
-    GTS_POINT(xst)->z += L[i]*GTS_POINT(bem3d_element_corner(e,i))->z ;
-  }
-
-  for ( j = 0 ; j < nc ; j ++ ) {
-    k = bem3d_element_corner_index(e, rot[j]) ;
-    xj = bem3d_element_vertex(e, k) ;
-    xi1 = bem3d_element_vertex_xi(e,k) ;
-    eta1 = bem3d_element_vertex_eta(e,k) ;
-
-    k = bem3d_element_corner_index(e, rot[j+1]) ;
-    xjp1 = bem3d_element_vertex(e, k) ;
-    xi2 = bem3d_element_vertex_xi(e,k) ;
-    eta2 = bem3d_element_vertex_eta(e,k) ;
-
-    edge_nearest_point(xj, xjp1, xst, fj) ;
-    hj = gts_point_distance(xst, fj) ;
-    if ( hj > 1e-9 ) {
-      dtheta = point_internal_angle(xj, xst, xjp1) ;
-      aj = point_internal_angle(xj, xst, fj) ;
-      i = bem3d_quadrature_vertex_number(q) ;
-      _bem3d_hayami_triangle_rule(hj, aj, d, dtheta, qn, qm, q->rule) ;
-      for ( k = 0 ; k < N*M ; k ++ ) {
-	_quadrature_rule_remap(xi0, eta0, xi1, eta1,
-			       xi2, eta2,
-			       q->rule[3*(i+k)+0],
-			       q->rule[3*(i+k)+1],
-			       q->rule[3*(i+k)+2],		    
-			       &xn, &en, &ww) ;
- 	_quadrature_add_point(q, xn, en, ww) ;
-      }
-    }
-  }
-
-  bem3d_workspace_gqr_rule_put(work, qn) ;
-  bem3d_workspace_gqr_rule_put(work, qm) ;
-  bem3d_workspace_gts_point_put(work, x) ;
-  bem3d_workspace_gts_point_put(work, xst) ;
-  bem3d_workspace_gts_point_put(work, fj) ;
-
-  return BEM3D_SUCCESS ;
-}
 
 /** 
  * Generate a quadrature rule for linear elements (triangular for now)
@@ -1496,7 +1435,8 @@ gint bem3d_quadrature_rule_hayami(GtsPoint *xs, BEM3DElement *e,
  * @param q quadrature rule;
  * @param gfunc this should contain ::bem3d_greens_func_laplace or NULL;
  * @param param ignored;
- * @param data ignored.
+ * @param data ignored;
+ * @param work workspace (not used).
  * 
  * @return BEM3D_SUCCESS on success.
  */
@@ -1620,7 +1560,8 @@ gint bem3d_quadrature_rule_newman(GtsPoint *xs, BEM3DElement *e,
  * @param q quadrature rule;
  * @param gfunc this should contain ::bem3d_greens_func_laplace or NULL;
  * @param param ignored;
- * @param data ignored.
+ * @param data ignored;
+ * @param work workspace (not used).
  * 
  * @return BEM3D_SUCCESS on success.
  */
@@ -1909,7 +1850,8 @@ gint bem3d_quadrature_rule_decomp_gradient(GtsPoint *xs, BEM3DElement *e,
  * @param gfunc ignored;
  * @param param ignored;
  * @param data pointer to gint containing the number of points in rule (1, 
- * 3, 4, or 7)
+ * 3, 4, or 7);
+ * @param work workspace (not used).
  * 
  * @return ::BEM3D_SUCCESS on success, exit with error if number of
  * points in rule is not 1, 3, 4, or 7.
@@ -1961,7 +1903,8 @@ gint bem3d_quadrature_rule_gauss(GtsPoint *p, BEM3DElement *e,
  * @param q quadrature rule to fill
  * @param gfunc ignored;
  * @param param ignored;
- * @param data pointer ignored.
+ * @param data pointer ignored;
+ * @param work workspace.
  * 
  * @return ::BEM3D_SUCCESS on success
  */

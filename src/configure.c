@@ -1,6 +1,6 @@
 /* configure.c
  * 
- * Copyright (C) 2010, 2017, 2018 by Michael Carley
+ * Copyright (C) 2010, 2017, 2018, 2019 by Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,12 @@ gpointer _config_quadratures[] =
    "bem3d_quadrature_mzht",
    "quadrature[]",
    "experimental method for hypersingular integrands",
-   bem3d_quadrature_rule_mzht,
+
+   NULL,
+   "",
+   "quadrature_tolerance",
+   "tolerance in estimating required quadrature order",
+   
    NULL, NULL, NULL, NULL} ;
 
 gpointer _config_physics[] =
@@ -189,6 +194,15 @@ gpointer _config_solver[] =
    "skeleton_order", "",
    NULL,
 
+   "[depth of octree in non-adaptive FMM]",
+   "fmm_tree_depth", "",
+   NULL,
+   
+   "[yes|YES|true|TRUE|no|NO|false|FALSE]",
+   "diagonal_shortcut",
+   "use shortcut in computing diagonal (self) terms in matrices",
+   NULL,
+   
    NULL, NULL, NULL, NULL} ;
 
 
@@ -215,14 +229,38 @@ BEM3DConfiguration *bem3d_configuration_new()
   c->qdata = bem3d_quadrature_selector_default() ;
 
   c->solver = BEM3D_SOLVER_DIRECT ;
-  c->fmm    = BEM3D_FMM_FMMLIB3D_1_2 ;
+  c->fmm    = BEM3D_FMM_WBFMM ;
 
   c->skel_order = 1 ;
   c->fmm_radius = 1.0 ;
-  c->fmm_tol    = 1e-6 ;
+  c->fmm_tol    = 1e-3 ;
+  c->fmm_tree_depth = 3 ;
   c->bc_default_admittance[0] = c->bc_default_admittance[1] = 0 ;
+  c->quad_tol = 1e-3 ;
 
+  c->diagonal_shortcut = TRUE ;
+  
   return c ;
+}
+
+static gint boolean_parse(gchar *s, gboolean *p)
+
+{
+  gchar *true[] = {"true", "TRUE", "yes", "YES", NULL} ;
+  gchar *false[] = {"false", "FALSE", "no", "NO", NULL} ;
+  gint i ;
+
+  *p = TRUE ;
+  for ( i = 0 ; true[i] != NULL ; i ++ ) {
+    if ( !strcmp(s, true[i]) ) return 0 ;
+  }
+
+  *p = FALSE ;
+  for ( i = 0 ; false[i] != NULL ; i ++ ) {
+    if ( !strcmp(s, false[i]) ) return 0 ;
+  }
+  
+  return 1 ;
 }
 
 static void parse_quadrature_key(GKeyFile *key, gchar *group, 
@@ -279,13 +317,14 @@ static void parse_quadrature_key(GKeyFile *key, gchar *group,
 }
 
 static void quadrature_rules_set(GKeyFile *key, gchar *group, 
-				 BEM3DQuadratureSelector *s)
+				 BEM3DConfiguration *c)
 
 {
   gint i, nk ;
-  gchar **w ;
+  gchar **w, *v ;
   GError *error = NULL ;
-
+  BEM3DQuadratureSelector *s = c->qdata ;
+  
   if ( !g_key_file_has_group(key, "BEM3D::Quadrature") ) return ;
 
   w = g_key_file_get_keys(key, "BEM3D::Quadrature", (gsize *)(&nk), &error) ;
@@ -293,6 +332,14 @@ static void quadrature_rules_set(GKeyFile *key, gchar *group,
 
   if ( nk == 0 || w == NULL ) return ;
 
+  if ( g_key_file_has_key(key, "BEM3D::Quadrature", "quadrature_tolerance", 
+			  &error) ) {
+    /*tolerance used in computing quadrature orders*/
+    v = g_key_file_get_value(key, "BEM3D::Quadrature", "quadrature_tolerance", 
+			     NULL) ;
+    c->quad_tol = atof(v) ;
+  }
+  
   bem3d_quadrature_selector_clear(s) ;
   for ( i = 0 ; i < nk ; i ++ )
     parse_quadrature_key(key, "BEM3D::Quadrature", w[i], s) ;
@@ -386,10 +433,24 @@ static void general_set(GKeyFile *key, BEM3DConfiguration *c)
     c->fmm_radius = atof(v) ;
   }
 
+  if ( g_key_file_has_key(key, "BEM3D::Solver", "fmm_tree_depth", &error) ) {
+    /*set solver*/
+    v = g_key_file_get_value(key, "BEM3D::Solver", "fmm_tree_depth", NULL) ;
+    c->fmm_tree_depth = atoi(v) ;
+  }
+
   if ( g_key_file_has_key(key, "BEM3D::Solver", "skeleton_order", &error) ) {
     /*set solver*/
     v = g_key_file_get_value(key, "BEM3D::Solver", "skeleton_order", NULL) ;
     c->skel_order = atoi(v) ;
+  }
+
+  if ( g_key_file_has_key(key, "BEM3D::Solver", "diagonal_shortcut", &error) ) {
+    /*set solver*/
+    v = g_key_file_get_value(key, "BEM3D::Solver", "diagonal_shortcut", NULL) ;
+    if ( boolean_parse(v, &(c->diagonal_shortcut)) != 0 ) {
+      g_error("%s: cannot parse diagonal_shortcut = %s", __FUNCTION__, v) ;
+    }
   }
 
   return ;
@@ -418,8 +479,9 @@ gint bem3d_configuration_set(BEM3DConfiguration *c, gpointer k)
        ) return BEM3D_SUCCESS ;
 
   /*quadrature rules*/
-  quadrature_rules_set(key, "BEM3D::Quadrature", c->qdata) ;
+  quadrature_rules_set(key, "BEM3D::Quadrature", c) ;
 
+  c->qdata->tol = c->quad_tol ;
   /*Green's function and other physical data*/
   physics_set(key, c) ;
 

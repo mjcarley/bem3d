@@ -36,6 +36,10 @@
 #include "fmmlib3d_1_2.h"
 #endif
 
+#ifdef HAVE_WBFMM
+#include "wbfmm-bem3d.h"
+#endif
+
 /**
  * @defgroup fmm Fast Multipole Method
  *
@@ -45,6 +49,32 @@
  *
  * @{
  * 
+ */
+
+/** 
+ * Perform a Fast Multipole Method (FMM) calculation using a specified
+ * solver. The source and dipole strengths, and the output arrays, may
+ * be NULL, and are then ignored in the calculation, for example
+ * depending on whether the single- or double-layer potential is being
+ * computed.
+ * 
+ * @param solver a ::BEM3DFastMultipole solver (depending on what has
+ * been compiled in to the library);
+ * @param problem type of problem to be solved, for example,
+ * ::BEM3D_FMM_LAPLACE, not all \a solver types can solve all problem types;
+ * @param param parameters for the problem;
+ * @param s an initialized ::BEM3DMeshSkeleton containing the point sources
+ * to be used in the FMM evaluation;
+ * @param tol FMM evaluation tolerance;
+ * @param q packed array of source strengths for the points in \a s;
+ * @param dq packed array of dipole strengths for the points in \a s;
+ * @param p on output, potential evaluated at target points in \a s;
+ * @param dp on output, normal derivative of potential evaluated at 
+ * target points in \a s;
+ * @param w a ::BEM3DFMMWorkspace allocated using
+ * ::bem3d_fmm_workspace_alloc.
+ * 
+ * @return 0 on success.
  */
 
 gint bem3d_fmm_calculate(BEM3DFastMultipole solver,
@@ -58,10 +88,14 @@ gint bem3d_fmm_calculate(BEM3DFastMultipole solver,
 
 {
   switch ( solver ) {
-  default: g_error("unrecognized solver type %d", solver) ; break ;
+  default: g_error("%s: unrecognized solver type %d",
+		   __FUNCTION__, solver) ;
+    break ;
   case BEM3D_FMM_FMMLIB3D_1_2:
-    switch (problem) {
-    default: g_error("unrecognized problem type %d", problem) ; break ;
+    switch ( problem ) {
+    default: g_error("%s: unrecognized problem type %d for solver %d",
+		     __FUNCTION__, problem, solver) ;
+      break ;
     case BEM3D_FMM_LAPLACE: 
       _bem3d_fmm_laplace_fmmlib3d_1_2(solver, problem, param, s, tol,
 				      q, dq, p, dp, w) ;
@@ -72,22 +106,45 @@ gint bem3d_fmm_calculate(BEM3DFastMultipole solver,
       break ;      
     }
     break ;
+  case BEM3D_FMM_WBFMM:
+    switch (problem) {
+    default: g_error("%s: unrecognized problem type %d for solver %d",
+		     __FUNCTION__, problem, solver) ; break ;
+    case BEM3D_FMM_HELMHOLTZ:
+      _bem3d_fmm_helmholtz_wbfmm(solver, problem, param, s, tol,
+				 q, dq, p, dp, w) ;
+      break ;      
+    }
+    break ;
   }
 
   return BEM3D_SUCCESS ;
 }
 
+/** 
+ * Allocate a ::BEM3DFMMWorkspace for use in Fast Multipole Method
+ * evaluations.
+ * 
+ * @param solver a ::BEM3DFastMultipole specifying the FMM method to be 
+ * used;
+ * @param skel the ::BEM3DMeshSkeleton which is to be passed to the 
+ * solver;
+ * 
+ * @return the newly allocated ::BEM3DFMMWorkspace.
+ */
+
 BEM3DFMMWorkspace *bem3d_fmm_workspace_alloc(BEM3DFastMultipole solver,
-					     BEM3DMeshSkeleton *skel)
+					     BEM3DMeshSkeleton *skel,
+					     BEM3DConfiguration *config)
 
 {
   BEM3DFMMWorkspace *w ;
   gint nda ;
 
-  w = (BEM3DFMMWorkspace *)g_malloc(sizeof(BEM3DFMMWorkspace)) ;
+  w = (BEM3DFMMWorkspace *)g_malloc0(sizeof(BEM3DFMMWorkspace)) ;
   
-  w->solver = solver ;
-
+  w->solver = solver ; nda = 0 ;
+  
   switch ( solver ) {
   default: g_error("unrecognized solver type %d", solver) ; break ;
   case BEM3D_FMM_FMMLIB3D_1_2:
@@ -98,10 +155,15 @@ BEM3DFMMWorkspace *bem3d_fmm_workspace_alloc(BEM3DFastMultipole solver,
       3*(skel->nt) ; /*points for field gradient calculation*/
     nda *= 2 ;   /*FMMLIB3D requires that everything be assumed complex*/
     break ;
+  case BEM3D_FMM_WBFMM:
+    w->i[0] = config->fmm_tree_depth ;
+    /* g_assert_not_reached() ; /\*don't know what to do yet*\/ */
+    break ;
   }
 
   w->nda = nda ;
-  w->d = (gdouble *)g_malloc(nda*sizeof(gdouble)) ;
+  if ( w->nda != 0 ) 
+    w->d = (gdouble *)g_malloc(nda*sizeof(gdouble)) ;
 
   return w ;
 }
@@ -326,6 +388,29 @@ BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
   m->solver = solver ;
   m->problem = problem ;
 
+  /*set the scaling factor for the output from different FMM solvers*/
+  switch ( solver ) {
+  default:
+    g_error("%s: solver %d not recognized", __FUNCTION__, solver) ;
+    break ;
+  case BEM3D_FMM_FMMLIB3D_1_2:
+    m->scaleA[0] = 0.25*M_1_PI ; m->scaleA[1] = 0.0 ;
+    m->scaleB[0] = 0.25*M_1_PI ; m->scaleB[1] = 0.0 ;
+    break ;
+  case BEM3D_FMM_WBFMM:
+    switch ( problem ) {
+    default: g_assert_not_reached() ; break ;
+    case BEM3D_FMM_LAPLACE:
+      g_error("%s: WBFMM does not handle Laplace problems", __FUNCTION__) ;
+      break ;
+    case BEM3D_FMM_HELMHOLTZ:
+      m->scaleA[0] = 0 ; m->scaleA[1] = -bem3d_parameters_wavenumber(param) ;
+      m->scaleB[0] = 0 ; m->scaleB[1] =  bem3d_parameters_wavenumber(param) ;
+      break ;
+    }
+    break ;
+  }
+  
   m->C = (gdouble *)g_malloc((skel->nt)*sizeof(gdouble)) ;
 
   m->gcorr = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
@@ -385,6 +470,22 @@ BEM3DSolver bem3d_solver_type(gchar *s)
   g_error("%s: unrecognized solver type %s", __FUNCTION__, s) ;
 
   return 0 ;
+}
+
+gchar *bem3d_fmm_name(BEM3DFastMultipole solver)
+
+{
+  switch ( solver ) {
+  default: return NULL ;
+  case BEM3D_FMM_FMMLIB3D_1_2:
+    return "fmmlib3d1.2" ;
+    break ;
+  case BEM3D_FMM_WBFMM:
+    return "wbfmm" ;
+    break ;
+  }
+  
+  return NULL ;
 }
 
 /**

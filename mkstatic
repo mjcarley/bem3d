@@ -25,6 +25,8 @@ LIBS=${LIBDIR}/libbem3d.a
 LIBS="${LIBS} /usr/lib64/libgts.a"
 LIBS="${LIBS} ${LIBDIR}/libgqr.a"
 LIBS="${LIBS} ${LIBDIR}/libsisl.a"
+LIBS="${LIBS} ${LIBDIR}/libwbfmm.a"
+LIBS="${LIBS} ${LIBDIR}/libwbfmm-base.a"
 LIBS="${LIBS} ${LIBDIR}/libwmpi_s.a"
 LIBS="${LIBS} /home/ensmjc/Codes/External/lib/libgsl.a"
 LIBS="${LIBS} /home/ensmjc/Codes/External/lib/libgslcblas.a"
@@ -36,11 +38,19 @@ LIBS="${LIBS} -lglib-2.0"
 LIBS="${LIBS} /usr/lib64/libgfortran.a /usr/lib64/libquadmath.a"
 LIBS="${LIBS} -lm"
 
-rm -rf static/*
-mkdir static/bin
+rm -rf static/bin/* static/doc/* static/examples/Scattering/*
 
 for exec in ${tools} ; do
     echo ${exec}
     gcc ${CFLAGS} -mtune=generic -march=x86-64 tools/${exec}.c \
 	-lfl ${LIBS} -o static/bin/${exec}
 done
+
+cp -r doc/html static/doc
+
+cp -r examples/Scattering/* static/examples/Scattering
+rm -f static/examples/Scattering/*~
+rm -f static/examples/Scattering/*.mtx
+rm -f static/examples/Scattering/*.dat
+rm -f static/examples/Scattering/*.xyz
+rm -f static/examples/Scattering/*-vis.msh

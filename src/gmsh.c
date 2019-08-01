@@ -45,17 +45,18 @@
 #include "bem3d.h"
 #include "bem3d-private.h"
 
-#define _GMSH_DATA_WIDTH  16
-#define _GMSH_DATA_FILE    0
-#define _GMSH_DATA_DATA    1
-#define _GMSH_DATA_INDEX   2
-#define _GMSH_DATA_INDICES 3
-#define _GMSH_DATA_N_NODES 4
-#define _GMSH_DATA_MODE    5
-#define _GMSH_DATA_HASH    6
-#define _GMSH_DATA_ETYPE   7
-#define _GMSH_DATA_ETYPES  8
-#define _GMSH_DATA_N_COM   9
+#define _GMSH_DATA_WIDTH    16
+#define _GMSH_DATA_FILE      0
+#define _GMSH_DATA_DATA      1
+#define _GMSH_DATA_INDEX     2
+#define _GMSH_DATA_INDICES   3
+#define _GMSH_DATA_N_NODES   4
+#define _GMSH_DATA_MODE      5
+#define _GMSH_DATA_HASH      6
+#define _GMSH_DATA_ETYPE     7
+#define _GMSH_DATA_ETYPES    8
+#define _GMSH_DATA_N_COM     9
+#define _GMSH_DATA_OFFSET   10
 
 static gint _gmsh_element_tag(BEM3DElement *e)
 
@@ -307,6 +308,7 @@ static void write_element_msh_4_1(BEM3DElement *e, gpointer *data)
   gint *idx = data[_GMSH_DATA_INDEX] ;
   GHashTable *h = data[_GMSH_DATA_HASH] ;
   gint etype = *((gint *)data[_GMSH_DATA_ETYPE]) ;
+  gint offset = *((gint *)data[_GMSH_DATA_OFFSET]) ;
   gint i, j ;
   
   (*idx) ++ ;
@@ -316,7 +318,7 @@ static void write_element_msh_4_1(BEM3DElement *e, gpointer *data)
   for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
     j = bem3d_element_global_index(e,i) ;
     j = GPOINTER_TO_INT(g_hash_table_lookup(h, GINT_TO_POINTER(j))) ;
-    fprintf(fp, " %d", j) ;
+    fprintf(fp, " %d", offset+j) ;
   }
   fprintf(fp, "\n") ;
   
@@ -343,11 +345,12 @@ static gint write_data_msh(gint i, gdouble *d, gint nf, gpointer *data)
   FILE *fp = data[_GMSH_DATA_FILE] ;
   GHashTable *h = data[_GMSH_DATA_HASH] ;
   gint ncom = *((gint *)data[_GMSH_DATA_N_COM]) ;
+  gint offset = *((gint *)data[_GMSH_DATA_OFFSET]) ;
   gint j ;
 
   j = GPOINTER_TO_INT(g_hash_table_lookup(h, GINT_TO_POINTER(i))) ;
 
-  fprintf(fp, "%d", j) ;
+  fprintf(fp, "%d", offset+j) ;
   for ( j = 0 ; j < ncom ; j ++ ) {
     fprintf(fp, " %lg", d[k+j]) ;
   }
@@ -359,7 +362,7 @@ static gint write_data_msh(gint i, gdouble *d, gint nf, gpointer *data)
 static gint bem3d_mesh_write_msh_4_1(BEM3DMesh *m, BEM3DMeshData *f,
 				     gint k, gchar *view, gdouble t,
 				     bem3d_gmsh_mode_t mode,
-				     FILE *fp)
+				     gint offset, FILE *fp)
 
 {
   gpointer data[_GMSH_DATA_WIDTH] ;
@@ -378,6 +381,7 @@ static gint bem3d_mesh_write_msh_4_1(BEM3DMesh *m, BEM3DMeshData *f,
   data[_GMSH_DATA_ETYPE] = &etype ;
   data[_GMSH_DATA_ETYPES] = n_etypes ;
   data[_GMSH_DATA_N_COM] = &ncom ;
+  data[_GMSH_DATA_OFFSET] = &offset ;
   
   /*this really only works for isoparametric elements*/
   nnodes = bem3d_mesh_node_number(m) ;
@@ -391,11 +395,11 @@ static gint bem3d_mesh_write_msh_4_1(BEM3DMesh *m, BEM3DMeshData *f,
   fprintf(fp, "$EndMeshFormat\n") ;
   fprintf(fp, "$Nodes\n") ;
   /*one entity block, number of nodes, tags from 1 to nnodes*/
-  fprintf(fp, "1 %d 1 %d\n", nnodes, nnodes) ;
+  fprintf(fp, "1 %d %d %d\n", nnodes, offset+1, offset+nnodes) ;
   /*2D entity (surface) 1, no parametric coordinates, nnodes */
   fprintf(fp, "2 1 0 %d\n", nnodes) ;
   /*node tags*/
-  for ( i = 1 ; i <= nnodes ; i ++ ) fprintf(fp, "%d\n", i) ;
+  for ( i = 1 ; i <= nnodes ; i ++ ) fprintf(fp, "%d\n", offset+i) ;
   i = 1 ;
   bem3d_mesh_foreach_node(m, (BEM3DNodeFunc)write_node_msh_4_1, data) ;
   fprintf(fp, "$EndNodes\n") ;
@@ -465,6 +469,7 @@ static gint bem3d_mesh_write_msh_4_1(BEM3DMesh *m, BEM3DMeshData *f,
 gint bem3d_mesh_write_msh(BEM3DMesh *m, BEM3DMeshData *f, gint k,
 			  gchar *view, gdouble t,
 			  bem3d_gmsh_mode_t mode,
+			  gint offset,
 			  FILE *fp)
 
 {
@@ -472,7 +477,7 @@ gint bem3d_mesh_write_msh(BEM3DMesh *m, BEM3DMeshData *f, gint k,
   g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
   g_return_val_if_fail(fp != NULL, BEM3D_NULL_ARGUMENT) ;
 
-  return bem3d_mesh_write_msh_4_1(m, f, k, view, t, mode, fp) ;
+  return bem3d_mesh_write_msh_4_1(m, f, k, view, t, mode, offset, fp) ;
 
   g_assert_not_reached() ;
   

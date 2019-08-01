@@ -161,6 +161,7 @@ typedef enum {
 #define BEM3D_PARAMETERS_JACOBIAN_INV   19
 #define BEM3D_PARAMETERS_COUPLING_REAL  28
 #define BEM3D_PARAMETERS_COUPLING_IMAG  29
+#define BEM3D_PARAMETERS_QUADRATURE_TOL 31
   
 #define BEM3D_PARAMETERS_GRADIENT        0
   
@@ -619,6 +620,7 @@ typedef enum {
       memset(((_p)->p), 0, sizeof(gpointer)*BEM3D_PARAMETERS_POINTER_SIZE) ; \
       (_p)->f[BEM3D_PARAMETERS_COUPLING_REAL] = 1.0 ;			\
       (_p)->f[BEM3D_PARAMETERS_COUPLING_IMAG] = 0.0 ;			\
+      (_p)->f[BEM3D_PARAMETERS_QUADRATURE_TOL] = 1e-3 ;			\
     }									\
     while (0)
     
@@ -685,6 +687,18 @@ typedef enum {
 #define bem3d_parameters_coupling_imag(_p)	\
   ((_p)->f[BEM3D_PARAMETERS_COUPLING_IMAG])
 
+  /**
+   * @ingroup quadrature
+   * Quadrature tolerance in a ::BEM3DParameters struct 
+   *
+   * @param p a pointer to a ::BEM3DParameters struct
+   *
+   * @return the tolerance to be passed to ::bem3d_quadrature_parameter
+   * @hideinitializer
+   */
+
+#define bem3d_parameters_quadrature_tol(_p)		\
+      ((_p)->f[BEM3D_PARAMETERS_QUADRATURE_TOL])
   
   /**
    * @ingroup gfunc
@@ -815,6 +829,7 @@ typedef enum {
   typedef struct {
     GPtrArray *f ;
     GArray *sigma, *NM ;
+    gdouble tol ;
   } BEM3DQuadratureSelector ;
 
 #define bem3d_quadrature_selector_length(_s) ((_s)->f->len)
@@ -824,6 +839,7 @@ typedef enum {
   (g_array_index((_s)->sigma,gdouble,(_i)))
 #define bem3d_quadrature_selector_data(_s,_i) \
   (g_array_index((_s)->NM,gint,(2*(_i))))
+#define bem3d_quadrature_selector_tol(_s)   ((_s)->tol)
 
   /**
    * @struct BEM3DEdge
@@ -1084,7 +1100,7 @@ struct _BEM3DFunctionClass {
 #define BEM3D_IS_FUNCTION(obj)         (gts_object_is_from_class (obj,\
 						 bem3d_function_class ()))
 
-BEM3DFunctionClass * bem3d_function_class  (void);
+  BEM3DFunctionClass * bem3d_function_class  (void) ;
   BEM3DFunction * bem3d_function_new    (BEM3DFunctionClass * klass) ;
   gint bem3d_function_add_function(BEM3DFunction *f, gint i, gchar *def) ;
 
@@ -1116,10 +1132,11 @@ BEM3DFunctionClass * bem3d_function_class  (void);
       order,     /*order of source point interpolation*/
       ns,        /*number of source points*/
       nt,        /*number of target (collocation) points*/
-      imin,      /*minimum index on the mesh (indexing assumed contiguous)*/
-      imax,      /*minimum index on the mesh (indexing assumed contiguous)*/
       *idx,      /*indices of nodes for source interpolation*/
       ppe ;      /*(maximum) points per element*/
+    guint imin,      /*minimum index on the mesh (indexing assumed contiguous)*/
+      imax ;      /*minimum index on the mesh (indexing assumed contiguous)*/
+
     BEM3DAverage anorm ; /*averaging for normal calculations*/
     gdouble *x, *n, *w ;  /*positions and normals, and interpolation weights*/
     GHashTable *e ; /*to tie elements to their point sources*/
@@ -1151,12 +1168,19 @@ BEM3DFunctionClass * bem3d_function_class  (void);
     BEM3D_FMM_HELMHOLTZ         /**< Helmholtz equation*/
   } BEM3DFastMultipoleProblem ;
 
+#define BEM3D_FMM_POINTER_NUMBER 8
+#define BEM3D_FMM_INT_NUMBER     8
+  
   typedef struct _BEM3DFMMWorkspace BEM3DFMMWorkspace ;
 
   struct _BEM3DFMMWorkspace {
     BEM3DFastMultipole solver ;
+    gpointer p[BEM3D_FMM_POINTER_NUMBER] ;
+    /*generic pointers made available to given FMM solvers for
+      internal data*/
+    gint i[BEM3D_FMM_INT_NUMBER] ;
     gint nda ;            /*number of doubles allocated in d*/
-    gdouble *d ;          /*double array*/
+    gdouble *d ;          /*double array for workspaces*/
   } ;
 
 
@@ -1172,7 +1196,10 @@ BEM3DFunctionClass * bem3d_function_class  (void);
     BEM3DFastMultipole solver ;
     BEM3DFastMultipoleProblem problem ;
     BEM3DMeshSkeleton *skel ;
-    gdouble tol, *C ;
+    gdouble tol, /*FMM calculation tolerance*/
+      *C,        /*diagonal terms*/
+      scaleA[2],  /*scaling of FMM output for `A' matrix, multiplying \phi*/
+      scaleB[2] ; /*scaling of FMM output for `B' matrix, multiplying d\phi*/
     GArray *gcorr, *dgcorr,  /*correction weights for G and dGdn*/
       *icorr ;               /*correction indices*/
     gint *idxcorr ;          /*node indices into correction arrays*/
@@ -1197,12 +1224,16 @@ struct _BEM3DConfiguration {
   BEM3DQuadratureSelector *qdata ;
   BEM3DSolver             solver ;
   BEM3DFastMultipole      fmm ;
-  gint                    skel_order ;
-  gdouble                 fmm_radius, fmm_tol, bc_default_admittance[2] ;
+  gint                    skel_order, fmm_tree_depth ;
+  gboolean diagonal_shortcut ; /*use short cut method to compute
+				 diagonal terms*/
+  gdouble fmm_radius,
+    fmm_tol,
+    bc_default_admittance[2],
+    quad_tol ;
   GString                 *job ;
   GString                 *gfunc_comment, *qrule_comment ;
 } ;
-
 
   /** 
    * @ingroup belement
@@ -1604,7 +1635,7 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
   gint bem3d_mesh_merge(BEM3DMesh *m, BEM3DMesh *n) ;
   gint bem3d_mesh_element_moments(BEM3DMesh *m, gint H) ;
   gint bem3d_mesh_element_node_number_max(BEM3DMesh *m) ;
-  gint bem3d_mesh_index_range(BEM3DMesh *m, gint *imin, gint *imax) ;
+  gint bem3d_mesh_index_range(BEM3DMesh *m, guint *imin, guint *imax) ;
   BEM3DElement *bem3d_mesh_element_sample(BEM3DMesh *m) ;
 
   BEM3DElement *bem3d_mesh_face_element(BEM3DMesh *m, GtsFace *f) ;
@@ -1819,7 +1850,8 @@ gint bem3d_quadrature_rule_decomp_gradient(GtsPoint *xs, BEM3DElement *e,
 					   gpointer data,
 					   BEM3DWorkspace *work) ;
 					   
-  gdouble bem3d_quadrature_parameter(GtsPoint *p, BEM3DElement *e) ;
+  gdouble bem3d_quadrature_parameter(GtsPoint *p, BEM3DElement *e,
+				     gdouble tol) ;
   gint bem3d_quadrature_rule_remap(gdouble xi0, gdouble eta0,
 				   gdouble xi1, gdouble eta1,
 				   gdouble xi2, gdouble eta2,
@@ -1837,8 +1869,8 @@ gint bem3d_quadrature_rule_decomp_gradient(GtsPoint *xs, BEM3DElement *e,
 				       BEM3DMeshData *f2,
 				       gboolean strict) ;
   gint bem3d_mesh_write_msh(BEM3DMesh *m, BEM3DMeshData *f, gint k,
-			    gchar *view, gdouble t,
-			    bem3d_gmsh_mode_t mode, FILE *fp) ;
+			    gchar *view, gdouble t, bem3d_gmsh_mode_t mode,
+			    gint offset, FILE *fp) ;
   gint bem3d_mesh_write_pos(BEM3DMesh *m, BEM3DMeshData *f, gint k,
 			    gchar *view, bem3d_gmsh_mode_t mode,
 			    FILE *fp) ;
@@ -2020,7 +2052,9 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
 			   BEM3DFMMWorkspace *w) ;
   
   BEM3DFMMWorkspace *bem3d_fmm_workspace_alloc(BEM3DFastMultipole solver,
-					       BEM3DMeshSkeleton *skel) ;
+					       BEM3DMeshSkeleton *skel,
+					       BEM3DConfiguration *config) ;
+					       
   BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
 				       BEM3DFastMultipoleProblem problem,
 				       BEM3DMeshSkeleton *skel,
@@ -2030,6 +2064,7 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
 
   gchar *bem3d_solver_name(BEM3DSolver s) ;
   BEM3DSolver bem3d_solver_type(gchar *s) ;
+  gchar *bem3d_fmm_name(BEM3DFastMultipole solver) ;
 
 #ifdef __cplusplus
 }

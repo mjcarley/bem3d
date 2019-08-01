@@ -78,7 +78,7 @@ static gint skeleton_set_unit_sources(BEM3DMeshSkeleton *s, gdouble *dq)
   for ( i = 0 ; i < s->ns ; i ++ ) {
     w = &(s->w[i*s->ppe]) ;
 
-    for ( j = 0 ; j < s->ppe ; j ++ ) dq[i] +=  w[j]*0.25*M_1_PI ;
+    for ( j = 0 ; j < s->ppe ; j ++ ) dq[i] +=  w[j] ;
   }
 
   return 0 ;
@@ -292,7 +292,8 @@ gint main(gint argc, gchar **argv)
   GPtrArray *meshes ;
   gboolean meshes_closed ;
   GTimer *t ;
-  gint i, j, np, nc, w, order, imin, imax ;
+  gint i, j, np, nc, w, order ;
+  guint imin, imax ;
   gchar ch, *opfile, p[32], *progname ;
   BEM3DLookupFunc dgfunc ;
   BEM3DParameters gdata ;
@@ -397,6 +398,8 @@ gint main(gint argc, gchar **argv)
       /* -1.0/bem3d_parameters_wavenumber(&gdata); */
   }
 
+  bem3d_parameters_quadrature_tol(&gdata) = config->quad_tol ;
+  
   for ( (i = 0), (np = 0) ; i < meshes->len ; i ++ ) {
     nc = bem3d_mesh_node_number(g_ptr_array_index(meshes,i)) ;
 
@@ -432,7 +435,10 @@ gint main(gint argc, gchar **argv)
   work = bem3d_workspace_new() ;  
 
   if ( config->solver == BEM3D_SOLVER_DIRECT ) {
-    if ( opfile != NULL ) {
+    fprintf(stderr, "%s: assembling for direct solver: t=%f\n", 
+	    progname, g_timer_elapsed(t, NULL)) ;
+
+  if ( opfile != NULL ) {
       output = file_open(opfile, "-", "w", stdout) ;
     }
 
@@ -464,23 +470,31 @@ gint main(gint argc, gchar **argv)
     gfunc = config->gfunc ;
     config->gfunc = greens_func_laplace ;
     if ( meshes_closed ) {
-      for ( i = 0 ; i < meshes->len ; i ++ )
+      for ( i = 0 ; i < meshes->len ; i ++ ) {
+	fprintf(stderr, "%s: P%d: diagonal term for mesh %d\n",
+		progname, wmpi_rank(), i) ;
 	bem3d_mesh_quad_dgdn(g_ptr_array_index(meshes,i),
 			     config, &gdata, dgfunc, NULL, 
 			     (BEM3DEquationFunc)equation_func_C, C,
 			     work) ;
+      }
     } else {
       /*if we have any open meshes, assume they are disjoint parts of the
        same surface and treat accordingly*/
       for ( i = 0 ; i < meshes->len ; i ++ )
-	for ( j = 0 ; j < meshes->len ; j ++ )
+	for ( j = 0 ; j < meshes->len ; j ++ ) {
+	  fprintf(stderr, "%s: P%d: diagonal term for meshes %d and %d\n",
+		  progname, wmpi_rank(), i, j) ;
 	  bem3d_mesh_disjoint_quad_dgdn(g_ptr_array_index(meshes,i),
 					g_ptr_array_index(meshes,j),
 					config, &gdata, dgfunc, NULL, 
 					(BEM3DEquationFunc)equation_func_C,
 					C, work) ;
+	}
     }
     
+    fprintf(stderr, "%s: P%d: diagonal terms computed\n",
+	    progname, wmpi_rank()) ;
     config->gfunc = gfunc ;
     bem3d_parameters_wavenumber(&gdata) = k ;
 
@@ -504,15 +518,29 @@ gint main(gint argc, gchar **argv)
     return 0 ;
   }
 
-  fprintf(stderr, "%s: assembling for FMM solver %d: t=%f\n", 
-	  progname, config->fmm, g_timer_elapsed(t, NULL)) ;
+  /*if we have made it this far we are doing fast multipole*/
+  fprintf(stderr, "%s: assembling for FMM solver %s: t=%f\n", 
+	  progname, bem3d_fmm_name(config->fmm), g_timer_elapsed(t, NULL)) ;
 
+  if ( meshes->len > 1 ) {
+    fprintf(stderr,
+	    "%s: FMM can only handle single mesh problems at the moment\n",
+	    progname) ;
+    return 1 ;
+  }
+  
+  wmpi_split_range(0, np, &imin, &imax) ;
+  fprintf(stderr, "%s: P%d: nodes: %d--%d\n", 
+	  progname, wmpi_rank(), imin, imax) ;
+  
   if ( opfile != NULL ) {
     output = file_open(opfile, "-", "w", stdout) ;
   }
 
   C = (gdouble *)g_malloc0(np*sizeof(gdouble)) ;
 
+  m = g_ptr_array_index(meshes,0) ;
+  
   bem3d_mesh_index_range(m, &imin, &imax) ;
 
   fprintf(output, "%s %u %d %d %u %u %d\n", 
@@ -531,44 +559,62 @@ gint main(gint argc, gchar **argv)
 			 (BEM3DEquationFunc)equation_func_C, C) ;
 
 #else /*FMM_DIRECT_CONSTANT*/
-  m = g_ptr_array_index(meshes, 0) ;
-  quad = bem3d_quadrature_rule_new(order, 1) ;
+  if ( config->fmm == BEM3D_FMM_WBFMM ) {
+    /*WBFMM does not have a Laplace solver (yet?) so we have to do
+      this by brute force*/
+    for ( i = 0 ; i < np ; i ++ ) C[i] = 1.0 ;
 
-  order = config->skel_order ;
-  r_correct = config->fmm_radius ;
+    gfunc = config->gfunc ;
+    config->gfunc = greens_func_laplace ;
 
-  if ( order <= 7 ) 
-    bem3d_quadrature_rule_gauss(NULL, bem3d_mesh_element_sample(m), quad, 
+    for ( i = 0 ; i < meshes->len ; i ++ ) {
+      fprintf(stderr, "%s: P%d: diagonal term for mesh %d\n",
+	      progname, wmpi_rank(), i) ;
+      bem3d_mesh_quad_dgdn(g_ptr_array_index(meshes,i),
+			   config, &gdata, dgfunc, NULL, 
+			   (BEM3DEquationFunc)equation_func_C, C,
+			   work) ;
+    }
+  } else {
+    m = g_ptr_array_index(meshes, 0) ;
+    quad = bem3d_quadrature_rule_new(order, 1) ;
+
+    order = config->skel_order ;
+    r_correct = config->fmm_radius ;
+
+    if ( order <= 7 ) 
+      bem3d_quadrature_rule_gauss(NULL, bem3d_mesh_element_sample(m), quad, 
 				NULL, NULL, &order, NULL) ;
-  else
-    bem3d_quadrature_rule_wx(NULL, bem3d_mesh_element_sample(m), quad, 
-			     NULL, NULL, &order, NULL) ;    
-
-  skel = bem3d_mesh_skeleton_new(m, order) ;
-  bem3d_mesh_skeleton_init(skel, quad, anorm) ;
-
-  gfunc = config->gfunc ;
-  config->gfunc = greens_func_laplace ;
-
-  mtx = bem3d_fmm_matrix_new(config->fmm, BEM3D_FMM_LAPLACE,
+    else
+      bem3d_quadrature_rule_wx(NULL, bem3d_mesh_element_sample(m), quad, 
+			       NULL, NULL, &order, NULL) ;    
+    
+    skel = bem3d_mesh_skeleton_new(m, order) ;
+    bem3d_mesh_skeleton_init(skel, quad, anorm) ;
+    
+    gfunc = config->gfunc ;
+    config->gfunc = greens_func_laplace ;
+    
+    mtx = bem3d_fmm_matrix_new(config->fmm, BEM3D_FMM_LAPLACE,
 			     skel, config, NULL, r_correct, work) ;
 
-  mtx->tol = config->fmm_tol ;
+    mtx->tol = config->fmm_tol ;
 
-  unit = (gdouble *)g_malloc(skel->ns*sizeof(gdouble)) ;
+    unit = (gdouble *)g_malloc(skel->ns*sizeof(gdouble)) ;
 
-  fmmwork = bem3d_fmm_workspace_alloc(config->fmm, skel) ;
+    fmmwork = bem3d_fmm_workspace_alloc(config->fmm, skel, config) ;
 
-  skeleton_set_unit_sources(skel, unit) ;
+    skeleton_set_unit_sources(skel, unit) ;
 
-  bem3d_fmm_calculate(mtx->solver, mtx->problem, NULL, mtx->skel, mtx->tol,
-  		      NULL, unit, C, NULL, fmmwork) ;
+    bem3d_fmm_calculate(mtx->solver, mtx->problem, NULL, mtx->skel, mtx->tol,
+			NULL, unit, C, NULL, fmmwork) ;
 
-  /*local correction terms in FMM integration*/
-  for ( i = 0 ; i < np ; i ++ ) {
-    C[i] += 1 ;
-    for ( j = mtx->idxcorr[2*i+0] ; j < mtx->idxcorr[2*i+1] ; j ++ ) {
-      C[i] += g_array_index(mtx->dgcorr, gdouble, j) ;
+    /*local correction terms in FMM integration*/
+    for ( i = 0 ; i < np ; i ++ ) {
+      C[i] = C[i]*mtx->scaleA[0] + 1 ;
+      for ( j = mtx->idxcorr[2*i+0] ; j < mtx->idxcorr[2*i+1] ; j ++ ) {
+	C[i] += g_array_index(mtx->dgcorr, gdouble, j) ;
+      }
     }
   }
 #endif /*FMM_DIRECT_CONSTANT*/

@@ -1040,8 +1040,6 @@ gint bem3d_function_integral_weights(BEM3DFunction *func,
   for ( i = 0 ; i < BEM3D_FUNCTION_NRESERVED ; i ++ )     
     vars[off+i] = BEM3D_FUNCTION_RESERVED[i] ;
 
-  
-  off = 0 ;
   if ( x != NULL ) {
     values[off + BEM3D_FUNCTION_X_EVAL] = GTS_POINT(x)->x ;
     values[off + BEM3D_FUNCTION_Y_EVAL] = GTS_POINT(x)->y ;
@@ -1071,6 +1069,21 @@ gint bem3d_function_integral_weights(BEM3DFunction *func,
   
   return 0 ;
 }
+
+/** 
+ * Evaluate a ::BEM3DFunction at a ::GtsPoint. The function is
+ * evaluated in the same way as for a ::BEM3DMesh except that the
+ * normal and index must be supplied explicitly.
+ * 
+ * @param func a ::BEM3DFunction;
+ * @param x a ::GtsPoint;
+ * @param n the normal at \a x;
+ * @param idx the mesh index to be used for \a x in \a f, if required;
+ * @param result the results of the evaluation of \a f;
+ * @param nres number of entries in \a result;
+ * 
+ * @return the number of functions evaluated, on success, -1 otherwise.
+ */
 
 gint bem3d_function_eval_point(BEM3DFunction *func,
 			       GtsPoint *x, GtsVector n, gint idx,

@@ -1,0 +1,4 @@
+BEM3DFunction
+k = 1.0
+f[0] = f[0] + g[0]
+f[1] = f[1] + g[1]

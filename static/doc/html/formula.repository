@@ -1,0 +1,99 @@
+\form#0:$\partial L_{i}/\partial \xi$
+\form#1:$\partial L_{i}/\partial \eta$
+\form#2:$G L_{i}$
+\form#3:$d G/d n L_{i}$
+\form#4:$g{d\phi}/{d n}-\phi dg/dn$
+\form#5:$ -\int_{S} \frac{\partial G}{\partial n} \mathrm{d}S$
+\form#6:$i$
+\form#7:$j$
+\form#8:$Gd\phi/dn+dG/dn\phi$
+\form#9:$L=1$
+\form#10:$dL/ds=0$
+\form#11:$dL/dt=0$
+\form#12:$(0,0)$
+\form#13:$(1,0)$
+\form#14:$(0,1)$
+\form#15:$L_{0}=(1-s-t)$
+\form#16:$L_{1}=s$
+\form#17:$L_{2}=t$
+\form#18:$dL_{0}/ds=-1$
+\form#19:$dL_{1}/ds=1$
+\form#20:$dL_{2}/ds=0$
+\form#21:$dL_{0}/dt=-1$
+\form#22:$dL_{1}/dt=0$
+\form#23:$dL_{2}/ds=1$
+\form#24:$G=-1/4\pi R^{2}\nabla R$, $R=|\mathbf{x}-\mathbf{y}|$
+\form#25:$\xi$
+\form#26:$\eta$
+\form#27:$d x/d\xi/h_{1}$
+\form#28:$h_{1}=|d x/d\xi|$
+\form#29:$d x/d\xi/h_{2}$
+\form#30:$h_{2}=|d x/d\xi|$
+\form#31:$(x,y,z)$
+\form#32:$(sx,sy,sz)$
+\form#33:$\partial\phi/\partial x=\sum_{i=0}^{N}\phi_{i}w_{3i}$
+\form#34:$\partial\phi/\partial y=\sum_{i=0}^{N}\phi_{i}w_{3i+1}$
+\form#35:$\partial\phi/\partial z=\sum_{i=0}^{N}\phi_{i}w_{3i+2}$
+\form#36:$N$
+\form#37:$3N$
+\form#38:$L_{i}$
+\form#39:$s$
+\form#40:$t$
+\form#41:$(1,1)$
+\form#42:$\nabla_{T}f$
+\form#43:$G=1/4\pi R$
+\form#44:$R=|\mathbf{x}-\mathbf{y}|$
+\form#45:$G=\exp(\mathrm{J} kR)/4\pi R$
+\form#46:$G=\exp(\mathrm{j} k\sigma)/4\pi S$
+\form#47:$k=2.7$
+\form#48:$k=5.0$
+\form#49:$(-3,-3,0)$
+\form#50:$(3,-3,0)$
+\form#51:$(3,3,0)$
+\form#52:$(-3,3,0)$
+\form#53:$[A]x=y$
+\form#54:$g{\partial\phi}/{\partial n}-\phi \partial g/\partial n$
+\form#55:$\int L_{i}/4\pi R\mathrm{d}S = f_{i}$
+\form#56:$f_{i}$
+\form#57:$x$
+\form#58:$y$
+\form#59:$I_{mn}$
+\form#60:$z$
+\form#61:$u$
+\form#62:$v$
+\form#63:$w$
+\form#64:$x0$
+\form#65:$y0$
+\form#66:$z0$
+\form#67:$nx$
+\form#68:$ny$
+\form#69:$nz$
+\form#70:$nx0$
+\form#71:$ny0$
+\form#72:$nz0$
+\form#73:$\nabla\int L_{i}/4\pi R\mathrm{d}S = f_{i}$
+\form#74:$g_{i}$
+\form#75:$\int G \phi\mathrm{d}S=\sum_{i=0}^{2}g_{i}\phi_{i}$
+\form#76:$\frac{\partial}{\partial x}\int G \phi\mathrm{d}S=\sum_{i=3}^{5}g_{i}\phi_{i}$
+\form#77:$\frac{\partial}{\partial y}\int G \phi\mathrm{d}S=\sum_{i=6}^{8}g_{i}\phi_{i}$
+\form#78:$\frac{\partial}{\partial y}\int G \phi\mathrm{d}S=\sum_{i=9}^{11}g_{i}\phi_{i}$
+\form#79:$\frac{\partial}{\partial z}\int G \phi\mathrm{d}S=\sum_{i=9}^{11}g_{i}\phi_{i}$
+\form#80:$\sigma$
+\form#81:$\mathbf{c}=\overline{\mathbf{x}_{i}}$
+\form#82:$R_{s}$
+\form#83:$\sqrt{2}|\mathbf{c}-\mathbf{x}_{i}$
+\form#84:$R_{p}=|\mathbf{c}-\mathbf{x}|$
+\form#85:$\sigma=0$
+\form#86:$R_{p}<R_{s}$
+\form#87:$\sigma=z_{n}/R_{s}$
+\form#88:$z_{n}$
+\form#89:$R_{p}\geq R_{s}$
+\form#90:$\sigma=R_{p}/R_{s}$
+\form#91:$\sqrt{2}|\mathbf{c}-\mathbf{x}_{i}|$
+\form#92:$\lambda$
+\form#93:$\partial x_{i}/\partial \xi_{j}$
+\form#94:$\partial \xi_{i}/\partial x_{j}$
+\form#95:$\phi$
+\form#96:$\partial\phi/\partial n$
+\form#97:$\int_{S}w(\mathbf{x})\phi(\mathbf{x})\approx\sum_{i}\phi_{i}f_{i}$
+\form#98:$\phi_{i}$

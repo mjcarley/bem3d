@@ -19,6 +19,10 @@ enum {\bf B\+E\+M3\+D\+Fast\+Multipole\+Problem} \{ {\bf B\+E\+M3\+D\+\_\+\+F\+M
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
+gint {\bf bem3d\+\_\+fmm\+\_\+calculate} ({\bf B\+E\+M3\+D\+Fast\+Multipole} solver, {\bf B\+E\+M3\+D\+Fast\+Multipole\+Problem} problem, {\bf B\+E\+M3\+D\+Parameters} $\ast$param, {\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$s, gdouble tol, gdouble $\ast$q, gdouble $\ast$dq, gdouble $\ast$p, gdouble $\ast$dp, B\+E\+M3\+D\+F\+M\+M\+Workspace $\ast$w)
+\item 
+B\+E\+M3\+D\+F\+M\+M\+Workspace $\ast$ {\bf bem3d\+\_\+fmm\+\_\+workspace\+\_\+alloc} ({\bf B\+E\+M3\+D\+Fast\+Multipole} solver, {\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$skel)
+\item 
 {\bf B\+E\+M3\+D\+F\+M\+M\+Matrix} $\ast$ {\bf bem3d\+\_\+fmm\+\_\+matrix\+\_\+new} ({\bf B\+E\+M3\+D\+Fast\+Multipole} solver, {\bf B\+E\+M3\+D\+Fast\+Multipole\+Problem} problem, {\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$skel, {\bf B\+E\+M3\+D\+Configuration} $\ast$config, {\bf B\+E\+M3\+D\+Parameters} $\ast$param, gdouble r, {\bf B\+E\+M3\+D\+Workspace} $\ast$work)
 \item 
 gchar $\ast$ {\bf bem3d\+\_\+solver\+\_\+name} ({\bf B\+E\+M3\+D\+Solver} s)
@@ -64,6 +68,54 @@ B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+T\+Z\label{group__fmm_gga
 
 
 \subsection{Function Documentation}
+\index{Fast Multipole Method@{Fast Multipole Method}!bem3d\+\_\+fmm\+\_\+calculate@{bem3d\+\_\+fmm\+\_\+calculate}}
+\index{bem3d\+\_\+fmm\+\_\+calculate@{bem3d\+\_\+fmm\+\_\+calculate}!Fast Multipole Method@{Fast Multipole Method}}
+\subsubsection[{bem3d\+\_\+fmm\+\_\+calculate}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+fmm\+\_\+calculate (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Fast\+Multipole}}]{solver, }
+\item[{{\bf B\+E\+M3\+D\+Fast\+Multipole\+Problem}}]{problem, }
+\item[{{\bf B\+E\+M3\+D\+Parameters} $\ast$}]{param, }
+\item[{{\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{s, }
+\item[{gdouble}]{tol, }
+\item[{gdouble $\ast$}]{q, }
+\item[{gdouble $\ast$}]{dq, }
+\item[{gdouble $\ast$}]{p, }
+\item[{gdouble $\ast$}]{dp, }
+\item[{B\+E\+M3\+D\+F\+M\+M\+Workspace $\ast$}]{w}
+\end{DoxyParamCaption}
+)}\label{group__fmm_gaa6af338ee603160ea484e5485a0d61c1}
+Perform a Fast Multipole Method (F\+M\+M) calculation using a specified solver.
+
+
+\begin{DoxyParams}{Parameters}
+{\em solver} & a \doxyref{B\+E\+M3\+D\+Fast\+Multipole}{p.}{group__fmm_gab908afe0c8ff3880fd8e79ea00234aff} solver (depending on what has been compiled in to the library); \\
+\hline
+{\em problem} & type of problem to be solved, for example, \doxyref{B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+C\+E}{p.}{group__fmm_ggaa6f3e73f1e19d3277c8ee633e869d647ac3938c2c26280542a8f9aa7b5a4bcce8}, not all {\itshape solver} types can solve all problem types; \\
+\hline
+{\em param} & parameters for the problem; \\
+\hline
+{\em s} & an initialized \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} containing the point sources to be used in the F\+M\+M evaluation; \\
+\hline
+{\em tol} & F\+M\+M evaluation tolerance; \\
+\hline
+{\em q} & packed array of source strengths for the points in {\itshape s}; \\
+\hline
+{\em dq} & packed array of dipole strengths for the points in {\itshape s}; \\
+\hline
+{\em p} & on output, potential evaluated at target points in {\itshape s}; \\
+\hline
+{\em dp} & on output, normal derivative of potential evaluated at target points in {\itshape s}; \\
+\hline
+{\em w} & a \+::\+B\+E\+M3\+D\+F\+M\+M\+Workspace allocated using \doxyref{bem3d\+\_\+fmm\+\_\+workspace\+\_\+alloc}{p.}{group__fmm_ga77f6060bed81a8414a3620ffb71db64f};\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success. 
+\end{DoxyReturn}
+
+
+References B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2, B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+H\+E\+L\+M\+H\+O\+L\+T\+Z, B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+L\+A\+P\+L\+A\+C\+E, and B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+W\+B\+F\+M\+M.
+
 \index{Fast Multipole Method@{Fast Multipole Method}!bem3d\+\_\+fmm\+\_\+matrix\+\_\+new@{bem3d\+\_\+fmm\+\_\+matrix\+\_\+new}}
 \index{bem3d\+\_\+fmm\+\_\+matrix\+\_\+new@{bem3d\+\_\+fmm\+\_\+matrix\+\_\+new}!Fast Multipole Method@{Fast Multipole Method}}
 \subsubsection[{bem3d\+\_\+fmm\+\_\+matrix\+\_\+new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf B\+E\+M3\+D\+F\+M\+M\+Matrix}$\ast$ bem3d\+\_\+fmm\+\_\+matrix\+\_\+new (
@@ -102,6 +154,30 @@ B\+E\+M3\+D\+\_\+\+S\+U\+C\+C\+E\+S\+S on success.
 
 
 References bem3d\+\_\+mesh\+\_\+foreach\+\_\+node().
+
+\index{Fast Multipole Method@{Fast Multipole Method}!bem3d\+\_\+fmm\+\_\+workspace\+\_\+alloc@{bem3d\+\_\+fmm\+\_\+workspace\+\_\+alloc}}
+\index{bem3d\+\_\+fmm\+\_\+workspace\+\_\+alloc@{bem3d\+\_\+fmm\+\_\+workspace\+\_\+alloc}!Fast Multipole Method@{Fast Multipole Method}}
+\subsubsection[{bem3d\+\_\+fmm\+\_\+workspace\+\_\+alloc}]{\setlength{\rightskip}{0pt plus 5cm}B\+E\+M3\+D\+F\+M\+M\+Workspace$\ast$ bem3d\+\_\+fmm\+\_\+workspace\+\_\+alloc (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Fast\+Multipole}}]{solver, }
+\item[{{\bf B\+E\+M3\+D\+Mesh\+Skeleton} $\ast$}]{skel}
+\end{DoxyParamCaption}
+)}\label{group__fmm_ga77f6060bed81a8414a3620ffb71db64f}
+Allocate a \+::\+B\+E\+M3\+D\+F\+M\+M\+Workspace for use in Fast Multipole Method evaluations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em solver} & a \doxyref{B\+E\+M3\+D\+Fast\+Multipole}{p.}{group__fmm_gab908afe0c8ff3880fd8e79ea00234aff} specifying the F\+M\+M method to be used; \\
+\hline
+{\em skel} & the \doxyref{B\+E\+M3\+D\+Mesh\+Skeleton}{p.}{structBEM3DMeshSkeleton} which is to be passed to the solver;\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the newly allocated \+::\+B\+E\+M3\+D\+F\+M\+M\+Workspace. 
+\end{DoxyReturn}
+
+
+References B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+F\+M\+M\+L\+I\+B3\+D\+\_\+1\+\_\+2, and B\+E\+M3\+D\+\_\+\+F\+M\+M\+\_\+\+W\+B\+F\+M\+M.
 
 \index{Fast Multipole Method@{Fast Multipole Method}!bem3d\+\_\+solver\+\_\+name@{bem3d\+\_\+solver\+\_\+name}}
 \index{bem3d\+\_\+solver\+\_\+name@{bem3d\+\_\+solver\+\_\+name}!Fast Multipole Method@{Fast Multipole Method}}

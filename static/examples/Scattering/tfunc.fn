@@ -1,0 +1,4 @@
+BEM3DFunction
+f[0] = nx*f[2]
+f[1] = ny*f[2]
+f[2] = nz*f[2]

@@ -7,7 +7,7 @@ gint {\bf bem3d\+\_\+element\+\_\+write\+\_\+pos} ({\bf B\+E\+M3\+D\+Element} $\
 \item 
 gint {\bf bem3d\+\_\+mesh\+\_\+write\+\_\+pos} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, {\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint k, gchar $\ast$view, bem3d\+\_\+gmsh\+\_\+mode\+\_\+t mode, F\+I\+L\+E $\ast$fp)
 \item 
-gint {\bf bem3d\+\_\+mesh\+\_\+write\+\_\+msh} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, {\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint k, gchar $\ast$view, gdouble t, bem3d\+\_\+gmsh\+\_\+mode\+\_\+t mode, F\+I\+L\+E $\ast$fp)
+gint {\bf bem3d\+\_\+mesh\+\_\+write\+\_\+msh} ({\bf B\+E\+M3\+D\+Mesh} $\ast$m, {\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$f, gint k, gchar $\ast$view, gdouble t, bem3d\+\_\+gmsh\+\_\+mode\+\_\+t mode, gint offset, F\+I\+L\+E $\ast$fp)
 \end{DoxyCompactItemize}
 
 
@@ -70,9 +70,10 @@ References bem3d\+\_\+mesh\+\_\+data\+\_\+get().
 \item[{gchar $\ast$}]{view, }
 \item[{gdouble}]{t, }
 \item[{bem3d\+\_\+gmsh\+\_\+mode\+\_\+t}]{mode, }
+\item[{gint}]{offset, }
 \item[{F\+I\+L\+E $\ast$}]{fp}
 \end{DoxyParamCaption}
-)}\label{group__gmsh_ga84bccd7cee7e205c55ff6718fc59f2e1}
+)}\label{group__gmsh_ga239c0f14bb7c74cd511a0b3e2bda94cb}
 Write a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} and corresponding data to a G\+M\+S\+H .msh file for visualization.
 
 

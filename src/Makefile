@@ -169,13 +169,13 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libbem3d_la_LIBADD =
 am__libbem3d_la_SOURCES_DIST = acoord.c belement.c logging.c files.c \
 	bmesh.c elements.c functions.c geometry.c gfunc.c gmsh.c \
-	lookup.c qselect.c quadrature.c radiation.c shapefunc.c \
-	bem3d-private.h bem3d.h bem3dconfig.h wandzura.c location.c \
-	matrix.c operators.c newman.c edge.c motion.c util.c data.c \
-	configure.c polar.c polar.h series.c intsincos.c gradient.c \
-	transforms.c qpanel.c cpanel.c skeleton.c fmm.c fmmlib3d_1_2.c \
-	fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h htriquad.c \
-	htriquad.h binomials.c binomials.h expansions.c \
+	lookup.c qselect.c quadrature.c hayami.c radiation.c \
+	shapefunc.c bem3d-private.h bem3d.h bem3dconfig.h wandzura.c \
+	location.c matrix.c operators.c newman.c edge.c motion.c \
+	util.c data.c configure.c polar.c polar.h series.c intsincos.c \
+	gradient.c transforms.c qpanel.c cpanel.c skeleton.c fmm.c \
+	fmmlib3d_1_2.c fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h \
+	htriquad.c htriquad.h binomials.c binomials.h expansions.c \
 	htri-transforms.c trace.c trace.h reduction.c work.c \
 	../fmmlib3d-1.2/src/cdjseval3d.f \
 	../fmmlib3d-1.2/src/d3mtreeplot.f \
@@ -234,13 +234,14 @@ am__objects_1 =  \
 	../fmmlib3d-1.2/src/yrecursion.lo
 am_libbem3d_la_OBJECTS = acoord.lo belement.lo logging.lo files.lo \
 	bmesh.lo elements.lo functions.lo geometry.lo gfunc.lo gmsh.lo \
-	lookup.lo qselect.lo quadrature.lo radiation.lo shapefunc.lo \
-	wandzura.lo location.lo matrix.lo operators.lo newman.lo \
-	edge.lo motion.lo util.lo data.lo configure.lo polar.lo \
-	series.lo intsincos.lo gradient.lo transforms.lo qpanel.lo \
-	cpanel.lo skeleton.lo fmm.lo fmmlib3d_1_2.lo wbfmm-bem3d.lo \
-	htriquad.lo binomials.lo expansions.lo htri-transforms.lo \
-	trace.lo reduction.lo work.lo $(am__objects_1)
+	lookup.lo qselect.lo quadrature.lo hayami.lo radiation.lo \
+	shapefunc.lo wandzura.lo location.lo matrix.lo operators.lo \
+	newman.lo edge.lo motion.lo util.lo data.lo configure.lo \
+	polar.lo series.lo intsincos.lo gradient.lo transforms.lo \
+	qpanel.lo cpanel.lo skeleton.lo fmm.lo fmmlib3d_1_2.lo \
+	wbfmm-bem3d.lo htriquad.lo binomials.lo expansions.lo \
+	htri-transforms.lo trace.lo reduction.lo work.lo \
+	$(am__objects_1)
 libbem3d_la_OBJECTS = $(am_libbem3d_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -274,19 +275,19 @@ am__depfiles_remade = ./$(DEPDIR)/acoord.Plo ./$(DEPDIR)/belement.Plo \
 	./$(DEPDIR)/fmmlib3d_1_2.Plo ./$(DEPDIR)/functions.Plo \
 	./$(DEPDIR)/geometry.Plo ./$(DEPDIR)/gfunc.Plo \
 	./$(DEPDIR)/gmsh.Plo ./$(DEPDIR)/gradient.Plo \
-	./$(DEPDIR)/htri-transforms.Plo ./$(DEPDIR)/htriquad.Plo \
-	./$(DEPDIR)/intsincos.Plo ./$(DEPDIR)/location.Plo \
-	./$(DEPDIR)/logging.Plo ./$(DEPDIR)/lookup.Plo \
-	./$(DEPDIR)/matrix.Plo ./$(DEPDIR)/motion.Plo \
-	./$(DEPDIR)/newman.Plo ./$(DEPDIR)/operators.Plo \
-	./$(DEPDIR)/polar.Plo ./$(DEPDIR)/qpanel.Plo \
-	./$(DEPDIR)/qselect.Plo ./$(DEPDIR)/quadrature.Plo \
-	./$(DEPDIR)/radiation.Plo ./$(DEPDIR)/reduction.Plo \
-	./$(DEPDIR)/series.Plo ./$(DEPDIR)/shapefunc.Plo \
-	./$(DEPDIR)/skeleton.Plo ./$(DEPDIR)/trace.Plo \
-	./$(DEPDIR)/transforms.Plo ./$(DEPDIR)/util.Plo \
-	./$(DEPDIR)/wandzura.Plo ./$(DEPDIR)/wbfmm-bem3d.Plo \
-	./$(DEPDIR)/work.Plo
+	./$(DEPDIR)/hayami.Plo ./$(DEPDIR)/htri-transforms.Plo \
+	./$(DEPDIR)/htriquad.Plo ./$(DEPDIR)/intsincos.Plo \
+	./$(DEPDIR)/location.Plo ./$(DEPDIR)/logging.Plo \
+	./$(DEPDIR)/lookup.Plo ./$(DEPDIR)/matrix.Plo \
+	./$(DEPDIR)/motion.Plo ./$(DEPDIR)/newman.Plo \
+	./$(DEPDIR)/operators.Plo ./$(DEPDIR)/polar.Plo \
+	./$(DEPDIR)/qpanel.Plo ./$(DEPDIR)/qselect.Plo \
+	./$(DEPDIR)/quadrature.Plo ./$(DEPDIR)/radiation.Plo \
+	./$(DEPDIR)/reduction.Plo ./$(DEPDIR)/series.Plo \
+	./$(DEPDIR)/shapefunc.Plo ./$(DEPDIR)/skeleton.Plo \
+	./$(DEPDIR)/trace.Plo ./$(DEPDIR)/transforms.Plo \
+	./$(DEPDIR)/util.Plo ./$(DEPDIR)/wandzura.Plo \
+	./$(DEPDIR)/wbfmm-bem3d.Plo ./$(DEPDIR)/work.Plo
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -512,11 +513,11 @@ libbem3d_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)\
 
 libbem3d_la_SOURCES = acoord.c belement.c logging.c files.c bmesh.c \
 	elements.c functions.c geometry.c gfunc.c gmsh.c lookup.c \
-	qselect.c quadrature.c radiation.c shapefunc.c bem3d-private.h \
-	bem3d.h bem3dconfig.h wandzura.c location.c matrix.c \
-	operators.c newman.c edge.c motion.c util.c data.c configure.c \
-	polar.c polar.h series.c intsincos.c gradient.c transforms.c \
-	qpanel.c cpanel.c skeleton.c fmm.c fmmlib3d_1_2.c \
+	qselect.c quadrature.c hayami.c radiation.c shapefunc.c \
+	bem3d-private.h bem3d.h bem3dconfig.h wandzura.c location.c \
+	matrix.c operators.c newman.c edge.c motion.c util.c data.c \
+	configure.c polar.c polar.h series.c intsincos.c gradient.c \
+	transforms.c qpanel.c cpanel.c skeleton.c fmm.c fmmlib3d_1_2.c \
 	fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h htriquad.c \
 	htriquad.h binomials.c binomials.h expansions.c \
 	htri-transforms.c trace.c trace.h reduction.c work.c \
@@ -744,6 +745,7 @@ include ./$(DEPDIR)/geometry.Plo # am--include-marker
 include ./$(DEPDIR)/gfunc.Plo # am--include-marker
 include ./$(DEPDIR)/gmsh.Plo # am--include-marker
 include ./$(DEPDIR)/gradient.Plo # am--include-marker
+include ./$(DEPDIR)/hayami.Plo # am--include-marker
 include ./$(DEPDIR)/htri-transforms.Plo # am--include-marker
 include ./$(DEPDIR)/htriquad.Plo # am--include-marker
 include ./$(DEPDIR)/intsincos.Plo # am--include-marker
@@ -989,6 +991,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/gfunc.Plo
 	-rm -f ./$(DEPDIR)/gmsh.Plo
 	-rm -f ./$(DEPDIR)/gradient.Plo
+	-rm -f ./$(DEPDIR)/hayami.Plo
 	-rm -f ./$(DEPDIR)/htri-transforms.Plo
 	-rm -f ./$(DEPDIR)/htriquad.Plo
 	-rm -f ./$(DEPDIR)/intsincos.Plo
@@ -1077,6 +1080,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/gfunc.Plo
 	-rm -f ./$(DEPDIR)/gmsh.Plo
 	-rm -f ./$(DEPDIR)/gradient.Plo
+	-rm -f ./$(DEPDIR)/hayami.Plo
 	-rm -f ./$(DEPDIR)/htri-transforms.Plo
 	-rm -f ./$(DEPDIR)/htriquad.Plo
 	-rm -f ./$(DEPDIR)/intsincos.Plo

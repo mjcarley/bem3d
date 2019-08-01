@@ -15,7 +15,8 @@ bem3d-solve -C sphere-laplace.cfg -d bc-laplace.dat -m sphere-laplace.mtx \
 	    -o solution.dat
 
 ## generate a GMSH visualization to view the surface potential solution
-bem3d2pos -t "Surface" -i sphere.bem -d solution.dat -o sphere.pos
+##bem3d2pos -t "Surface" -i sphere.bem -d solution.dat -o sphere.pos
+bem3d2msh -t "Surface" -i sphere.bem -d solution.dat -o sphere-vis.msh
 
 ## generate a simple regular grid
 bem3d-plane -v -2.5,-2.5,0 -v 2.5,-2.5,0 -v 2.5,2.5,0 -v -2.5,2.5,0 \
@@ -26,7 +27,8 @@ bem3d-field -C sphere-laplace.cfg -d solution.dat -i sphere.bem \
 	    -s field.bem -o phi.dat
 
 ## generate a GMSH visualization to view the field potential
-bem3d2pos -t "Potential" -i field.bem -d phi.dat -o field.pos
+##bem3d2pos -t "Potential" -i field.bem -d phi.dat -o field.pos
+bem3d2msh -n 1000 -t "Potential" -i field.bem -d phi.dat -o field.msh
 
 ## use a mesh from GMSH to show the gradient (velocity field)
 ## generate a GMSH mesh for the field
@@ -44,4 +46,6 @@ bem3d-function -E 4 -F gradient.fn -i gradient.bem -d gradient1.dat \
 	       -o gradient.dat
 
 ## generate a GMSH visualization for the three components of velocity
-bem3d2pos -t "Velocity" -i gradient.bem -d gradient.dat -g -f 1 -o gradient.pos
+##bem3d2pos -t "Velocity" -i gradient.bem -d gradient.dat -g -f 1 -o gradient.pos
+bem3d2msh -n 10000 -t "Velocity" -i gradient.bem -d gradient.dat -g \
+	  -f 1 -o gradient.msh

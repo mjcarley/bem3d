@@ -21,6 +21,8 @@ gint {\bf bem3d\+\_\+function\+\_\+apply\+\_\+motion} ({\bf B\+E\+M3\+D\+Functio
 gint {\bf bem3d\+\_\+function\+\_\+apply\+\_\+motion\+\_\+list} ({\bf B\+E\+M3\+D\+Function} $\ast$func, G\+Ptr\+Array $\ast$motions, gdouble t, {\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$f, {\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$g)
 \item 
 gint {\bf bem3d\+\_\+function\+\_\+integral\+\_\+weights} ({\bf B\+E\+M3\+D\+Function} $\ast$func, {\bf B\+E\+M3\+D\+Mesh} $\ast$m, gint imesh, Gts\+Vertex $\ast$x, Gts\+Vector n, gint i, {\bf B\+E\+M3\+D\+Quadrature\+Rule} $\ast$q, {\bf B\+E\+M3\+D\+Mesh\+Data} $\ast$f)
+\item 
+gint {\bf bem3d\+\_\+function\+\_\+eval\+\_\+point} ({\bf B\+E\+M3\+D\+Function} $\ast$func, Gts\+Point $\ast$x, Gts\+Vector n, gint idx, gdouble $\ast$result, gint nres)
 \end{DoxyCompactItemize}
 
 
@@ -145,6 +147,38 @@ Apply a function to a list of surface data, in the same way as \doxyref{bem3d\+\
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 0 on success. 
+\end{DoxyReturn}
+\index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+eval\+\_\+point@{bem3d\+\_\+function\+\_\+eval\+\_\+point}}
+\index{bem3d\+\_\+function\+\_\+eval\+\_\+point@{bem3d\+\_\+function\+\_\+eval\+\_\+point}!Functions of surface data@{Functions of surface data}}
+\subsubsection[{bem3d\+\_\+function\+\_\+eval\+\_\+point}]{\setlength{\rightskip}{0pt plus 5cm}gint bem3d\+\_\+function\+\_\+eval\+\_\+point (
+\begin{DoxyParamCaption}
+\item[{{\bf B\+E\+M3\+D\+Function} $\ast$}]{func, }
+\item[{Gts\+Point $\ast$}]{x, }
+\item[{Gts\+Vector}]{n, }
+\item[{gint}]{idx, }
+\item[{gdouble $\ast$}]{result, }
+\item[{gint}]{nres}
+\end{DoxyParamCaption}
+)}\label{group__functions_gae88b2d3a2ab245efa599aaeabd7da70b}
+Evaluate a \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c} at a \+::\+Gts\+Point. The function is evaluated in the same way as for a \doxyref{B\+E\+M3\+D\+Mesh}{p.}{structBEM3DMesh} except that the normal and index must be supplied explicitly.
+
+
+\begin{DoxyParams}{Parameters}
+{\em func} & a \doxyref{B\+E\+M3\+D\+Function}{p.}{group__functions_ga2daa612ab588925bd1784c135ddf821c}; \\
+\hline
+{\em x} & a \+::\+Gts\+Point; \\
+\hline
+{\em n} & the normal at {\itshape x}; \\
+\hline
+{\em idx} & the mesh index to be used for {\itshape x} in {\itshape f}, if required; \\
+\hline
+{\em result} & the results of the evaluation of {\itshape f}; \\
+\hline
+{\em nres} & number of entries in {\itshape result};\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the number of functions evaluated, on success, -\/1 otherwise. 
 \end{DoxyReturn}
 \index{Functions of surface data@{Functions of surface data}!bem3d\+\_\+function\+\_\+insert\+\_\+string@{bem3d\+\_\+function\+\_\+insert\+\_\+string}}
 \index{bem3d\+\_\+function\+\_\+insert\+\_\+string@{bem3d\+\_\+function\+\_\+insert\+\_\+string}!Functions of surface data@{Functions of surface data}}

@@ -1,0 +1,68 @@
+#!/bin/bash
+
+## set the wavenumber
+k=1.4
+## set the geometry
+geometry=sphere
+#geometry=peanut
+
+## set the source function (plane or point source)
+srcfunc=plane.fn
+
+## configuration file with solver settings
+config=scatter.cfg
+
+## generate a spherical surface using the BEM3D sphere generator
+## increase the argument of the -r option to refine the geometry
+## bem3d-sphere -e 1 -r 4 > sphere.bem
+
+## assemble the matrix for a Helmholtz problem
+bem3d-assemble -k ${k} -C ${config} -i ${geometry}.bem -o ${geometry}.mtx
+
+## generate the boundary condition using an analytically-specified
+## function
+bem3d-function -E 4 -i ${geometry}.bem -F ${srcfunc} -s "k=${k}" -o bc.dat
+
+## solve for the surface potential using the plane wave boundary condition
+bem3d-solve -C ${config} -d bc.dat -m ${geometry}.mtx \
+	    -i ${geometry}.bem -o solution.dat -t 1e-6 -k ${k}
+
+## solve for the surface potential using the plane wave boundary condition
+## including a surface admittance
+#bem3d-function -E 2 -i ${geometry}.bem -F admittance.fn -D -o admittance.mtx
+#bem3d-solve -C ${config} -d bc.dat -m ${geometry}.mtx \
+#	    -A admittance.mtx -i ${geometry}.bem -o solution.dat \
+#	    -t 1e-6 -k ${k}
+
+## total potential on the scattering surface (boundary condition plus
+## solution)
+bem3d-function -E 2 -s "k=${k}" -F total.fn -d bc.dat -e solution.dat \
+	       -i ${geometry}.bem -o ${geometry}.dat
+
+## generate a GMSH visualization to view the surface potential solution
+bem3d2msh -t "Surface" -i ${geometry}.bem -d ${geometry}.dat \
+	  -o ${geometry}-vis.msh
+
+## generate a GMSH mesh for the field
+gmsh -2 field.geo
+
+## convert the GMSH mesh to BEM3D format
+msh2bem3d < field.msh > field.bem
+
+## compute the scattered field on the mesh
+bem3d-field -k ${k} -C ${config} -d solution.dat -i ${geometry}.bem \
+	    -s field.bem -o scattered.dat
+
+## compute the incident field on the mesh
+bem3d-function -E 4 -s "k=${k}" -F ${srcfunc} -i field.bem \
+	       -o incident.dat
+
+## add the scattered and incident fields to generate the output
+bem3d-function -E 2 -s "k=${k}" -F total.fn -d incident.dat -e scattered.dat \
+	       -i field.bem -o field.dat
+
+## generate a GMSH visualization for the field
+##the "-n ${nsol}" option increments the indices on field.msh to avoid a
+## conflict with the scatterer geometry when gmsh loads the two meshes
+nsol=`head -n1 ${geometry}.dat | cut -d" " -f1`
+bem3d2msh -t "Field" -i field.bem -d field.dat -o field.msh -n ${nsol}

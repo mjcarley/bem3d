@@ -26,4 +26,13 @@
 
 #include <glib.h>
 
-#endif /*__FMMLIB3D_1_2_H_INCLUDED__*/
+gint _bem3d_fmm_helmholtz_wbfmm(BEM3DFastMultipole solver,
+				BEM3DFastMultipoleProblem problem,
+				BEM3DParameters *param,
+				BEM3DMeshSkeleton *s, 
+				gdouble tol,
+				gdouble *q, gdouble *dq,
+				gdouble *p, gdouble *dp,
+				BEM3DFMMWorkspace *w) ;
+
+#endif /*__WBFMM_H_INCLUDED__*/

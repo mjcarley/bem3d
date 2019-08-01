@@ -18,7 +18,7 @@
  */
 
 /** 
-@page bem3daero bem3d-aero: a potential code for unsteady aerodynamics
+@page bem3daero bem3d-aero
 
 bem3d-aero is a Morino type code for quasi-potential flow
 calculations. It is intended to handle higher order elements, although

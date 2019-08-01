@@ -41,10 +41,6 @@
 #include <gsl/gsl_complex.h>
 #include <gsl/gsl_complex_math.h>
 
-/* #define SLOW_VECTOR_ACCESS 0 */
-
-/* #define FMM_MATRIX_CHECK 0 */
-
 static void read_real_matrices(FILE *f, gint n, 
 			       sisl_matrix_t *A, sisl_matrix_t *B)
 
@@ -162,7 +158,7 @@ static gint sisl_matrix_vector_mul_A(sisl_matrix_t *A, sisl_vector_t *v,
   BEM3DMeshSkeleton *s ;
   gdouble *scratch = data[3] ;
   gint i, j, k, *idx ;
-  gdouble *wt ;
+  gdouble *wt, *wp, *vp ;
 
   g_assert(sisl_matrix_density(A) == SISL_MATRIX_USER_DEFINED) ;
 
@@ -172,53 +168,29 @@ static gint sisl_matrix_vector_mul_A(sisl_matrix_t *A, sisl_vector_t *v,
     g_assert_not_reached() ;
   } else {
     memset(scratch, 0, 2*s->ns*sizeof(gdouble)) ;
-#ifndef SLOW_VECTOR_ACCESS
-    gdouble *vp ;
-
     vp = sisl_vector_data(v) ;
 
     for ( i = 0 ; i < s->ns ; i ++ ) {
       wt = &(s->w[i*s->ppe]) ; idx = &(s->idx[i*s->ppe]) ;
 
       for ( j = 0 ; j < s->ppe ; j ++ ) {
-	scratch[2*i+0] +=  wt[j]*vp[2*idx[j]+0]*0.25*M_1_PI ;
-	scratch[2*i+1] +=  wt[j]*vp[2*idx[j]+1]*0.25*M_1_PI ;
+	scratch[2*i+0] +=  wt[j]*vp[2*idx[j]+0] ;
+	scratch[2*i+1] +=  wt[j]*vp[2*idx[j]+1] ;
       }
     }
-
-#ifdef FMM_MATRIX_CHECK
-    fprintf(stderr, "%lg %lg %lg ", vp[0], vp[1], mtx->C[0]) ;
-#endif /*FMM_MATRIX_CHECK*/
-
-#else /*SLOW_VECTOR_ACCESS*/
-    gsl_complex vc, wc, *cc ;
-    for ( i = 0 ; i < s->ns ; i ++ ) {
-      wt = &(s->w[i*s->ppe]) ; idx = &(s->idx[i*s->ppe]) ;
-
-      for ( j = 0 ; j < s->ppe ; j ++ ) {
-	wc = sisl_vector_get_complex(v,idx[j]) ; 
-
-	scratch[i*2+0] +=  wt[j]*GSL_REAL(wc)*0.25*M_1_PI ;
-	scratch[i*2+1] +=  wt[j]*GSL_IMAG(wc)*0.25*M_1_PI ;
-      }
-    }
-#endif /*SLOW_VECTOR_ACCESS*/
   }
 
+  wp = sisl_vector_data(w) ;
   bem3d_fmm_calculate(mtx->solver, mtx->problem, param, mtx->skel,
   		      mtx->tol, NULL, scratch,
-  		      sisl_vector_data(w), NULL, work) ;
+  		      wp, NULL, work) ;
 
-#ifdef FMM_MATRIX_CHECK
-  fprintf(stderr, "%lg %lg ", 
-	  (sisl_vector_data(w))[0], (sisl_vector_data(w))[1]) ;
-#endif /*FMM_MATRIX_CHECK*/
-
+  sisl_vector_scale_complex(w, *((gsl_complex *)(mtx->scaleA))) ;
+  
   if ( sisl_is_real(A) ) {
     g_assert_not_reached() ;
   } else {
 
-#ifndef SLOW_VECTOR_ACCESS
     gdouble *wp, *vp, *cp ;
 
     cp = &(g_array_index(mtx->dgcorr, gdouble, 0)) ;
@@ -229,10 +201,6 @@ static gint sisl_matrix_vector_mul_A(sisl_matrix_t *A, sisl_vector_t *v,
       wp[2*i+0] -= mtx->C[i]*vp[2*i+0] ;
       wp[2*i+1] -= mtx->C[i]*vp[2*i+1] ;
     }
-#ifdef FMM_MATRIX_CHECK
-  fprintf(stderr, "%lg %lg ", 
-	  (sisl_vector_data(w))[0], (sisl_vector_data(w))[1]) ;
-#endif /*FMM_MATRIX_CHECK*/
 
     for ( i = 0 ; i < sisl_vector_length(v) ; i ++ ) {
       for ( j = mtx->idxcorr[2*i+0] ; j < mtx->idxcorr[2*i+1] ; j ++ ) {
@@ -241,28 +209,6 @@ static gint sisl_matrix_vector_mul_A(sisl_matrix_t *A, sisl_vector_t *v,
 	wp[2*i+1] += vp[2*k+0]*cp[2*j+1] + vp[2*k+1]*cp[2*j+0] ;
       }
     }
-
-#ifdef FMM_MATRIX_CHECK
-  fprintf(stderr, "%lg %lg\n", 
-	  (sisl_vector_data(w))[0], (sisl_vector_data(w))[1]) ;
-#endif /*FMM_MATRIX_CHECK*/
-
-#else /*SLOW_VECTOR_ACCESS*/
-    for ( i = 0 ; i < sisl_vector_length(v) ; i ++ ) {
-      vc = sisl_vector_get_complex(v, i) ;
-      wc = sisl_vector_get_complex(w, i) ;
-      wc = gsl_complex_add(wc, gsl_complex_mul_real(vc, mtx->C[i])) ;
-      for ( j = mtx->idxcorr[2*i+0] ; j < mtx->idxcorr[2*i+1] ; j ++ ) {
-    	k = g_array_index(mtx->icorr, gint, j) ;
-    	vc = sisl_vector_get_complex(v, k) ;
-    	cc = (gsl_complex *)(&(g_array_index(mtx->dgcorr, gdouble, 2*j))) ;
-      
-    	wc = gsl_complex_add(wc,
-    			     gsl_complex_mul(vc, *cc)) ;
-      }
-      sisl_vector_set_complex(w, i, wc) ;
-    }
-#endif /*SLOW_VECTOR_ACCESS*/
   }
 
   return 0 ;
@@ -291,50 +237,28 @@ static gint sisl_matrix_vector_mul_B(sisl_matrix_t *B, sisl_vector_t *v,
   } else {
     memset(scratch, 0, 2*s->ns*sizeof(gdouble)) ;
 
-#ifndef SLOW_VECTOR_ACCESS
-    gdouble *vp ;
-
     vp = sisl_vector_data(v) ;
-
+    
     for ( i = 0 ; i < s->ns ; i ++ ) {
       wt = &(s->w[i*s->ppe]) ; idx = &(s->idx[i*s->ppe]) ;
 
       for ( j = 0 ; j < s->ppe ; j ++ ) {
-	/* zc = sisl_vector_get_complex(v,idx[j]) ;  */
-	
-	scratch[2*i+0] +=  wt[j]*vp[2*idx[j]+0]*0.25*M_1_PI ;
-	scratch[2*i+1] +=  wt[j]*vp[2*idx[j]+1]*0.25*M_1_PI ;
+	scratch[2*i+0] += wt[j]*vp[2*idx[j]+0] ;
+	scratch[2*i+1] += wt[j]*vp[2*idx[j]+1] ;
       }
     }
-
-#else /*SLOW_VECTOR_ACCESS*/
-
-    for ( i = 0 ; i < s->ns ; i ++ ) {
-      wt = &(s->w[i*s->ppe]) ; idx = &(s->idx[i*s->ppe]) ;
-
-      for ( j = 0 ; j < s->ppe ; j ++ ) {
-	vc = sisl_vector_get_complex(v,idx[j]) ; 
-
-	scratch[i*2+0] +=  wt[j]*GSL_REAL(vc)*0.25*M_1_PI ;
-	scratch[i*2+1] +=  wt[j]*GSL_IMAG(vc)*0.25*M_1_PI ;
-      }
-    }
-
-#endif /*SLOW_VECTOR_ACCESS*/
-
   }
-
+  wp = sisl_vector_data(w) ;
   bem3d_fmm_calculate(mtx->solver, mtx->problem, param, mtx->skel,
   		      mtx->tol,
-  		      scratch, NULL,
-  		      &(g_array_index(w->x,gdouble,0)), NULL, work) ;
-
+  		      scratch, NULL, wp, NULL, work) ;
+  sisl_vector_scale_complex(w, *((gsl_complex *)(mtx->scaleB))) ;
+  
   if ( sisl_is_real(B) ) {
     g_assert_not_reached() ;
   } else {
     /*correction terms to FMM multiplication*/
 
-#ifndef SLOW_VECTOR_ACCESS
     wp = sisl_vector_data(w) ;
     vp = sisl_vector_data(v) ;
 
@@ -350,22 +274,6 @@ static gint sisl_matrix_vector_mul_B(sisl_matrix_t *B, sisl_vector_t *v,
       }
       wp[2*i+0] = GSL_REAL(wc) ; wp[2*i+1] = GSL_IMAG(wc) ;
     }
-
-#else /*SLOW_VECTOR_ACCESS*/
-    for ( i = 0 ; i < sisl_vector_length(v) ; i ++ ) {
-      wc = sisl_vector_get_complex(w, i) ;
-      for ( j = mtx->idxcorr[2*i+0] ; j < mtx->idxcorr[2*i+1] ; j ++ ) {
-	k = g_array_index(mtx->icorr, gint, j) ;
-	vc = sisl_vector_get_complex(v, k) ;
-	cc = (gsl_complex *)(&(g_array_index(mtx->gcorr, gdouble, 2*j))) ;
-      
-	wc = gsl_complex_add(wc, 
-			     gsl_complex_mul(vc, *cc)) ;
-      }
-      sisl_vector_set_complex(w, i, wc) ;
-    }
-#endif /*SLOW_VECTOR_ACCESS*/
-
   }
 
   return 0 ;
@@ -680,6 +588,8 @@ gint main(gint argc, gchar **argv)
 
   config->solver = bem3d_solver_type(solver_name) ;
 
+  bem3d_parameters_quadrature_tol(&param) = config->quad_tol ;  
+  
   work = bem3d_workspace_new() ;
   if ( config->solver == BEM3D_SOLVER_DIRECT ) {
     wmpi_split_range(0, np, &imin, &imax) ;
@@ -789,9 +699,9 @@ gint main(gint argc, gchar **argv)
     for ( i = 0 ; i < np ; i ++ ) fscanf(input, "%*d %lg", &(mtx->C[i])) ;
     
     Adata[0] = mtx ;
-    Adata[1] = bem3d_fmm_workspace_alloc(config->fmm, skel) ;
+    Adata[1] = bem3d_fmm_workspace_alloc(config->fmm, skel, config) ;
     Adata[2] = &(param) ;
-    Adata[3] = (gdouble *)g_malloc(skel->ns*2*sizeof(gdouble)) ;
+    Adata[3] = (gdouble *)g_malloc0(skel->ns*2*sizeof(gdouble)) ;
 
     sisl_matrix_row_number(A) = np ;
     sisl_matrix_column_number(A) = np ;
@@ -864,16 +774,22 @@ gint main(gint argc, gchar **argv)
     
     file_close(input) ;
   }
-
+  
   /*if required, invert the surface admittance matrix*/
   if ( invertB ) sisl_matrix_invert(surface_beta) ;
 
-  /*apply the surface treatment to the A matrix: A-> A - B\beta^{-1}\alpha*/
-  if ( rc == SISL_REAL ) {
-    sisl_matrix_triple_mul_w(B, surface_beta, surface_alpha, A, -1.0, 1.0) ;
+  if ( config->solver == BEM3D_SOLVER_DIRECT ) {
+    /*apply the surface treatment to the A matrix: A-> A - B\beta^{-1}\alpha*/
+    if ( rc == SISL_REAL ) {
+      sisl_matrix_triple_mul_w(B, surface_beta, surface_alpha, A, -1.0, 1.0) ;
+    } else {
+      GSL_SET_COMPLEX(&zc, 1.0, 0.0) ; GSL_SET_COMPLEX(&ac, -1.0, 0.0) ;
+      sisl_matrix_triple_mul_w_complex(B, surface_beta, surface_alpha,
+				       A, ac, zc) ;
+    }
   } else {
-    GSL_SET_COMPLEX(&zc, 1.0, 0.0) ; GSL_SET_COMPLEX(&ac, -1.0, 0.0) ;
-    sisl_matrix_triple_mul_w_complex(B, surface_beta, surface_alpha, A, ac, zc) ;
+    fprintf(stderr, "%s: FMM solver, no surface conditions applied\n",
+	    progname) ;
   }
 
   if ( wmpi_rank() == 0 ) 
@@ -913,8 +829,10 @@ gint main(gint argc, gchar **argv)
   sisl_vector_set_length(v2, np) ;
 
   /*initialize the right hand side*/
-  sisl_matrix_vector_mul(surface_alpha, phi, v1) ;
-  sisl_matrix_vector_mul(surface_beta, v1, v2) ;
+  /* if ( config->solver == BEM3D_SOLVER_DIRECT ) {   */
+    sisl_matrix_vector_mul(surface_alpha, phi, v1) ;
+    sisl_matrix_vector_mul(surface_beta, v1, v2) ;
+  /* } */
   sisl_vector_sub(v2, dphi) ;
   sisl_matrix_vector_mul(B, v2, rhs) ;
 

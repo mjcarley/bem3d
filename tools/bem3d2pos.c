@@ -18,9 +18,10 @@
  */
 
 /** 
-@page bem3d2pos bem3d2pos: convert BEM3D meshes to GMSH .pos format
+@page bem3d2pos bem3d2pos
 
-This code is now superseded by ::bem3d2msh
+bem3d2pos converts BEM3D meshes to GMSH .pos format. It is now
+superseded by @ref bem3d2msh
 
 The GMSH pos format is deprecated, since visualization is now done
 with mesh files, but it is still sufficient for visualization of data

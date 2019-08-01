@@ -18,7 +18,10 @@
  */
 
 /** 
-@page bem3d2msh bem3d2msh: convert BEM3D meshes to GMSH .msh format
+@page bem3d2msh bem3d2msh
+
+bem3d2msh converts BEM3D meshes to GMSH .msh format, with the option
+to include surface data.
 
 The most basic invocation of @c bem3d2msh is
 @verbatim
@@ -69,20 +72,19 @@ gint main(gint argc, gchar **argv)
   gchar *progname, *ipfile = NULL, *opfile = NULL, *datafile = NULL ;
   gchar *title = NULL ;
   GLogLevelFlags loglevel ;
-  FILE *fs, *ip ;
-  BEM3DEdge *edge ;
+  FILE *fs ;
   bem3d_gmsh_mode_t mode ;
   gdouble t ;
-  gint i, field ;
+  gint field, idx0 ;
   gchar ch ;
 
   progname = g_strdup(g_path_get_basename(argv[0])) ;
 
   t = 0.0 ;
-  mode = BEM3D_GMSH_SCALAR ; field = 0 ; f = NULL ;
+  mode = BEM3D_GMSH_SCALAR ; field = 0 ; idx0 = 0 ; f = NULL ;
   loglevel = G_LOG_LEVEL_MESSAGE ;
   edgefiles = g_ptr_array_new() ;
-  while ( (ch = getopt(argc, argv, "d:e:f:ghl:i:o:t:")) != EOF ) {
+  while ( (ch = getopt(argc, argv, "hd:e:f:gi:l:n:o:t:")) != EOF ) {
     switch (ch) {
     default: 
     case 'h':
@@ -99,18 +101,20 @@ gint main(gint argc, gchar **argv)
 	      "        -f # field of data to plot (%d)\n"
 	      "        -g output three components of gradient\n"
 	      "        -l # set logging level\n"
+	      "        -n # offset added to node indices (%d)\n"
 	      "        -i <bem3d input file>\n"
 	      "        -o <output file name>\n"
 	      "        -t <title for GMSH view>\n",
-	      field) ;
+	      field, idx0) ;
       return 0 ;
       break ;
     case 'd': datafile = g_strdup(optarg) ; break ;
     case 'e': g_ptr_array_add(edgefiles, g_strdup(optarg));
     case 'f': field = atoi(optarg) ; break ;
     case 'g': mode = BEM3D_GMSH_VECTOR ; break ;
-    case 'l': loglevel = 1 << atoi(optarg) ; break ;
     case 'i': ipfile = g_strdup(optarg) ; break ;
+    case 'l': loglevel = 1 << atoi(optarg) ; break ;
+    case 'n': idx0 = atoi(optarg) ; break ;
     case 'o': opfile = g_strdup(optarg) ; break ;
     case 't': title = g_strdup(optarg) ; break ;
     }
@@ -166,7 +170,7 @@ gint main(gint argc, gchar **argv)
     }
   }
   
-  bem3d_mesh_write_msh(m, f, field, title, t, mode, fs) ;
+  bem3d_mesh_write_msh(m, f, field, title, t, mode, idx0, fs) ;
 
   /* if ( edgefiles->len != 0 ) { */
   /*   edge = bem3d_edge_new(bem3d_edge_class()) ; */

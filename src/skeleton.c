@@ -138,7 +138,11 @@ static gint source_points(BEM3DElement *e, gpointer data[])
     cpfunc(s, t, L, NULL, NULL, NULL) ;
     
     for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
-      /* g_assert(w*L[j]*J >= 0.0) ; */
+      /* if ( !(w*L[j]*J > 0.0) ) { */
+      /* 	g_error("%: weight=%lg; L=%lg; J=%lg", */
+      /* 		__FUNCTION__, w, L[j], J) ; */
+      /* } */
+      /* g_assert(w*L[j]*J > 0.0) ; */
       skel->w[(skel->ppe)*(skel->ns)+j] = w*L[j]*J ;
       skel->idx[(skel->ppe)*(skel->ns)+j] = 
 	bem3d_element_global_index(e, j) - skel->imin ;
