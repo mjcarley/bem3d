@@ -880,6 +880,36 @@ gint bem3d_mesh_set_bc(BEM3DMesh *m, BEM3DBCFunc bcf, gpointer bdata)
   return BEM3D_SUCCESS ;
 }
 
+static gdouble solid_angle(GtsVertex *v, GtsSurface *s)
+
+/*
+  apply the spherical excess formula to the triangles which meet at
+  vertex v
+*/
+
+{
+  gdouble Om = 0.0 ;
+  GSList *f, *j ;
+  gint n = 0 ;
+
+  f = gts_vertex_faces(v, s, NULL) ; 
+
+  for ( ; f != NULL ; f = f->next ) {
+    for ( j = f->next ; j != NULL ; j = j->next ) {
+      if ( gts_triangles_common_edge(GTS_TRIANGLE(f->data),
+				     GTS_TRIANGLE(j->data)) != NULL ) {
+	Om -= gts_triangles_angle(GTS_TRIANGLE(f->data),
+				  GTS_TRIANGLE(j->data)) ;
+      }
+    }
+    n ++ ;
+  }
+
+  Om -= M_PI*(n-2) ;
+
+  return Om ;
+}
+
 static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
 
 {
@@ -894,13 +924,14 @@ static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
   gint j ;
   GArray *g = NULL, *f = NULL, *zero = NULL ;
   gdouble gsc = 0.0, dgsc = -0.5 ;
-  
+  gdouble Om ;
+
   /*check if we can use the shortcut, including check that we are not
-    at a sharp node (multiple indices) or on an open edge*/
+    at an open edge*/
   if ( config->diagonal_shortcut &&
-       (bem3d_mesh_vertex_index_number(m, v) < 2) &&
-       !gts_vertex_is_boundary(v, GTS_SURFACE(m))
-       ) {
+       !gts_vertex_is_boundary(v, GTS_SURFACE(m)) ) {
+    Om = solid_angle(v, GTS_SURFACE(m)) ;
+    dgsc = Om*0.25*M_1_PI - 1.0 ;
     efunc(i, i, &gsc, &dgsc, 1, edata) ;
     
     return ;
@@ -919,6 +950,8 @@ static void mesh_quad_gfunc(gint i, GtsVertex *v, gpointer data[])
 	&(g_array_index(f,gdouble,0)),
 	f->len, edata) ;
 
+  Om = solid_angle(v, GTS_SURFACE(m)) ;
+  
   bem3d_workspace_double_array_put(work, f) ;
   bem3d_workspace_double_array_put(work, g) ;
   bem3d_workspace_double_array_put(work, zero) ;

@@ -238,7 +238,7 @@ BEM3DConfiguration *bem3d_configuration_new()
   c->bc_default_admittance[0] = c->bc_default_admittance[1] = 0 ;
   c->quad_tol = 1e-3 ;
 
-  c->diagonal_shortcut = TRUE ;
+  c->diagonal_shortcut = FALSE ;
   
   return c ;
 }

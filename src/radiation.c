@@ -28,6 +28,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <glib.h>
 #include <gts.h>
@@ -148,6 +149,48 @@ static void radiation_complex(gdouble *G, gdouble *dG, gint nc, gint len,
   return ;
 }
 
+/* gdouble scalar_triple_product(GtsVector r1, GtsVector r2, GtsVector r3) */
+
+/* { */
+/*   GtsVector c ; */
+/*   gdouble tp ; */
+
+/*   gts_vector_cross(c, r2, r3) ; */
+/*   tp = gts_vector_scalar(r1, c) ; */
+
+/*   return tp ; */
+/* } */
+
+/* gdouble face_angle(GtsFace *f, GtsVertex *v) */
+
+/* { */
+/*   GtsVector R1, R2, R3 ; */
+/*   GtsVertex *v1, *v2, *v3 ; */
+/*   gdouble r1, r2, r3, tp, den, Om ; */
+
+/*   gts_triangle_vertices(GTS_TRIANGLE(f), &v1, &v2, &v3) ; */
+
+/*   gts_vector_init(R1, GTS_POINT(v), GTS_POINT(v1)) ; */
+/*   gts_vector_init(R2, GTS_POINT(v), GTS_POINT(v3)) ; */
+/*   gts_vector_init(R3, GTS_POINT(v), GTS_POINT(v2)) ; */
+
+/*   tp = scalar_triple_product(R1, R2, R3) ; */
+/*   r1 = gts_vector_norm(R1) ; */
+/*   r2 = gts_vector_norm(R2) ; */
+/*   r3 = gts_vector_norm(R3) ; */
+
+/*   /\* if ( r1 == 0.0 || r2 == 0.0 || r3 == 0.0 ) return 0.0 ; *\/ */
+
+/*   den = r1*r2*r3 +  */
+/*     gts_vector_scalar(R1, R2)*r3 +  */
+/*     gts_vector_scalar(R2, R3)*r1 + */
+/*     gts_vector_scalar(R3, R1)*r2 ;  */
+
+/*   Om = 2.0*atan2(tp, den) ; */
+
+/*   return Om ; */
+/* } */
+
 static void element_radiation_point(BEM3DElement *e, 
 				    BEM3DConfiguration *config,
 				    BEM3DParameters *gdata,
@@ -169,7 +212,8 @@ static void element_radiation_point(BEM3DElement *e,
   gdouble s, t, J, w, wt ;
   GtsPoint y ;
   GtsVector n ;
-
+  /* gdouble Om ; */
+  
   g_debug("%s: e=%p", __FUNCTION__, e) ;
 
   g_assert(bem3d_element_node_number(e) < 17) ;
@@ -256,6 +300,8 @@ static void element_radiation_point(BEM3DElement *e,
   bem3d_workspace_double_array_put(work,  phi) ;
   bem3d_workspace_double_array_put(work, dphi) ;
 
+  /* Om = face_angle(e->f[0], GTS_VERTEX(x)) ; */
+  
   return ;
 }
 

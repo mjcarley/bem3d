@@ -27,6 +27,8 @@ bem3d-function -E 4 -i ${geometry}.bem -F ${srcfunc} -s "k=${k}" -o bc.dat
 bem3d-solve -C ${config} -d bc.dat -m ${geometry}.mtx \
 	    -i ${geometry}.bem -o solution.dat -t 1e-6 -k ${k}
 
+return
+
 ## solve for the surface potential using the plane wave boundary condition
 ## including a surface admittance
 #bem3d-function -E 2 -i ${geometry}.bem -F admittance.fn -D -o admittance.mtx

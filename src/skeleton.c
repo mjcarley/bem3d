@@ -270,25 +270,25 @@ gint bem3d_mesh_skeleton_read(BEM3DMeshSkeleton *s, FILE *f)
   gint i, j, *idx ;
   gdouble *w ;
 
-  g_assert_not_reached() ; /*untested, uncompleted code*/
+  /* g_assert_not_reached() ; /\*untested, uncompleted code*\/ */
 
-  fprintf(f, "%d %d %d %d %d %d %d %d %d\n",
-	  s->nnodes, s->nelem, s->npts, s->order,
-	  s->ns, s->nt, s->imin,
-	  s->imax, s->ppe) ;
+  fscanf(f, "%d %d %d %d %d %d %d %d %d\n",
+	 &(s->nnodes), &(s->nelem), &(s->npts), &(s->order),
+	  &(s->ns), &(s->nt), &(s->imin),
+	 &(s->imax), &(s->ppe)) ;
 
   for ( i = 0 ; i < s->ns+s->nt ; i ++ ) {
-    fprintf(f, "%1.16e %1.16e %1.16e %1.16e %1.16e %1.16e\n",
-	    s->x[3*i+0], s->x[3*i+1], s->x[3*i+2],
-	    s->n[3*i+0], s->n[3*i+1], s->n[3*i+2]) ;
+    fscanf(f, "%lg %lg %lg %lg %lg %lg\n",
+	    &(s->x[3*i+0]), &(s->x[3*i+1]), &(s->x[3*i+2]),
+	    &(s->n[3*i+0]), &(s->n[3*i+1]), &(s->n[3*i+2])) ;
   }
 
   for ( i = 0 ; i < s->ns ; i ++ ) {
     w = &(s->w[i*s->ppe]) ; idx = &(s->idx[i*s->ppe]) ;
     for ( j = 0 ; j < s->ppe ; j ++ ) {
-      fprintf(f, "%d %1.16e ", idx[j], w[j]) ;
+      fscanf(f, "%d %lg ", &(idx[j]), &(w[j])) ;
     }
-    fprintf(f, "\n") ;
+    /* ftf(f, "\n") ; */
   }
 
   return 0 ;

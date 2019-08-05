@@ -165,7 +165,7 @@ lock_old_archive_extraction=no
 LTCC="gcc"
 
 # LTCC compiler flags.
-LTCFLAGS="-g -O3 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include -fopenmp -I/home/ensmjc/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include"
+LTCFLAGS="-g -O0 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include -fopenmp -I/home/ensmjc/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include"
 
 # Take the output of nm and produce a listing of raw symbols and C names.
 global_symbol_pipe="sed -n -e 's/^.*[	 ]\\([ABCDGIRSTW][ABCDGIRSTW]*\\)[	 ][	 ]*\\([_A-Za-z][_A-Za-z0-9]*\\)\$/\\1 \\2 \\2/p' | sed '/ __gnu_lto/d'"

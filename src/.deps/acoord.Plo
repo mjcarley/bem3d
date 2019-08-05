@@ -8,8 +8,7 @@ acoord.lo: acoord.c /usr/include/stdc-predef.h /usr/include/math.h \
  /usr/include/bits/floatn-common.h /usr/include/bits/flt-eval-method.h \
  /usr/include/bits/fp-logb.h /usr/include/bits/fp-fast.h \
  /usr/include/bits/mathcalls-helper-functions.h \
- /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h \
- /usr/include/stdlib.h \
+ /usr/include/bits/mathcalls.h /usr/include/stdlib.h \
  /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/include/stddef.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
  /usr/include/sys/types.h /usr/include/bits/types/clock_t.h \
@@ -25,9 +24,8 @@ acoord.lo: acoord.c /usr/include/stdc-predef.h /usr/include/math.h \
  /usr/include/bits/sysmacros.h /usr/include/bits/pthreadtypes.h \
  /usr/include/bits/thread-shared-types.h \
  /usr/include/bits/pthreadtypes-arch.h /usr/include/alloca.h \
- /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
- /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
- /usr/include/glib-2.0/glib/gtypes.h \
+ /usr/include/bits/stdlib-float.h /usr/include/glib-2.0/glib.h \
+ /usr/include/glib-2.0/glib/galloca.h /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib64/glib-2.0/include/glibconfig.h \
  /usr/include/glib-2.0/glib/gmacros.h \
  /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/include-fixed/limits.h \
@@ -116,8 +114,8 @@ acoord.lo: acoord.c /usr/include/stdc-predef.h /usr/include/math.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/libio.h \
  /usr/include/bits/_G_config.h /usr/include/bits/types/__mbstate_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
- /usr/include/bits/stdio.h /usr/include/gtsconfig.h bem3d.h \
- /home/ensmjc/Codes/include/gqr.h bem3dconfig.h bem3d-private.h
+ /usr/include/gtsconfig.h bem3d.h /home/ensmjc/Codes/include/gqr.h \
+ bem3dconfig.h bem3d-private.h
 
 /usr/include/stdc-predef.h:
 
@@ -158,8 +156,6 @@ acoord.lo: acoord.c /usr/include/stdc-predef.h /usr/include/math.h \
 /usr/include/bits/mathcalls-helper-functions.h:
 
 /usr/include/bits/mathcalls.h:
-
-/usr/include/bits/mathinline.h:
 
 /usr/include/stdlib.h:
 
@@ -214,8 +210,6 @@ acoord.lo: acoord.c /usr/include/stdc-predef.h /usr/include/math.h \
 /usr/include/bits/pthreadtypes-arch.h:
 
 /usr/include/alloca.h:
-
-/usr/include/bits/stdlib-bsearch.h:
 
 /usr/include/bits/stdlib-float.h:
 
@@ -478,8 +472,6 @@ acoord.lo: acoord.c /usr/include/stdc-predef.h /usr/include/math.h \
 /usr/include/bits/stdio_lim.h:
 
 /usr/include/bits/sys_errlist.h:
-
-/usr/include/bits/stdio.h:
 
 /usr/include/gtsconfig.h:
 
