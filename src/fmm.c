@@ -163,7 +163,7 @@ BEM3DFMMWorkspace *bem3d_fmm_workspace_alloc(BEM3DFastMultipole solver,
 
   w->nda = nda ;
   if ( w->nda != 0 ) 
-    w->d = (gdouble *)g_malloc(nda*sizeof(gdouble)) ;
+    w->d = (gdouble *)g_malloc0(nda*sizeof(gdouble)) ;
 
   return w ;
 }
@@ -382,7 +382,7 @@ BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
   gpointer data[16] = {NULL} ;
   GArray *G, *dG ;
 
-  m = (BEM3DFMMMatrix *)g_malloc(sizeof(BEM3DFMMMatrix)) ;
+  m = (BEM3DFMMMatrix *)g_malloc0(sizeof(BEM3DFMMMatrix)) ;
 
   m->skel = skel ;
   m->solver = solver ;
@@ -411,12 +411,12 @@ BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
     break ;
   }
   
-  m->C = (gdouble *)g_malloc((skel->nt)*sizeof(gdouble)) ;
+  m->C = (gdouble *)g_malloc0((skel->nt)*sizeof(gdouble)) ;
 
   m->gcorr = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
   m->dgcorr = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
   m->icorr = g_array_new(TRUE, TRUE, sizeof(gint)) ;
-  m->idxcorr = (gint *)g_malloc(2*skel->nt*sizeof(gint)) ;
+  m->idxcorr = (gint *)g_malloc0(2*skel->nt*sizeof(gint)) ;
 
   data[0] = m ; data[1] = &r ; data[2] = config ; data[3] = param ;
 

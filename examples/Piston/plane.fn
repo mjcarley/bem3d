@@ -1,0 +1,8 @@
+BEM3DFunction
+k = 1.0
+C = cos(k*z)
+S = sin(k*z)
+f[0] = C
+f[1] = S
+f[2] = -k*S*nz
+f[3] = k*C*nz

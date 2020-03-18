@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## set the wavenumber
-k=1.4
+k=1.3
 ## set the geometry
 geometry=sphere
 #geometry=peanut
@@ -17,7 +17,8 @@ config=scatter.cfg
 ## bem3d-sphere -e 1 -r 4 > sphere.bem
 
 ## assemble the matrix for a Helmholtz problem
-bem3d-assemble -k ${k} -C ${config} -i ${geometry}.bem -o ${geometry}.mtx
+bem3d-assemble -k ${k} -C ${config} -i ${geometry}.bem -o ${geometry}.mtx \
+	       -S ${geometry}.slf -K ${geometry}.skl
 
 ## generate the boundary condition using an analytically-specified
 ## function
@@ -26,8 +27,6 @@ bem3d-function -E 4 -i ${geometry}.bem -F ${srcfunc} -s "k=${k}" -o bc.dat
 ## solve for the surface potential using the plane wave boundary condition
 bem3d-solve -C ${config} -d bc.dat -m ${geometry}.mtx \
 	    -i ${geometry}.bem -o solution.dat -t 1e-6 -k ${k}
-
-return
 
 ## solve for the surface potential using the plane wave boundary condition
 ## including a surface admittance

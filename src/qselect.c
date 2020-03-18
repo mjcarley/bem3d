@@ -67,7 +67,7 @@ BEM3DQuadratureSelector *bem3d_quadrature_selector_new(void)
   g_debug("%s: ", __FUNCTION__) ;
 
   s = (BEM3DQuadratureSelector *)
-    g_malloc(sizeof(BEM3DQuadratureSelector)) ;
+    g_malloc0(sizeof(BEM3DQuadratureSelector)) ;
   
   s->f = g_ptr_array_new() ;
   s->sigma = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;

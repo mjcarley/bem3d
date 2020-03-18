@@ -1,4 +1,3 @@
-
 /* bem3d-function.c
  * 
  * Copyright (C) 2010, 2017, 2018, 2019 Michael Carley
@@ -212,7 +211,7 @@ gint main(gint argc, gchar **argv)
   gchar *opfile, *datafile, *edatafile, *funcfile ;
   gchar **reductions ;
   GLogLevelFlags loglevel ;
-  FILE *fs ;
+  FILE *fs, *fo ;
   gint mesh_data_width, i, j, k, idata[64], nc, ni, nd, nnodes, lineno ;
   gdouble ddata[64] ;
   gchar ch, line[1024], *point_file ;
@@ -370,29 +369,6 @@ gint main(gint argc, gchar **argv)
     return 0 ;
   }
 
-  if ( point_file != NULL ) {
-    lineno = 1 ;
-    x = gts_point_new(gts_point_class(), 0, 0, 0) ;
-    fs = file_open(point_file, "-", "r", stdin) ;
-
-    while ( (nc = fscanf(fs, "%[^\n]c", line)) != EOF && ( nc != 0 ) ) {
-      nc = sscanf(line, "%d %lg %lg %lg", &j, &(x->x), &(x->y), &(x->z)) ;
-      if ( nc != 4 ) {
-	fprintf(stderr, "%s: cannot parse line %d\n  %s\n",
-		progname, lineno, line) ;
-	exit(1) ;
-      }
-      fprintf(stdout, "%d", j) ;
-      j = bem3d_function_eval_point(efunc, x, NULL, 0, ddata, 8) ;
-      for ( i = 0 ; i <= j ; i ++ ) fprintf(stdout, " %lg", ddata[i]) ;
-      fprintf(stdout, "\n") ;
-      lineno ++ ;
-      if ( (nc = fscanf(fs, "%*c")) == EOF ) break ;
-    }
-
-    return 0 ;
-  }
-
   if ( datafile != NULL ) {
     fs = file_open(datafile, "-", "r", stdin) ;
     if ( fs == NULL ) {
@@ -402,6 +378,46 @@ gint main(gint argc, gchar **argv)
     }
     bem3d_mesh_data_read(&f, fs, mesh_data_width) ;
     file_close(fs) ;
+  }
+
+  if ( edatafile != NULL ) {
+    fs = file_open(edatafile, "-", "r", stdin) ;
+    if ( fs == NULL ) {
+      fprintf(stderr, "%s: cannot open data file %s.\n",
+	      progname, datafile) ;
+      return 1 ;
+    }
+    bem3d_mesh_data_read(&g, fs, 0) ;
+    file_close(fs) ;
+  }
+
+  if ( point_file != NULL ) {
+    lineno = 1 ;
+    x = gts_point_new(gts_point_class(), 0, 0, 0) ;
+    fs = file_open(point_file, "-", "r", stdin) ;
+
+    if ( opfile == NULL ) fo = stdout ;
+    else
+      fo = file_open(opfile, "-", "w", stdout) ;
+    
+    while ( (nc = fscanf(fs, "%[^\n]c", line)) != EOF && ( nc != 0 ) ) {
+      nc = sscanf(line, "%d %lg %lg %lg", &j, &(x->x), &(x->y), &(x->z)) ;
+      if ( nc != 4 ) {
+	fprintf(stderr, "%s: cannot parse line %d\n  %s\n",
+		progname, lineno, line) ;
+	exit(1) ;
+      }
+      fprintf(fo, "%d", j) ;
+      j = bem3d_function_eval_point(efunc, x, NULL, 0, ddata, 8) ;
+      for ( i = 0 ; i <= j ; i ++ ) fprintf(fo, " %lg", ddata[i]) ;
+      fprintf(fo, "\n") ;
+      lineno ++ ;
+      if ( (nc = fscanf(fs, "%*c")) == EOF ) break ;
+    }
+
+    file_close(fo) ;
+    
+    return 0 ;
   }
 
   if ( f == NULL ) {
@@ -414,17 +430,6 @@ gint main(gint argc, gchar **argv)
       bem3d_mesh_data_add_mesh(f, m) ;
     }
     bem3d_mesh_data_clear(f) ;
-  }
-
-  if ( edatafile != NULL ) {
-    fs = file_open(edatafile, "-", "r", stdin) ;
-    if ( fs == NULL ) {
-      fprintf(stderr, "%s: cannot open data file %s.\n",
-	      progname, datafile) ;
-      return 1 ;
-    }
-    bem3d_mesh_data_read(&g, fs, 0) ;
-    file_close(fs) ;
   }
 
   if ( integral_weights ) {

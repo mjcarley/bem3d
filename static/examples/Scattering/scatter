@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## set the wavenumber
-k=1.4
+k=1.3
 ## set the geometry
 geometry=sphere
 #geometry=peanut
@@ -17,7 +17,8 @@ config=scatter.cfg
 ## bem3d-sphere -e 1 -r 4 > sphere.bem
 
 ## assemble the matrix for a Helmholtz problem
-bem3d-assemble -k ${k} -C ${config} -i ${geometry}.bem -o ${geometry}.mtx
+bem3d-assemble -k ${k} -C ${config} -i ${geometry}.bem -o ${geometry}.mtx \
+	       -S ${geometry}.slf -K ${geometry}.skl
 
 ## generate the boundary condition using an analytically-specified
 ## function
@@ -62,6 +63,7 @@ bem3d-function -E 2 -s "k=${k}" -F total.fn -d incident.dat -e scattered.dat \
 	       -i field.bem -o field.dat
 
 ## generate a GMSH visualization for the field
-##the "-n 1000" increments the indices on field.msh to avoid a
-## conflict with the scatterer geometry
-bem3d2msh -t "Field" -i field.bem -d field.dat -o field.msh -n 1000
+##the "-n ${nsol}" option increments the indices on field.msh to avoid a
+## conflict with the scatterer geometry when gmsh loads the two meshes
+nsol=`head -n1 ${geometry}.dat | cut -d" " -f1`
+bem3d2msh -t "Field" -i field.bem -d field.dat -o field.msh -n ${nsol}

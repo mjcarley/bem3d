@@ -76,7 +76,7 @@ BEM3DOperator *bem3d_operator_new(void)
 {
   BEM3DOperator *op ;
 
-  op = (BEM3DOperator *)g_malloc(sizeof(BEM3DOperator)) ;
+  op = (BEM3DOperator *)g_malloc0(sizeof(BEM3DOperator)) ;
 
   op->nc = 0 ;
   op->w = g_array_new(FALSE, TRUE, sizeof(gdouble)) ;

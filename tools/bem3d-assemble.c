@@ -43,7 +43,7 @@
 #error "GQR is required for quadrature rules"
 #endif /*HAVE_GQR*/
 
-/* #define FMM_DIRECT_CONSTANT */
+#define FMM_DIRECT_CONSTANT
 
 #define ADATA_SIZE     32
 
@@ -66,6 +66,8 @@
 #define ADATA_GRADIENT_W_I 16
 #define ADATA_GRADIENT_N_W 17
 #define ADATA_WORK         18
+
+gchar *progname = NULL ;
 
 static gint skeleton_set_unit_sources(BEM3DMeshSkeleton *s, gdouble *dq)
 
@@ -279,6 +281,56 @@ static void _assemble_rows(gint i, GtsVertex *v, gpointer adata[])
   return ;
 }
 
+static gint write_self_file(gchar *file, gdouble *C, gint n)
+
+{
+  FILE *f ;
+  gint i ;
+  
+  f = fopen(file, "w") ;
+  if ( f == NULL ) {
+    fprintf(stderr, "%s: cannot open file %s for self terms\n",
+	    progname, file) ;
+    exit(1) ;
+  }
+
+  fprintf(f, "self: %d\n", n) ;
+  for ( i = 0 ; i < n ; i ++ ) fprintf(f, "%d %1.16e\n", i, C[i]) ;
+
+  fclose(f) ;
+  
+  return 0 ;
+}
+
+static gint read_self_file(gchar *file, gdouble *C, gint n)
+
+{
+  FILE *f ;
+  gint i, j ;
+  gdouble tmp ;
+  
+  f = fopen(file, "r") ;
+  if ( f == NULL ) {
+    fprintf(stderr, "%s: cannot open file %s for self terms\n",
+	    progname, file) ;
+    exit(1) ;
+  }
+
+  fscanf(f, "self: %d\n", &i) ;
+  if ( i != n ) {
+    fprintf(stderr,
+	    "%s: self-file (%s) header (%d) does not match problem size (%d)\n",
+	    progname, file, i, n) ;
+  }
+  for ( i = 0 ; i < n ; i ++ ) {
+    fscanf(f, "%d %lg\n", &j, &tmp) ;
+    C[j] = tmp ;
+  }
+  
+  return 0 ;
+}
+
+
 gint main(gint argc, gchar **argv)
 
 {
@@ -290,11 +342,11 @@ gint main(gint argc, gchar **argv)
   BEM3DFMMWorkspace *fmmwork ;
   BEM3DWorkspace *work ;
   GPtrArray *meshes ;
-  gboolean meshes_closed ;
+  gboolean meshes_closed, write_self, read_self ;
   GTimer *t ;
   gint i, j, np, nc, w, order ;
   guint imin, imax ;
-  gchar ch, *opfile, p[32], *progname ;
+  gchar ch, *opfile, p[32], *self_file, *skel_file ;
   BEM3DLookupFunc dgfunc ;
   BEM3DParameters gdata ;
   gpointer adata[ADATA_SIZE] ;
@@ -318,6 +370,8 @@ gint main(gint argc, gchar **argv)
   bem3d_parameters_init(&gdata) ;
 
   meshes_closed = TRUE ;
+  write_self = FALSE ; read_self = FALSE ;
+  self_file = NULL ; skel_file = NULL ;
   
   bem3d_parameters_wavenumber(&gdata) = 0.0 ;
   /*this is required to ensure correct evaluation for
@@ -338,7 +392,7 @@ gint main(gint argc, gchar **argv)
   bem3d_configuration_init() ;
   config = bem3d_configuration_new() ;
 
-  while ( (ch = getopt(argc, argv, "hl:C:i:k:o:")) != EOF ) {
+  while ( (ch = getopt(argc, argv, "hl:C:i:K:k:o:S:s:")) != EOF ) {
     switch (ch) {
     default:
     case 'h':
@@ -352,9 +406,13 @@ gint main(gint argc, gchar **argv)
 		"        -h (print this message and exit)\n"
 		"        -C <configuration file>\n"
 		"        -i <bem3d input file>\n"
+		"        -K <skeleton file name>\n"
 		"        -k # (wave number for Helmholtz calculation\n"
 /* 		"        -M # (Mach number for convected Helmholtz\n" */
-		"        -o <output file name>\n") ;
+		"        -o <output file name>\n"
+		"        -S <file name> (write self-term to file)\n"
+		"        -s <file name> (read self-term from file)\n"
+		) ;
       }
       wmpi_pause() ;
       wmpi_shutdown() ;
@@ -363,6 +421,7 @@ gint main(gint argc, gchar **argv)
     case 'l': loglevel = 1 << atoi(optarg) ; break ;
     case 'C': bem3d_configuration_read(config, optarg) ; break ;
     case 'i': append_mesh_from_file(meshes, optarg) ; break ;
+    case 'K': skel_file = g_strdup(optarg) ; break ;
     case 'k': bem3d_parameters_wavenumber(&gdata) = atof(optarg) ;
       break ;
     /* case 'M':  */
@@ -373,6 +432,12 @@ gint main(gint argc, gchar **argv)
 	opfile = g_strdup(optarg) ; 
       else
 	opfile = g_strdup_printf("%s-%04d", optarg, wmpi_rank()) ; 
+      break ;
+    case 'S': self_file = g_strdup(optarg) ;
+      write_self = TRUE ; read_self = FALSE ;
+      break ;
+    case 's': self_file = g_strdup(optarg) ;
+      write_self = FALSE ; read_self = TRUE ;
       break ;
     }
   }
@@ -402,7 +467,7 @@ gint main(gint argc, gchar **argv)
   
   for ( (i = 0), (np = 0) ; i < meshes->len ; i ++ ) {
     nc = bem3d_mesh_node_number(g_ptr_array_index(meshes,i)) ;
-
+    
     if ( wmpi_rank() == 0 ) {
       fprintf(stderr, "%s: ", progname) ;
       if ( gts_surface_is_closed(GTS_SURFACE(g_ptr_array_index(meshes,i))) ) {
@@ -411,7 +476,7 @@ gint main(gint argc, gchar **argv)
 	meshes_closed = FALSE ;
 	fprintf(stderr, "open ") ;
       }
-
+      
       fprintf(stderr, "mesh %d, %d collocation points\n", i, nc) ;
     }
     np += nc ;
@@ -428,7 +493,7 @@ gint main(gint argc, gchar **argv)
   }
 
   if ( wmpi_rank() == 0 )
-      fprintf(stderr, "%s: mesh collocation points: %d\n", progname, np) ;
+    fprintf(stderr, "%s: mesh collocation points: %d\n", progname, np) ;
 
   t = g_timer_new() ; g_timer_start(t) ;
 
@@ -438,7 +503,7 @@ gint main(gint argc, gchar **argv)
     fprintf(stderr, "%s: assembling for direct solver: t=%f\n", 
 	    progname, g_timer_elapsed(t, NULL)) ;
 
-  if ( opfile != NULL ) {
+    if ( opfile != NULL ) {
       output = file_open(opfile, "-", "w", stdout) ;
     }
 
@@ -480,7 +545,7 @@ gint main(gint argc, gchar **argv)
       }
     } else {
       /*if we have any open meshes, assume they are disjoint parts of the
-       same surface and treat accordingly*/
+	same surface and treat accordingly*/
       for ( i = 0 ; i < meshes->len ; i ++ )
 	for ( j = 0 ; j < meshes->len ; j ++ ) {
 	  fprintf(stderr, "%s: P%d: diagonal term for meshes %d and %d\n",
@@ -522,6 +587,21 @@ gint main(gint argc, gchar **argv)
   fprintf(stderr, "%s: assembling for FMM solver %s: t=%f\n", 
 	  progname, bem3d_fmm_name(config->fmm), g_timer_elapsed(t, NULL)) ;
 
+  /*check auxiliary file names are set*/
+  if ( self_file == NULL ) {
+    fprintf(stderr,
+	    "%s: FMM matrices require a self-term file to be specified\n",
+	    progname) ;
+    return 1 ;
+  }
+
+  if ( skel_file == NULL ) {
+    fprintf(stderr,
+	    "%s: FMM matrices require a skeleton file name to be specified\n",
+	    progname) ;
+    return 1 ;
+  }
+  
   if ( meshes->len > 1 ) {
     fprintf(stderr,
 	    "%s: FMM can only handle single mesh problems at the moment\n",
@@ -546,88 +626,98 @@ gint main(gint argc, gchar **argv)
   fprintf(output, "%s %u %d %d %u %u %d\n", 
 	  bem3d_solver_name(config->solver), 
 	  wmpi_rank(), np, w, imin, imax, config->fmm) ;
+  fprintf(output, "self: %s\n", self_file) ;
+  fprintf(output, "skeleton: %s\n", skel_file) ;
 
+  file_close(output) ;
+  
+  /*skeleton for FMM calculations, possibly for Laplace calculation*/
+  m = g_ptr_array_index(meshes, 0) ;
+  quad = bem3d_quadrature_rule_new(order, 1) ;
+
+  order = config->skel_order ;
+  r_correct = config->fmm_radius ;
+
+  if ( order <= 7 ) 
+    bem3d_quadrature_rule_gauss(NULL, bem3d_mesh_element_sample(m), quad, 
+				NULL, NULL, &order, NULL) ;
+  else
+    bem3d_quadrature_rule_wx(NULL, bem3d_mesh_element_sample(m), quad, 
+			     NULL, NULL, &order, NULL) ;    
+  
+  skel = bem3d_mesh_skeleton_new(m, order) ;
+  bem3d_mesh_skeleton_init(skel, quad, anorm) ;
+
+  if ( read_self ) {
+    read_self_file(self_file, C, np) ;
+  } else {
 #ifdef FMM_DIRECT_CONSTANT
-  for ( i = 0 ; i < np ; i ++ ) C[i] = 1.0 ;
-
-  gfunc = config->gfunc ;
-  config->gfunc = greens_func_laplace ;
-
-  for ( i = 0 ; i < meshes->len ; i ++ )
-    bem3d_mesh_quad_dgdn(g_ptr_array_index(meshes,i),
-			 config, &gdata, dgfunc, NULL, 
-			 (BEM3DEquationFunc)equation_func_C, C) ;
-
-#else /*FMM_DIRECT_CONSTANT*/
-  if ( config->fmm == BEM3D_FMM_WBFMM ) {
-    /*WBFMM does not have a Laplace solver (yet?) so we have to do
-      this by brute force*/
     for ( i = 0 ; i < np ; i ++ ) C[i] = 1.0 ;
 
     gfunc = config->gfunc ;
     config->gfunc = greens_func_laplace ;
 
-    for ( i = 0 ; i < meshes->len ; i ++ ) {
-      fprintf(stderr, "%s: P%d: diagonal term for mesh %d\n",
-	      progname, wmpi_rank(), i) ;
+    for ( i = 0 ; i < meshes->len ; i ++ )
       bem3d_mesh_quad_dgdn(g_ptr_array_index(meshes,i),
 			   config, &gdata, dgfunc, NULL, 
-			   (BEM3DEquationFunc)equation_func_C, C,
-			   work) ;
-    }
-  } else {
-    m = g_ptr_array_index(meshes, 0) ;
-    quad = bem3d_quadrature_rule_new(order, 1) ;
+			   (BEM3DEquationFunc)equation_func_C, C, work) ;
 
-    order = config->skel_order ;
-    r_correct = config->fmm_radius ;
+#else /*FMM_DIRECT_CONSTANT*/
+    if ( config->fmm == BEM3D_FMM_WBFMM ) {
+      /*WBFMM does not have a Laplace solver (yet?) so we have to do
+	this by brute force*/
+      for ( i = 0 ; i < np ; i ++ ) C[i] = 1.0 ;
 
-    if ( order <= 7 ) 
-      bem3d_quadrature_rule_gauss(NULL, bem3d_mesh_element_sample(m), quad, 
-				NULL, NULL, &order, NULL) ;
-    else
-      bem3d_quadrature_rule_wx(NULL, bem3d_mesh_element_sample(m), quad, 
-			       NULL, NULL, &order, NULL) ;    
+      gfunc = config->gfunc ;
+      config->gfunc = greens_func_laplace ;
+
+      for ( i = 0 ; i < meshes->len ; i ++ ) {
+	fprintf(stderr, "%s: P%d: diagonal term for mesh %d\n",
+		progname, wmpi_rank(), i) ;
+	bem3d_mesh_quad_dgdn(g_ptr_array_index(meshes,i),
+			     config, &gdata, dgfunc, NULL, 
+			     (BEM3DEquationFunc)equation_func_C, C,
+			     work) ;
+      }
+    } else {
+      gfunc = config->gfunc ;
+      config->gfunc = greens_func_laplace ;
     
-    skel = bem3d_mesh_skeleton_new(m, order) ;
-    bem3d_mesh_skeleton_init(skel, quad, anorm) ;
-    
-    gfunc = config->gfunc ;
-    config->gfunc = greens_func_laplace ;
-    
-    mtx = bem3d_fmm_matrix_new(config->fmm, BEM3D_FMM_LAPLACE,
-			     skel, config, NULL, r_correct, work) ;
+      mtx = bem3d_fmm_matrix_new(config->fmm, BEM3D_FMM_LAPLACE,
+				 skel, config, &param, r_correct, work) ;
 
-    mtx->tol = config->fmm_tol ;
+      mtx->tol = config->fmm_tol ;
 
-    unit = (gdouble *)g_malloc(skel->ns*sizeof(gdouble)) ;
+      unit = (gdouble *)g_malloc(skel->ns*sizeof(gdouble)) ;
 
-    fmmwork = bem3d_fmm_workspace_alloc(config->fmm, skel, config) ;
+      fmmwork = bem3d_fmm_workspace_alloc(config->fmm, skel, config) ;
 
-    skeleton_set_unit_sources(skel, unit) ;
+      skeleton_set_unit_sources(skel, unit) ;
 
-    bem3d_fmm_calculate(mtx->solver, mtx->problem, NULL, mtx->skel, mtx->tol,
-			NULL, unit, C, NULL, fmmwork) ;
+      bem3d_fmm_calculate(mtx->solver, mtx->problem, NULL, mtx->skel, mtx->tol,
+			  NULL, unit, C, NULL, fmmwork) ;
 
-    /*local correction terms in FMM integration*/
-    for ( i = 0 ; i < np ; i ++ ) {
-      C[i] = C[i]*mtx->scaleA[0] + 1 ;
-      for ( j = mtx->idxcorr[2*i+0] ; j < mtx->idxcorr[2*i+1] ; j ++ ) {
-	C[i] += g_array_index(mtx->dgcorr, gdouble, j) ;
+      /*local correction terms in FMM integration*/
+      for ( i = 0 ; i < np ; i ++ ) {
+	C[i] = C[i]*mtx->scaleA[0] + 1 ;
+	for ( j = mtx->idxcorr[2*i+0] ; j < mtx->idxcorr[2*i+1] ; j ++ ) {
+	  C[i] += g_array_index(mtx->dgcorr, gdouble, j) ;
+	}
       }
     }
-  }
 #endif /*FMM_DIRECT_CONSTANT*/
-
+  }
   fprintf(stderr, "%s: assembly completed: t=%f\n", 
 	  progname, g_timer_elapsed(t, NULL)) ;
 
-  for ( i = 0 ; i < np ; i ++ ) {
-    fprintf(output, "%d %1.16e\n", i, C[i]) ;
-  }
+  if ( write_self ) write_self_file(self_file, C, np) ;
 
+  output = file_open(skel_file, "-", "w", stdout) ;
+
+  bem3d_mesh_skeleton_write(skel, output) ;
+  
   file_close(output) ;
-
+  
   wmpi_pause() ;
   wmpi_shutdown() ;
 

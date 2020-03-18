@@ -1590,6 +1590,8 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
 				 BEM3DWorkspace *work) ;
 
   GtsVertex *bem3d_mesh_node_from_index(BEM3DMesh *m, gint i) ;
+  BEM3DElement *bem3d_mesh_element_from_indices(BEM3DMesh *m,
+						gint *idx, gint ni) ;
   gint bem3d_mesh_index_from_node(BEM3DMesh *m, GtsVertex *v) ;
   gint bem3d_mesh_write(BEM3DMesh *m, FILE *fptr) ;
   guint bem3d_mesh_read(BEM3DMesh *m, GtsFile *f) ;

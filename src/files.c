@@ -248,9 +248,9 @@ guint bem3d_mesh_read(BEM3DMesh *m, GtsFile * f)
   if (nf <= 0) return BEM3D_SUCCESS ;
 
   /* allocate nv + 1 just in case nv == 0 */
-  vertices = g_malloc ((nv + 1)*sizeof (GtsVertex *));
-  edges = g_malloc ((ne + 1)*sizeof (GtsEdge *));
-  faces = g_malloc ((nf + 1)*sizeof (GtsFace *));
+  vertices = g_malloc0((nv + 1)*sizeof (GtsVertex *));
+  edges = g_malloc0((ne + 1)*sizeof (GtsEdge *));
+  faces = g_malloc0((nf + 1)*sizeof (GtsFace *));
   
   n = 0;
   while (n < nv && f->type != GTS_ERROR) {
@@ -983,7 +983,7 @@ static guint gmsh_read_file4_0(FILE *f, BEM3DMesh *m, guint lineno)
   }
 
   h = g_hash_table_new(NULL, NULL) ;
-  tags = (gint *)g_malloc(MAX(n_nodes, 32)*sizeof(gint)) ;
+  tags = (gint *)g_malloc0(MAX(n_nodes, 32)*sizeof(gint)) ;
   for ( i = np = 0 ; i < n_ent ; i ++ ) {
     nv = fscanf(f, "%d %d %d %d", &dim, &etag, &parametric, &nnblock) ;
 

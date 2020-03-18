@@ -9,7 +9,8 @@ motion.lo: motion.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/bits/flt-eval-method.h /usr/include/bits/fp-logb.h \
  /usr/include/bits/fp-fast.h \
  /usr/include/bits/mathcalls-helper-functions.h \
- /usr/include/bits/mathcalls.h /usr/include/string.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h \
+ /usr/include/string.h \
  /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/include/stddef.h \
  /usr/include/bits/types/locale_t.h /usr/include/bits/types/__locale_t.h \
  /usr/include/strings.h bem3d.h /usr/include/stdio.h \
@@ -18,8 +19,8 @@ motion.lo: motion.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/bits/types/__mbstate_t.h \
  /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
- /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
- /usr/include/glib-2.0/glib/gtypes.h \
+ /usr/include/bits/stdio.h /usr/include/glib-2.0/glib.h \
+ /usr/include/glib-2.0/glib/galloca.h /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib64/glib-2.0/include/glibconfig.h \
  /usr/include/glib-2.0/glib/gmacros.h \
  /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/include-fixed/limits.h \
@@ -50,9 +51,9 @@ motion.lo: motion.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/bits/sysmacros.h /usr/include/bits/pthreadtypes.h \
  /usr/include/bits/thread-shared-types.h \
  /usr/include/bits/pthreadtypes-arch.h /usr/include/alloca.h \
- /usr/include/bits/stdlib-float.h /usr/include/glib-2.0/glib/gbacktrace.h \
- /usr/include/signal.h /usr/include/bits/signum.h \
- /usr/include/bits/signum-generic.h \
+ /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
+ /usr/include/glib-2.0/glib/gbacktrace.h /usr/include/signal.h \
+ /usr/include/bits/signum.h /usr/include/bits/signum-generic.h \
  /usr/include/bits/types/sig_atomic_t.h \
  /usr/include/bits/types/siginfo_t.h /usr/include/bits/types/__sigval_t.h \
  /usr/include/bits/siginfo-arch.h /usr/include/bits/siginfo-consts.h \
@@ -162,6 +163,8 @@ motion.lo: motion.c /usr/include/stdc-predef.h ../config.h \
 
 /usr/include/bits/mathcalls.h:
 
+/usr/include/bits/mathinline.h:
+
 /usr/include/string.h:
 
 /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/include/stddef.h:
@@ -191,6 +194,8 @@ bem3d.h:
 /usr/include/bits/stdio_lim.h:
 
 /usr/include/bits/sys_errlist.h:
+
+/usr/include/bits/stdio.h:
 
 /usr/include/glib-2.0/glib.h:
 
@@ -293,6 +298,8 @@ bem3d.h:
 /usr/include/bits/pthreadtypes-arch.h:
 
 /usr/include/alloca.h:
+
+/usr/include/bits/stdlib-bsearch.h:
 
 /usr/include/bits/stdlib-float.h:
 

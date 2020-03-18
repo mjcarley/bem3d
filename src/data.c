@@ -137,7 +137,7 @@ BEM3DMeshData *bem3d_mesh_data_sized_new(gint n, gint m)
   g_return_val_if_fail (n > 0, NULL) ;
   g_return_val_if_fail (m > 0, NULL) ;
 
-  d = (BEM3DMeshData *)g_malloc(sizeof(BEM3DMeshData)) ;
+  d = (BEM3DMeshData *)g_malloc0(sizeof(BEM3DMeshData)) ;
   d->nd = n ;
 
   d->d = g_array_sized_new(TRUE, TRUE, sizeof(gdouble), n*m) ;
@@ -286,7 +286,7 @@ gint bem3d_mesh_data_write(BEM3DMeshData *f, FILE *fp, gchar *header)
  * Read a ::BEM3DMeshData block from an input file, allocating it as
  * necessary.
  * 
- * @param f ::BEM3DMEshData block to allocate;
+ * @param f ::BEM3DMeshData block to allocate;
  * @param fp input file stream;
  * @param width data is set to the maximum of \a width and the number of
  * elements specified in the input file; set to 0 to use the number specified
@@ -378,7 +378,7 @@ gint bem3d_mesh_data_multiproc_sum(BEM3DMeshData *m)
 
   if ( _multiproc_buffer == NULL ) {
     _multiproc_nb = m->d->len ;
-    _multiproc_buffer = (gdouble *)g_malloc(_multiproc_nb*sizeof(gdouble)) ;
+    _multiproc_buffer = (gdouble *)g_malloc0(_multiproc_nb*sizeof(gdouble)) ;
   }
 
   if ( _multiproc_nb < m->d->len) {

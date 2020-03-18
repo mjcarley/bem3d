@@ -318,7 +318,7 @@ static void write_element_msh_4_1(BEM3DElement *e, gpointer *data)
   for ( i = 0 ; i < bem3d_element_node_number(e) ; i ++ ) {
     j = bem3d_element_global_index(e,i) ;
     j = GPOINTER_TO_INT(g_hash_table_lookup(h, GINT_TO_POINTER(j))) ;
-    fprintf(fp, " %d", offset+j) ;
+    if ( j != 0 ) fprintf(fp, " %d", offset+j) ;
   }
   fprintf(fp, "\n") ;
   
@@ -349,6 +349,8 @@ static gint write_data_msh(gint i, gdouble *d, gint nf, gpointer *data)
   gint j ;
 
   j = GPOINTER_TO_INT(g_hash_table_lookup(h, GINT_TO_POINTER(i))) ;
+
+  if ( j == 0 ) return 0 ;
 
   fprintf(fp, "%d", offset+j) ;
   for ( j = 0 ; j < ncom ; j ++ ) {

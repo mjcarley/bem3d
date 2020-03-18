@@ -10,14 +10,15 @@ shapefunc.lo: shapefunc.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/bits/types/__mbstate_t.h \
  /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
- /usr/include/math.h /usr/include/bits/math-vector.h \
- /usr/include/bits/libm-simd-decl-stubs.h /usr/include/bits/floatn.h \
- /usr/include/bits/floatn-common.h /usr/include/bits/flt-eval-method.h \
- /usr/include/bits/fp-logb.h /usr/include/bits/fp-fast.h \
+ /usr/include/bits/stdio.h /usr/include/math.h \
+ /usr/include/bits/math-vector.h /usr/include/bits/libm-simd-decl-stubs.h \
+ /usr/include/bits/floatn.h /usr/include/bits/floatn-common.h \
+ /usr/include/bits/flt-eval-method.h /usr/include/bits/fp-logb.h \
+ /usr/include/bits/fp-fast.h \
  /usr/include/bits/mathcalls-helper-functions.h \
- /usr/include/bits/mathcalls.h /usr/include/gts.h \
- /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
- /usr/include/glib-2.0/glib/gtypes.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h \
+ /usr/include/gts.h /usr/include/glib-2.0/glib.h \
+ /usr/include/glib-2.0/glib/galloca.h /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib64/glib-2.0/include/glibconfig.h \
  /usr/include/glib-2.0/glib/gmacros.h \
  /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/include-fixed/limits.h \
@@ -49,9 +50,9 @@ shapefunc.lo: shapefunc.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/bits/sysmacros.h /usr/include/bits/pthreadtypes.h \
  /usr/include/bits/thread-shared-types.h \
  /usr/include/bits/pthreadtypes-arch.h /usr/include/alloca.h \
- /usr/include/bits/stdlib-float.h /usr/include/glib-2.0/glib/gbacktrace.h \
- /usr/include/signal.h /usr/include/bits/signum.h \
- /usr/include/bits/signum-generic.h \
+ /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
+ /usr/include/glib-2.0/glib/gbacktrace.h /usr/include/signal.h \
+ /usr/include/bits/signum.h /usr/include/bits/signum-generic.h \
  /usr/include/bits/types/sig_atomic_t.h \
  /usr/include/bits/types/siginfo_t.h /usr/include/bits/types/__sigval_t.h \
  /usr/include/bits/siginfo-arch.h /usr/include/bits/siginfo-consts.h \
@@ -160,6 +161,8 @@ shapefunc.lo: shapefunc.c /usr/include/stdc-predef.h ../config.h \
 
 /usr/include/bits/sys_errlist.h:
 
+/usr/include/bits/stdio.h:
+
 /usr/include/math.h:
 
 /usr/include/bits/math-vector.h:
@@ -179,6 +182,8 @@ shapefunc.lo: shapefunc.c /usr/include/stdc-predef.h ../config.h \
 /usr/include/bits/mathcalls-helper-functions.h:
 
 /usr/include/bits/mathcalls.h:
+
+/usr/include/bits/mathinline.h:
 
 /usr/include/gts.h:
 
@@ -287,6 +292,8 @@ shapefunc.lo: shapefunc.c /usr/include/stdc-predef.h ../config.h \
 /usr/include/bits/pthreadtypes-arch.h:
 
 /usr/include/alloca.h:
+
+/usr/include/bits/stdlib-bsearch.h:
 
 /usr/include/bits/stdlib-float.h:
 

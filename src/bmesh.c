@@ -1,6 +1,6 @@
 /* bmesh.c
  * 
- * Copyright (C) 2006, 2009, 2018 Michael Carley
+ * Copyright (C) 2006, 2009, 2018, 2019 Michael Carley
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -540,7 +540,7 @@ gint bem3d_mesh_discretize(GtsSurface *s, gint nne,
   g_return_val_if_fail(BEM3D_IS_MESH(m), BEM3D_ARGUMENT_WRONG_TYPE) ;
 
   ne = gts_surface_edge_number(s) ;
-  es = (GtsEdge **)g_malloc(ne*nne*sizeof(GtsEdge *)) ;
+  es = (GtsEdge **)g_malloc0(ne*nne*sizeof(GtsEdge *)) ;
   e = g_hash_table_new(g_direct_hash, g_direct_equal) ;
 
   data[BEM3D_BMESH_DATA_MESH] = m ;
@@ -1387,6 +1387,41 @@ gdouble bem3d_mesh_surface_area(BEM3DMesh *m, gint ngp)
   bem3d_mesh_foreach_element(m, (BEM3DElementFunc)element_area, data) ;
 
   return S ;
+}
+
+BEM3DElement *bem3d_mesh_element_from_indices(BEM3DMesh *m,
+					      gint *idx, gint ni)
+
+{
+  GSList *e1, *e2, *e3, *e ;
+  GtsVertex *v ;
+  gint i ;
+
+  g_return_val_if_fail(m != NULL, NULL) ;
+  g_return_val_if_fail(idx != NULL, NULL) ;
+  if ( ni == 0 ) return NULL ;
+  
+  i = 0 ;
+  v = bem3d_mesh_node_from_index(m, idx[i]) ;
+  e1 = bem3d_mesh_vertex_elements(m, v) ;
+  if ( e1 == NULL ) return NULL ;
+  if ( e1->next == NULL ) return BEM3D_ELEMENT(e1->data) ;
+
+  for ( i = 1 ; i < ni ; i ++ ) {
+    v = bem3d_mesh_node_from_index(m, idx[i]) ;
+    e2 = bem3d_mesh_vertex_elements(m, v) ;
+    e3 = NULL ;
+    for ( e = e1 ; e != NULL ; e = e->next ) {
+      if ( g_slist_find(e2, e->data) != NULL )
+	e3 = g_slist_prepend(e3, e->data) ;
+    }
+    e1 = e3 ;
+  }
+
+  g_assert(e1 != NULL) ;
+  g_assert(e1->next == NULL) ;
+  
+  return e1->data ;
 }
 
 /**

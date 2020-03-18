@@ -193,7 +193,7 @@ AWK = gawk
 BEM3D_VERSION = 0.2.1
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O0 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include -fopenmp -I/home/ensmjc/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include
+CFLAGS = -g -O3 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/usr/local/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include -fopenmp -I/home/ensmjc/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/ensmjc/Codes/include
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo

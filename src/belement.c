@@ -138,24 +138,24 @@ BEM3DElement *bem3d_element_new(BEM3DElementClass * klass,
   e = BEM3D_ELEMENT (gts_object_new (GTS_OBJECT_CLASS (klass)));
 
   e->nf = nf ;
-  e->f = (gpointer *)g_malloc(nf*sizeof(gpointer)) ;
+  e->f = (gpointer *)g_malloc0(nf*sizeof(gpointer)) ;
   e->nv = nv ;
-  e->v = (gpointer *)g_malloc(nv*sizeof(gpointer)) ;
+  e->v = (gpointer *)g_malloc0(nv*sizeof(gpointer)) ;
   e->ns = ns ;
-  e->s = (gint *)g_malloc(ns*sizeof(gint)) ;
-  e->xs = (gdouble *)g_malloc(2*nv*sizeof(gdouble)) ;
+  e->s = (gint *)g_malloc0(ns*sizeof(gint)) ;
+  e->xs = (gdouble *)g_malloc0(2*nv*sizeof(gdouble)) ;
   bem3d_element_moment_order(e) = 0 ;
   e->Imn = NULL ;
 
   if ( nc > 0 ) {
     e->nc = nc ;
-    e->c = (gpointer *)g_malloc(nc*sizeof(gpointer)) ;
-    e->xc = (gdouble *)g_malloc(2*nc*sizeof(gdouble)) ;
+    e->c = (gpointer *)g_malloc0(nc*sizeof(gpointer)) ;
+    e->xc = (gdouble *)g_malloc0(2*nc*sizeof(gdouble)) ;
   } else {
     e->nc = nv ; e->c = e->v ; e->xc = e->xs ;
   }
 
-  e->i = (gint *)g_malloc((e->nc)*sizeof(gint)) ;
+  e->i = (gint *)g_malloc0((e->nc)*sizeof(gint)) ;
   for ( i = 0 ; i < e->nc ; i ++ ) e->i[i] = 0 ;
   e->shf = shf ; e->cpf = cpf ;
 

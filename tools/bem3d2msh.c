@@ -154,7 +154,8 @@ gint main(gint argc, gchar **argv)
     file_close(fs) ;
   }
 
-  if ( bem3d_mesh_data_node_number(f) < bem3d_mesh_node_number(m) ) {
+  if ( f != NULL &&
+       ( bem3d_mesh_data_node_number(f) < bem3d_mesh_node_number(m)) ) {
     fprintf(stderr, "%s: number of mesh nodes (%d) is greater than number of "
 	    "data points (%d)\n", progname, bem3d_mesh_node_number(m),
 	    bem3d_mesh_data_node_number(f)) ;

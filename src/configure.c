@@ -218,7 +218,7 @@ BEM3DConfiguration *bem3d_configuration_new()
 {
   BEM3DConfiguration *c ;
 
-  c = (BEM3DConfiguration *)g_malloc(sizeof(BEM3DConfiguration)) ;
+  c = (BEM3DConfiguration *)g_malloc0(sizeof(BEM3DConfiguration)) ;
 
   c->job = g_string_new("BEM3D") ;
   c->keys = g_ptr_array_new() ;

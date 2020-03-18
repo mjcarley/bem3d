@@ -75,7 +75,7 @@ BEM3DMeshSkeleton *bem3d_mesh_skeleton_new(BEM3DMesh *m, gint order_max)
 {
   BEM3DMeshSkeleton *s ;
 
-  s = (BEM3DMeshSkeleton *)g_malloc(sizeof(BEM3DMeshSkeleton)) ;
+  s = (BEM3DMeshSkeleton *)g_malloc0(sizeof(BEM3DMeshSkeleton)) ;
 
   s->m = m ;
 
@@ -88,12 +88,12 @@ BEM3DMeshSkeleton *bem3d_mesh_skeleton_new(BEM3DMesh *m, gint order_max)
   s->npts = s->nelem*order_max + s->nnodes ;
   s->ppe = bem3d_mesh_element_node_number_max(m) ;
 
-  s->x = (gdouble *)g_malloc(((s->npts)*6 + 
+  s->x = (gdouble *)g_malloc0(((s->npts)*6 + 
 			      s->nelem*order_max*s->ppe)*sizeof(gdouble)) ;
   s->n = &(s->x[3*(s->npts)]) ;
   s->w = &(s->n[3*(s->npts)]) ;
 
-  s->idx = (gint *)g_malloc(s->nelem*order_max*s->ppe*sizeof(gint)) ;
+  s->idx = (gint *)g_malloc0(s->nelem*order_max*s->ppe*sizeof(gint)) ;
 
   bem3d_mesh_index_range(m, &(s->imin), &(s->imax)) ;
   
@@ -116,7 +116,6 @@ static gint source_points(BEM3DElement *e, gpointer data[])
   gdouble L[32], dLds[32], dLdt[32], s, t, w, J ;
   gint i, j ;
   GtsPoint y ;
-  GtsVector n ;
 
   g_hash_table_insert(skel->e, (gpointer)e, GINT_TO_POINTER(skel->ns)) ;
   for ( i = 0 ; i < bem3d_quadrature_vertex_number(q) ; i ++ ) {
@@ -125,24 +124,15 @@ static gint source_points(BEM3DElement *e, gpointer data[])
     w = bem3d_quadrature_weight(q,i) ;
     shfunc(s, t, L, dLds, dLdt, NULL) ;
     bem3d_element_position(e, L, &y) ;
-    bem3d_element_normal(e, dLds, dLdt, n, &J) ;
+    bem3d_element_normal(e, dLds, dLdt, &(skel->n[3*(skel->ns)+0]), &J) ;
 
     skel->x[3*(skel->ns)+0] = y.x ;
     skel->x[3*(skel->ns)+1] = y.y ;
     skel->x[3*(skel->ns)+2] = y.z ;
 
-    skel->n[3*(skel->ns)+0] = n[0] ;
-    skel->n[3*(skel->ns)+1] = n[1] ;
-    skel->n[3*(skel->ns)+2] = n[2] ;
-
     cpfunc(s, t, L, NULL, NULL, NULL) ;
     
     for ( j = 0 ; j < bem3d_element_node_number(e) ; j ++ ) {
-      /* if ( !(w*L[j]*J > 0.0) ) { */
-      /* 	g_error("%: weight=%lg; L=%lg; J=%lg", */
-      /* 		__FUNCTION__, w, L[j], J) ; */
-      /* } */
-      /* g_assert(w*L[j]*J > 0.0) ; */
       skel->w[(skel->ppe)*(skel->ns)+j] = w*L[j]*J ;
       skel->idx[(skel->ppe)*(skel->ns)+j] = 
 	bem3d_element_global_index(e, j) - skel->imin ;
@@ -269,12 +259,11 @@ gint bem3d_mesh_skeleton_read(BEM3DMeshSkeleton *s, FILE *f)
 {
   gint i, j, *idx ;
   gdouble *w ;
-
-  /* g_assert_not_reached() ; /\*untested, uncompleted code*\/ */
-
+  BEM3DElement *e, *e1 ;
+  
   fscanf(f, "%d %d %d %d %d %d %d %d %d\n",
 	 &(s->nnodes), &(s->nelem), &(s->npts), &(s->order),
-	  &(s->ns), &(s->nt), &(s->imin),
+	 &(s->ns), &(s->nt), &(s->imin),
 	 &(s->imax), &(s->ppe)) ;
 
   for ( i = 0 ; i < s->ns+s->nt ; i ++ ) {
@@ -288,9 +277,17 @@ gint bem3d_mesh_skeleton_read(BEM3DMeshSkeleton *s, FILE *f)
     for ( j = 0 ; j < s->ppe ; j ++ ) {
       fscanf(f, "%d %lg ", &(idx[j]), &(w[j])) ;
     }
-    /* ftf(f, "\n") ; */
   }
 
+  e1 = NULL ;
+  for ( i = 0 ; i < s->ns ; i ++ ) {
+    e = bem3d_mesh_element_from_indices(s->m, &(s->idx[i*s->ppe]), s->ppe) ;
+    if ( e != e1 ) {
+      g_hash_table_insert(s->e, (gpointer)e, GINT_TO_POINTER(i)) ;
+      e1 = e ;
+    }
+  }
+  
   return 0 ;
 }
 

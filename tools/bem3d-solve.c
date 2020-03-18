@@ -41,6 +41,8 @@
 #include <gsl/gsl_complex.h>
 #include <gsl/gsl_complex_math.h>
 
+gchar *progname ;
+
 static void read_real_matrices(FILE *f, gint n, 
 			       sisl_matrix_t *A, sisl_matrix_t *B)
 
@@ -389,8 +391,10 @@ static sisl_matrix_t *read_surface_matrix(FILE *f, gdouble *Ad,
   read surface property data and return the corresponding surface
   matrix, with default diagonal entries Ad (real or complex, which is
   why it's a pointer); currently only implemented for diagonal
-  matrices corresponding to locally-reacting boundary conditions;
-  returns NULL on error, which must be checked for.
+  matrices corresponding to locally-reacting boundary conditions, and
+  for sparse non-local boundary conditions;
+
+ returns NULL on error, which must be checked for.
 
   Input syntax, header:
 
@@ -457,6 +461,81 @@ static sisl_matrix_t *read_surface_matrix(FILE *f, gdouble *Ad,
   return A ;
 }
 
+static gint parse_fmm_file(FILE *f, gchar **self_file, gchar **skel_file)
+
+{
+  gchar line[1024] ;
+
+  *self_file = *skel_file = NULL ;
+  while ( (fscanf(f, "%[^\n]c", line) != EOF) &&
+	  ((*self_file == NULL) || (*skel_file == NULL)) ) {
+    if ( strncmp(line, "self:", 5) == 0 ) {
+      *self_file = g_strdup(&(line[6])) ;
+    }
+    if ( strncmp(line, "skeleton:", 9) == 0 ) {
+      *skel_file = g_strdup(&(line[10])) ;
+    }
+    fscanf(f, "%*c") ;
+  }
+  
+  if ( *skel_file == NULL || *self_file == NULL ) {
+    fprintf(stderr,
+	    "%s: could not find skeleton and/or self-term files\n",
+	    progname) ;
+  }
+  
+  return 0 ;
+}
+
+static gint read_self_file(gchar *file, gdouble *C, gint n)
+
+{
+  FILE *f ;
+  gint i, j ;
+  gdouble tmp ;
+  
+  f = fopen(file, "r") ;
+  if ( f == NULL ) {
+    fprintf(stderr, "%s: cannot open file %s for self terms\n",
+	    progname, file) ;
+    exit(1) ;
+  }
+
+  fscanf(f, "self: %d\n", &i) ;
+  if ( i != n ) {
+    fprintf(stderr,
+	    "%s: self-file (%s) header (%d) does not match problem size (%d)\n",
+	    progname, file, i, n) ;
+  }
+  for ( i = 0 ; i < n ; i ++ ) {
+    fscanf(f, "%d %lg\n", &j, &tmp) ;
+    C[j] = tmp ;
+  }
+  
+  fclose(f) ;
+
+  return 0 ;
+}
+
+static gint read_skel_file(gchar *file, BEM3DMeshSkeleton *s)
+
+{
+  FILE *f ;
+  
+  f = fopen(file, "r") ;
+  if ( f == NULL ) {
+    fprintf(stderr, "%s: cannot open file %s for mesh skeleton\n",
+	    progname, file) ;
+    exit(1) ;
+  }
+
+  bem3d_mesh_skeleton_read(s, f) ;
+  
+  fclose(f) ;
+  
+  return 0 ;
+}
+
 gint main(gint argc, gchar **argv)
 
 {
@@ -472,9 +551,10 @@ gint main(gint argc, gchar **argv)
   sisl_solver_performance_t perf ;
   sisl_complex_t rc ;
   gchar *ipfile, *opfile, *matfile, *datfile, solver_name[256] ;
+  gchar *skel_file, *self_file ;
   FILE *input, *output ;
   GtsFile *fp ;
-  gchar *progname, ch, p[32], *surface_alpha_file, *surface_beta_file ;
+  gchar ch, p[32], *surface_alpha_file, *surface_beta_file ;
   gint np, i, j, mstride, solver ;
   guint imin, imax, itmp0, itmp1 ;
   gsl_complex zc, ac ;
@@ -635,7 +715,6 @@ gint main(gint argc, gchar **argv)
     /*set up the matrices for fast multipole solver*/
     BEM3DMeshSkeleton *skel ;
     BEM3DQuadratureRule *quad ;
-    BEM3DAverage anorm = BEM3D_AVERAGE_MWAAT; /* BEM3D_AVERAGE_MWA ; */
     BEM3DFMMMatrix *mtx ;
     gpointer Adata[4] ;
     gint order ;
@@ -671,21 +750,14 @@ gint main(gint argc, gchar **argv)
 
     m = g_ptr_array_index(meshes, 0) ;
 
-    quad = bem3d_quadrature_rule_new(order, 1) ;
-    if ( order < 7 ) 
-      bem3d_quadrature_rule_gauss(NULL, bem3d_mesh_element_sample(m), quad, 
-				  NULL, NULL, &order, NULL) ;
-    else
-      bem3d_quadrature_rule_wx(NULL, bem3d_mesh_element_sample(m), quad, 
-			       NULL, NULL, &order, NULL) ;    
+    parse_fmm_file(input, &self_file, &skel_file) ;
 
-    if ( wmpi_rank() == 0 ) 
-      fprintf(stderr, "%s: generating mesh skeleton: t=%f\n",
-	      progname, g_timer_elapsed(t, NULL)) ;
-
+    /* fprintf(stderr, "self: %s\n", self_file) ; */
+    /* fprintf(stderr, "skel: %s\n", skel_file) ; */
+    
     skel = bem3d_mesh_skeleton_new(m, order) ;
-    bem3d_mesh_skeleton_init(skel, quad, anorm) ;
-
+    read_skel_file(skel_file, skel) ;
+			     
     if ( wmpi_rank() == 0 ) 
       fprintf(stderr, "%s: initializing corrected FMM matrix: t=%f\n",
 	      progname, g_timer_elapsed(t, NULL)) ;
@@ -696,7 +768,7 @@ gint main(gint argc, gchar **argv)
 			       skel, config, &param, r_correct, work) ;
     mtx->tol = config->fmm_tol ;
 
-    for ( i = 0 ; i < np ; i ++ ) fscanf(input, "%*d %lg", &(mtx->C[i])) ;
+    read_self_file(self_file, mtx->C, np) ;
     
     Adata[0] = mtx ;
     Adata[1] = bem3d_fmm_workspace_alloc(config->fmm, skel, config) ;
@@ -829,10 +901,8 @@ gint main(gint argc, gchar **argv)
   sisl_vector_set_length(v2, np) ;
 
   /*initialize the right hand side*/
-  /* if ( config->solver == BEM3D_SOLVER_DIRECT ) {   */
-    sisl_matrix_vector_mul(surface_alpha, phi, v1) ;
-    sisl_matrix_vector_mul(surface_beta, v1, v2) ;
-  /* } */
+  sisl_matrix_vector_mul(surface_alpha, phi, v1) ;
+  sisl_matrix_vector_mul(surface_beta, v1, v2) ;
   sisl_vector_sub(v2, dphi) ;
   sisl_matrix_vector_mul(B, v2, rhs) ;
 
@@ -840,15 +910,6 @@ gint main(gint argc, gchar **argv)
   sisl_vector_copy(v1, phi) ;
   
   w = sisl_solver_workspace_new() ;
-
-#ifdef FMM_MATRIX_CHECK
-  sisl_matrix_vector_mul(A, rhs, dphi) ;
-
-  i = 0 ; 
-  zc = sisl_vector_get_complex(dphi,i) ;      
-  fprintf(stderr, "%lg %lg\n", GSL_REAL(zc), GSL_IMAG(zc)) ;
-
-#endif /*FMM_MATRIX_CHECK*/
 
   if ( sisl_is_real(phi) ) sisl_vector_set_all(phi, 0.0) ;
   else sisl_vector_set_all_complex(phi, GSL_COMPLEX_ZERO) ;

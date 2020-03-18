@@ -268,13 +268,13 @@ BEM3DQuadratureRule *bem3d_quadrature_rule_new(gint n, gint nc)
   g_return_val_if_fail(n >= 0, NULL) ;
   g_return_val_if_fail(nc > 0, NULL) ;
 
-  q = (BEM3DQuadratureRule *)g_malloc(sizeof(BEM3DQuadratureRule)) ;
+  q = (BEM3DQuadratureRule *)g_malloc0(sizeof(BEM3DQuadratureRule)) ;
   q->nmax = n ; q->n = 0 ; q->nc = nc ;
 
   q->nfree = 0 ; q->nfree_max = 32 ; q->wfree = 1 ;
 
   if ( n != 0 )
-    q->rule = (gdouble *)g_malloc(3*nc*n*sizeof(gdouble)) ;
+    q->rule = (gdouble *)g_malloc0(3*nc*n*sizeof(gdouble)) ;
   else
     q->rule = NULL ;
 
@@ -317,7 +317,7 @@ gint bem3d_quadrature_rule_realloc(BEM3DQuadratureRule *q, gint n)
 
   g_free(q->rule) ;
   q->nmax = n ; q->n = 0 ;
-  q->rule = (gdouble *)g_malloc(3*n*(q->nc)*sizeof(gdouble)) ;
+  q->rule = (gdouble *)g_malloc0(3*n*(q->nc)*sizeof(gdouble)) ;
 
   return BEM3D_SUCCESS ;
 }
@@ -770,7 +770,7 @@ static gint _bem3d_polar_triangle_rule(gqr_rule_t *gN,
   /*cache the new rule*/
   g_array_append_val(cache_mn, M) ;
   g_array_append_val(cache_mn, N) ;
-  rule = (gdouble *)g_malloc(3*M*N*sizeof(gdouble)) ;
+  rule = (gdouble *)g_malloc0(3*M*N*sizeof(gdouble)) ;
   memcpy(rule, zeta, M*N*sizeof(gdouble)) ;
   memcpy(&rule[M*N], eta, M*N*sizeof(gdouble)) ;
   memcpy(&rule[2*M*N], w, M*N*sizeof(gdouble)) ;

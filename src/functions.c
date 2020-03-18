@@ -658,11 +658,11 @@ static gint bem3d_function_apply_index(BEM3DFunction *func,
   }
   
   if ( g == NULL ) 
-    vars = (gchar **)g_malloc((4*bem3d_mesh_data_element_number(f)+
+    vars = (gchar **)g_malloc0((4*bem3d_mesh_data_element_number(f)+
 			       BEM3D_FUNCTION_NRESERVED)*
 			      sizeof(gchar *)) ;
   else
-    vars = (gchar **)g_malloc((4*bem3d_mesh_data_element_number(f)+
+    vars = (gchar **)g_malloc0((4*bem3d_mesh_data_element_number(f)+
 			       4*bem3d_mesh_data_element_number(g)+
 			       BEM3D_FUNCTION_NRESERVED)*
 			      sizeof(gchar *)) ;
@@ -1007,7 +1007,7 @@ gint bem3d_function_integral_weights(BEM3DFunction *func,
   nvals = BEM3D_FUNCTION_NRESERVED + 4*bem3d_mesh_data_element_number(f) ;
   g_assert(nvals < 128) ;
 
-  vars = (gchar **)g_malloc(nvals*sizeof(gchar *)) ;
+  vars = (gchar **)g_malloc0(nvals*sizeof(gchar *)) ;
   /*reserved names (x, y, z, etc)*/
   off = 0 ;
   for ( i = 0 ; i < BEM3D_FUNCTION_NRESERVED ; i ++ )     
@@ -1097,7 +1097,7 @@ gint bem3d_function_eval_point(BEM3DFunction *func,
   nvals = BEM3D_FUNCTION_NRESERVED + 4*nres ;
   g_assert(nvals < 128) ;
 
-  vars = (gchar **)g_malloc(nvals*sizeof(gchar *)) ;
+  vars = (gchar **)g_malloc0(nvals*sizeof(gchar *)) ;
   /*reserved names (x, y, z, etc)*/
   off = 0 ;
   for ( i = 0 ; i < BEM3D_FUNCTION_NRESERVED ; i ++ )     

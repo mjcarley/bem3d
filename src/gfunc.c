@@ -617,7 +617,7 @@ BEM3DParameters *bem3d_parameters_new(void)
 {
   BEM3DParameters *p ;
 
-  p = (BEM3DParameters *)g_malloc(sizeof(BEM3DParameters)) ;
+  p = (BEM3DParameters *)g_malloc0(sizeof(BEM3DParameters)) ;
 
   memset(p->f,0,BEM3D_PARAMETERS_REAL_SIZE*sizeof(gdouble)) ;
   memset(p->n,0,BEM3D_PARAMETERS_INT_SIZE*sizeof(gint)) ;

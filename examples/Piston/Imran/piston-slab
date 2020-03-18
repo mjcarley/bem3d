@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#gmsh -2 slab.geo
+#msh2bem3d -a 89 < slab.msh > slab.bem 2> output
+#nnodes=`grep index output | cut -d: -f3`
+
+#gmsh -2 piston.geo
+#msh2bem3d -n ${nnodes} < piston.msh > piston.bem
+
+k=1.0
+srcfunc=point.fn
+
+bem3d-function -s "k=${k}" -E 2 -F piston.fn -i piston.bem \
+     -o piston.mtx -S0,1 -w
+
+#bem3d-assemble -C piston.cfg -k ${k} -i slab.bem -i piston.bem \
+#	       -o piston-slab.mtx 
+
+bem3d-function -E 4 -i slab.bem -i piston.bem -F ${srcfunc} \
+	       -s "k=${k}" -o bc.dat
+
+bem3d-solve -C piston.cfg -k ${k} -m piston-slab.mtx -A piston.mtx \
+	    -d bc.dat -o solution.dat 
+
+bem3d-function -E 4 -s "k=${k}" -F total.fn -d bc.dat -e solution.dat \
+               -i slab.bem -i piston.bem  -o surface.dat
+
+bem3d2msh -n 5000 -f 0 -i piston.bem -d surface.dat -o piston-vel.msh
+bem3d2msh -f 0 -i slab.bem -d surface.dat -o slab-vel.msh
+
