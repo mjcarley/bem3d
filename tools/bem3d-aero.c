@@ -126,7 +126,8 @@ static gint element_assemble(BEM3DElement *e, gpointer data[])
     G = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
     dGdn = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
   }
-  
+
+  bem3d_parameters_quadrature_tol(&pm) = config->quad_tol ;
   g_array_set_size(G,bem3d_element_node_number(e)) ; 
   g_array_set_size(dGdn,bem3d_element_node_number(e)) ;
   bem3d_element_assemble_equations(e, p, config, &pm, G, dGdn, work) ;
@@ -164,6 +165,7 @@ static gint self_assemble(BEM3DElement *e, gpointer data[])
     dGdn = g_array_new(TRUE, TRUE, sizeof(gdouble)) ;
   }
   
+  bem3d_parameters_quadrature_tol(&pm) = config->quad_tol ;
   g_array_set_size(G,bem3d_element_node_number(e)) ; 
   g_array_set_size(dGdn,bem3d_element_node_number(e)) ;
   bem3d_element_assemble_equations(e, p, config, &pm, G, dGdn, work) ;
@@ -291,6 +293,7 @@ static gint wake_element_assemble(BEM3DElement *e, gpointer data[])
     dGdn = g_array_new(FALSE, FALSE, sizeof(gdouble)) ;
   }
 
+  bem3d_parameters_quadrature_tol(&pt) = config->quad_tol ;
   g_array_set_size(G,bem3d_element_node_number(e)) ; 
   g_array_set_size(dGdn,bem3d_element_node_number(e)) ;
   bem3d_element_assemble_equations(e, p, config, &pt, G, dGdn, work) ;
@@ -436,10 +439,10 @@ static gint set_bc(gint i, GtsVertex *v, gpointer data[])
   dd = bem3d_mesh_data_get(d,i) ;
   g_array_index(dphi, gdouble, i) = dd[1] = gts_vector_scalar(u,n) ;
 
-  fprintf(stderr, "%d %lg (%lg, %lg, %lg) (%lg, %lg, %lg)\n",
-	  i, dd[1],
-	  n[0], n[1], n[2],
-	  u[0], u[1], u[2]) ;
+  /* fprintf(stderr, "%d %lg (%lg, %lg, %lg) (%lg, %lg, %lg)\n", */
+  /* 	  i, dd[1], */
+  /* 	  n[0], n[1], n[2], */
+  /* 	  u[0], u[1], u[2]) ; */
   
   /* g_assert(!isnan(dd[1])) ; */
   
