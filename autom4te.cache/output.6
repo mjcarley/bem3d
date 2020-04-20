@@ -633,8 +633,9 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIB@&t@OBJS
-amm_tools
 mpi_tools
+wbfmm_libs
+wbfmm_cflags
 wmpi_libs
 wmpi_cflags
 sisl_libs
@@ -649,6 +650,7 @@ libmatheval_LIBS
 libmatheval_CFLAGS
 USE_FMMLIB3D_1_2_FALSE
 USE_FMMLIB3D_1_2_TRUE
+WBFMM
 WMPI
 SISL
 GQR
@@ -12765,7 +12767,9 @@ fi
 
 
 if test x$GCC = xyes ; then
-  CFLAGS="$CFLAGS -Wall -Werror-implicit-function-declaration -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations"
+  CFLAGS="$CFLAGS -Wall -Werror-implicit-function-declaration \
+  		  -Wstrict-prototypes -Wmissing-prototypes \
+		  -Wmissing-declarations"
 fi
 
 ac_ext=f
@@ -16521,21 +16525,6 @@ $as_echo "yes" >&6; }
 	
 fi 
 
-#AC_CHECK_PROG(GSL, gsl-config, yes, no)
-#if test x$GSL = xyes ; then
-#   gsl_cflags=`gsl-config --cflags`
-#   gsl_libs=`gsl-config --libs`
-#else
-#  echo \#################################################################
-#  echo \#
-#  echo \# GNU Scientific Library not available or not properly installed.
-#  echo \# You can get the most recent version from 
-#  echo \#      http://www.gnu.org/software/gsl/
-#  echo \#
-#  echo \#################################################################
-#  exit
-#fi
-
 # Extract the first word of "gqr-config", so it can be a program name with args.
 set dummy gqr-config; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -16717,6 +16706,61 @@ $as_echo "@%:@define HAVE_WMPI 0" >>confdefs.h
   echo \#################################################################
 fi
 
+# Extract the first word of "wbfmm-config", so it can be a program name with args.
+set dummy wbfmm-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_WBFMM+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$WBFMM"; then
+  ac_cv_prog_WBFMM="$WBFMM" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_WBFMM="yes"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_prog_WBFMM" && ac_cv_prog_WBFMM="no"
+fi
+fi
+WBFMM=$ac_cv_prog_WBFMM
+if test -n "$WBFMM"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $WBFMM" >&5
+$as_echo "$WBFMM" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+if test x$WBFMM = xyes ; then
+   
+$as_echo "@%:@define HAVE_WBFMM 1" >>confdefs.h
+
+   wbfmm_cflags=`wbfmm-config --cflags`
+   wbfmm_libs=`wbfmm-config --libs`
+else
+  
+$as_echo "@%:@define HAVE_WBFMM 0" >>confdefs.h
+
+  echo \#################################################################
+  echo \#
+  echo \# WBFMM not found: wide-band FMM not available
+  echo \#
+  echo \#################################################################
+fi
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for fmmlib3d-1.2" >&5
 $as_echo_n "checking for fmmlib3d-1.2... " >&6; }
 if ${ac_cv_file_fmmlib3d_1_2+:} false; then :
@@ -16810,13 +16854,31 @@ fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$libmatheval_PKG_ERRORS" >&5
 
-	echo libmatheval not available
-	
+	as_fn_error $? "Package requirements (libmatheval) were not met:
+
+$libmatheval_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables libmatheval_CFLAGS
+and libmatheval_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5        
 elif test $pkg_failed = untried; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-	echo libmatheval not available
-	
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables libmatheval_CFLAGS
+and libmatheval_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }        
 else
 	libmatheval_CFLAGS=$pkg_cv_libmatheval_CFLAGS
 	libmatheval_LIBS=$pkg_cv_libmatheval_LIBS
@@ -16825,7 +16887,8 @@ $as_echo "yes" >&6; }
 	
 $as_echo "@%:@define HAVE_LIBMATHEVAL 1" >>confdefs.h
 
-#	matheval_defines="#define BEM3D_HAVE_MATHEVAL"
+	echo libmatheval not available
+	
 fi
 
 
@@ -16843,8 +16906,11 @@ fi
 
 
 
-CFLAGS="$CFLAGS $libmatheval_CFLAGS $gts_cflags $gqr_cflags $GSL_CFLAGS"
-LDFLAGS="$LDFLAGS $gts_libs $gqr_libs $GSL_LIBS"
+
+CFLAGS="$CFLAGS $libmatheval_CFLAGS $gts_cflags $gqr_cflags $GSL_CFLAGS \
+		$sisl_cflags $wbfmm_cflags $wmpi_cflags"
+LDFLAGS="$LDFLAGS $gts_libs $gqr_libs $GSL_LIBS $wmpi_libs $sisl_libs \
+		  $wbfmm_libs"
 
 
 

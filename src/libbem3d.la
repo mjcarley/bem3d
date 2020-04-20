@@ -17,7 +17,7 @@ old_library='libbem3d.a'
 inherited_linker_flags=' -pthread -fopenmp'
 
 # Libraries that this one depends upon.
-dependency_libs=' -L/home/ensmjc/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../.. /home/ensmjc/Codes/lib/libwmpi_s.la /home/ensmjc/Codes/lib/libsisl.la /home/ensmjc/Codes/lib/libwbfmm-base.la /home/ensmjc/Codes/lib/libwbfmm.la /home/ensmjc/Codes/lib/libgqr.la -llapack -lcblas -lf77blas -latlas -lgfortran -lquadmath -lgsl -lgslcblas -L/usr/local/lib64 /usr/local/lib64/libmatheval.la -lfl /usr/lib64/gcc/x86_64-slackware-linux/8.2.0/../../../../lib64/libgts.la -lgthread-2.0 -lgmodule-2.0 -lglib-2.0 -lm'
+dependency_libs=' -L/home/michael/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. /home/michael/Codes/lib/libwmpi_s.la /home/michael/Codes/lib/libsisl.la -L/usr/lib64 /home/michael/Codes/lib/libwbfmm-base.la /home/michael/Codes/lib/libwbfmm.la /home/michael/Codes/lib/libgqr.la /usr/lib64/libgsl.la /usr/lib64/libgslcblas.la /usr/lib64/../lib64/libgfortran.la -llapack -lcblas -lf77blas -latlas /usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64/libgfortran.la /usr/lib64/../lib64/libquadmath.la /usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64/libquadmath.la /usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64/libgsl.la /usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64/libgslcblas.la /home/michael/Codes/lib/libmatheval.la /usr/lib64/libfl.la /usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64/libgts.la /usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64/libgthread-2.0.la /usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64/libgmodule-2.0.la -ldl /usr/lib64/libglib-2.0.la /usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64/libglib-2.0.la -lpthread -lm'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/ensmjc/Codes/lib'
+libdir='/home/michael/Codes/lib'

@@ -1,6 +1,6 @@
 /* bem3d-field.c
  * 
- * Copyright (C) 2006, 2008, 2018, 2019 Michael Carley
+ * Copyright (C) 2006, 2008, 2018, 2019, 2020 Michael Carley
  * 
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <unistd.h>
 #include <mcheck.h>

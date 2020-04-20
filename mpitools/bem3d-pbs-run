@@ -2,7 +2,7 @@
 
 # mpitools/bem3d-pbs-run.  Generated from bem3d-pbs-run.in by configure.
 
-prefix=/home/ensmjc/Codes
+prefix=/home/michael/Codes
 exec_prefix=${prefix}
 
 export JOBNAME=$1

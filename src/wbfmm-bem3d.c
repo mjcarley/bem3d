@@ -76,13 +76,23 @@ gint _bem3d_fmm_helmholtz_wbfmm(BEM3DFastMultipole solver,
 
     tree = wbfmm_tree_new(xtree, D, s->ns) ;
     w->p[0] = tree ;
+    wbfmm_tree_source_size(tree) = 1 ;
+    wbfmm_tree_problem(tree) = WBFMM_PROBLEM_HELMHOLTZ ;
 
     order_max = 0 ;
-    for ( i = 1 ; i <= depth ; i ++ ) {
-      order[2*i+0] = order[2*i+1] =
-	wbfmm_truncation_number(tree, k, i, tol) ;
-      order_max = MAX(order_max, order[2*i+0]) ;
-      order_max = MAX(order_max, order[2*i+1]) ;      
+    /* for ( i = 1 ; i <= depth ; i ++ ) { */
+    /*   order[2*i+0] = order[2*i+1] = */
+    /* 	wbfmm_truncation_number(tree, k, i, tol) ; */
+    /*   order_max = MAX(order_max, order[2*i+0]) ; */
+    /*   order_max = MAX(order_max, order[2*i+1]) ;       */
+    /* } */
+    order_max = 8 ;
+    for ( i = depth ; i >= 1 ; i -- ) {
+      order[2*i+0] = order[2*i+1] = order_max ;
+      order_max += 4 ;
+      /* 	wbfmm_truncation_number(tree, k, i, tol) ; */
+      /* order_max = MAX(order_max, order[2*i+0]) ; */
+      /* order_max = MAX(order_max, order[2*i+1]) ;       */
     }
 
     nda = wbfmm_element_number_rotation(2*order_max) ;
@@ -94,7 +104,7 @@ gint _bem3d_fmm_helmholtz_wbfmm(BEM3DFastMultipole solver,
     
     wbfmm_shift_angle_table_init() ;
 
-    shifts = wbfmm_shift_operators_new(order_max, w->d) ;
+    shifts = wbfmm_shift_operators_new(order_max, TRUE, w->d) ;
     w->p[1] = shifts ;
 
     for ( i = 1 ; i <= depth ; i ++ ) {
@@ -157,9 +167,9 @@ gint _bem3d_fmm_helmholtz_wbfmm(BEM3DFastMultipole solver,
     b = wbfmm_point_box(tree, tree->depth, &(xt[i*3])) ;
     phi[0] = phi[1] = 0.0 ;
     wbfmm_tree_box_local_field(tree, tree->depth, b, k, 
-			       &(xt[i*3]), phi,
+			       &(xt[i*3]), phi, 2,
 			       q, 2, normals, 3, dq, 2,
-			       TRUE, w->d) ;
+			       TRUE, WBFMM_FIELD_SCALAR, w->d) ;
     p[2*i+0] = phi[0] ; p[2*i+1] = phi[1] ;
   }
   
