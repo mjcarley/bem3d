@@ -716,13 +716,12 @@ gint main(gint argc, gchar **argv)
   } else {
     /*set up the matrices for fast multipole solver*/
     BEM3DMeshSkeleton *skel ;
-    BEM3DQuadratureRule *quad ;
     BEM3DFMMMatrix *mtx ;
     gpointer Adata[4] ;
     gint order ;
     gdouble r_correct ;
 
-    g_assert(config->fmm == solver) ;
+    /* g_assert(config->fmm == solver) ; */
     g_assert(meshes->len > 0) ;
 
     imin = itmp0 ; imax = itmp1 ;
@@ -764,7 +763,8 @@ gint main(gint argc, gchar **argv)
       fprintf(stderr, "%s: initializing corrected FMM matrix: t=%f\n",
 	      progname, g_timer_elapsed(t, NULL)) ;
 
-    mtx = bem3d_fmm_matrix_new(solver, 
+    mtx = bem3d_fmm_matrix_new(config->fmm,
+			       /* solver,  */
 			       (rc == SISL_REAL ? 
 				BEM3D_FMM_LAPLACE : BEM3D_FMM_HELMHOLTZ),
 			       skel, config, &param, r_correct, work) ;
