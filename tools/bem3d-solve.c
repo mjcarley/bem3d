@@ -478,10 +478,12 @@ static gint parse_fmm_file(FILE *f, gchar **self_file, gchar **skel_file)
     fscanf(f, "%*c") ;
   }
   
-  if ( *skel_file == NULL || *self_file == NULL ) {
-    fprintf(stderr,
-	    "%s: could not find skeleton and/or self-term files\n",
-	    progname) ;
+  if ( *skel_file == NULL ) {
+    fprintf(stderr, "%s: could not find skeleton file\n", progname) ;
+  }
+
+  if ( *self_file == NULL ) {
+    fprintf(stderr, "%s: could not find self term file\n", progname) ;
   }
   
   return 0 ;

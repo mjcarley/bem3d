@@ -421,6 +421,12 @@ gint main(gint argc, gchar **argv)
   }
 
   if ( f == NULL ) {
+    if ( meshes->len == 0 ) {
+      fprintf(stderr,
+	      "%s: if no data file name is specified (-d), "
+	      "a mesh must be specified\n", progname) ;
+      exit(1) ;
+    }
     m = g_ptr_array_index(meshes, 0) ;
     nnodes = bem3d_mesh_node_number(m) ;
     f = bem3d_mesh_data_new(m, mesh_data_width) ;

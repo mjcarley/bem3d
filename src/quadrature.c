@@ -395,6 +395,7 @@ gdouble bem3d_quadrature_parameter(GtsPoint *p, BEM3DElement *e,
 {
   gdouble Rs, sc = M_SQRT2, Rp, len, s[3], t[3], n[3] ;
   gdouble rmin, rmax, z, x0[2], x1[2], x2[2], x3[2], r01, r02, r03 ;
+  gdouble sigma ;
   gint i, q ;
   GtsPoint y, r0 ;
   GtsPoint *c1, *c2, *c3 ;
@@ -403,10 +404,22 @@ gdouble bem3d_quadrature_parameter(GtsPoint *p, BEM3DElement *e,
 /*   g_debug("%s:", __FUNCTION__) ; */
 
   g_assert(tol > 0.0) ;
-  
-  for ( i = 0 ; i < bem3d_element_vertex_number(e) ; i ++ )
+
+  sigma = 0.0 ;
+  /* for ( i = 0 ; i < bem3d_element_vertex_number(e) ; i ++ ) */
+  /*   if ( nodes_coincide(p, bem3d_element_vertex(e,i)) ) return 0.0 ; */
+  rmin = G_MAXDOUBLE ;
+  for ( i = 0 ; i < bem3d_element_vertex_number(e) ; i ++ ) {
     if ( nodes_coincide(p, bem3d_element_vertex(e,i)) ) return 0.0 ;
 
+    rmin = MIN(gts_point_distance2(p, GTS_POINT(bem3d_element_vertex(e,i))),
+	       rmin) ;
+  }
+
+  sigma = sqrt(rmin/bem3d_element_area(e, 7)) ;
+  
+  return sigma ;
+  
   if ( bem3d_element_corner_number(e) != 3 )
     g_error("%s: only implemented for triangular elements for now",
 	    __FUNCTION__) ;
