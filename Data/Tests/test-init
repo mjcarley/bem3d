@@ -1,0 +1,131 @@
+#!/bin/bash
+
+## initialize data for test cases by generating (if needed) a
+## geometry, reference solution, and boundary conditions
+
+## working directory
+optdcty=.
+## job name
+##optjob=
+## wavenumber option
+optk=0
+## element order
+optorder=1
+## element refinement
+optrefine=
+## GMSH element scaling length
+optlen=0.2
+## source coordinates where required
+optx=0.1
+opty=0.1
+optz=0.1
+## source type for boundary conditions and reference solution
+optsource=point
+## number of entries in boundary condition and reference data
+optwidth=4
+
+function print_usage 
+{
+    echo Initialization of data for BEM3D test calculations
+    echo 
+    echo Usage: $0 options
+    echo Options: 
+}
+
+while [ "$1" ]
+do
+   if [ "$1" = "-d" ]; then
+       optdcty="$2"
+       shift 2
+   elif [ "$1" = "-e" ]; then
+       optorder="$2"
+       shift 2
+   elif [ "$1" = "-j" ]; then
+       optjob="$2"
+       shift 2
+   elif [ "$1" = "-k" ]; then
+       optk="$2"
+       shift 2
+   elif [ "$1" = "-l" ]; then
+       optlen="$2"
+       shift 2
+   elif [ "$1" = "-r" ]; then
+       optrefine=-refine
+       shift 1
+   elif [ "$1" = "-s" ]; then
+       optsource="$2"
+       shift 2
+   elif [ "$1" = "-x" ]; then
+       optx="$2"
+       shift 2
+   elif [ "$1" = "-y" ]; then
+       opty="$2"
+       shift 2
+   elif [ "$1" = "-z" ]; then
+       optz="$2"
+       shift 2
+   elif [ "$1" = "-h" ]; then
+       print_usage ;
+       shift 1
+       exit 1
+   else
+      echo "$0: unrecognized option $1"
+      print_usage ;
+      exit 1
+   fi
+done
+
+if [ -z "${optjob+x}" ]; then
+    echo Job name must be set for test
+    exit 1
+fi
+
+## check for gmsh
+if GMSH=`command -v gmsh`; then
+    echo gmsh is available at ${GMSH}
+    use_gmsh=1
+else
+    echo gmsh not installed
+    use_gmsh=0
+fi
+
+## check for octave
+if OCTAVE=`command -v octave`; then
+    echo octave is available at ${OCTAVE}
+else
+    echo octave not installed
+fi
+
+echo Directory: ${optdcty}
+echo Job: ${optjob}
+echo Element order: ${optorder}
+echo Element length scale: ${optlen}
+echo -n "Element refine: "
+if [[ -z "${optrefine}" ]] ; then
+    echo no
+else
+    echo yes
+fi
+
+cd ${optdcty}
+
+if [ $use_gmsh ]; then
+    ##echo Use gmsh
+    sed -e s/LENSCALE/${optlen}/ ../Geometries/${optjob}.geo.in > ${optjob}.geo
+    ${GMSH} -2 -order ${optorder} ${optrefine} ${optjob}.geo
+    msh2bem3d -a 80 < ${optjob}.msh > ${optjob}.bem
+else
+    echo No use gmsh
+fi
+
+## generate boundary conditions and reference solutions
+## function settings to override internal variables
+optvars="-s k=${optk} -s x0=${optx} -s y0=${opty} -s z0=${optz}"
+
+##echo ${optvars}
+
+bem3d-function ${optvars} -F ../Functions/${optsource}-source.fn \
+	       -E ${optwidth} -i ${optjob}.bem -o ${optjob}.bc
+bem3d-function ${optvars} -F ../Functions/${optsource}-ref.fn \
+	       -E ${optwidth} -i ${optjob}.bem -o ${optjob}.ref
+

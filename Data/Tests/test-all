@@ -1,0 +1,10 @@
+#!/bin/bash
+
+## run the convergence tests for geometries in the directory
+## Geometries, varying the mesh resolution if possible and computing
+## the error norm of the solutions, results are output in the format
+## described in test-errors
+
+./test-errors -k 0.5 -j peanut -d ../Peanut -n 5
+
+./test-errors -j catseye -d ../CatsEye -n 5

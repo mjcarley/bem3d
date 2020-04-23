@@ -1,0 +1,9 @@
+The main documentation for BEM3D is in the doxygen-generated files in .../doc
+
+After installation, you can run a test of the toolchain for accuracy
+and convergence using the scripts in .../Data. The script
+
+./test-all
+
+will run a test on each of a number of different geometries, with mesh
+refinement where possible.

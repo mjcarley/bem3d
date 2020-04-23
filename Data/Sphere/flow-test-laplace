@@ -1,0 +1,29 @@
+#!/bin/bash
+
+## solve Laplace problem for flow over a sphere
+
+funcdir=../Functions
+configdir=../Configurations
+mesh=sphere.bem
+field=flow-grid.bem
+source=${funcdir}/flow-laplace.fn
+config=${configdir}/sphere-laplace.cfg
+gconfig=${configdir}/sphere-laplace-gradient.cfg
+gradient=${funcdir}/gradient-laplace.fn
+
+bem3d2msh < sphere.bem > sphere.msh
+
+#bem3d-assemble -C ${config} -i ${mesh} -o laplace.mtx
+bem3d-function -E 2 -i ${mesh} -F ${source} -o bc-laplace.dat
+bem3d-solve -C ${config} -d bc-laplace.dat -m laplace.mtx \
+	    -o potential.dat
+
+bem3d-field -C ${config} -d potential.dat -i ${mesh} \
+	    -o field.dat -s ${field} 
+bem3d2msh -i flow-grid.bem -d field.dat -o flow-vis.msh
+
+bem3d-field -C ${gconfig} -d potential.dat -i ${mesh} \
+	    -F ${funcdir}/flow-laplace-gradient.fn \
+	    -o gradient.dat -s ${field}
+
+bem3d2msh -f 1 -i ${field} -d gradient.dat -g -o sphere-grad.msh

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+## Test a mesh and configuration (e.g. quadrature rules) for point
+## source boundary conditions by comparing exact and computed
+## solutions on mesh and/or in field
+
+funcdir=../Functions
+configdir=../Configurations
+mesh=sphere.bem
+field=sphere-field.bem
+source=${funcdir}/source-laplace.fn
+config=${configdir}/sphere-laplace.cfg
+gconfig=${configdir}/sphere-laplace-gradient.cfg
+gradient=${funcdir}/gradient-laplace.fn
+
+bem3d-assemble -C ${config} -i ${mesh} -o laplace.mtx
+bem3d-function -E 2 -i ${mesh} -F ${source} -o bc-laplace.dat
+bem3d-solve -C ${config} -d bc-laplace.dat -m laplace.mtx \
+	    -o potential.dat
+
+bem3d-function -E 2 -i ${mesh} -F ${source} -o ref-laplace.dat
+bem3d-function -E 2 -i ${mesh} -F ${funcdir}/compare-real.fn \
+	       -d ref-laplace.dat -e potential.dat -o check.dat
+
+bem3d-field -C ${config} -d potential.dat -i ${mesh} \
+	    -o field.dat -s ${field} 
+bem3d-function -E 2 -i ${field} -F ${source} -o field-laplace.dat
+bem3d-function -E 2 -i ${field} -F ${funcdir}/compare-real.fn \
+	       -d field-laplace.dat -e field.dat -o check-field.dat
+bem3d2msh -i sphere-field.bem -d field.dat -o sphere-vis.msh
+
+bem3d-field -C ${gconfig} -d potential.dat -i ${mesh} \
+	    -o gradient.dat -s ${field} 
+bem3d-function -E 4 -i ${field} -F ${gradient} -o gradient-laplace.dat
+bem3d-function -E 4 -i ${field} -F ${funcdir}/compare-real-vector.fn \
+	       -d gradient-laplace.dat -e gradient.dat -o check-gradient.dat
+bem3d2msh -f 1 -i sphere-field.bem -d gradient.dat -g -o sphere-grad.msh

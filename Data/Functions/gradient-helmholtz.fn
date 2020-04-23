@@ -1,0 +1,16 @@
+BEM3DFunction
+x0 = 0.1
+y0 = 0.0
+z0 = 0.1
+k = 1.0
+R = sqrt((x-x0)^2 + (y-y0)^2 + (z-z0)^2)
+C = cos(k*R)
+S = sin(k*R)
+f[0] = C/R/4/pi
+f[1] = S/R/4/pi
+f[2] = -(C + k*R*S)/4/pi*(x-x0)/R^3
+f[3] =  (k*R*C - S)/4/pi*(x-x0)/R^3
+f[4] = -(C + k*R*S)/4/pi*(y-y0)/R^3
+f[5] =  (k*R*C - S)/4/pi*(y-y0)/R^3
+f[6] = -(C + k*R*S)/4/pi*(z-z0)/R^3
+f[7] =  (k*R*C - S)/4/pi*(z-z0)/R^3

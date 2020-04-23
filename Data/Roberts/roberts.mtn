@@ -1,0 +1,4 @@
+BEM3DMotion
+al = -5*pi/180.0
+x = x0 - cos(al)*t
+y = y0 + sin(al)*t

@@ -1,0 +1,9 @@
+This directory contains a number of geometries and examples which can
+be used to see how to use BEM3D and to check the accuracy and
+convergence of calculations.
+
+Geometries: GMSH files to generate sample geometries
+
+Tests:      scripts to run some basic tests (see README in the directory)
+
+Sphere:     scripts for sphere calculations with finite impedance

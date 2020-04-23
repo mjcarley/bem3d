@@ -1,0 +1,18 @@
+BEM3DFunction
+# mode extraction from a square region
+dx = 0.3
+dy = 0.5
+
+lx = 2*dx
+ly = 2*dy
+
+CX1 = cos(2*pi*1*x/2/dx)
+CY1 = cos(2*pi*1*y/2/dy)
+SX1 = sin(2*pi*1*x/2/dx)
+SY1 = sin(2*pi*1*y/2/dy)
+
+f[0] = 1.0/2/dx/2/dy
+f[1] = 2*CX1/lx/ly
+f[2] = 2*SX1/lx/ly
+f[3] = 2*CY1/lx/ly
+f[4] = 2*SY1/lx/ly

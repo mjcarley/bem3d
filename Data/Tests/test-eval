@@ -1,0 +1,97 @@
+#!/bin/bash
+
+## perform accuracy test using data initialized by test-init
+
+## working directory
+optdcty=.
+## job name
+##optjob=
+## wavenumber option
+optk=0
+## real (1) or complex (2) problem
+optreal=2
+## source type for boundary conditions and reference solution
+optsource=point
+
+optconfig=../Configurations/direct.cfg
+
+function print_usage 
+{
+    echo BEM3D test calculations using data from test-init
+    echo 
+    echo Usage: $0 options
+    echo Options: 
+}
+
+while [ "$1" ]
+do
+   if [ "$1" = "-d" ]; then
+       optdcty="$2"
+       shift 2
+   elif [ "$1" = "-j" ]; then
+       optjob="$2"
+       shift 2
+   elif [ "$1" = "-k" ]; then
+       optk="$2"
+       optreal=2
+       shift 2
+   elif [ "$1" = "-s" ]; then
+       optsource="$2"
+       shift 2
+   elif [ "$1" = "-h" ]; then
+       print_usage ;
+       shift 1
+       exit 1
+   else
+      echo "$0: unrecognized option $1"
+      print_usage ;
+      exit 1
+   fi
+done
+
+## number of entries in boundary condition and reference data
+optwidth=$((optreal*2))
+
+if [ -z "${optjob+x}" ]; then
+    echo Job name must be set for test
+    exit 1
+fi
+
+if [ ! -z "${optk}" ]; then
+    optionk="-k ${optk}"
+else
+    optionk=
+fi
+
+cd ${optdcty}
+
+bem3d-assemble ${optionk} -C ${optconfig} -i ${optjob}.bem -o ${optjob}.mtx
+
+bem3d-solve -C ${optconfig} -m ${optjob}.mtx -d ${optjob}.bc -o ${optjob}.dat
+
+bem3d-function -F ../Functions/diff-${optreal}.fn -d ${optjob}.dat \
+	       -e ${optjob}.ref -r max -i ${optjob}.bem -o scratch.dat \
+	       > error.dat
+bem3d-function -F ../Functions/abs-${optreal}.fn -d ${optjob}.ref \
+	       -r max -i ${optjob}.bem -o scratch.dat \
+	       > abs.dat
+
+if [ "$optreal" = "2" ]; then
+    absmax=`cut -d " " -f 3 abs.dat`
+    absmax=`sed -E 's/([+-]?[0-9.]+)[eE]\+?(-?)([0-9]+)/(\1*10^\2\3)/g' \
+    <<< "$absmax"`
+    ##echo ${absmax}
+    ereal=`cut -d " " -f 3 error.dat`
+    ereal=`sed -E 's/([+-]?[0-9.]+)[eE]\+?(-?)([0-9]+)/(\1*10^\2\3)/g' \
+    <<< "$ereal"`
+    ##echo ${ereal}
+    eimag=`cut -d " " -f 5 error.dat`
+    eimag=`sed -E 's/([+-]?[0-9.]+)[eE]\+?(-?)([0-9]+)/(\1*10^\2\3)/g' \
+    <<< "$eimag"`
+    ##echo ${eimag}
+    err=`echo sqrt\(${ereal}*${ereal}+${eimag}*${eimag}\)/${absmax} | \
+    bc -l`
+    echo ${err}
+else
+    echo Real problem
+fi

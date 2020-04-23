@@ -1,0 +1,89 @@
+#!/bin/bash
+
+## run convergence tests on spherical geometry generated using BEM3D
+## internal geometry generator
+
+
+optjob=sphere
+optdcty=../Sphere
+optk=1.0
+
+optrefine=2
+optnsteps=3
+
+## source coordinates where required
+optx=0.1
+opty=0.1
+optz=0.1
+## source type for boundary conditions and reference solution
+optsource=point
+## number of entries in boundary condition and reference data
+optwidth=4
+
+function print_usage 
+{
+    echo Run BEM3D convergence and accuracy tests
+    echo 
+    echo Usage: $0 options
+    echo Options: 
+}
+
+while [ "$1" ]
+do
+   if [ "$1" = "-d" ]; then
+       optdcty="$2"
+       shift 2
+   elif [ "$1" = "-j" ]; then
+       optjob="$2"
+       shift 2
+   elif [ "$1" = "-k" ]; then
+       optk="$2"
+       optreal=2
+       shift 2
+   elif [ "$1" = "-n" ]; then
+       optnsteps="$2"
+       shift 2
+   elif [ "$1" = "-r" ]; then
+       optrefine="$2"
+       shift 2
+   elif [ "$1" = "-h" ]; then
+       print_usage ;
+       shift 1
+       exit 1
+   else
+      echo "$0: unrecognized option $1"
+      print_usage ;
+      exit 1
+   fi
+done
+
+echo Directory: ${optdcty}
+echo Job: ${optjob}
+echo Wavenumber: ${optk}
+echo Element initial length scale: ${optlenmax}
+echo Number of steps: ${optnsteps}
+
+opfile=${optjob}-errors.dat
+
+refine=${optrefine}
+
+rm -f ${opfile}
+touch ${opfile}
+
+optvars="-s k=${optk} -s x0=${optx} -s y0=${opty} -s z0=${optz}"
+
+for (( i=1; i<=${optnsteps}; i++ )) do
+    echo Refinement: ${refine}
+    bem3d-sphere -r ${refine} > ${optdcty}/${optjob}.bem
+    bem3d-function ${optvars} -F ../Functions/${optsource}-source.fn \
+		   -E ${optwidth} -i ${optdcty}/${optjob}.bem \
+		   -o ${optdcty}/${optjob}.bc
+    bem3d-function ${optvars} -F ../Functions/${optsource}-ref.fn \
+		   -E ${optwidth} -i ${optdcty}/${optjob}.bem \
+		   -o ${optdcty}/${optjob}.ref
+    lmean=`gtscheck -v < ${optdcty}/${optjob}.bem 2>&1 >/dev/null | \
+	grep length | cut -d" " -f 10`
+    echo -n "${refine} ${lmean} " >> ${opfile}
+    ./test-eval -k ${optk} -d ${optdcty} -j ${optjob} >> ${opfile}
+    ((refine++))
+done

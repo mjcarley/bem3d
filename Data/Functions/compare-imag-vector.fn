@@ -1,0 +1,7 @@
+BEM3DFunction
+f[0] = abs(f[0]-g[0])
+f[1] = abs(f[1]-g[1])
+f[2] = abs(f[2]-g[2])
+f[3] = abs(f[3]-g[3])
+f[4] = abs(f[4]-g[4])
+f[5] = abs(f[5]-g[5])

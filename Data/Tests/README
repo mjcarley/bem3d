@@ -1,0 +1,11 @@
+Basic tests of the installation, checking accuracy and
+convergence. Results of oconvergence tests are output as refinement
+data and L_\infty norm of error, calculated as difference between
+exact and computed solution for internal point source excitation (see
+test-errors for format).
+
+test-all:    convergence tests for GMSH geometries in ../Geometries
+
+sphere-test: convergence test for hard sphere, using BEM3D native
+	     spherical geometry generator
+

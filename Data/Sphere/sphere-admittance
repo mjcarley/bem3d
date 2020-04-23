@@ -1,0 +1,54 @@
+#!/bin/bash
+
+k=0.9
+radius=1.2
+beta_r=1.4
+beta_i=-0.3
+optk="-k ${k}"
+optr="-r 4"
+job=sphere
+funcdir=../Functions
+
+# beta is specific impedance as in the Morse and Ingard formula;
+# this adjusts to surface impedance for the boundary condition
+admittance_r=`echo  ${beta_i}*${k} | bc -l`
+admittance_i=`echo -${beta_r}*${k} | bc -l`
+
+sed s/ADMITTANCE/${admittance_r}+j${admittance_i}/ ${job}.cfg.in > ${job}.cfg
+
+## generate a spherical mesh of the required radius and refinement
+bem3d-sphere -R ${radius} ${optr} > ${job}.bem
+
+## assemble the solution matrix
+bem3d-assemble ${optk} -C ${job}.cfg -i ${job}.bem -o ${job}.mtx
+
+## compute the incident field boundary condition
+bem3d-function -E 5 -F ${funcdir}/plane-source.fn -i ${job}.bem -s "k=${k}" \
+	       -o bc.dat
+
+## solve for surface potential
+bem3d-solve -m ${job}.mtx ${optk} -d bc.dat -o solution.dat -C sphere.cfg
+
+## calculate total field at points specified in points.dat (polar plot)
+bem3d-field -C ${job}.cfg -i ${job}.bem ${optk} -s points.dat -X \
+	    -d solution.dat -v "k=${k}" -F ${funcdir}/plane-source.fn \
+	    > polar.dat
+
+## calculate total field using approximate analytical solution
+bem3d-function -E 4 -X points.dat -s "k=${k}" -s "a=${radius}" \
+	       -s "br=${beta_r}"  -s "bi=${beta_i}"  \
+	       -F ${funcdir}/isphere.fn > isphere.dat
+
+## compute potential on field mesh for visualization
+bem3d-field -C ${job}.cfg -i ${job}.bem -d solution.dat ${optk} \
+ 	    -v "k=${k}" -F ${funcdir}/plane-source.fn \
+	    -s field.bem > field.dat
+
+## compute potential on field mesh using approximate analytical solution
+bem3d-function -E 4 -i field.bem -s "k=${k}" -s "a=${radius}" \
+	       -s "br=${beta_r}"  -s "bi=${beta_i}"  \
+	       -F ${funcdir}/isphere.fn > field-a.dat
+
+## generate visualization meshes
+bem3d2msh -i field.bem -d field.dat -o field-vis.msh
+bem3d2msh -i field.bem -d field-a.dat -o field-vis-a.msh

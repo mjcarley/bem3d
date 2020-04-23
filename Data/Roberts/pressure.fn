@@ -1,0 +1,12 @@
+BEM3DFunction
+# inclination of flight path
+a = -5*pi/180
+# velocity of wing in air-fixed frame
+U = -cos(a)
+V = sin(a)
+# pressure coefficient
+f[2] = 1-((dfdx[0]-U + f[1]*nx)^2 + (dfdy[0]-V + f[1]*ny)^2 + (dfdz[0]+f[1]*nz)^2)
+# output the surface velocities as well
+f[3] = dfdx[0]
+f[4] = dfdy[0]
+f[5] = dfdz[0]

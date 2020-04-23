@@ -1,0 +1,79 @@
+#!/bin/bash
+
+## call the test scripts to generate convergence data with mesh
+## refinement by solving with point source placed inside mesh
+##
+## output file lines are:
+## (length scale in gmsh) (mean edge length in BEM) (L_\infty error in solution)
+
+optjob=catseye
+optdcty=CatsEye
+optk=1.0
+
+optscale=0.8409
+optlenmax=0.281
+optnsteps=4
+
+function print_usage 
+{
+    echo Run BEM3D convergence and accuracy tests
+    echo 
+    echo Usage: $0 options
+    echo Options: 
+}
+
+while [ "$1" ]
+do
+   if [ "$1" = "-d" ]; then
+       optdcty="$2"
+       shift 2
+   elif [ "$1" = "-j" ]; then
+       optjob="$2"
+       shift 2
+   elif [ "$1" = "-k" ]; then
+       optk="$2"
+       optreal=2
+       shift 2
+   elif [ "$1" = "-l" ]; then
+       optlenmax="$2"
+       shift 2       
+   elif [ "$1" = "-n" ]; then
+       optnsteps="$2"
+       shift 2
+   elif [ "$1" = "-s" ]; then
+       optscale="$2"
+       shift 2
+   elif [ "$1" = "-h" ]; then
+       print_usage ;
+       shift 1
+       exit 1
+   else
+      echo "$0: unrecognized option $1"
+      print_usage ;
+      exit 1
+   fi
+done
+
+echo Directory: ${optdcty}
+echo Job: ${optjob}
+echo Wavenumber: ${optk}
+echo Element initial length scale: ${optlenmax}
+echo Number of steps: ${optnsteps}
+
+opfile=${optjob}-errors.dat
+
+len=${optlenmax}
+
+rm -f ${opfile}
+touch ${opfile}
+
+for (( i=1; i<=${optnsteps}; i++ )) do
+    echo Length scale: ${len}
+    ./test-init -k ${optk} -x -0.289 -y -0.289 -z -0.289 \
+		-d ${optdcty} -j ${optjob} -l ${len}
+    lmean=`gtscheck -v < ${optdcty}/${optjob}.bem 2>&1 >/dev/null | \
+	grep length | cut -d" " -f 10`
+    echo -n "${len} ${lmean} " >> ${opfile}
+    ./test-eval -k ${optk} -d ${optdcty} -j ${optjob} >> ${opfile}
+    len=`echo ${len}*${optscale} | bc -l`
+done

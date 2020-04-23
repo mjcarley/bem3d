@@ -1,0 +1,17 @@
+BEM3DFunction
+## reference calculation for point source, with negative amplitude to
+## give same result as when positive source is used in a scattering
+## calculation
+k = 0.0
+x0 = 0.1
+y0 = 0.0
+z0 = 0.0
+R = sqrt((x-x0)^2 + (y-y0)^2 + (z-z0)^2)
+dR = (nx*(x-x0) + ny*(y-y0) + nz*(z-z0))/R^3
+C = cos(k*R)
+S = sin(k*R)
+f[0] = -C/R/4/pi
+f[1] = -S/R/4/pi
+f[2] = (C + k*R*S)/4/pi*dR
+f[3] = -(k*R*C - S)/4/pi*dR
+
