@@ -1,5 +1,5 @@
-#ifndef __HTRIQUAD_H_INCLUDED__
-#define __HTRIQUAD_H_INCLUDED__
+#ifndef BEM3D_HTRIQUAD_H_INCLUDED
+#define BEM3D_HTRIQUAD_H_INCLUDED
 
 #include <glib.h>
 
@@ -91,4 +91,4 @@ gint htri_quad_shape_0(gdouble *xf,
 gint htri_quad_order_1R(gdouble rmin, gdouble rmax, gdouble z,
 			gint qmax, gdouble tol) ;
 
-#endif /*__HTRIQUAD_H_INCLUDED__*/
+#endif /*BEM3D_HTRIQUAD_H_INCLUDED*/

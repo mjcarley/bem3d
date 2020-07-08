@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __FMMLIB3D_1_2_H_INCLUDED__
-#define __FMMLIB3D_1_2_H_INCLUDED__
+#ifndef BEM3D_FMMLIB3D_1_2_H_INCLUDED
+#define BEM3D_FMMLIB3D_1_2_H_INCLUDED
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -45,4 +45,4 @@ gint _bem3d_fmm_laplace_fmmlib3d_1_2(BEM3DFastMultipole solver,
 				     gdouble *p, gdouble *dp,
 				     BEM3DFMMWorkspace *w) ;
 
-#endif /*__FMMLIB3D_1_2_H_INCLUDED__*/
+#endif /*BEM3D_FMMLIB3D_1_2_H_INCLUDED*/

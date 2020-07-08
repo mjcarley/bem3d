@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __WBFMM_BEM3D_H_INCLUDED__
-#define __WBFMM_BEM3D_H_INCLUDED__
+#ifndef BEM3D_WBFMM_H_INCLUDED
+#define BEM3D_WBFMM_H_INCLUDED
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -35,4 +35,4 @@ gint _bem3d_fmm_helmholtz_wbfmm(BEM3DFastMultipole solver,
 				gdouble *p, gdouble *dp,
 				BEM3DFMMWorkspace *w) ;
 
-#endif /*__WBFMM_H_INCLUDED__*/
+#endif /*BEM3D_WBFMM_H_INCLUDED*/

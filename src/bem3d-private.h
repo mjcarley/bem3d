@@ -1,5 +1,5 @@
-#ifndef _BEM_PRIVATE_H_INCLUDED_
-#define _BEM_PRIVATE_H_INCLUDED_
+#ifndef BEM_PRIVATE_H_INCLUDED
+#define BEM_PRIVATE_H_INCLUDED
 
 #include <glib.h>
 #include <gts.h>
@@ -129,4 +129,4 @@ gint _bem3d_edge_nearest_point(GtsPoint *x1, GtsPoint *x2,
 			       GtsPoint *x, GtsPoint *c) ;
 gdouble _bem3d_point_internal_angle(GtsPoint *x1, GtsPoint *x2, GtsPoint *x3) ;
 
-#endif /*_BEM_PRIVATE_H_INCLUDED_*/
+#endif /*BEM_PRIVATE_H_INCLUDED*/

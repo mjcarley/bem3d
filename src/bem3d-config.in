@@ -6,7 +6,7 @@ exec_prefix=@exec_prefix@
 includedir=@includedir@
 ldflags="@LDFLAGS@"
 libs="@LIBS@"
-cflags="-I@includedir@ @CPPFLAGS@"
+cflags="-I@includedir@ @CFLAGS@ @CPPFLAGS@"
 
 usage()
 {

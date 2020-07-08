@@ -156,7 +156,7 @@ gint _bem3d_fmm_helmholtz_wbfmm(BEM3DFastMultipole solver,
 
   /* fprintf(stderr, "%s: downward pass\n", __FUNCTION__) ; */
   for ( i = 2 ; i <= tree->depth ; i ++ )
-    wbfmm_downward_pass(tree, shifts, i, w->d) ;
+    wbfmm_downward_pass(tree, shifts, i, w->d, -1) ;
 
   /*run over targets and compute field*/
   nt = s->nt ; xt = &(s->x[3*(s->ns)]) ;

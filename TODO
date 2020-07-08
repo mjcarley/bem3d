@@ -1,9 +1,20 @@
 REMOVE STATIC VARIABLES (thread safety) and switch to workspaces
 
+output geometry as asymptote file
+
 quadrature rules for quad elements;
 
-Sanity checking for element build functions (check edges really do
-connect properly) and/or add/check for missing nodes
+AVX acceleration where useful
+
+Threads!
+
+QBX?
+
+WBFMM integration including Laplace for C(x)
+
+Sanity checking for meshes and element build functions (check edges
+really do connect properly) and/or add/check for missing nodes (new
+program bem3d-check?)
 
 Parallel implementation of BEM3DMeshData;
 
@@ -33,3 +44,4 @@ bem3d-solve: add a memory check with exit if insufficient memory for
 matrices
 
 acos checks to avoid NaN errors in htriquad
+

@@ -1,5 +1,5 @@
-#ifndef POLAR_H_INCLUDED
-#define POLAR_H_INCLUDED
+#ifndef BEM3D_POLAR_H_INCLUDED
+#define BEM3D_POLAR_H_INCLUDED
 
 gdouble orient2d(gdouble *, gdouble *, gdouble *) ;
 gint triangle_orientations(gdouble *x1, gdouble *x2, gdouble *x3,
@@ -48,4 +48,4 @@ gint triangle_gradient_quad_shape(gdouble *x1, gdouble *x2, gdouble *x3,
 				  gdouble o12, gdouble o23, gdouble o31,
 				  gdouble *G, gdouble *dG) ;
 
-#endif /*POLAR_H_INCLUDED*/
+#endif /*BEM3D_POLAR_H_INCLUDED*/

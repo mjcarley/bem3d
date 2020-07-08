@@ -1,5 +1,5 @@
-#ifndef __TRACE_H_INCLUDED__
-#define __TRACE_H_INCLUDED__
+#ifndef BEM3D_TRACE_H_INCLUDED
+#define BEM3D_TRACE_H_INCLUDED
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,4 +12,4 @@ extern gboolean _bem3d_trace[64] ;
 #define _bem3d_unset_trace(_i) (_bem3d_trace[(_i)] = FALSE)
 #define _bem3d_trace_set(_i)   (_bem3d_trace[(_i)])
 
-#endif /*__TRACE_H_INCLUDED__*/
+#endif /*BEM3D_TRACE_H_INCLUDED*/

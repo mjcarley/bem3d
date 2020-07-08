@@ -131,6 +131,25 @@ const gint NEWMAN_BINOMIALS[] = {
 #define newman_index(m,n) \
   (newman_block_start((m)+(n))+newman_index_mn((m),(n)))
 
+#define _invert3x3(_Ai,_A)						\
+  do {                                                                  \
+    gdouble _det = 1.0/((_A)[0]*((_A)[8]*(_A)[4]-(_A)[7]*(_A)[5]) -     \
+                        (_A)[3]*((_A)[8]*(_A)[1]-(_A)[7]*(_A)[2]) +     \
+                        (_A)[6]*((_A)[5]*(_A)[1]-(_A)[4]*(_A)[2])) ;    \
+    (_Ai)[0] =  _det*((_A)[8]*(_A)[4] - (_A)[7]*(_A)[5]) ;              \
+    (_Ai)[1] = -_det*((_A)[8]*(_A)[1] - (_A)[7]*(_A)[2]) ;              \
+    (_Ai)[2] =  _det*((_A)[5]*(_A)[1] - (_A)[4]*(_A)[2]) ;              \
+                                                                        \
+    (_Ai)[3] = -_det*((_A)[8]*(_A)[3] - (_A)[6]*(_A)[5]) ;              \
+    (_Ai)[4] =  _det*((_A)[8]*(_A)[0] - (_A)[6]*(_A)[2]) ;              \
+    (_Ai)[5] = -_det*((_A)[5]*(_A)[0] - (_A)[3]*(_A)[2]) ;              \
+                                                                        \
+    (_Ai)[6] =  _det*((_A)[7]*(_A)[3] - (_A)[6]*(_A)[4]) ;              \
+    (_Ai)[7] = -_det*((_A)[7]*(_A)[0] - (_A)[6]*(_A)[1]) ;              \
+    (_Ai)[8] =  _det*((_A)[4]*(_A)[0] - (_A)[3]*(_A)[1]) ;              \
+  } while (0)
+
+
 gint NEWMAN_TRI (REAL p[], REAL x1[], REAL x2[], REAL x3[],
 		 REAL I[], REAL J[]) ;
 gint NEWMAN_TRI_GRADIENT (REAL p[], REAL x1[], REAL x2[], REAL x3[],
@@ -150,20 +169,6 @@ gint NEWMAN_TRI_SHAPE_GRADIENT (REAL p[], REAL x1[], REAL x2[], REAL x3[],
 				REAL Imn[], gint hmax,
 				REAL I[], REAL J[]) ;
 
-static void newman_shape_combine(REAL a, REAL b, REAL c, REAL d, REAL x1,
-				 REAL g[], REAL G[])
-
-{
-  REAL e, f ;
-
-  e = g[1] - x1*g[0] ; f = g[2] - x1*g[0] ;
-  
-  G[2] = (e*c - f*a)/(b*c - d*a) ;
-  G[1] = (e - b*G[2])/a ;
-  G[0] = g[0] - G[1] - G[2] ;
-
-  return ;
-}
 
 /*
   Generate derivatives of the Laplace equation Green's function
@@ -474,8 +479,7 @@ gint NEWMAN_TRI_SHAPE (REAL *p, REAL *x1, REAL *x2, REAL *x3,
 		       REAL *G, REAL *dG)
 
 {
-  REAL g[3], dg[3] ;
-  REAL a, b, c, d ;
+  REAL g[3], dg[3], A[9], Ai[9] ;
 
   if ( (p[0]*p[0] + p[1]*p[1] + p[2]*p[2]) >
        4*(x1[0]*x1[0] + x1[1]*x1[1] + x1[2]*x1[2]) &&
@@ -487,12 +491,20 @@ gint NEWMAN_TRI_SHAPE (REAL *p, REAL *x1, REAL *x2, REAL *x3,
     if ( NEWMAN_TRI (p, x1, x2, x3, dg, g) ) return 1 ;
   }
 
-  a = x2[0] - x1[0] ; b = x3[0] - x1[0] ;
-  c = x2[1] - x1[1] ; d = x3[1] - x1[1] ;
+  A[0] = A[1] = A[2] = 1.0 ;
+  A[3] = x1[0] ; A[4] = x2[0] ; A[5] = x3[0] ; 
+  A[6] = x1[1] ; A[7] = x2[1] ; A[8] = x3[1] ; 
 
-  newman_shape_combine(a, b, c, d, x1[0], g, G) ;
-  newman_shape_combine(a, b, c, d, x1[0], dg, dG) ;
+  _invert3x3(Ai, A) ;
 
+  G[0] = Ai[0]*g[0] + Ai[1]*g[1] + Ai[2]*g[2] ;
+  G[1] = Ai[3]*g[0] + Ai[4]*g[1] + Ai[5]*g[2] ;
+  G[2] = Ai[6]*g[0] + Ai[7]*g[1] + Ai[8]*g[2] ;
+
+  dG[0] = Ai[0]*dg[0] + Ai[1]*dg[1] + Ai[2]*dg[2] ;
+  dG[1] = Ai[3]*dg[0] + Ai[4]*dg[1] + Ai[5]*dg[2] ;
+  dG[2] = Ai[6]*dg[0] + Ai[7]*dg[1] + Ai[8]*dg[2] ;
+  
   return 0 ;
 }
 
@@ -722,33 +734,24 @@ gint NEWMAN_TRI_SHAPE_GRADIENT (REAL *p, REAL *x1, REAL *x2, REAL *x3,
 				REAL *G, REAL *dG)
 
 {
-  REAL g[12], dg[12] ;
-  REAL a, b, c, d ;
-
-/*   if ( (p[0]*p[0] + p[1]*p[1] + p[2]*p[2]) > */
-/*        4*(x1[0]*x1[0] + x1[1]*x1[1] + x1[2]*x1[2]) && */
-/*        (p[0]*p[0] + p[1]*p[1] + p[2]*p[2]) > */
-/*        4*(x2[0]*x2[0] + x2[1]*x2[1] + x2[2]*x2[2]) && */
-/*        (Imn != NULL) ) { */
-/*     if ( NEWMAN_TRI_MP (p, x1, x2, x3, Imn, hmax, dg, g) ) return 1 ; */
-/*   } else { */
-/*     if ( NEWMAN_TRI (p, x1, x2, x3, dg, g) ) return 1 ; */
-/*   } */
+  REAL g[12], dg[12], A[9], Ai[9] ;
 
   if ( NEWMAN_TRI_GRADIENT (p, x1, x2, x3, dg, g) ) return 1 ;
 
-  a = x2[0] - x1[0] ; b = x3[0] - x1[0] ;
-  c = x2[1] - x1[1] ; d = x3[1] - x1[1] ;
+  A[0] = A[1] = A[2] = 1.0 ;
+  A[3] = x1[0] ; A[4] = x2[0] ; A[5] = x3[0] ; 
+  A[6] = x1[1] ; A[7] = x2[1] ; A[8] = x3[1] ; 
 
-  newman_shape_combine(a, b, c, d, x1[0], &(g[0]), &(G[0])) ;
-  newman_shape_combine(a, b, c, d, x1[0], &(g[3]), &(G[3])) ;
-  newman_shape_combine(a, b, c, d, x1[0], &(g[6]), &(G[6])) ;
-  newman_shape_combine(a, b, c, d, x1[0], &(g[9]), &(G[9])) ;
+  _invert3x3(Ai, A) ;
 
-  newman_shape_combine(a, b, c, d, x1[0], &(dg[0]), &(dG[0])) ;
-  newman_shape_combine(a, b, c, d, x1[0], &(dg[3]), &(dG[3])) ;
-  newman_shape_combine(a, b, c, d, x1[0], &(dg[6]), &(dG[6])) ;
-  newman_shape_combine(a, b, c, d, x1[0], &(dg[9]), &(dG[9])) ;
+  G[0] = Ai[0]*g[0] + Ai[1]*g[1] + Ai[2]*g[2] ;
+  G[1] = Ai[3]*g[0] + Ai[4]*g[1] + Ai[5]*g[2] ;
+  G[2] = Ai[6]*g[0] + Ai[7]*g[1] + Ai[8]*g[2] ;
+
+  dG[0] = Ai[0]*dg[0] + Ai[1]*dg[1] + Ai[2]*dg[2] ;
+  dG[1] = Ai[3]*dg[0] + Ai[4]*dg[1] + Ai[5]*dg[2] ;
+  dG[2] = Ai[6]*dg[0] + Ai[7]*dg[1] + Ai[8]*dg[2] ;
+  
 
   return 0 ;
 }
