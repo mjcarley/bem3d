@@ -100,7 +100,23 @@ else
   echo \#
   echo \# Gauss Quadrature Rule library not installed or not properly
   echo \# installed. You can get it from
-  echo \# http://www.paraffinalia.co.uk/Software/downloads.shtml
+  echo \# https://github.com/mjcarley/gqr
+  echo \#
+  echo \#################################################################
+  exit
+fi
+
+AC_CHECK_PROG(SQT, sqt-config, yes, no)
+if test x$SQT = xyes ; then
+   AC_DEFINE(HAVE_SQT, 1, [Singular Quadrature on Triangles library available])
+   sqt_cflags=`sqt-config --cflags`
+   sqt_libs=`sqt-config --libs`
+else
+  echo \#################################################################
+  echo \#
+  echo \# Singular Quadrature on Triangles library not installed or not
+  echo \# properly installed. You can get it from
+  echo \# https://github.com/mjcarley/sqt
   echo \#
   echo \#################################################################
   exit
@@ -180,6 +196,8 @@ AC_SUBST(gqr_cflags)
 AC_SUBST(gqr_libs)
 AC_SUBST(gts_cflags)
 AC_SUBST(gts_libs)
+AC_SUBST(sqt_cflags)
+AC_SUBST(sqt_libs)
 AC_SUBST(libmatheval_CFLAGS)
 AC_SUBST(libmatheval_LIBS)
 AC_SUBST(sisl_cflags)
@@ -190,10 +208,10 @@ AC_SUBST(wbfmm_cflags)
 AC_SUBST(wbfmm_libs)
 AC_SUBST(mpi_tools)
 
-CFLAGS="$CFLAGS $libmatheval_CFLAGS $gts_cflags $gqr_cflags $GSL_CFLAGS \
-		$sisl_cflags $wbfmm_cflags $wmpi_cflags"
-LDFLAGS="$LDFLAGS $gts_libs $gqr_libs $GSL_LIBS $wmpi_libs $sisl_libs \
-		  $wbfmm_libs"
+CFLAGS="$CFLAGS $libmatheval_CFLAGS $gts_cflags $sqt_cflags $gqr_cflags \
+		$GSL_CFLAGS $sisl_cflags $wbfmm_cflags $wmpi_cflags"
+LDFLAGS="$LDFLAGS $gts_libs $sqt_libs $gqr_libs $GSL_LIBS $wmpi_libs \
+		  $sisl_libs $wbfmm_libs"
 
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
@@ -202,7 +220,7 @@ AC_SUBST(LDFLAGS)
 AC_CHECK_LIB(m, sqrt)
 #AC_CHECK_LIB(matheval, evaluator_evaluate)
 
-LIBS="$gqr_libs $GSL_LIBS $libmatheval_LIBS $gts_libs $LIBS"
+LIBS="$gqr_libs $sqt_libs $GSL_LIBS $libmatheval_LIBS $gts_libs $LIBS"
 
 dnl generate `src/bem3dconfig.h'
 AC_CONFIG_COMMANDS([default-1],[[

@@ -35,6 +35,7 @@ libbem3d_la_SOURCES = \
 	bem3d.h \
 	bem3dconfig.h \
 	wandzura.c \
+	xiao.c \
 	location.c \
 	matrix.c \
 	operators.c \

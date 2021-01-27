@@ -4,7 +4,8 @@
 bem3d-sphere > sphere.bem
 
 ## assemble the matrix for a Laplace problem
-bem3d-assemble -C sphere-laplace.cfg -i sphere.bem -o sphere-laplace.mtx
+bem3d-assemble -C sphere-laplace.cfg -S sphere.slf -K sphere.skl \
+	       -i sphere.bem -o sphere-laplace.mtx
 
 ## generate a mean flow boundary condition using an
 ## analytically-specified function
@@ -12,7 +13,7 @@ bem3d-function -E 2 -i sphere.bem -F velocity.fn -o bc-laplace.dat
 
 ## solve for the surface potential using the velocity boundary condition
 bem3d-solve -C sphere-laplace.cfg -d bc-laplace.dat -m sphere-laplace.mtx \
-	    -o solution.dat
+	    -i sphere.bem -o solution.dat
 
 ## generate a GMSH visualization to view the surface potential solution
 ##bem3d2pos -t "Surface" -i sphere.bem -d solution.dat -o sphere.pos

@@ -493,7 +493,7 @@ gint main(gint argc, gchar **argv)
     /* basic evaluation of surface functions*/
     bem3d_function_apply_mesh_list(efunc, meshes, f, g) ;
   }
-
+  
   if ( write_data ) {
     if ( opfile == NULL ) fs = stdout ;
     else fs = file_open(opfile, "-", "w", stdout) ;
@@ -501,7 +501,7 @@ gint main(gint argc, gchar **argv)
     
     file_close(fs) ;
   }
-  
+
   if ( reductions != NULL ) {
     mesh_data_width = bem3d_mesh_data_element_number(f) ;
     if ( meshes->len == 0 ) m = NULL ;

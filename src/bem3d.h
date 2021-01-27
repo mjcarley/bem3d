@@ -1141,7 +1141,7 @@ struct _BEM3DFunctionClass {
     gdouble *x, *n, *w ;  /*positions and normals, and interpolation weights*/
     GHashTable *e ; /*to tie elements to their point sources*/
   } ;
-
+  
   /**
    * Selection of different fast multipole implementations linked into
    * the library
@@ -1198,6 +1198,7 @@ struct _BEM3DFunctionClass {
     BEM3DMeshSkeleton *skel ;
     gdouble tol, /*FMM calculation tolerance*/
       *C,        /*diagonal terms*/
+      *w,        /*workspace for source terms*/
       scaleA[2],  /*scaling of FMM output for `A' matrix, multiplying \phi*/
       scaleB[2] ; /*scaling of FMM output for `B' matrix, multiplying d\phi*/
     GArray *gcorr, *dgcorr,  /*correction weights for G and dGdn*/
@@ -1808,6 +1809,12 @@ gint bem3d_element_assemble_equations_direct(BEM3DElement *e,
 				BEM3DParameters *param,
 				gpointer data,
 				BEM3DWorkspace *work) ;
+  gint bem3d_quadrature_rule_xg(GtsPoint *p, BEM3DElement *e,
+				BEM3DQuadratureRule *q, 
+				BEM3DGreensFunction *gfunc,
+				BEM3DParameters *param,
+				gpointer data,
+				BEM3DWorkspace *work) ;
 				
   gint bem3d_quadrature_rule_newman(GtsPoint *xs, BEM3DElement *e,
 				    BEM3DQuadratureRule *q, 
@@ -2043,6 +2050,8 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
 				BEM3DAverage anorm) ;
   gint bem3d_mesh_skeleton_write(BEM3DMeshSkeleton *s, FILE *f) ;
   gint bem3d_mesh_skeleton_read(BEM3DMeshSkeleton *s, FILE *f) ;
+  gint bem3d_skeleton_set_sources(BEM3DMeshSkeleton *s, gdouble *q,
+				  gint nc, gdouble *qs) ;
 
   gint bem3d_fmm_calculate(BEM3DFastMultipole solver,
 			   BEM3DFastMultipoleProblem problem,
@@ -2063,6 +2072,10 @@ gint bem3d_motion_node_acceleration(BEM3DMotion *m, gint i, gdouble t,
 				       BEM3DConfiguration *config,
 				       BEM3DParameters *param,
 				       gdouble r, BEM3DWorkspace *work) ;
+  gint bem3d_fmm_matrix_multiply(BEM3DFMMMatrix *m,
+				 gdouble *q, gdouble *dq,
+				 gdouble *p, gdouble *dp,
+				 BEM3DFMMWorkspace *w) ;
 
   gchar *bem3d_solver_name(BEM3DSolver s) ;
   BEM3DSolver bem3d_solver_type(gchar *s) ;

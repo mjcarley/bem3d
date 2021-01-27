@@ -30,6 +30,9 @@
 /* Simple iterative solver library available */
 #undef HAVE_SISL
 
+/* Singular Quadrature on Triangles library available */
+#undef HAVE_SQT
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 

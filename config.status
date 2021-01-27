@@ -600,7 +600,7 @@ old_postuninstall_cmds=''
 old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs~$RANLIB $tool_oldlib'
 lock_old_archive_extraction='no'
 CC='gcc'
-CFLAGS='-g -O2 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include -fopenmp -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include'
+CFLAGS='-g -O2 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include 		 -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include -fopenmp -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include'
 compiler='g77'
 GCC='yes'
 lt_cv_sys_global_symbol_pipe='sed -n -e '\''s/^.*[	 ]\([ABCDGIRSTW][ABCDGIRSTW]*\)[	 ][	 ]*\([_A-Za-z][_A-Za-z0-9]*\)$/\1 \2 \2/p'\'' | sed '\''/ __gnu_lto/d'\'''
@@ -678,8 +678,8 @@ postuninstall_cmds=''
 finish_cmds='PATH="\$PATH:/sbin" ldconfig -n $libdir'
 finish_eval=''
 hardcode_into_libs='yes'
-sys_lib_search_path_spec='/usr/lib64/gcc/x86_64-slackware-linux/5.4.0 /usr/lib64 /lib64 /usr/x86_64-slackware-linux/lib /lib /usr/lib '
-configure_time_dlsearch_path='/lib /usr/lib /lib64 /usr/lib64 /usr/local/lib64 /usr/x86_64-slackware-linux/lib64 /usr/lib64/seamonkey '
+sys_lib_search_path_spec='/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 /usr/lib64 /lib64 /usr/x86_64-slackware-linux/lib /lib /usr/lib '
+configure_time_dlsearch_path='/lib /usr/lib /lib64 /usr/lib64 /usr/local/lib64 /usr/x86_64-slackware-linux/lib64 '
 configure_time_lt_sys_library_path=''
 hardcode_action='immediate'
 enable_dlopen='unknown'
@@ -884,19 +884,23 @@ S["am__EXEEXT_TRUE"]="#"
 S["LTLIBOBJS"]=""
 S["LIBOBJS"]=""
 S["mpi_tools"]=""
-S["wbfmm_libs"]="-L/home/michael/Codes/lib -lwbfmm-base -lwbfmm -lglib-2.0 -lm"
+S["wbfmm_libs"]="-L/home/michael/Codes/lib -lwbfmm -lglib-2.0 -lblas -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../."\
+"./../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/"\
+"gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lquadmath -lm"
 S["wbfmm_cflags"]="-fopenmp -I/home/michael/Codes/include"
 S["wmpi_libs"]="-L/home/michael/Codes/lib -lwmpi_s -lglib-2.0 -L/home/michael/Codes/lib -lglib-2.0 -lm"
 S["wmpi_cflags"]="-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include"
-S["sisl_libs"]="-L/home/michael/Codes/lib -lsisl -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0 -L/usr/li"\
-"b64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../.."\
-"/x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath"
+S["sisl_libs"]="-L/home/michael/Codes/lib -lsisl -lgsl -lgslcblas -lm -lblas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-lin"\
+"ux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib "\
+"-L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath"
 S["sisl_cflags"]="-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include"
+S["sqt_libs"]=""
+S["sqt_cflags"]="-I/home/michael/Codes/include"
 S["gts_libs"]="-lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0"
 S["gts_cflags"]="-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include"
-S["gqr_libs"]="-L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0"\
-" -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/."\
-"./../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath"
+S["gqr_libs"]="-L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -lblas -lrrqr -lm -L/home/michael/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/"\
+"5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5."\
+"5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath"
 S["gqr_cflags"]="-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include"
 S["gsl_libs"]=""
 S["gsl_cflags"]=""
@@ -907,6 +911,7 @@ S["USE_FMMLIB3D_1_2_TRUE"]=""
 S["WBFMM"]="yes"
 S["WMPI"]="yes"
 S["SISL"]="yes"
+S["SQT"]="yes"
 S["GQR"]="yes"
 S["GSL_LIBS"]="-lgsl -lgslcblas -lm"
 S["GSL_CFLAGS"]=""
@@ -956,18 +961,20 @@ S["OBJEXT"]="o"
 S["EXEEXT"]=""
 S["ac_ct_CC"]="gcc"
 S["CPPFLAGS"]=""
-S["LDFLAGS"]=" -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm"\
-" -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib6"\
-"4 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-s"\
-"lackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/michael/Codes/lib -lwmpi_s -lglib-2.0 -L/home/michael/Codes/lib"\
-" -lglib-2.0 -lm -L/home/michael/Codes/lib -lsisl -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux"\
-"/5.4.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5"\
-".4.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath 		  -L/home/michael/Cod"\
-"es/lib -lwbfmm-base -lwbfmm -lglib-2.0 -lm"
+S["LDFLAGS"]=" -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0  -L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -l"\
+"m -lblas -lrrqr -lm -L/home/michael/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../."\
+"./lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x8"\
+"6_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/michael/Codes/lib -lwmpi_s -lglib-2.0 -L/home/michael/Cod"\
+"es/lib -lglib-2.0 -lm 		  -L/home/michael/Codes/lib -lsisl -lgsl -lgslcblas -lm -lblas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib6"\
+"4/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x"\
+"86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath -L/home/michael/Codes/lib -lwbfmm -lglib-"\
+"2.0 -lblas -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/"\
+"../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.."\
+" -lgfortran -lquadmath -lm"
 S["CFLAGS"]="-g -O2 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/home/michael/Codes/i"\
-"nclude -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include  		"\
-"-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include -fopenmp -I/home/michael/Codes/include -I/usr/include/glib-2.0 -"\
-"I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include"
+"nclude -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/"\
+"home/michael/Codes/include 		 -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include -fopenmp -I/home/michael/Codes/inc"\
+"lude -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include"
 S["CC"]="gcc"
 S["host_os"]="linux-gnu"
 S["host_vendor"]="unknown"
@@ -1013,10 +1020,10 @@ S["BEM3D_VERSION"]="0.2.1"
 S["target_alias"]=""
 S["host_alias"]=""
 S["build_alias"]=""
-S["LIBS"]="-L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0"\
-" -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/."\
-"./../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/"\
-"michael/Codes/lib -lmatheval -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -lm "
+S["LIBS"]="-L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -lblas -lrrqr -lm -L/home/michael/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/"\
+"5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5."\
+"5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath  -lgsl -lgslcblas -lm -L"\
+"/home/michael/Codes/lib -lmatheval -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -lm "
 S["ECHO_T"]=""
 S["ECHO_N"]="-n"
 S["ECHO_C"]=""
@@ -1116,6 +1123,7 @@ D["HAVE_DLFCN_H"]=" 1"
 D["LT_OBJDIR"]=" \".libs/\""
 D["STDC_HEADERS"]=" 1"
 D["HAVE_GQR"]=" 1"
+D["HAVE_SQT"]=" 1"
 D["HAVE_SISL"]=" 1"
 D["HAVE_WMPI"]=" 1"
 D["HAVE_WBFMM"]=" 1"

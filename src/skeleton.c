@@ -291,6 +291,25 @@ gint bem3d_mesh_skeleton_read(BEM3DMeshSkeleton *s, FILE *f)
   return 0 ;
 }
 
+gint bem3d_skeleton_set_sources(BEM3DMeshSkeleton *s, gdouble *q,
+				gint nc, gdouble *qs)
+
+{
+  gint i, j, *idx ;
+  gdouble *w ;
+
+  g_assert(nc == 1) ;
+  memset(qs, 0, (s->ns)*sizeof(gdouble)) ;
+
+  for ( i = 0 ; i < s->ns ; i ++ ) {
+    w = &(s->w[i*s->ppe]) ; idx = &(s->idx[i*s->ppe]) ;
+
+    for ( j = 0 ; j < s->ppe ; j ++ ) qs[i] +=  w[j]*q[idx[j]] ;
+  }
+
+  return 0 ;
+}
+
 /**
  * @}
  * 

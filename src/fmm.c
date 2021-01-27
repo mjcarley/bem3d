@@ -110,6 +110,10 @@ gint bem3d_fmm_calculate(BEM3DFastMultipole solver,
     switch (problem) {
     default: g_error("%s: unrecognized problem type %d for solver %d",
 		     __FUNCTION__, problem, solver) ; break ;
+    case BEM3D_FMM_LAPLACE: 
+      _bem3d_fmm_laplace_wbfmm(solver, problem, param, s, tol,
+			       q, dq, p, dp, w) ;
+      break ;
     case BEM3D_FMM_HELMHOLTZ:
       _bem3d_fmm_helmholtz_wbfmm(solver, problem, param, s, tol,
 				 q, dq, p, dp, w) ;
@@ -231,10 +235,14 @@ static gint correction_gfunc(gdouble *x, gdouble *y, gdouble *n,
   r[0] = x[0] - y[0] ; r[1] = x[1] - y[1] ; r[2] = x[2] - y[2] ; 
 
   R2 = r[0]*r[0] + r[1]*r[1] + r[2]*r[2] ;
-  R = sqrt(R2) ;
+  if ( R2 > 1e-12 ) {
+    R = sqrt(R2) ;
 
-  g[0] = -0.25*M_1_PI/R ; 
-  dg[0] = -0.25*M_1_PI*(r[0]*n[0] + r[1]*n[1] + r[2]*n[2])/R2/R ;
+    g[0] = -0.25*M_1_PI/R ; 
+    dg[0] = -0.25*M_1_PI*(r[0]*n[0] + r[1]*n[1] + r[2]*n[2])/R2/R ;
+  } else {
+    R = 0.0 ; g[0] = dg[0] = 0.0 ;
+  }
 
   if ( problem == BEM3D_FMM_LAPLACE ) return 0 ;
 
@@ -381,13 +389,15 @@ BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
   BEM3DFMMMatrix *m ;
   gpointer data[16] = {NULL} ;
   GArray *G, *dG ;
-
+  gint ns ;
+  
   m = (BEM3DFMMMatrix *)g_malloc0(sizeof(BEM3DFMMMatrix)) ;
 
   m->skel = skel ;
   m->solver = solver ;
   m->problem = problem ;
-
+  ns = skel->ns ;
+  
   /*set the scaling factor for the output from different FMM solvers*/
   switch ( solver ) {
   default:
@@ -396,16 +406,20 @@ BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
   case BEM3D_FMM_FMMLIB3D_1_2:
     m->scaleA[0] = 0.25*M_1_PI ; m->scaleA[1] = 0.0 ;
     m->scaleB[0] = 0.25*M_1_PI ; m->scaleB[1] = 0.0 ;
+    m->w = (gdouble *)g_malloc0(2*2*ns*sizeof(gdouble)) ;
     break ;
   case BEM3D_FMM_WBFMM:
     switch ( problem ) {
     default: g_assert_not_reached() ; break ;
     case BEM3D_FMM_LAPLACE:
-      g_error("%s: WBFMM does not handle Laplace problems", __FUNCTION__) ;
+      m->scaleA[0] = 1.0 ; m->scaleA[1] = 0.0 ;
+      m->scaleB[0] = 1.0 ; m->scaleB[1] = 0.0 ;
+      m->w = (gdouble *)g_malloc0(2*1*ns*sizeof(gdouble)) ;
       break ;
     case BEM3D_FMM_HELMHOLTZ:
       m->scaleA[0] = 0 ; m->scaleA[1] = -bem3d_parameters_wavenumber(param) ;
       m->scaleB[0] = 0 ; m->scaleB[1] =  bem3d_parameters_wavenumber(param) ;
+      m->w = (gdouble *)g_malloc0(2*2*ns*sizeof(gdouble)) ;
       break ;
     }
     break ;
@@ -429,6 +443,75 @@ BEM3DFMMMatrix *bem3d_fmm_matrix_new(BEM3DFastMultipole solver,
   g_array_free(G, TRUE) ; g_array_free(dG, TRUE) ;
 
   return m ;
+}
+
+gint bem3d_fmm_matrix_multiply(BEM3DFMMMatrix *m,
+			       gdouble *q, gdouble *dq,
+			       gdouble *p, gdouble *dp,
+			       BEM3DFMMWorkspace *w)
+
+{
+  gint nc, ns, i, j, k ;
+  
+  g_assert(dp == NULL) ;
+  g_assert(m->problem == BEM3D_FMM_LAPLACE) ; /*affects address for
+						sources*/
+
+  if ( q == NULL && dq == NULL ) return 0 ;
+  
+  nc = 1 ;
+  ns = m->skel->ns ;
+  /*generate skeleton source strengths*/
+  if ( q  != NULL ) 
+    bem3d_skeleton_set_sources(m->skel,  q, nc, &(m->w[ 0])) ;
+  if ( dq != NULL ) 
+    bem3d_skeleton_set_sources(m->skel, dq, nc, &(m->w[ns])) ;
+
+  for ( i = 0 ; i < ns ; i ++ ) m->w[   i] *= m->scaleA[0] ;
+  for ( i = 0 ; i < ns ; i ++ ) m->w[ns+i] *= m->scaleB[0] ;
+  
+  /*FMM calculation*/
+  if ( dq == NULL ) {
+    bem3d_fmm_calculate(m->solver, m->problem, NULL, m->skel, m->tol,
+			NULL, m->w, p, NULL, w) ;
+  
+    /*add corrections*/
+    for ( i = 0 ; i < m->skel->nnodes ; i ++ ) {
+      for ( j = m->idxcorr[2*i+0] ; j < m->idxcorr[2*i+1] ; j ++ ) {
+	k = g_array_index(m->icorr, gint, j) ;
+	p[i] += g_array_index(m->dgcorr, gdouble, j)*q[k] ;
+      }
+    }
+    return BEM3D_SUCCESS ;
+  }
+
+  if ( q == NULL ) {
+    bem3d_fmm_calculate(m->solver, m->problem, NULL, m->skel, m->tol,
+			&(m->w[ns]), NULL, p, NULL, w) ;
+  
+    /*add corrections*/
+    for ( i = 0 ; i < m->skel->nnodes ; i ++ ) {
+      for ( j = m->idxcorr[2*i+0] ; j < m->idxcorr[2*i+1] ; j ++ ) {
+	k = g_array_index(m->icorr, gint, j) ;
+	p[i] += g_array_index(m->gcorr, gdouble, j)*dq[k] ;
+      }
+    }
+    return BEM3D_SUCCESS ;
+  }
+  
+  bem3d_fmm_calculate(m->solver, m->problem, NULL, m->skel, m->tol,
+		      &(m->w[ns]), m->w, p, NULL, w) ;
+  
+  /*add corrections*/
+  for ( i = 0 ; i < m->skel->nnodes ; i ++ ) {
+    for ( j = m->idxcorr[2*i+0] ; j < m->idxcorr[2*i+1] ; j ++ ) {
+      k = g_array_index(m->icorr, gint, j) ;
+      p[i] += g_array_index(m->gcorr , gdouble, j)*dq[k] ;
+      p[i] += g_array_index(m->dgcorr, gdouble, j)* q[k] ;
+    }
+  }
+
+  return BEM3D_SUCCESS ;
 }
 
 /** 

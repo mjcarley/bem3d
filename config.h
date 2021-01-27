@@ -31,6 +31,9 @@
 /* Simple iterative solver library available */
 #define HAVE_SISL 1
 
+/* Singular Quadrature on Triangles library available */
+#define HAVE_SQT 1
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
 

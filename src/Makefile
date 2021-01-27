@@ -171,13 +171,13 @@ am__libbem3d_la_SOURCES_DIST = acoord.c belement.c logging.c files.c \
 	bmesh.c elements.c functions.c geometry.c gfunc.c gmsh.c \
 	lookup.c qselect.c quadrature.c hayami.c radiation.c \
 	shapefunc.c bem3d-private.h bem3d.h bem3dconfig.h wandzura.c \
-	location.c matrix.c operators.c newman.c edge.c motion.c \
-	util.c data.c configure.c polar.c polar.h series.c intsincos.c \
-	gradient.c transforms.c qpanel.c cpanel.c skeleton.c fmm.c \
-	fmmlib3d_1_2.c fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h \
-	htriquad.c htriquad.h binomials.c binomials.h expansions.c \
-	htri-transforms.c trace.c trace.h reduction.c work.c \
-	../fmmlib3d-1.2/src/cdjseval3d.f \
+	xiao.c location.c matrix.c operators.c newman.c edge.c \
+	motion.c util.c data.c configure.c polar.c polar.h series.c \
+	intsincos.c gradient.c transforms.c qpanel.c cpanel.c \
+	skeleton.c fmm.c fmmlib3d_1_2.c fmmlib3d_1_2.h wbfmm-bem3d.c \
+	wbfmm-bem3d.h htriquad.c htriquad.h binomials.c binomials.h \
+	expansions.c htri-transforms.c trace.c trace.h reduction.c \
+	work.c ../fmmlib3d-1.2/src/cdjseval3d.f \
 	../fmmlib3d-1.2/src/d3mtreeplot.f \
 	../fmmlib3d-1.2/src/d3tstrcr.f ../fmmlib3d-1.2/src/dfft.f \
 	../fmmlib3d-1.2/src/h3dterms.f ../fmmlib3d-1.2/src/h3dtrans.f \
@@ -235,12 +235,12 @@ am__objects_1 =  \
 am_libbem3d_la_OBJECTS = acoord.lo belement.lo logging.lo files.lo \
 	bmesh.lo elements.lo functions.lo geometry.lo gfunc.lo gmsh.lo \
 	lookup.lo qselect.lo quadrature.lo hayami.lo radiation.lo \
-	shapefunc.lo wandzura.lo location.lo matrix.lo operators.lo \
-	newman.lo edge.lo motion.lo util.lo data.lo configure.lo \
-	polar.lo series.lo intsincos.lo gradient.lo transforms.lo \
-	qpanel.lo cpanel.lo skeleton.lo fmm.lo fmmlib3d_1_2.lo \
-	wbfmm-bem3d.lo htriquad.lo binomials.lo expansions.lo \
-	htri-transforms.lo trace.lo reduction.lo work.lo \
+	shapefunc.lo wandzura.lo xiao.lo location.lo matrix.lo \
+	operators.lo newman.lo edge.lo motion.lo util.lo data.lo \
+	configure.lo polar.lo series.lo intsincos.lo gradient.lo \
+	transforms.lo qpanel.lo cpanel.lo skeleton.lo fmm.lo \
+	fmmlib3d_1_2.lo wbfmm-bem3d.lo htriquad.lo binomials.lo \
+	expansions.lo htri-transforms.lo trace.lo reduction.lo work.lo \
 	$(am__objects_1)
 libbem3d_la_OBJECTS = $(am_libbem3d_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -341,7 +341,7 @@ AWK = gawk
 BEM3D_VERSION = 0.2.1
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include  		-I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include -fopenmp -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include
+CFLAGS = -g -O2 -Wall -Werror-implicit-function-declaration   		  -Wstrict-prototypes -Wmissing-prototypes 		  -Wmissing-declarations -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include 		 -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include -fopenmp -I/home/michael/Codes/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -369,9 +369,9 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/x86_64-slackware-linux/bin/ld -m elf_x86_64
-LDFLAGS =  -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/michael/Codes/lib -lwmpi_s -lglib-2.0 -L/home/michael/Codes/lib -lglib-2.0 -lm -L/home/michael/Codes/lib -lsisl -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath 		  -L/home/michael/Codes/lib -lwbfmm-base -lwbfmm -lglib-2.0 -lm
+LDFLAGS =  -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0  -L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -lblas -lrrqr -lm -L/home/michael/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/michael/Codes/lib -lwmpi_s -lglib-2.0 -L/home/michael/Codes/lib -lglib-2.0 -lm 		  -L/home/michael/Codes/lib -lsisl -lgsl -lgslcblas -lm -lblas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath -L/home/michael/Codes/lib -lwbfmm -lglib-2.0 -lblas -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lquadmath -lm
 LIBOBJS = 
-LIBS = -L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath -lgsl -lgslcblas -lm -L/home/michael/Codes/lib -lmatheval -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -lm 
+LIBS = -L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -lblas -lrrqr -lm -L/home/michael/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath  -lgsl -lgslcblas -lm -L/home/michael/Codes/lib -lmatheval -lgts -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -lm 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -406,6 +406,7 @@ SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 SISL = yes
+SQT = yes
 STRIP = strip
 VERSION = 0.2
 WBFMM = yes
@@ -436,7 +437,7 @@ docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
 gqr_cflags = -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include
-gqr_libs = -L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath
+gqr_libs = -L/home/michael/Codes/lib -lgqr -lglib-2.0 -lgsl -lgslcblas -lm -lblas -lrrqr -lm -L/home/michael/Codes/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath
 gsl_cflags = 
 gsl_libs = 
 gts_CFLAGS = -pthread -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include
@@ -469,7 +470,9 @@ psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
 sisl_cflags = -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include
-sisl_libs = -L/home/michael/Codes/lib -lsisl -lgsl -lgslcblas -lm -llapack -lcblas -lf77blas -latlas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.4.0/../../.. -lgfortran -lm -lquadmath
+sisl_libs = -L/home/michael/Codes/lib -lsisl -lgsl -lgslcblas -lm -lblas -lm -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lm -lquadmath
+sqt_cflags = -I/home/michael/Codes/include
+sqt_libs = 
 srcdir = .
 sysconfdir = ${prefix}/etc
 target_alias = 
@@ -477,7 +480,7 @@ top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
 wbfmm_cflags = -fopenmp -I/home/michael/Codes/include
-wbfmm_libs = -L/home/michael/Codes/lib -lwbfmm-base -lwbfmm -lglib-2.0 -lm
+wbfmm_libs = -L/home/michael/Codes/lib -lwbfmm -lglib-2.0 -lblas -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../../../x86_64-slackware-linux/lib -L/usr/lib64/gcc/x86_64-slackware-linux/5.5.0/../../.. -lgfortran -lquadmath -lm
 wmpi_cflags = -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/home/michael/Codes/include
 wmpi_libs = -L/home/michael/Codes/lib -lwmpi_s -lglib-2.0 -L/home/michael/Codes/lib -lglib-2.0 -lm
 AM_CPPFLAGS = -I$(top_srcdir) -I$(includedir) -DG_LOG_DOMAIN=\"BEM3D\"
@@ -492,12 +495,12 @@ libbem3d_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)\
 libbem3d_la_SOURCES = acoord.c belement.c logging.c files.c bmesh.c \
 	elements.c functions.c geometry.c gfunc.c gmsh.c lookup.c \
 	qselect.c quadrature.c hayami.c radiation.c shapefunc.c \
-	bem3d-private.h bem3d.h bem3dconfig.h wandzura.c location.c \
-	matrix.c operators.c newman.c edge.c motion.c util.c data.c \
-	configure.c polar.c polar.h series.c intsincos.c gradient.c \
-	transforms.c qpanel.c cpanel.c skeleton.c fmm.c fmmlib3d_1_2.c \
-	fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h htriquad.c \
-	htriquad.h binomials.c binomials.h expansions.c \
+	bem3d-private.h bem3d.h bem3dconfig.h wandzura.c xiao.c \
+	location.c matrix.c operators.c newman.c edge.c motion.c \
+	util.c data.c configure.c polar.c polar.h series.c intsincos.c \
+	gradient.c transforms.c qpanel.c cpanel.c skeleton.c fmm.c \
+	fmmlib3d_1_2.c fmmlib3d_1_2.h wbfmm-bem3d.c wbfmm-bem3d.h \
+	htriquad.c htriquad.h binomials.c binomials.h expansions.c \
 	htri-transforms.c trace.c trace.h reduction.c work.c \
 	$(am__append_1)
 include_HEADERS = \
@@ -749,6 +752,7 @@ include ./$(DEPDIR)/util.Plo
 include ./$(DEPDIR)/wandzura.Plo
 include ./$(DEPDIR)/wbfmm-bem3d.Plo
 include ./$(DEPDIR)/work.Plo
+include ./$(DEPDIR)/xiao.Plo
 
 .c.o:
 	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

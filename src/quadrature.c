@@ -112,7 +112,7 @@ const gdouble GAUSS_TRIANGLE_7[] = {
 } ;
 
 extern gdouble WANDZURA_7[], WANDZURA_25[], WANDZURA_54[], 
-  WANDZURA_85[], WANDZURA_126[], WANDZURA_175[] ;
+  WANDZURA_85[], WANDZURA_126[], WANDZURA_175[], XIAO_GIMBUTAS_453[] ;
 
 static gboolean nodes_coincide(GtsPoint *x, GtsPoint *y)
 
@@ -1258,7 +1258,6 @@ gint bem3d_quadrature_rule_polar_hs(GtsPoint *p, BEM3DElement *e,
   return BEM3D_SUCCESS ;
 }
 
-
 /** 
  * Symmetric Gaussian quadrature rules for triangles, taken from
  * Wandzura, S. and Xiao, H., `Symmetric quadrature rules on a
@@ -1350,6 +1349,57 @@ gint bem3d_quadrature_rule_wx(GtsPoint *p, BEM3DElement *e,
   }
   
   return BEM3D_SUCCESS ;
+}
+
+/** 
+ * Symmetric Gaussian quadrature rules for triangles, taken from Xiao,
+ * H. and Gimbutas, Z. `A numerical algorithm for the construction of
+ * efficient quadrature rules in two and higher dimensions',
+ * Computers and Mathematics with Applications, 59:663--676, 2010.
+ * 
+ * @param p field point (ignored);
+ * @param e element to integrate over;
+ * @param q quadrature rule to fill;
+ * @param gfunc ignored;
+ * @param param ignored;
+ * @param data gint *, number of points in rule (453)
+ * @param work workspace (not used).
+ * 
+ * @return ::BEM3D_SUCCESS on success.
+ */
+
+gint bem3d_quadrature_rule_xg(GtsPoint *p, BEM3DElement *e,
+			      BEM3DQuadratureRule *q, 
+			      BEM3DGreensFunction *gfunc,
+			      BEM3DParameters *param,
+			      gpointer data,
+			      BEM3DWorkspace *work)
+{
+  gint n, nc ;
+
+  g_return_val_if_fail(e != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(BEM3D_IS_ELEMENT(e), BEM3D_ARGUMENT_WRONG_TYPE) ;
+  g_return_val_if_fail(q != NULL, BEM3D_NULL_ARGUMENT) ;
+  g_return_val_if_fail(data != NULL, BEM3D_NULL_ARGUMENT) ;
+
+  nc = bem3d_element_corner_number(e) ;
+  g_assert(nc == 3) ;
+  n = *(gint *)data ;
+  bem3d_quadrature_rule_realloc(q, n) ;
+
+  switch (n) {
+  case 453:
+    memcpy(q->rule, XIAO_GIMBUTAS_453, 3*n*sizeof(gdouble)) ; break ;
+  default:
+    g_log(G_LOG_DOMAIN,
+  	  G_LOG_LEVEL_ERROR,
+  	  "%s: %d point Xiao-Gimbutas quadrature is not available",
+  	  __FUNCTION__, n) ;
+    break ;
+    
+  }
+  
+  return 0 ;
 }
 
 /** 

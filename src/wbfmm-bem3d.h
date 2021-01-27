@@ -34,5 +34,13 @@ gint _bem3d_fmm_helmholtz_wbfmm(BEM3DFastMultipole solver,
 				gdouble *q, gdouble *dq,
 				gdouble *p, gdouble *dp,
 				BEM3DFMMWorkspace *w) ;
+gint _bem3d_fmm_laplace_wbfmm(BEM3DFastMultipole solver,
+			      BEM3DFastMultipoleProblem problem,
+			      BEM3DParameters *param,
+			      BEM3DMeshSkeleton *s, 
+			      gdouble tol,
+			      gdouble *q, gdouble *dq,
+			      gdouble *p, gdouble *dp,
+			      BEM3DFMMWorkspace *w) ;
 
 #endif /*BEM3D_WBFMM_H_INCLUDED*/

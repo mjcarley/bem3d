@@ -706,6 +706,7 @@ static gint bem3d_function_apply_index(BEM3DFunction *func,
 	    "expansions (%d)",
 	    __FUNCTION__, func->evaluators->len, func->expansions->len) ;
 
+
   for ( i = 0 ; i < bem3d_function_function_number(func) ; i ++ ) {
     if ( g_ptr_array_index(func->evaluators, i) != NULL ) 
       evaluator_destroy(g_ptr_array_index(func->evaluators, i)) ;
@@ -717,7 +718,7 @@ static gint bem3d_function_apply_index(BEM3DFunction *func,
 	      __FUNCTION__, 
 	      ((GString *)(g_ptr_array_index(func->expansions,i)))->str) ;
   }
-  
+
   data[BEM3D_FUNCTION_DATA_FUNC] = func ;
   data[BEM3D_FUNCTION_DATA_DATA_F] = f ;
   data[BEM3D_FUNCTION_DATA_VARS] = vars ;

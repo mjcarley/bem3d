@@ -75,6 +75,10 @@ gint bem3d_greens_func_laplace(GtsPoint *x, GtsPoint *y,
   g_return_val_if_fail(dGdn != NULL, BEM3D_NULL_ARGUMENT) ;
 
   R2 = gts_point_distance2(x, y) ;
+  if ( R2 < 1e-12 ) {
+    G[0] = dGdn[0] = 0.0 ;
+    return BEM3D_SUCCESS ;
+  }
   g_assert(R2 != 0.0) ;
   R = sqrt(R2) ;
 

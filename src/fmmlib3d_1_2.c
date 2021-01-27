@@ -67,7 +67,7 @@ static gint complex_fill(gdouble *dest, gdouble *src, gint n)
   gint i ;
 
   for ( i = 0 ; i < n ; i ++ ) {
-    dest[2*i+0] = src[i] ; dest[2*i+1] = 0.0 ;
+    dest[2*i+0] += src[i] ; dest[2*i+1] += 0.0 ;
   }
 
   return 0 ;
@@ -78,7 +78,7 @@ static gint real_fill(gdouble *dest, gdouble *src, gint n)
 {
   gint i ;
 
-  for ( i = 0 ; i < n ; i ++ ) dest[i] = src[2*i+0] ;
+  for ( i = 0 ; i < n ; i ++ ) dest[i] += src[2*i+0] ;
 
   return 0 ;
 }
@@ -114,7 +114,7 @@ gint _bem3d_fmm_helmholtz_fmmlib3d_1_2(BEM3DFastMultipole solver,
 
   g_assert(solver == BEM3D_FMM_FMMLIB3D_1_2) ;
   g_assert(problem == BEM3D_FMM_HELMHOLTZ) ;
-  
+
   ifcharge = FALSE ;  charge  = (gdouble *)dum ;
   ifdipole = FALSE ;  dipstr  = (gdouble *)dum ;
   ifpot    = FALSE ;  /* pot     = (gdouble *)dum ; */
@@ -224,6 +224,8 @@ gint _bem3d_fmm_laplace_fmmlib3d_1_2(BEM3DFastMultipole solver,
   g_error("%s: no fmmlib3d-1.2 support compiled in", __FUNCTION__) ;
 #endif /*HAVE_FMMLIB3D_1_2*/
 
+  g_assert_not_reached() ; /*check increment of output arrays*/
+  
   if (  p != NULL ) { real_fill(p, pottarg, s->nt) ; }
 
   if (  dp != NULL ) { real_fill(dp, fldtarg, s->nt) ; }
